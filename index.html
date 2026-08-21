@@ -16,7 +16,6 @@
       --text: #f7f8ff;
       --muted: #a0aec0;
       --accent: #7dd3fc;
-      --green: #4ade80;
       --discord: #5865F2;
       --yellow: #facc15;
     }
@@ -105,27 +104,20 @@
       border: 2px solid rgba(125, 211, 252, 0.25);
     }
 
-    .avatar-placeholder {
-      width: 140px;
-      height: 140px;
-      border-radius: 20px;
-      background: #1a1f35;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin: 0 auto;
-    }
-
     .avatar-name {
       margin-top: 12px;
       font-weight: 700;
       font-size: 1.15rem;
     }
 
+    .avatar-username {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
     .rating-box {
-      margin-top: 8px;
+      margin-top: 10px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -248,7 +240,7 @@
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-      .avatar, .avatar-placeholder {
+      .avatar {
         width: 120px;
         height: 120px;
       }
@@ -267,9 +259,15 @@
       <h2 class="section-title">In-game Stats</h2>
       <div class="profile-card">
         <div class="avatar-wrap">
-          <img id="robloxAvatar" class="avatar" alt="Hunger" style="display:none">
-          <div id="avatarPlaceholder" class="avatar-placeholder">Loading...</div>
+          <!-- Direct image URL - no CORS / no fetch needed -->
+          <img 
+            class="avatar" 
+            src="https://www.roblox.com/headshot-thumbnail/image?userId=2440032582&width=420&height=420&format=png" 
+            alt="Sn2_wing"
+            onerror="this.src='https://tr.rbxcdn.com/180DAY-AvatarHeadshot-2440032582-Png/150/150/AvatarHeadshot/Png/noFilter'"
+          >
           <div class="avatar-name">Hunger</div>
+          <div class="avatar-username">@Sn2_wing</div>
           <div class="rating-box">★ 93 Rating</div>
         </div>
 
@@ -337,31 +335,5 @@
       <p>© 2026 N29 · Blue Lock Rivals</p>
     </footer>
   </div>
-
-  <script>
-    // Correct Roblox avatar loading
-    const userId = 2440032582;
-    const img = document.getElementById('robloxAvatar');
-    const placeholder = document.getElementById('avatarPlaceholder');
-
-    // Use the official thumbnails API
-    fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=420x420&format=Png&isCircular=false`)
-      .then(r => r.json())
-      .then(data => {
-        if (data && data.data && data.data[0] && data.data[0].imageUrl) {
-          img.src = data.data[0].imageUrl;
-          img.style.display = 'block';
-          placeholder.style.display = 'none';
-        } else {
-          placeholder.textContent = 'No avatar';
-        }
-      })
-      .catch(() => {
-        // Fallback direct image
-        img.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=420&height=420&format=png`;
-        img.style.display = 'block';
-        placeholder.style.display = 'none';
-      });
-  </script>
 </body>
 </html>
