@@ -81,7 +81,6 @@
       letter-spacing: -0.02em;
     }
 
-    /* Profile card */
     .profile-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -104,6 +103,19 @@
       background: #1a1f35;
       object-fit: cover;
       border: 2px solid rgba(125, 211, 252, 0.25);
+    }
+
+    .avatar-placeholder {
+      width: 140px;
+      height: 140px;
+      border-radius: 20px;
+      background: #1a1f35;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 0 auto;
     }
 
     .avatar-name {
@@ -155,7 +167,6 @@
       letter-spacing: 0.03em;
     }
 
-    /* Discord */
     .discord-card {
       background: linear-gradient(145deg, rgba(88, 101, 242, 0.18), rgba(88, 101, 242, 0.06));
       border: 1px solid rgba(88, 101, 242, 0.35);
@@ -237,7 +248,7 @@
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-      .avatar {
+      .avatar, .avatar-placeholder {
         width: 120px;
         height: 120px;
       }
@@ -252,18 +263,12 @@
       <p class="subtitle">My stats, league & community</p>
     </header>
 
-    <!-- Profile + Stats -->
     <div class="section">
       <h2 class="section-title">In-game Stats</h2>
       <div class="profile-card">
         <div class="avatar-wrap">
-          <img 
-            id="robloxAvatar"
-            class="avatar" 
-            src="https://www.roblox.com/headshot-thumbnail/image?userId=2440032582&width=420&height=420&format=png" 
-            alt="Hunger"
-            onerror="this.src='https://tr.rbxcdn.com/30DAY-AvatarHeadshot-2440032582-Png/150/150/AvatarHeadshot/Png/isCircular'"
-          >
+          <img id="robloxAvatar" class="avatar" alt="Hunger" style="display:none">
+          <div id="avatarPlaceholder" class="avatar-placeholder">Loading...</div>
           <div class="avatar-name">Hunger</div>
           <div class="rating-box">★ 93 Rating</div>
         </div>
@@ -309,7 +314,6 @@
       </div>
     </div>
 
-    <!-- Discord -->
     <div class="section">
       <h2 class="section-title">BLR League Discord</h2>
       <div class="discord-card">
@@ -335,11 +339,29 @@
   </div>
 
   <script>
-    // Fallback avatar loader if the first URL fails
-    const avatar = document.getElementById('robloxAvatar');
-    avatar.addEventListener('error', function() {
-      this.src = 'https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=2440032582&size=420x420&format=Png&isCircular=false';
-    }, { once: true });
+    // Correct Roblox avatar loading
+    const userId = 2440032582;
+    const img = document.getElementById('robloxAvatar');
+    const placeholder = document.getElementById('avatarPlaceholder');
+
+    // Use the official thumbnails API
+    fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=420x420&format=Png&isCircular=false`)
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.data && data.data[0] && data.data[0].imageUrl) {
+          img.src = data.data[0].imageUrl;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+        } else {
+          placeholder.textContent = 'No avatar';
+        }
+      })
+      .catch(() => {
+        // Fallback direct image
+        img.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=420&height=420&format=png`;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      });
   </script>
 </body>
 </html>
