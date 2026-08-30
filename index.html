@@ -24,7 +24,7 @@
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      background: 
+      background:
         radial-gradient(ellipse 80% 50% at 50% -20%, rgba(88, 101, 242, 0.15), transparent),
         linear-gradient(180deg, #070914 0%, #0d1224 100%);
       color: var(--text);
@@ -199,6 +199,23 @@
 
     .btn-discord svg { width: 20px; height: 20px; }
 
+    .widget-wrap {
+      margin: 24px auto 0;
+      width: min(350px, 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(88, 101, 242, 0.35);
+      background: #2b2d31;
+      line-height: 0;
+    }
+
+    .widget-wrap iframe {
+      width: 100%;
+      height: 500px;
+      border: 0;
+      display: block;
+    }
+
     .links {
       display: flex;
       gap: 12px;
@@ -259,13 +276,14 @@
       <h2 class="section-title">In-game Stats</h2>
       <div class="profile-card">
         <div class="avatar-wrap">
-          <img 
-            class="avatar" 
-            src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-FB4A2C8D1791993701E2C2A726F9580B-Png/420/420/AvatarHeadshot/Png/noFilter" 
+          <img
+            id="rbx-avatar"
+            class="avatar"
+            src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-FB4A2C8D1791993701E2C2A726F9580B-Png/420/420/AvatarHeadshot/Png/noFilter"
             alt="Sn2_wing"
           >
-          <div class="avatar-name">Hunger</div>
-          <div class="avatar-username">@Sn2_wing</div>
+          <div id="rbx-display" class="avatar-name">Hunger</div>
+          <div id="rbx-username" class="avatar-username">@Sn2_wing</div>
           <div class="rating-box">★ 93 Rating</div>
         </div>
 
@@ -319,12 +337,20 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
           Join Discord Server
         </a>
+        <div class="widget-wrap">
+          <iframe
+            src="https://discord.com/widget?id=1533115925350318140&theme=dark&username=Sn2_wing"
+            title="Discord server widget"
+            allowtransparency="true"
+            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+          </iframe>
+        </div>
       </div>
     </div>
 
     <div class="links">
       <a href="https://n29.kz" class="link">← n29.kz</a>
-      <a href="https://www.roblox.com/users/2440032582/profile" target="_blank" rel="noopener" class="link">Roblox Profile</a>
+      <a id="rbx-profile-link" href="https://www.roblox.com/users/2440032582/profile" target="_blank" rel="noopener" class="link">Roblox Profile</a>
       <a href="https://n29dev.github.io/gk-reaction-trainer" class="link">GK Trainer</a>
       <a href="https://guns.lol/n29" target="_blank" rel="noopener" class="link">guns.lol</a>
     </div>
@@ -333,5 +359,54 @@
       <p>© 2026 N29 · Blue Lock Rivals</p>
     </footer>
   </div>
+
+  <script>
+    const ROBLOX_USER_ID = 2440032582;
+    const PREFERRED_USERNAME = 'Sn2_wing';
+
+    async function fetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res.ok) return await res.json();
+        } catch (err) {
+          /* try next endpoint */
+        }
+      }
+      return null;
+    }
+
+    async function loadRobloxProfile() {
+      const user = await fetchJson([
+        `https://users.roproxy.com/v1/users/${ROBLOX_USER_ID}`,
+        `https://users.roblox.com/v1/users/${ROBLOX_USER_ID}`
+      ]);
+
+      const thumbs = await fetchJson([
+        `https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${ROBLOX_USER_ID}&size=420x420&format=Png&isCircular=false`,
+        `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${ROBLOX_USER_ID}&size=420x420&format=Png&isCircular=false`
+      ]);
+
+      const displayEl = document.getElementById('rbx-display');
+      const userEl = document.getElementById('rbx-username');
+      const avatarEl = document.getElementById('rbx-avatar');
+
+      const handle = PREFERRED_USERNAME;
+      const liveDisplay = (user && user.displayName) ? user.displayName : handle;
+      const liveUsername = (user && user.name) ? user.name : handle;
+      const shownHandle = liveUsername.toLowerCase() === handle.toLowerCase()
+        ? liveUsername
+        : handle;
+
+      displayEl.textContent = liveDisplay;
+      userEl.textContent = '@' + shownHandle;
+      avatarEl.alt = shownHandle;
+
+      const imageUrl = thumbs && thumbs.data && thumbs.data[0] && thumbs.data[0].imageUrl;
+      if (imageUrl) avatarEl.src = imageUrl;
+    }
+
+    loadRobloxProfile();
+  </script>
 </body>
 </html>
