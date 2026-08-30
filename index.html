@@ -280,10 +280,10 @@
             id="rbx-avatar"
             class="avatar"
             src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-FB4A2C8D1791993701E2C2A726F9580B-Png/420/420/AvatarHeadshot/Png/noFilter"
-            alt="Sn2_wing"
+            alt="OnlyHunger"
           >
           <div id="rbx-display" class="avatar-name">Hunger</div>
-          <div id="rbx-username" class="avatar-username">@Sn2_wing</div>
+          <div id="rbx-username" class="avatar-username">@OnlyHunger</div>
           <div class="rating-box">★ 93 Rating</div>
         </div>
 
@@ -339,7 +339,8 @@
         </a>
         <div class="widget-wrap">
           <iframe
-            src="https://discord.com/widget?id=1533115925350318140&theme=dark&username=Sn2_wing"
+            id="discord-widget"
+            src="https://discord.com/widget?id=1533115925350318140&theme=dark"
             title="Discord server widget"
             allowtransparency="true"
             sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
@@ -362,7 +363,6 @@
 
   <script>
     const ROBLOX_USER_ID = 2440032582;
-    const PREFERRED_USERNAME = 'Sn2_wing';
 
     async function fetchJson(urls) {
       for (const url of urls) {
@@ -387,23 +387,22 @@
         `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${ROBLOX_USER_ID}&size=420x420&format=Png&isCircular=false`
       ]);
 
-      const displayEl = document.getElementById('rbx-display');
-      const userEl = document.getElementById('rbx-username');
-      const avatarEl = document.getElementById('rbx-avatar');
+      if (user) {
+        const displayName = user.displayName || user.name;
+        const username = user.name;
 
-      const handle = PREFERRED_USERNAME;
-      const liveDisplay = (user && user.displayName) ? user.displayName : handle;
-      const liveUsername = (user && user.name) ? user.name : handle;
-      const shownHandle = liveUsername.toLowerCase() === handle.toLowerCase()
-        ? liveUsername
-        : handle;
+        document.getElementById('rbx-display').textContent = displayName;
+        document.getElementById('rbx-username').textContent = '@' + username;
+        document.getElementById('rbx-avatar').alt = username;
 
-      displayEl.textContent = liveDisplay;
-      userEl.textContent = '@' + shownHandle;
-      avatarEl.alt = shownHandle;
+        const widget = document.getElementById('discord-widget');
+        if (widget) {
+          widget.src = 'https://discord.com/widget?id=1533115925350318140&theme=dark&username=' + encodeURIComponent(username);
+        }
+      }
 
       const imageUrl = thumbs && thumbs.data && thumbs.data[0] && thumbs.data[0].imageUrl;
-      if (imageUrl) avatarEl.src = imageUrl;
+      if (imageUrl) document.getElementById('rbx-avatar').src = imageUrl;
     }
 
     loadRobloxProfile();
