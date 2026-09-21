@@ -40,6 +40,28 @@
         <div class="creator-list" id="creatorList"></div>
       </section>
       <section class="card">
+        <div class="card-head"><h2>Auto parser</h2></div>
+        <p class="note">
+          YouTube: paste a free Data API v3 key, then Sync. Videos and Shorts in the event window are pulled with view counts.
+          TikTok: official API is closed, so the parser tries a public lookup and otherwise reads pasted TikTok links.
+        </p>
+        <div class="form-grid">
+          <label>YouTube Data API key
+            <input id="ytKey" type="password" placeholder="AIza…" autocomplete="off" />
+          </label>
+          <label>Paste video links (YouTube / Shorts / TikTok), one or many
+            <textarea id="parsePaste" rows="5" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/shorts/...&#10;https://www.tiktok.com/@user/video/..."></textarea>
+          </label>
+          <label class="check-line"><input type="checkbox" id="parseWindowOnly" checked /> Only keep posts inside the event window</label>
+        </div>
+        <div class="row">
+          <button class="btn primary" type="button" id="parseLinksBtn">Parse pasted links</button>
+          <button class="btn" type="button" id="syncAllBtn">Sync all creators</button>
+          <button class="btn" type="button" id="refreshViewsBtn">Refresh existing views</button>
+        </div>
+        <p class="empty" id="parseStatus"></p>
+      </section>
+      <section class="card">
         <div class="card-head"><h2>Add video or Short</h2></div>
         <form class="form-grid" id="videoForm">
           <label>Creator
@@ -62,7 +84,6 @@
         <p class="note">
           Saving here only edits this browser until you publish.
           Paste a GitHub token with access to <code>N29dev/blr</code> to write <code>leaderboard/data.json</code>.
-          Or download JSON and send it to be pushed.
         </p>
         <label>GitHub token (stored only in this browser)
           <input id="ghToken" type="password" placeholder="ghp_…" autocomplete="off" />
@@ -92,6 +113,7 @@
     </div>
   </div>
   <script src="shared.js"></script>
+  <script src="parser.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
