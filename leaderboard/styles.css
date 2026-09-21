@@ -91,3 +91,17 @@ input, select, textarea {
 .check-line { flex-direction: row !important; align-items: center; gap: 8px !important; color: var(--muted); font-size: 13px; }
 textarea { min-height: 110px; resize: vertical; }
 @media (max-width: 800px) { .boards { grid-template-columns: 1fr; } }
+
+.parse-log {
+  margin-top: 10px;
+  max-height: 180px;
+  overflow: auto;
+  background: #0b1020;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  color: #cbd5e1;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

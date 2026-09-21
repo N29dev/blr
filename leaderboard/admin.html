@@ -16,6 +16,7 @@
       <h1>Add creators</h1>
       <p class="subtitle">One person = one YouTube + one TikTok. Videos and Shorts both count.</p>
     </header>
+
     <section class="card" id="loginCard">
       <form class="login" id="loginForm">
         <label>Admin password
@@ -25,6 +26,7 @@
         <p class="empty" id="loginError"></p>
       </form>
     </section>
+
     <div id="app" hidden>
       <section class="card">
         <div class="card-head"><h2>Add / edit creator</h2></div>
@@ -39,28 +41,34 @@
         </form>
         <div class="creator-list" id="creatorList"></div>
       </section>
+
       <section class="card">
         <div class="card-head"><h2>Auto parser</h2></div>
         <p class="note">
-          YouTube: paste a free Data API v3 key, then Sync. Videos and Shorts in the event window are pulled with view counts.
-          TikTok: official API is closed, so the parser tries a public lookup and otherwise reads pasted TikTok links.
+          Auto parser: add creators, paste a YouTube Data API v3 key, then Sync.
+          It pulls YouTube videos + Shorts in the event window with view counts.
+          TikTok has no official list API — Sync tries a profile lookup; if that is blocked, paste video links.
+          Mixed pastes are auto-assigned by @handle / channel URL.
         </p>
         <div class="form-grid">
           <label>YouTube Data API key
             <input id="ytKey" type="password" placeholder="AIza…" autocomplete="off" />
           </label>
-          <label>Paste video links (YouTube / Shorts / TikTok), one or many
-            <textarea id="parsePaste" rows="5" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/shorts/...&#10;https://www.tiktok.com/@user/video/..."></textarea>
+          <label>Paste anything: video links, channel URLs, TikTok links, Discord dump
+            <textarea id="parsePaste" rows="6" placeholder="https://www.youtube.com/@creator&#10;https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/shorts/...&#10;https://www.tiktok.com/@user/video/..."></textarea>
           </label>
           <label class="check-line"><input type="checkbox" id="parseWindowOnly" checked /> Only keep posts inside the event window</label>
+          <label class="check-line"><input type="checkbox" id="autoSyncOnSave" checked /> Auto-sync a creator right after you save them</label>
         </div>
         <div class="row">
-          <button class="btn primary" type="button" id="parseLinksBtn">Parse pasted links</button>
+          <button class="btn primary" type="button" id="parseLinksBtn">Auto parse paste</button>
           <button class="btn" type="button" id="syncAllBtn">Sync all creators</button>
           <button class="btn" type="button" id="refreshViewsBtn">Refresh existing views</button>
         </div>
         <p class="empty" id="parseStatus"></p>
+        <pre class="parse-log" id="parseLog">Ready. Add creators, then Sync or paste links.</pre>
       </section>
+
       <section class="card">
         <div class="card-head"><h2>Add video or Short</h2></div>
         <form class="form-grid" id="videoForm">
@@ -79,11 +87,13 @@
           </div>
         </form>
       </section>
+
       <section class="card">
         <div class="card-head"><h2>Publish to blr.n29.kz/leaderboard</h2></div>
         <p class="note">
           Saving here only edits this browser until you publish.
           Paste a GitHub token with access to <code>N29dev/blr</code> to write <code>leaderboard/data.json</code>.
+          Or download JSON and send it to be pushed.
         </p>
         <label>GitHub token (stored only in this browser)
           <input id="ghToken" type="password" placeholder="ghp_…" autocomplete="off" />
@@ -95,6 +105,7 @@
         </div>
         <p class="empty" id="publishStatus"></p>
       </section>
+
       <section class="card">
         <div class="card-head"><h2>Current videos</h2></div>
         <div class="table-wrap">
@@ -107,6 +118,7 @@
         </div>
       </section>
     </div>
+
     <div class="links">
       <a class="link" href="./">Public board</a>
       <a class="link" href="/">BLR home</a>
