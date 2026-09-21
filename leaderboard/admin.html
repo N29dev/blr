@@ -29,28 +29,35 @@
 
     <div id="app" hidden>
       <section class="card">
-        <div class="card-head"><h2>Add / edit creator</h2></div>
+        <div class="card-head"><h2>Official pairs · YouTube + TikTok</h2></div>
+        <p class="note">
+          This is the manual file <code>pairs.json</code>. Use it only when one person has both accounts.
+          Saving a pair merges any auto-detected YouTube-only and TikTok-only rows into one creator.
+        </p>
         <form class="form-grid" id="creatorForm">
           <label>Display name <input name="name" required placeholder="Creator name" /></label>
-          <label>YouTube channel URL or @handle <input name="youtube" placeholder="https://youtube.com/@name" /></label>
-          <label>TikTok username <input name="tiktok" placeholder="@username" /></label>
+          <label>YouTube channel URL or @handle <input name="youtube" required placeholder="https://youtube.com/@name" /></label>
+          <label>TikTok username <input name="tiktok" required placeholder="@username" /></label>
           <div class="row">
-            <button class="btn primary" type="submit">Save creator</button>
+            <button class="btn primary" type="submit">Save pair</button>
             <button class="btn" type="button" id="resetCreator">Clear</button>
           </div>
         </form>
+        <div class="creator-list" id="pairList"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Auto-detected creators</h2></div>
+        <p class="note">Created automatically from parsed video authors. Pair them above if the same person owns both platforms.</p>
         <div class="creator-list" id="creatorList"></div>
       </section>
 
       <section class="card">
         <div class="card-head"><h2>Auto parser</h2></div>
         <p class="note">
-          <strong>YouTube:</strong> paste a Data API v3 key, save the creator, Sync. Videos + Shorts come in with views.
-          <strong>TikTok:</strong> TikTok locked the official API and profile-list lookups get blocked.
-          Individual videos still auto-parse — paste
-          <code>https://www.tiktok.com/@user/video/…</code> or <code>vm.tiktok.com</code> links
-          (Discord dump is fine). Assigned by @handle, views + date filled in.
-          Later use <strong>Refresh existing views</strong>.
+          Paste links — the parser detects the owner and creates them if needed.
+          Official YouTube+TikTok people go in <code>pairs.json</code> above so both platforms count as one person.
+          YouTube key still needed for views. TikTok: paste video links.
         </p>
         <div class="form-grid">
           <label>YouTube Data API key
@@ -94,8 +101,7 @@
         <div class="card-head"><h2>Publish to blr.n29.kz/leaderboard</h2></div>
         <p class="note">
           Saving here only edits this browser until you publish.
-          Paste a GitHub token with access to <code>N29dev/blr</code> to write <code>leaderboard/data.json</code>.
-          Or download JSON and send it to be pushed.
+          Paste a GitHub token with access to <code>N29dev/blr</code> to write <code>leaderboard/data.json</code> and <code>leaderboard/pairs.json</code>.
         </p>
         <label>GitHub token (stored only in this browser)
           <input id="ghToken" type="password" placeholder="ghp_…" autocomplete="off" />
