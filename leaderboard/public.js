@@ -1,5 +1,5 @@
-function rankItem(row, i, primary, secondary) {
-  const onPodium = i < 5 && (row.stats.views > 0 || row.stats.qualCount > 0);
+function rankItem(row, i, primary, secondary, score) {
+  const onPodium = i < 5 && Number(score) > 0;
   return `
     <li class="${onPodium ? "top" : ""}">
       <span class="num">${i + 1}</span>
@@ -9,25 +9,55 @@ function rankItem(row, i, primary, secondary) {
   `;
 }
 
+function fillBoard(id, rows, primaryFn, secondaryFn, scoreFn) {
+  const el = document.getElementById(id);
+  el.innerHTML = rows.length
+    ? rows.map((r, i) => rankItem(r, i, primaryFn(r), secondaryFn(r), scoreFn(r))).join("")
+    : `<li class="empty">Waiting for creators.</li>`;
+}
+
 function render(data) {
   const s = data.settings;
   document.getElementById("windowLabel").textContent =
     formatFull(s.eventStartUnix) + "  →  " + formatFull(s.eventEndUnix);
   document.getElementById("countdown").textContent = countdownText(s.eventStartUnix, s.eventEndUnix);
 
-  const byViews = ranked(data.creators, data.videos, s, "views");
-  const byQual = ranked(data.creators, data.videos, s, "qualCount");
+  const byViewsSum = ranked(data.creators, data.videos, s, "viewsSum");
+  const byViewsMax = ranked(data.creators, data.videos, s, "viewsMax");
+  const byQualSum = ranked(data.creators, data.videos, s, "qualSum");
+  const byQualMax = ranked(data.creators, data.videos, s, "qualMax");
 
-  document.getElementById("boardViews").innerHTML = byViews.length
-    ? byViews.map((r, i) => rankItem(r, i, fmtNum(r.stats.views) + " views", r.stats.videoCount + " videos")).join("")
-    : `<li class="empty">Waiting for creators.</li>`;
-
-  document.getElementById("boardVideos").innerHTML = byQual.length
-    ? byQual.map((r, i) => rankItem(r, i, r.stats.qualCount + " videos", fmtNum(r.stats.views) + " views")).join("")
-    : `<li class="empty">Waiting for qualifying videos.</li>`;
+  fillBoard(
+    "boardViewsSum",
+    byViewsSum,
+    (r) => fmtNum(r.stats.viewsSum) + " views",
+    (r) => `YT ${fmtNum(r.stats.youtube.views)} · TT ${fmtNum(r.stats.tiktok.views)}`,
+    (r) => r.stats.viewsSum
+  );
+  fillBoard(
+    "boardVideosSum",
+    byQualSum,
+    (r) => r.stats.qualSum + " videos",
+    (r) => `YT ${r.stats.youtube.qualCount} · TT ${r.stats.tiktok.qualCount}`,
+    (r) => r.stats.qualSum
+  );
+  fillBoard(
+    "boardViewsMax",
+    byViewsMax,
+    (r) => fmtNum(r.stats.viewsMax) + " views",
+    (r) => r.stats.viewsMaxPlatform,
+    (r) => r.stats.viewsMax
+  );
+  fillBoard(
+    "boardVideosMax",
+    byQualMax,
+    (r) => r.stats.qualMax + " videos",
+    (r) => r.stats.qualMaxPlatform,
+    (r) => r.stats.qualMax
+  );
 
   const q = (document.getElementById("search").value || "").toLowerCase();
-  const rows = byViews.filter((r) => r.creator.name.toLowerCase().includes(q));
+  const rows = byViewsSum.filter((r) => r.creator.name.toLowerCase().includes(q));
   document.getElementById("emptyState").style.display = data.creators.length ? "none" : "block";
   document.getElementById("allTable").innerHTML = rows.map((r, i) => {
     const c = r.creator;
@@ -40,9 +70,12 @@ function render(data) {
         ${yt ? `<a class="pill yt" href="${escapeHtml(yt)}" target="_blank" rel="noopener">YouTube</a>` : ""}
         ${tt ? `<a class="pill tt" href="${escapeHtml(tt)}" target="_blank" rel="noopener">TikTok</a>` : ""}
       </td>
-      <td>${r.stats.videoCount}</td>
-      <td>${r.stats.qualCount}</td>
-      <td class="metric">${fmtNum(r.stats.views)}</td>
+      <td class="metric">${fmtNum(r.stats.youtube.views)}</td>
+      <td class="metric">${fmtNum(r.stats.tiktok.views)}</td>
+      <td class="metric">${fmtNum(r.stats.viewsSum)}</td>
+      <td class="metric">${fmtNum(r.stats.viewsMax)}</td>
+      <td>${r.stats.qualSum}</td>
+      <td>${r.stats.qualMax}</td>
     </tr>`;
   }).join("");
 

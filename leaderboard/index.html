@@ -19,26 +19,50 @@
       <p class="window" id="windowLabel">Loading event window…</p>
       <p class="countdown" id="countdown">—</p>
     </header>
+
     <p class="note">
-      YouTube <strong>videos</strong> and YouTube <strong>Shorts</strong> both count, plus TikTok.
-      A video qualifies on Board B only if it was posted in the event window and has at least 5,000 views.
+      YouTube <strong>videos</strong> and YouTube <strong>Shorts</strong> both count as YouTube.
+      <strong>Sum</strong> = TikTok + YouTube together.
+      <strong>Max of two</strong> = only the stronger platform.
+      Board B still needs 5,000 views and an in-window post time.
     </p>
+
+    <p class="variant-label">Variant 1 · Sum of both platforms</p>
     <div class="boards">
       <section class="card">
         <div class="card-head">
-          <h2>Views this week</h2>
+          <h2>Views · sum</h2>
           <span class="win">Top 5</span>
         </div>
-        <ol id="boardViews" class="ranks"></ol>
+        <ol id="boardViewsSum" class="ranks"></ol>
       </section>
       <section class="card">
         <div class="card-head">
-          <h2>Videos made ≥ 5k</h2>
+          <h2>Videos ≥ 5k · sum</h2>
           <span class="win">Top 5</span>
         </div>
-        <ol id="boardVideos" class="ranks"></ol>
+        <ol id="boardVideosSum" class="ranks"></ol>
       </section>
     </div>
+
+    <p class="variant-label">Variant 2 · Max of the two platforms</p>
+    <div class="boards">
+      <section class="card">
+        <div class="card-head">
+          <h2>Views · max</h2>
+          <span class="win">Top 5</span>
+        </div>
+        <ol id="boardViewsMax" class="ranks"></ol>
+      </section>
+      <section class="card">
+        <div class="card-head">
+          <h2>Videos ≥ 5k · max</h2>
+          <span class="win">Top 5</span>
+        </div>
+        <ol id="boardVideosMax" class="ranks"></ol>
+      </section>
+    </div>
+
     <section class="card">
       <div class="card-head">
         <h2>All creators</h2>
@@ -51,9 +75,12 @@
               <th>#</th>
               <th>Creator</th>
               <th>Links</th>
-              <th>In-window</th>
-              <th>5k+</th>
-              <th>Views</th>
+              <th>YT views</th>
+              <th>TT views</th>
+              <th>Sum</th>
+              <th>Max</th>
+              <th>5k sum</th>
+              <th>5k max</th>
             </tr>
           </thead>
           <tbody id="allTable"></tbody>
@@ -61,6 +88,7 @@
       </div>
       <p class="empty" id="emptyState">No creators published yet.</p>
     </section>
+
     <section class="card">
       <div class="card-head"><h2>Logged videos</h2></div>
       <div class="table-wrap">
@@ -79,6 +107,7 @@
         </table>
       </div>
     </section>
+
     <div class="links">
       <a class="link" href="/">← BLR home</a>
       <a class="link" href="https://n29.kz">n29.kz</a>
