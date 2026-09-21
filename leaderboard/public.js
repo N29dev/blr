@@ -65,7 +65,7 @@ function render(data) {
     const tt = tiktokUrl(c.tiktok);
     return `<tr>
       <td>${i + 1}</td>
-      <td><strong>${escapeHtml(c.name)}</strong></td>
+      <td><strong>${escapeHtml(c.name)}</strong>${c.source === "pair" || (c.youtube && c.tiktok) ? ' <span class="pill ok">YT+TT</span>' : ""}</td>
       <td>
         ${yt ? `<a class="pill yt" href="${escapeHtml(yt)}" target="_blank" rel="noopener">YouTube</a>` : ""}
         ${tt ? `<a class="pill tt" href="${escapeHtml(tt)}" target="_blank" rel="noopener">TikTok</a>` : ""}

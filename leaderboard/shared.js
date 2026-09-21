@@ -122,10 +122,105 @@ function countdownText(startUnix, endUnix) {
   return "Ends in " + humanDuration(end - now);
 }
 
+function uid() {
+  return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+}
+
+function normalizeTiktok(v) {
+  if (!v) return "";
+  const m = String(v).trim().match(/tiktok\.com\/@([^/?]+)/i);
+  if (m) return "@" + m[1];
+  const t = String(v).trim().replace(/^@/, "");
+  return t ? "@" + t : "";
+}
+
+function tiktokHandle(v) {
+  return normalizeTiktok(v).replace(/^@/, "").toLowerCase();
+}
+
+function youtubeKey(value) {
+  if (!value) return "";
+  const v = String(value).trim();
+  const handle = v.match(/youtube\.com\/@([^/?]+)/i);
+  if (handle) return handle[1].toLowerCase();
+  const chan = v.match(/youtube\.com\/channel\/(UC[\w-]+)/i);
+  if (chan) return chan[1].toLowerCase();
+  return v.replace(/^https?:\/\/(www\.)?youtube\.com\//i, "").replace(/^@/, "").split(/[/?]/)[0].toLowerCase();
+}
+
+function creatorIsPair(c) {
+  return Boolean(c && c.youtube && c.tiktok);
+}
+
+function findCreatorHits(creators, spec) {
+  const yt = youtubeKey(spec.youtube || spec.channelHandle || "");
+  const ytId = spec.youtubeChannelId || spec.channelId || "";
+  const tt = tiktokHandle(spec.tiktok || spec.author || "");
+  return (creators || []).filter((c) => {
+    if (ytId && c.youtubeChannelId && c.youtubeChannelId === ytId) return true;
+    if (yt && youtubeKey(c.youtube) && youtubeKey(c.youtube) === yt) return true;
+    if (tt && tiktokHandle(c.tiktok) && tiktokHandle(c.tiktok) === tt) return true;
+    return false;
+  });
+}
+
+function mergeCreatorsInto(state, keep, extras) {
+  extras.forEach((extra) => {
+    if (!extra || extra.id === keep.id) return;
+    (state.videos || []).forEach((v) => {
+      if (v.creatorId === extra.id) v.creatorId = keep.id;
+    });
+    state.creators = state.creators.filter((c) => c.id !== extra.id);
+  });
+  return keep;
+}
+
+function applyPair(state, pair) {
+  const spec = {
+    youtube: pair.youtube,
+    tiktok: pair.tiktok,
+    youtubeChannelId: pair.youtubeChannelId,
+  };
+  const hits = findCreatorHits(state.creators, spec);
+  let keep;
+  if (!hits.length) {
+    keep = {
+      id: pair.id || uid(),
+      name: pair.name,
+      youtube: pair.youtube || "",
+      tiktok: normalizeTiktok(pair.tiktok),
+      youtubeChannelId: pair.youtubeChannelId || "",
+      source: "pair",
+    };
+    state.creators.push(keep);
+  } else {
+    keep = hits[0];
+    keep.name = pair.name || keep.name;
+    keep.youtube = pair.youtube || keep.youtube;
+    keep.tiktok = normalizeTiktok(pair.tiktok) || keep.tiktok;
+    keep.youtubeChannelId = pair.youtubeChannelId || keep.youtubeChannelId || "";
+    keep.source = "pair";
+    mergeCreatorsInto(state, keep, hits.slice(1));
+  }
+  return keep;
+}
+
+function applyAllPairs(state) {
+  (state.pairs || []).forEach((pair) => applyPair(state, pair));
+  return state;
+}
+
 async function loadBoardData() {
-  const res = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
-  if (!res.ok) throw new Error("Could not load data.json");
-  const data = await res.json();
+  const [dataRes, pairsRes] = await Promise.all([
+    fetch("data.json?t=" + Date.now(), { cache: "no-store" }),
+    fetch("pairs.json?t=" + Date.now(), { cache: "no-store" }),
+  ]);
+  if (!dataRes.ok) throw new Error("Could not load data.json");
+  const data = await dataRes.json();
+  let pairsDoc = { pairs: data.pairs || [] };
+  if (pairsRes.ok) {
+    try { pairsDoc = await pairsRes.json(); } catch { /* keep */ }
+  }
   data.settings = {
     eventStartUnix: EVENT_START,
     eventEndUnix: EVENT_END,
@@ -134,5 +229,7 @@ async function loadBoardData() {
   };
   data.creators = data.creators || [];
   data.videos = data.videos || [];
+  data.pairs = pairsDoc.pairs || data.pairs || [];
+  applyAllPairs(data);
   return data;
 }
