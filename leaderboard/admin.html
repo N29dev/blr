@@ -45,10 +45,12 @@
       <section class="card">
         <div class="card-head"><h2>Auto parser</h2></div>
         <p class="note">
-          Auto parser: add creators, paste a YouTube Data API v3 key, then Sync.
-          It pulls YouTube videos + Shorts in the event window with view counts.
-          TikTok has no official list API — Sync tries a profile lookup; if that is blocked, paste video links.
-          Mixed pastes are auto-assigned by @handle / channel URL.
+          <strong>YouTube:</strong> paste a Data API v3 key, save the creator, Sync. Videos + Shorts come in with views.
+          <strong>TikTok:</strong> TikTok locked the official API and profile-list lookups get blocked.
+          Individual videos still auto-parse — paste
+          <code>https://www.tiktok.com/@user/video/…</code> or <code>vm.tiktok.com</code> links
+          (Discord dump is fine). Assigned by @handle, views + date filled in.
+          Later use <strong>Refresh existing views</strong>.
         </p>
         <div class="form-grid">
           <label>YouTube Data API key
