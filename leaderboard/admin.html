@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · CC Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Admin only</div>
+      <h1>Add creators</h1>
+      <p class="subtitle">One person = one YouTube + one TikTok. Videos and Shorts both count.</p>
+    </header>
+    <section class="card" id="loginCard">
+      <form class="login" id="loginForm">
+        <label>Admin password
+          <input type="password" id="password" required autocomplete="current-password" />
+        </label>
+        <div class="row"><button class="btn primary" type="submit">Enter</button></div>
+        <p class="empty" id="loginError"></p>
+      </form>
+    </section>
+    <div id="app" hidden>
+      <section class="card">
+        <div class="card-head"><h2>Add / edit creator</h2></div>
+        <form class="form-grid" id="creatorForm">
+          <label>Display name <input name="name" required placeholder="Creator name" /></label>
+          <label>YouTube channel URL or @handle <input name="youtube" placeholder="https://youtube.com/@name" /></label>
+          <label>TikTok username <input name="tiktok" placeholder="@username" /></label>
+          <div class="row">
+            <button class="btn primary" type="submit">Save creator</button>
+            <button class="btn" type="button" id="resetCreator">Clear</button>
+          </div>
+        </form>
+        <div class="creator-list" id="creatorList"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>Add video or Short</h2></div>
+        <form class="form-grid" id="videoForm">
+          <label>Creator
+            <select name="creatorId" required></select>
+          </label>
+          <label>URL
+            <input name="url" required placeholder="YouTube video, YouTube Short, or TikTok link" />
+          </label>
+          <label>Title <input name="title" placeholder="Optional" /></label>
+          <label>Posted at <input name="postedAt" type="datetime-local" required /></label>
+          <label>Current views <input name="views" type="number" min="0" required value="0" /></label>
+          <p class="note" id="kindHint">Paste a link — type is detected automatically (YT video / YT Short / TikTok).</p>
+          <div class="row">
+            <button class="btn primary" type="submit">Save video</button>
+          </div>
+        </form>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>Publish to blr.n29.kz/leaderboard</h2></div>
+        <p class="note">
+          Saving here only edits this browser until you publish.
+          Paste a GitHub token with access to <code>N29dev/blr</code> to write <code>leaderboard/data.json</code>.
+          Or download JSON and send it to be pushed.
+        </p>
+        <label>GitHub token (stored only in this browser)
+          <input id="ghToken" type="password" placeholder="ghp_…" autocomplete="off" />
+        </label>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="publishBtn" type="button">Publish live</button>
+          <button class="btn" id="downloadBtn" type="button">Download JSON</button>
+          <button class="btn" id="reloadBtn" type="button">Reload live data</button>
+        </div>
+        <p class="empty" id="publishStatus"></p>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>Current videos</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Posted</th><th>Creator</th><th>Type</th><th>Views</th><th></th></tr>
+            </thead>
+            <tbody id="adminVideos"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+    <div class="links">
+      <a class="link" href="./">Public board</a>
+      <a class="link" href="/">BLR home</a>
+    </div>
+  </div>
+  <script src="shared.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
