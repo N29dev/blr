@@ -59,14 +59,44 @@ function youtubeUrl(value) {
   return `https://www.youtube.com/${h}`;
 }
 
+function platformOf(video) {
+  const kind = video.kind || detectKind(video.url, video.platform);
+  return kind === "tiktok" ? "tiktok" : "youtube";
+}
+
+function bucketStats(list, min) {
+  const views = list.reduce((s, v) => s + Number(v.views || 0), 0);
+  const qual = list.filter((v) => Number(v.views) >= min);
+  return { views, count: list.length, qualCount: qual.length };
+}
+
 function statsFor(creator, videos, settings) {
   const start = settings.eventStartUnix || EVENT_START;
   const end = settings.eventEndUnix || EVENT_END;
   const min = Number(settings.minViews ?? MIN_VIEWS);
   const windowed = videos.filter((v) => v.creatorId === creator.id && inWindow(v.postedAt, start, end));
-  const qualifying = windowed.filter((v) => Number(v.views) >= min);
-  const views = windowed.reduce((s, v) => s + Number(v.views || 0), 0);
-  return { windowed, qualifying, views, videoCount: windowed.length, qualCount: qualifying.length };
+  const yt = bucketStats(windowed.filter((v) => platformOf(v) === "youtube"), min);
+  const tt = bucketStats(windowed.filter((v) => platformOf(v) === "tiktok"), min);
+  const viewsSum = yt.views + tt.views;
+  const viewsMax = Math.max(yt.views, tt.views);
+  const viewsMaxPlatform = yt.views === tt.views && yt.views > 0 ? "tie" : (yt.views > tt.views ? "YouTube" : (tt.views > 0 ? "TikTok" : "—"));
+  const qualSum = yt.qualCount + tt.qualCount;
+  const qualMax = Math.max(yt.qualCount, tt.qualCount);
+  const qualMaxPlatform = yt.qualCount === tt.qualCount && yt.qualCount > 0 ? "tie" : (yt.qualCount > tt.qualCount ? "YouTube" : (tt.qualCount > 0 ? "TikTok" : "—"));
+  return {
+    windowed,
+    youtube: yt,
+    tiktok: tt,
+    views: viewsSum,
+    viewsSum,
+    viewsMax,
+    viewsMaxPlatform,
+    videoCount: windowed.length,
+    qualCount: qualSum,
+    qualSum,
+    qualMax,
+    qualMaxPlatform,
+  };
 }
 
 function ranked(creators, videos, settings, key) {

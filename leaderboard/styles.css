@@ -34,7 +34,15 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.04em
 .window { margin-top: 8px; font-size: .95rem; }
 .countdown { margin-top: 6px; font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--accent); }
 .note { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin: 16px 0 20px; font-size: .92rem; }
-.boards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.variant-label {
+  margin: 8px 0 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  font-weight: 700;
+}
+.boards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 14px; }
 .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
 .card h2 { font-size: 1.05rem; }
