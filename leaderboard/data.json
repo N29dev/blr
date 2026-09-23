@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T13:22:10.638Z"
+    "updatedAt": "2026-09-23T13:49:42.345Z"
   },
   "creators": [
     {
@@ -65,6 +65,14 @@
       "youtube": "",
       "tiktok": "@notsocreativeraz",
       "source": "auto"
+    },
+    {
+      "id": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "name": "Zyron",
+      "youtube": "@zyron60",
+      "youtubeChannelId": "UCM-Qr373mGQrf2y6TtSxuaA",
+      "tiktok": "@zyron0.2",
+      "source": "pair"
     }
   ],
   "videos": [
@@ -367,6 +375,136 @@
       "views": 1413,
       "kind": "tiktok",
       "platform": "tiktok"
+    },
+    {
+      "id": "55dbf200-5971-4b4e-8013-33d32b32878e",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/jlXx8J1s5kI",
+      "title": "Using 7 moves for 0 goals in BLR..💀😭 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-20T17:04",
+      "views": 12111,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "38f94716-0a83-487d-82f4-ce2c62953513",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/kARpPQ8YtUk",
+      "title": "Prime AIKU was way too OVERPOWERED..💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-21T19:59",
+      "views": 3607,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "984f5ac3-83f9-4d20-8db6-310f7367d3b6",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/vkcvTCy6Rao",
+      "title": "Prime nel nagi’s voice actor was actually PEAK..💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-22T16:08",
+      "views": 7248,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "3d83a997-c717-4993-bc9f-32d83cb757bd",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/k_T-ddAf_pA",
+      "title": "Shidou x sae vs kaiser x ness chem - which one is better?💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-23T16:41",
+      "views": 401,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "0d2be214-7991-40b6-996e-69f3e24cacb9",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7685256662961229079",
+      "title": "Old NEL Isagi awakening was TUFF..💀🔥 #bluelock #bluelockrivals #roblox ",
+      "postedAt": "2026-09-14T10:21",
+      "views": 6424,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "97e403bc-6c30-46f8-bee4-6a5446c0389c",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7685615792817474818",
+      "title": "POV: You ABUSE this NIKO bug in BLR..💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-15T09:34",
+      "views": 30887,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "921c03cc-e813-4546-be62-8dda4ce8a349",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7685845362132782358",
+      "title": "Being an egoist gk as Niko..💀🔥 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-16T00:25",
+      "views": 15009,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "b35983d4-2ce1-4505-af53-aa7e6e1752c2",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7685993981754330390",
+      "title": "Old shidou awakening was TUFF..💀🔥 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-16T10:02",
+      "views": 5117,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "3f42e068-d5a6-4e45-981a-db60748ffffc",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7686354042485787926",
+      "title": "Gagamaru mains NEVER give up..💀😭 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-17T09:19",
+      "views": 14277,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "e3611eb6-9884-4e7a-a1b0-7ba7a8e85473",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7686634685081963798",
+      "title": "NAGI always hits different in BLR..😩 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-18T03:28",
+      "views": 1734,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "93d0d83f-b8d8-4e3c-8d1f-51694a1cd128",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/9lgojRy5WBE",
+      "title": "Snuffy TRAILER in bluelock rivals is PEAK..💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-20T00:20",
+      "views": 4814,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "3a9f1428-e3bb-4ca6-883f-ecb3976f101a",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/IEOpA6EkdlA",
+      "title": "Blox lock is finally RELEASING today..💀🔥 #bluelockrivals #bluelock #roblox #bloxlock",
+      "postedAt": "2026-09-19T18:02",
+      "views": 14183,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "bbf28346-5694-4e2a-b8d9-db43a81df646",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/jH1gvstINnM",
+      "title": "Niko VS Aiku - Who is the best spammer..💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-19T16:16",
+      "views": 12628,
+      "kind": "youtube-short",
+      "platform": "youtube"
     }
   ],
   "pairs": [
@@ -375,6 +513,12 @@
       "name": "udaisoro",
       "youtube": "@udaisoro",
       "tiktok": "@udaisoro"
+    },
+    {
+      "id": "16bbd43b-3d3f-45de-86db-5712bbcde6e3",
+      "name": "Zyron",
+      "youtube": "@zyron60",
+      "tiktok": "@zyron0.2"
     }
   ]
 }
