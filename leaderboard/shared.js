@@ -7,11 +7,13 @@ function fmtNum(n) {
 }
 
 function escapeHtml(s) {
-  return String(s ?? "")
-    .replaceAll("&", "&")
-    .replaceAll("<", "<")
-    .replaceAll(">", ">")
-    .replaceAll('"', """);
+  return String(s ?? "").replace(/[&<>"']/g, function (ch) {
+    if (ch === "&") return "&" + "amp;";
+    if (ch === "<") return "&" + "lt;";
+    if (ch === ">") return "&" + "gt;";
+    if (ch === '"') return "&" + "quot;";
+    return "&#" + "39;";
+  });
 }
 
 function formatFull(unix) {
@@ -106,10 +108,10 @@ function statsFor(creator, videos, settings) {
   const tt = bucketStats(windowed.filter((v) => platformOf(v) === "tiktok"), min);
   const viewsSum = yt.views + tt.views;
   const viewsMax = Math.max(yt.views, tt.views);
-  const viewsMaxPlatform = yt.views === tt.views && yt.views > 0 ? "tie" : (yt.views > tt.views ? "YouTube" : (tt.views > 0 ? "TikTok" : "—"));
+  const viewsMaxPlatform = yt.views === tt.views && yt.views > 0 ? "tie" : (yt.views > tt.views ? "YouTube" : (tt.views > 0 ? "TikTok" : "-"));
   const qualSum = yt.qualCount + tt.qualCount;
   const qualMax = Math.max(yt.qualCount, tt.qualCount);
-  const qualMaxPlatform = yt.qualCount === tt.qualCount && yt.qualCount > 0 ? "tie" : (yt.qualCount > tt.qualCount ? "YouTube" : (tt.qualCount > 0 ? "TikTok" : "—"));
+  const qualMaxPlatform = yt.qualCount === tt.qualCount && yt.qualCount > 0 ? "tie" : (yt.qualCount > tt.qualCount ? "YouTube" : (tt.qualCount > 0 ? "TikTok" : "-"));
   return {
     windowed,
     youtube: yt,
