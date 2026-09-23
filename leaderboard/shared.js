@@ -210,16 +210,49 @@ function applyAllPairs(state) {
   return state;
 }
 
+const GH_OWNER = "N29dev";
+const GH_REPO = "blr";
+const GH_BRANCH = "main";
+
+function decodeGithubFile(json) {
+  const b64 = String(json.content || "").replace(/\n/g, "");
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+async function fetchGithubJson(path) {
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}&_=${Date.now()}`;
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: { Accept: "application/vnd.github+json" },
+  });
+  if (!res.ok) throw new Error("GitHub " + res.status + " for " + path);
+  return decodeGithubFile(await res.json());
+}
+
+async function fetchLocalJson(path) {
+  const res = await fetch(path + "?t=" + Date.now(), { cache: "no-store" });
+  if (!res.ok) throw new Error("Could not load " + path);
+  return res.json();
+}
+
 async function loadBoardData() {
-  const [dataRes, pairsRes] = await Promise.all([
-    fetch("data.json?t=" + Date.now(), { cache: "no-store" }),
-    fetch("pairs.json?t=" + Date.now(), { cache: "no-store" }),
-  ]);
-  if (!dataRes.ok) throw new Error("Could not load data.json");
-  const data = await dataRes.json();
-  let pairsDoc = { pairs: data.pairs || [] };
-  if (pairsRes.ok) {
-    try { pairsDoc = await pairsRes.json(); } catch { /* keep */ }
+  let data;
+  let pairsDoc = { pairs: [] };
+  let source = "pages";
+  try {
+    const [liveData, livePairs] = await Promise.all([
+      fetchGithubJson("leaderboard/data.json"),
+      fetchGithubJson("leaderboard/pairs.json").catch(() => ({ pairs: [] })),
+    ]);
+    data = liveData;
+    pairsDoc = livePairs;
+    source = "github";
+  } catch {
+    data = await fetchLocalJson("data.json");
+    try { pairsDoc = await fetchLocalJson("pairs.json"); } catch { pairsDoc = { pairs: data.pairs || [] }; }
   }
   data.settings = {
     eventStartUnix: EVENT_START,
@@ -230,6 +263,7 @@ async function loadBoardData() {
   data.creators = data.creators || [];
   data.videos = data.videos || [];
   data.pairs = pairsDoc.pairs || data.pairs || [];
+  data._source = source;
   applyAllPairs(data);
   return data;
 }

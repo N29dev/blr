@@ -95,14 +95,36 @@ function render(data) {
   }).join("");
 }
 
+function setLiveStatus(data) {
+  const el = document.getElementById("liveStatus");
+  if (!el) return;
+  const when = data.settings && data.settings.updatedAt
+    ? new Date(data.settings.updatedAt).toLocaleTimeString()
+    : "—";
+  const src = data._source === "github" ? "live (GitHub, no Pages wait)" : "Pages cache";
+  el.textContent = "Data " + src + " · published " + when;
+}
+
+let boardData = null;
+
+function boot(data) {
+  boardData = data;
+  render(data);
+  setLiveStatus(data);
+}
+
 loadBoardData()
   .then((data) => {
-    render(data);
-    document.getElementById("search").addEventListener("input", () => render(data));
+    boot(data);
+    document.getElementById("search").addEventListener("input", () => render(boardData));
     setInterval(() => {
+      if (!boardData) return;
       document.getElementById("countdown").textContent =
-        countdownText(data.settings.eventStartUnix, data.settings.eventEndUnix);
+        countdownText(boardData.settings.eventStartUnix, boardData.settings.eventEndUnix);
     }, 30000);
+    setInterval(() => {
+      loadBoardData().then(boot).catch(() => {});
+    }, 45000);
   })
   .catch(() => {
     document.getElementById("windowLabel").textContent = "Could not load public data.json";
