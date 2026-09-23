@@ -243,26 +243,14 @@ const GH_REPO = "blr";
 const GH_BRANCH = "main";
 const GH_DATA_BRANCH = "board-data";
 
-function decodeGithubFile(json) {
-  const b64 = String(json.content || "").replace(/\n/g, "");
-  const binary = atob(b64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return JSON.parse(new TextDecoder().decode(bytes));
-}
-
 async function fetchGithubJson(path, timeoutMs) {
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_DATA_BRANCH}&_=${Date.now()}`;
+  const url = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_DATA_BRANCH}/${path}?_=${Date.now()}`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeoutMs || 2500);
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs || 4000);
   try {
-    const res = await fetch(url, {
-      cache: "no-store",
-      signal: ctrl.signal,
-      headers: { Accept: "application/vnd.github+json" },
-    });
-    if (!res.ok) throw new Error("GitHub " + res.status + " for " + path);
-    return decodeGithubFile(await res.json());
+    const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
+    if (!res.ok) throw new Error("GitHub raw " + res.status + " for " + path);
+    return res.json();
   } finally {
     clearTimeout(timer);
   }
@@ -298,8 +286,8 @@ async function loadPagesBoard() {
 
 async function loadGithubBoard() {
   const [liveData, livePairs] = await Promise.all([
-    fetchGithubJson("leaderboard/data.json", 2500),
-    fetchGithubJson("leaderboard/pairs.json", 2500).catch(() => ({ pairs: [] })),
+    fetchGithubJson("leaderboard/data.json", 4000),
+    fetchGithubJson("leaderboard/pairs.json", 4000).catch(() => ({ pairs: [] })),
   ]);
   return normalizeBoard(liveData, livePairs, "github");
 }
