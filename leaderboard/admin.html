@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <div class="container">
@@ -56,8 +56,7 @@
         <div class="card-head"><h2>Auto parser</h2></div>
         <p class="note">
           Paste links. The parser detects the owner and creates them if needed.
-          Official YouTube+TikTok people go in <code>pairs.json</code> above so both platforms count as one person.
-          YouTube key still needed for views. TikTok: paste video links.
+          Refresh views only updates numbers on rows that already exist. It cannot delete people.
         </p>
         <div class="form-grid">
           <label>YouTube Data API key
@@ -100,9 +99,9 @@
       <section class="card">
         <div class="card-head"><h2>Publish to blr.n29.kz/leaderboard</h2></div>
         <p class="note">
-          Saving here only edits this browser until you publish.
-          Paste a GitHub token with access to <code>N29dev/blr</code>.
-          The public board reads the repo API directly, so it updates in seconds, not after the Pages rebuild.
+          Publish <strong>merges</strong> this tab into the live GitHub file.
+          Missing people here are kept from live data. Refresh views cannot wipe the roster.
+          Only a Delete click in this tab removes someone on the next publish.
         </p>
         <label>GitHub token (stored only in this browser)
           <input id="ghToken" type="password" placeholder="ghp_" autocomplete="off" />
@@ -133,8 +132,8 @@
       <a class="link" href="/">BLR home</a>
     </div>
   </div>
-  <script src="shared.js?v=3"></script>
-  <script src="parser.js?v=3"></script>
-  <script src="admin.js?v=3"></script>
+  <script src="shared.js?v=7"></script>
+  <script src="parser.js?v=7"></script>
+  <script src="admin.js?v=7"></script>
 </body>
 </html>
