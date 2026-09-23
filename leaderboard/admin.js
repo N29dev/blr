@@ -4,7 +4,7 @@ const GH_REPO = "blr";
 const GH_PATH = "leaderboard/data.json";
 const GH_BRANCH = "main";
 
-let state = { settings: { eventStartUnix: EVENT_START, eventEndUnix: EVENT_END, minViews: MIN_VIEWS }, creators: [], videos: [] };
+let state = { settings: { eventStartUnix: EVENT_START, eventEndUnix: EVENT_END, minViews: MIN_VIEWS }, creators: [], videos: [], pairs: [] };
 let editingCreatorId = null;
 
 async function sha256(text) {
@@ -39,24 +39,46 @@ function payload() {
     },
     creators: state.creators,
     videos: state.videos,
+    pairs: state.pairs || [],
   };
 }
 
-function renderAdmin() {
-  const list = document.getElementById("creatorList");
-  list.innerHTML = state.creators.map((c) => `
-    <div class="creator-row">
-      <div>
-        <strong>${escapeHtml(c.name)}</strong><br>
-        <small>${escapeHtml(c.youtube || "no YouTube")} · ${escapeHtml(c.tiktok || "no TikTok")}</small>
-      </div>
-      <div class="row">
+function pairsPayload() {
+  return { pairs: state.pairs || [] };
+}
+
+function rowButtons(c) {
+  return `<div class="row">
         <button class="btn" data-sync="${c.id}">Sync</button>
         <button class="btn" data-edit="${c.id}">Edit</button>
         <button class="btn danger" data-del="${c.id}">Delete</button>
+      </div>`;
+}
+
+function renderAdmin() {
+  const pairs = (state.creators || []).filter((c) => c.source === "pair" || (c.youtube && c.tiktok));
+  const autos = (state.creators || []).filter((c) => !pairs.some((p) => p.id === c.id));
+  const pairList = document.getElementById("pairList");
+  if (pairList) {
+    pairList.innerHTML = pairs.map((c) => `
+    <div class="creator-row">
+      <div>
+        <strong>${escapeHtml(c.name)}</strong> <span class="pill ok">YT+TT</span><br>
+        <small>${escapeHtml(c.youtube || "no YouTube")} · ${escapeHtml(c.tiktok || "no TikTok")}</small>
       </div>
+      ${rowButtons(c)}
+    </div>`).join("") || `<p class="empty">No official pairs yet. Add people who have both accounts.</p>`;
+  }
+  const list = document.getElementById("creatorList");
+  list.innerHTML = autos.map((c) => `
+    <div class="creator-row">
+      <div>
+        <strong>${escapeHtml(c.name)}</strong> <span class="pill">${escapeHtml(c.source || "auto")}</span><br>
+        <small>${escapeHtml(c.youtube || "no YouTube")} · ${escapeHtml(c.tiktok || "no TikTok")}</small>
+      </div>
+      ${rowButtons(c)}
     </div>
-  `).join("") || `<p class="empty">No creators yet.</p>`;
+  `).join("") || `<p class="empty">No auto-detected creators yet. Paste video links.</p>`;
 
   const sel = document.querySelector("#videoForm [name=creatorId]");
   sel.innerHTML = state.creators.map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
@@ -101,19 +123,16 @@ document.getElementById("creatorForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const form = e.target;
   const row = {
+    id: editingCreatorId || uid(),
     name: form.name.value.trim(),
     youtube: form.youtube.value.trim(),
     tiktok: normalizeTiktok(form.tiktok.value),
   };
-  let saved;
-  if (editingCreatorId) {
-    const i = state.creators.findIndex((c) => c.id === editingCreatorId);
-    if (i >= 0) state.creators[i] = { ...state.creators[i], ...row };
-    saved = state.creators[i];
-  } else {
-    saved = { id: uid(), ...row };
-    state.creators.push(saved);
-  }
+  state.pairs = state.pairs || [];
+  const existingPair = state.pairs.findIndex((p) => p.id === row.id || (p.name === row.name && p.youtube === row.youtube));
+  if (existingPair >= 0) state.pairs[existingPair] = { ...state.pairs[existingPair], ...row };
+  else state.pairs.push(row);
+  const saved = applyPair(state, row);
   editingCreatorId = null;
   form.reset();
   renderAdmin();
@@ -187,8 +206,10 @@ document.addEventListener("click", (e) => {
   }
   if (del) {
     const id = del.dataset.del;
+    const gone = state.creators.find((c) => c.id === id);
     state.creators = state.creators.filter((c) => c.id !== id);
     state.videos = state.videos.filter((v) => v.creatorId !== id);
+    state.pairs = (state.pairs || []).filter((p) => p.id !== id && !(gone && p.name === gone.name && p.youtube === gone.youtube));
     renderAdmin();
   }
   if (delV) {
@@ -212,8 +233,8 @@ document.getElementById("reloadBtn").addEventListener("click", () => loadLive().
 document.getElementById("parseLinksBtn").addEventListener("click", async () => {
   const blob = document.getElementById("parsePaste").value;
   const creatorId = document.querySelector("#videoForm [name=creatorId]")?.value || "";
-  if (!state.creators.length) {
-    setParseStatus("Add a creator first.");
+  if (!document.getElementById("parsePaste").value.trim()) {
+    setParseStatus("Paste video or channel links first.");
     return;
   }
   const windowOnly = document.getElementById("parseWindowOnly").checked;
@@ -285,30 +306,34 @@ document.getElementById("publishBtn").addEventListener("click", async () => {
   localStorage.setItem("cc-gh-token", token);
   status.textContent = "Publishing…";
   try {
-    const getUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}?ref=${GH_BRANCH}`;
-    const current = await fetch(getUrl, { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" } });
-    const currentJson = await current.json();
-    const sha = currentJson.sha;
-    const body = JSON.stringify({
-      message: "Update CC leaderboard data",
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(payload(), null, 2)))),
-      sha,
-      branch: GH_BRANCH,
-    });
-    const put = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`, {
-      method: "PUT",
-      headers: {
-        Authorization: "Bearer " + token,
-        Accept: "application/vnd.github+json",
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-    if (!put.ok) {
-      const err = await put.json().catch(() => ({}));
-      throw new Error(err.message || ("GitHub " + put.status));
+    async function putGithub(path, obj, message) {
+      const getUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`;
+      const current = await fetch(getUrl, { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" } });
+      const currentJson = await current.json();
+      const sha = currentJson.sha;
+      const body = JSON.stringify({
+        message,
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2)))),
+        sha,
+        branch: GH_BRANCH,
+      });
+      const put = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + token,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body,
+      });
+      if (!put.ok) {
+        const err = await put.json().catch(() => ({}));
+        throw new Error((err.message || ("GitHub " + put.status)) + " (" + path + ")");
+      }
     }
-    status.textContent = "Published. Public page updates in about a minute.";
+    await putGithub(GH_PATH, payload(), "Update CC leaderboard data");
+    await putGithub("leaderboard/pairs.json", pairsPayload(), "Update CC official pairs");
+    status.textContent = "Published data.json + pairs.json. Public page updates in about a minute.";
   } catch (err) {
     status.textContent = "Publish failed: " + (err.message || err);
   }
