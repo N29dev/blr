@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T19:39:48.863Z"
+    "updatedAt": "2026-09-23T19:53:14.820Z"
   },
   "creators": [
     {
@@ -126,6 +126,13 @@
       "name": "Jër3my🧀",
       "youtube": "",
       "tiktok": "@jeremyiyiez",
+      "source": "auto"
+    },
+    {
+      "id": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "name": "JUN-KIOR",
+      "youtube": "",
+      "tiktok": "@junkior_blr",
       "source": "auto"
     }
   ],
@@ -1077,6 +1084,26 @@
       "title": "me olvidé de algunos efectos de sonido mb #bluelockrivals #blr #roblox #bluelock #fyp ",
       "postedAt": "2026-09-23T16:29",
       "views": 10222,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "9230dc9d-b47b-4cae-8ba1-a149beedd45c",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7688176236895423765",
+      "title": "¿CUÁL ES EL FLUJO MAS POTENTE DE BLR? 🌹🐇 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-22T07:10",
+      "views": 14211,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "6ad2687f-f987-4a7a-bd77-7e2ee1dd50e9",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7687774097492675860",
+      "title": "¿SKELETON NAGI O MC NAGI? 🍔🆚💀 #bluelockrivals #roblox #bluelock ",
+      "postedAt": "2026-09-21T05:10",
+      "views": 17720,
       "kind": "tiktok",
       "platform": "tiktok"
     }
