@@ -242,6 +242,7 @@ function applyAllPairs(state) {
 const GH_OWNER = "N29dev";
 const GH_REPO = "blr";
 const GH_BRANCH = "main";
+const GH_DATA_BRANCH = "board-data";
 
 function decodeGithubFile(json) {
   const b64 = String(json.content || "").replace(/\n/g, "");
@@ -252,7 +253,7 @@ function decodeGithubFile(json) {
 }
 
 async function fetchGithubJson(path, timeoutMs) {
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}&_=${Date.now()}`;
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_DATA_BRANCH}&_=${Date.now()}`;
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs || 2500);
   try {
@@ -306,8 +307,8 @@ async function loadGithubBoard() {
 
 async function loadBoardData() {
   try {
-    return await loadPagesBoard();
+    return await loadGithubBoard();
   } catch (err) {
-    return loadGithubBoard();
+    return loadPagesBoard();
   }
 }
