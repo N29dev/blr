@@ -3,8 +3,203 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": null
+    "updatedAt": "2026-09-23T13:11:39.721Z"
   },
-  "creators": [],
-  "videos": []
+  "creators": [
+    {
+      "id": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "name": "🔥🔥bocchi🔥🔥",
+      "youtube": "",
+      "tiktok": "@jc_hitori",
+      "source": "auto"
+    },
+    {
+      "id": "47e88461-4d95-4a7b-8cc0-826ce404ea07",
+      "name": "Крутой Артемчик",
+      "youtube": "https://www.youtube.com/@крутоиартемчик",
+      "youtubeChannelId": "UCiviaMo44J83z9dbF2yLMDg",
+      "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "name": "NOOR PLAYES",
+      "youtube": "https://www.youtube.com/@noorplayes2",
+      "youtubeChannelId": "UCUlm7JDY3WWwpmArRyVRtDA",
+      "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "name": "Fluxyy!",
+      "youtube": "https://www.youtube.com/@fluxyy077",
+      "youtubeChannelId": "UC3tdxVpvJnD2tjlOomWhlOg",
+      "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "name": "udaisoro",
+      "youtube": "",
+      "tiktok": "@udaisoro",
+      "source": "auto"
+    },
+    {
+      "id": "223334d4-3011-4ea5-8b0c-bda1f3a65d12",
+      "name": "ZeroX",
+      "youtube": "",
+      "tiktok": "@zeroxtk1",
+      "source": "auto"
+    },
+    {
+      "id": "b9a24035-e9eb-45ea-b6c5-626b5d497871",
+      "name": "0nlyhunger",
+      "youtube": "",
+      "tiktok": "@0nlyhunger",
+      "source": "auto"
+    }
+  ],
+  "videos": [
+    {
+      "id": "df697a2a-5e6e-482d-9894-a4801dfcad72",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7688079080964574484",
+      "title": "guía de... #guia #de #bocchi🔥🔥 #bluelockrivals #blr",
+      "postedAt": "2026-09-22T00:53",
+      "views": 19735,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "b50b146f-1ea8-4d6e-9d90-3f4a6e151b2f",
+      "creatorId": "47e88461-4d95-4a7b-8cc0-826ce404ea07",
+      "url": "https://www.youtube.com/shorts/90zTOEMid-k",
+      "title": "Snuffy Trailer | Blue Lock Rivals #roblox #bluelockrivals",
+      "postedAt": "2026-09-20T11:34",
+      "views": 472,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "53313ff8-45da-4afc-b862-13c8d8586dc4",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/515Ya9H3aq0",
+      "title": "5–5 INTENSE SITUATION!! Overtime Awakening 😈🔥 #bluelock #bluelockrivals #robloxshorts #blr",
+      "postedAt": "2026-09-20T14:01",
+      "views": 36062,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "7069a03c-b3c7-49e1-8a0b-9759a9df8eed",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/e7IUn7AMuI4",
+      "title": "POV: Prime BLR was way too OP 😈🔥#bluelock #bluelockrivals #blr #robloxshorts",
+      "postedAt": "2026-09-20T19:16",
+      "views": 8616,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "07c26e8b-ffbd-4db3-adeb-0aad7b939031",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/JXnETlv7xCw",
+      "title": "POV: Prime Karasu was way too OP 😈🔥#bluelock #bluelockrivals #robloxshorts #blr",
+      "postedAt": "2026-09-20T20:45",
+      "views": 24170,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "c140134b-77f6-4e7b-86df-fd04f89b969a",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/5XJmFJt_Gdc",
+      "title": "Egoist GK as Phantom Isagi in BLR??!! 😈🔥#blr #bluelockrivals #bluelock #robloxshorts",
+      "postedAt": "2026-09-21T10:00",
+      "views": 48521,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "d7c49a6d-38ca-4091-be83-5687afa8bf1e",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/V9D0do0FFCk",
+      "title": "POV: This Duo Nagi Tech is so OP in BLR 😈🔥#bluelock #bluelockrivals #blr #robloxshorts",
+      "postedAt": "2026-09-21T17:46",
+      "views": 74352,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "1c01bae6-0a35-4e47-9093-322935d0583c",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/X6o4QDvvC1A",
+      "title": "My Answer to \"Why don't you just PASS?\"✌️🥀#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-20T16:30",
+      "views": 31296,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "b742f17f-a815-412a-ad87-1bec0ff339d6",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/tWeKMD1zCxc",
+      "title": "This duo Nagi tech is GENUINELY EVIL bro😭🙏#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-21T16:30",
+      "views": 7753,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "a6491aa0-6d14-4ec8-8d1c-6f1777755438",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.tiktok.com/@udaisoro/video/7687584907656236305",
+      "title": "(CODES) Snuffy Master Class In Blue Lock Rivals... #roblox #bluelock #bluelockrivals #trailer",
+      "postedAt": "2026-09-20T16:56",
+      "views": 3997,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "e59bd64d-5cbd-4188-8f6f-ea5a13bbfce6",
+      "creatorId": "223334d4-3011-4ea5-8b0c-bda1f3a65d12",
+      "url": "https://www.tiktok.com/@zeroxtk1/video/7687617928962903304",
+      "title": "Snuffy llegará a blr #bluelock #fyp #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii #tiktok #bluelockrivals ",
+      "postedAt": "2026-09-20T19:03",
+      "views": 2396,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "769aff5f-32a1-4a89-88b0-4fe3c65a987b",
+      "creatorId": "b9a24035-e9eb-45ea-b6c5-626b5d497871",
+      "url": "https://www.tiktok.com/@0nlyhunger/video/7687648620597759253",
+      "title": "NEL SAE LARP | BLUE LOCK RIVALS #bluelockrivals #bluelock #blr #roblox #mambo #120fps #nelsae",
+      "postedAt": "2026-09-20T21:03",
+      "views": 112927,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "0431a4da-3375-42c7-a109-c6863ce29a42",
+      "creatorId": "223334d4-3011-4ea5-8b0c-bda1f3a65d12",
+      "url": "https://www.tiktok.com/@zeroxtk1/video/7687699623992904968",
+      "title": "Estilos de bluelock rivals en una frase #bluelockrivals #tiktok #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii #fyp #bluelock ",
+      "postedAt": "2026-09-21T00:21",
+      "views": 6223,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "ebfe8b5c-96f0-4622-8851-321094384345",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7687774229265255700",
+      "title": "como subir tu glr #subir #glr #bocchi🔥🔥 #bluelockrivals #blr",
+      "postedAt": "2026-09-21T05:10",
+      "views": 43574,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    }
+  ],
+  "pairs": []
 }
