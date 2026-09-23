@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T13:49:42.345Z"
+    "updatedAt": "2026-09-23T15:12:54.554Z"
   },
   "creators": [
     {
@@ -73,6 +73,21 @@
       "youtubeChannelId": "UCM-Qr373mGQrf2y6TtSxuaA",
       "tiktok": "@zyron0.2",
       "source": "pair"
+    },
+    {
+      "id": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "name": "ChefioBloxian",
+      "youtube": "https://www.youtube.com/@chefiobloxian",
+      "youtubeChannelId": "UCZH9z6o18N_dAX0dkHxnYZw",
+      "tiktok": "@chefiobloxian",
+      "source": "pair"
+    },
+    {
+      "id": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "name": "ChefioBloxian",
+      "youtube": "",
+      "tiktok": "@chefiobloxianyt",
+      "source": "auto"
     }
   ],
   "videos": [
@@ -505,6 +520,146 @@
       "views": 12628,
       "kind": "youtube-short",
       "platform": "youtube"
+    },
+    {
+      "id": "b2ac98a5-d413-47da-83e7-d1d0c46c67cc",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/3CbavynDLTc",
+      "title": "NEL CHIGIRI + GODSPEED IS OP! ⚡💨 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-20T19:00",
+      "views": 24204,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "4df5316c-be68-4ec0-b3f9-5f36ffc4f66d",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/YF8YQUM7Uz0",
+      "title": "POV: YOU’RE GK AS NEL CHIGIRI ⚡💨 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-20T21:30",
+      "views": 22637,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "bd759e6e-ff9a-4c15-997d-9a0a24717cf1",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/KQxKnFzBVbo",
+      "title": "POV: YOU REDEEM YOURSELF AS GK IN BLR 😭🧤 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-21T19:00",
+      "views": 30436,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "368e0c84-bde3-44e6-8340-bd31e84607d0",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/oZPsPHmTNRo",
+      "title": "DARTBOARD LENS + GODSPEED IS OP! 🎯⚡ #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-21T22:00",
+      "views": 9778,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "61f5f1d7-549a-4e04-a5ba-ef00bc59e84f",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/c1MQgYujUBw",
+      "title": "NEW MASTERCLASS SNUFFY SNEAK! 👀🔥 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-22T15:21",
+      "views": 7590,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "5d3f15bf-61b9-4821-ab3a-84f03a6394a0",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/4RupcsIMxFA",
+      "title": "POV: YOU’RE GK AS KRAMPUS BAROU 😭🎅 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-23T01:33",
+      "views": 6796,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "54b43e44-0368-4142-8328-e4532fd16e77",
+      "creatorId": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7687617237460454669",
+      "title": "NEL CHIGIRI + GODSPEED IS OP! ⚡💨 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-20T19:01",
+      "views": 38692,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "d872114d-d6cf-48ca-9b18-9264e2048e4d",
+      "creatorId": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7687655778370489613",
+      "title": "POV: YOU’RE GK AS NEL CHIGIRI ⚡💨 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-20T21:31",
+      "views": 5710,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "219a7984-c0e8-4e77-b2d1-99af74d81ca4",
+      "creatorId": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7688017455301561614",
+      "title": "POV: YOU REDEEM YOURSELF AS GK IN BLR 😭🧤 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-21T20:54",
+      "views": 25042,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "631aef77-9ce8-47fb-841a-59b04989a943",
+      "creatorId": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7688068648665238797",
+      "title": "DARTBOARD LENS + GODSPEED IS OP! 🎯⚡ #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-22T00:13",
+      "views": 11342,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "4e3235d9-6369-4812-a1a8-be0a132a4f97",
+      "creatorId": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7688315207109709070",
+      "title": "NEW MASTERCLASS SNUFFY SNEAK! 👀🔥 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-22T16:10",
+      "views": 5211,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "1354e637-c8fb-4c57-9ed2-eea2f158c536",
+      "creatorId": "6a673b45-6047-4e09-bc9c-58b456941436",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7688494783022615821",
+      "title": "POV: YOU’RE GK AS KRAMPUS BAROU 😭🎅 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-23T03:46",
+      "views": 4846,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "44b11fea-e8eb-4e0a-8e6f-959e0a7b5300",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/vF_uR6B8_zs",
+      "title": "EGOIST GK AS NIKO 👀🗼 #bluelockrivals #roblox #bluelockroblox #niko #robloxshorts #blr",
+      "postedAt": "2026-09-20T01:19",
+      "views": 17752,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "0e94d962-70e5-4b1d-ae2f-bbbf17e16660",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/3cOE2lqQ65I",
+      "title": "MASTERCLASS SNUFFY TRAILER SNEAK! | Blue Lock Rivals #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-20T00:23",
+      "views": 11117,
+      "kind": "youtube-short",
+      "platform": "youtube"
     }
   ],
   "pairs": [
@@ -519,6 +674,12 @@
       "name": "Zyron",
       "youtube": "@zyron60",
       "tiktok": "@zyron0.2"
+    },
+    {
+      "id": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "name": "ChefioBloxian",
+      "youtube": "https://www.youtube.com/@chefiobloxian",
+      "tiktok": "@chefiobloxian"
     }
   ]
 }
