@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T19:38:16.593Z"
+    "updatedAt": "2026-09-23T19:39:48.863Z"
   },
   "creators": [
     {
@@ -119,6 +119,13 @@
       "youtube": "https://www.youtube.com/@onakuroblox",
       "youtubeChannelId": "UCtV946myXBxw8_FkDnj8oqA",
       "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "9b14db9e-da65-4eda-a2cf-a02d6aaaaf87",
+      "name": "Jër3my🧀",
+      "youtube": "",
+      "tiktok": "@jeremyiyiez",
       "source": "auto"
     }
   ],
@@ -1032,6 +1039,46 @@
       "views": 124,
       "kind": "youtube-short",
       "platform": "youtube"
+    },
+    {
+      "id": "3bc85e00-2eb6-44d5-a1b1-ae36288be1b2",
+      "creatorId": "9b14db9e-da65-4eda-a2cf-a02d6aaaaf87",
+      "url": "https://www.tiktok.com/@jeremyiyiez/video/7687721453994642709",
+      "title": "me he quedado sin idea son #bluelockrivals #blr #roblox #bluelock #fyp ",
+      "postedAt": "2026-09-21T01:45",
+      "views": 23778,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "d06cd726-cfef-4527-abc3-09d9ebb43cc9",
+      "creatorId": "9b14db9e-da65-4eda-a2cf-a02d6aaaaf87",
+      "url": "https://www.tiktok.com/@jeremyiyiez/video/7687771990249475348",
+      "title": "Definitivamente estoy sin ideas #bluelockrivals #blr #roblox #bluelock #fyp ",
+      "postedAt": "2026-09-21T05:01",
+      "views": 19483,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "3da01c6b-222c-4aea-8175-6e99400ed431",
+      "creatorId": "9b14db9e-da65-4eda-a2cf-a02d6aaaaf87",
+      "url": "https://www.tiktok.com/@jeremyiyiez/video/7687943495402949909",
+      "title": "pero tienen que estar muy apegado a la pared #bluelockrivals #blr #roblox #bluelock #fyp ",
+      "postedAt": "2026-09-21T16:07",
+      "views": 49382,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "4219968b-4121-411a-abe8-a3288d0baec5",
+      "creatorId": "9b14db9e-da65-4eda-a2cf-a02d6aaaaf87",
+      "url": "https://www.tiktok.com/@jeremyiyiez/video/7688691461637803270",
+      "title": "me olvidé de algunos efectos de sonido mb #bluelockrivals #blr #roblox #bluelock #fyp ",
+      "postedAt": "2026-09-23T16:29",
+      "views": 10222,
+      "kind": "tiktok",
+      "platform": "tiktok"
     }
   ],
   "pairs": [
