@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T13:11:39.721Z"
+    "updatedAt": "2026-09-23T13:22:10.638Z"
   },
   "creators": [
     {
@@ -40,9 +40,10 @@
     {
       "id": "c97999a0-43db-4f1e-8870-d702f4cd701f",
       "name": "udaisoro",
-      "youtube": "",
+      "youtube": "@udaisoro",
       "tiktok": "@udaisoro",
-      "source": "auto"
+      "source": "pair",
+      "youtubeChannelId": "UCyQxVg-dMu3BoNrkD6v21ig"
     },
     {
       "id": "223334d4-3011-4ea5-8b0c-bda1f3a65d12",
@@ -56,6 +57,13 @@
       "name": "0nlyhunger",
       "youtube": "",
       "tiktok": "@0nlyhunger",
+      "source": "auto"
+    },
+    {
+      "id": "4d1faea5-7e54-429b-b00c-21c11e94e1ea",
+      "name": "LanR",
+      "youtube": "",
+      "tiktok": "@notsocreativeraz",
       "source": "auto"
     }
   ],
@@ -199,7 +207,174 @@
       "views": 43574,
       "kind": "tiktok",
       "platform": "tiktok"
+    },
+    {
+      "id": "53cdbf4a-6530-4445-8e83-bc6e129553f6",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/u_HnJxfFvrs",
+      "title": "POV: The Duo Nagi Tech Tutorial Everyone Needs in BLR 😈🔥#bluelock #bluelockrivals #robloxshorts",
+      "postedAt": "2026-09-21T23:02",
+      "views": 31735,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "9ce6aaea-bc01-4662-958f-bf976de4af3a",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.youtube.com/shorts/fOYI_-tDblc",
+      "title": "NEW SNUFFY MASTER SNEAK… Blue Lock Rivals #roblox #bluelock #bluelockrivals #fyp",
+      "postedAt": "2026-09-22T13:05",
+      "views": 2647,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "72b6501a-5408-43cb-94cd-b38ad78faa09",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/u1W30lRDUN8",
+      "title": "This Nagi duo tech is OVERPOWERED in BLR💀👀#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-21T21:00",
+      "views": 15316,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "b4717e6a-b733-46e9-a7bf-9fa51d10cda6",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/3-IJPKd2OZY",
+      "title": "Egoist GK as the Wild Card of BlueLock!?🃏👀#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-22T04:30",
+      "views": 14570,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "1daf2794-1e9b-4c55-862c-fe4710dbc411",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/LCNpSzeML58",
+      "title": "POV: Avg everyday Blue Lock Experience✌️🥀#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-22T17:45",
+      "views": 11219,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "8d9d2295-a628-4660-832e-e0ee63a063de",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/Kw1bcwSN4Ec",
+      "title": "Playing BLR Solo V/S Playing with Bros🗣️👀#bluelockrivals #fluxyy #blr #bluelock #friends #relatable",
+      "postedAt": "2026-09-22T21:00",
+      "views": 14415,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "6e01f0ee-603a-4794-b658-a2db7529711d",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7688105481365245204",
+      "title": "parece que voy a chutar pero amago🗣️🔥 #amago #nagi #rap #clip #bocchi🔥🔥",
+      "postedAt": "2026-09-22T02:35",
+      "views": 56769,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "94ef0ff9-c0a8-4a57-ae7d-37fcf55b6a3a",
+      "creatorId": "b9a24035-e9eb-45ea-b6c5-626b5d497871",
+      "url": "https://www.tiktok.com/@0nlyhunger/video/7688135504960802068",
+      "title": "NEL SAE LARPING PUBLIC | BLUE LOCK RIVALS #bluelockrivals #bluelock #blr #roblox #mambo #120fps #nelsae",
+      "postedAt": "2026-09-22T04:32",
+      "views": 66412,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "64d783d7-f2cd-425f-8f07-8b8b1ef9dacd",
+      "creatorId": "4d1faea5-7e54-429b-b00c-21c11e94e1ea",
+      "url": "https://www.tiktok.com/@notsocreativeraz/video/7688124759271279886",
+      "title": "ITS ALMOST ABOUT TIME FOR THE HALLOWEEN STYLES TO COME BACK IN BLUE LOCK RIVALS! (PHANTOM ISAGI BLUE LOCK RIVALS) PHANTOM ISAGI SHOWCASE PHANTOM ISAGI GAMEPLAY ghostface cosplay  #blr #bluelockrivals #bluelockmanga #bluelock  @eliisbored3",
+      "postedAt": "2026-09-22T03:50",
+      "views": 4227,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "745dbe06-c3fc-46ce-b97d-b32c4753bfe0",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7688186177509248276",
+      "title": "como llegar a las zonas restringidas #zona #cc#bocchi🔥🔥 #bluelockrivals #blr",
+      "postedAt": "2026-09-22T07:49",
+      "views": 25216,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "2d6cabde-bfba-4381-a07c-9d1ccef6eb20",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.tiktok.com/@udaisoro/video/7688262029232065809",
+      "title": "NEW SNUFFY MASTER SNEAK... Blue Lock Rivals #roblox #bluelock #bluelockrivals #snuffymarc",
+      "postedAt": "2026-09-22T12:43",
+      "views": 830,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "bbb6bbc0-8195-43fd-82b5-0947c2c5fa6c",
+      "creatorId": "b9a24035-e9eb-45ea-b6c5-626b5d497871",
+      "url": "https://www.tiktok.com/@0nlyhunger/video/7688301466171247893",
+      "title": "Curve Cancel Shot Explanation | BLUE LOCK RIVALS #bluelockrivals #bluelock #blr #roblox #mambo #120fps #nelsae",
+      "postedAt": "2026-09-22T15:16",
+      "views": 26705,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "d7b771a7-65bc-47de-8446-058d2b5bbb38",
+      "creatorId": "223334d4-3011-4ea5-8b0c-bda1f3a65d12",
+      "url": "https://www.tiktok.com/@zeroxtk1/video/7688323851893083410",
+      "title": "Estilos de bluelock rivals resumidos en una frase parte 2 #bluelockrivals #tiktok #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii #fyp #bluelock ",
+      "postedAt": "2026-09-22T16:43",
+      "views": 6438,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "9d05796c-6515-4588-999c-2f4417578033",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7688553990769970452",
+      "title": "Todo de... karasu🗣️🔥 #karasu ##bocchi🔥🔥 #bluelockrivals #blr #reworked",
+      "postedAt": "2026-09-23T07:36",
+      "views": 11507,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "06cd4451-8e33-4cfb-8b9f-c2129ef0e7b4",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7688568340713032981",
+      "title": "LOKI NO CORRAS WE🗣️🔥 #loki #bocchi🔥🔥 #bluelockrivals #blr #clip #rap #referencia",
+      "postedAt": "2026-09-23T08:32",
+      "views": 45683,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "0881271c-c15d-449e-a1ce-a98aa4d691ce",
+      "creatorId": "4d1faea5-7e54-429b-b00c-21c11e94e1ea",
+      "url": "https://www.tiktok.com/@notsocreativeraz/video/7688594060386389261",
+      "title": "NIKO IN BLUE LOCK RIVALS RESEMBLES HUGO PLAYSTYLE ALOT! ITS JUST THE COLORS THAT DONT MATCH.. (NIKO BLUE LOCK RIVALS) NIKO SHOWCASE NIKO GAMEPLAY #blr #bluelockrivals #bluelockmanga #bluelock ",
+      "postedAt": "2026-09-23T10:11",
+      "views": 1413,
+      "kind": "tiktok",
+      "platform": "tiktok"
     }
   ],
-  "pairs": []
+  "pairs": [
+    {
+      "id": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "name": "udaisoro",
+      "youtube": "@udaisoro",
+      "tiktok": "@udaisoro"
+    }
+  ]
 }
