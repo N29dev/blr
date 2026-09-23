@@ -9,18 +9,6 @@ async function sha256(text) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function uid() {
-  return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
-}
-
-function normalizeTiktok(v) {
-  if (!v) return "";
-  const m = v.trim().match(/tiktok\.com\/@([^/?]+)/i);
-  if (m) return "@" + m[1];
-  const t = v.trim().replace(/^@/, "");
-  return t ? "@" + t : "";
-}
-
 async function loadLive() {
   state = await loadBoardData();
   renderAdmin();
@@ -61,7 +49,7 @@ function renderAdmin() {
     <div class="creator-row">
       <div>
         <strong>${escapeHtml(c.name)}</strong> <span class="pill ok">YT+TT</span><br>
-        <small>${escapeHtml(c.youtube || "no YouTube")} · ${escapeHtml(c.tiktok || "no TikTok")}</small>
+        <small>${escapeHtml(c.youtube || "no YouTube")} / ${escapeHtml(c.tiktok || "no TikTok")}</small>
       </div>
       ${rowButtons(c)}
     </div>`).join("") || `<p class="empty">No official pairs yet. Add people who have both accounts.</p>`;
@@ -71,7 +59,7 @@ function renderAdmin() {
     <div class="creator-row">
       <div>
         <strong>${escapeHtml(c.name)}</strong> <span class="pill">${escapeHtml(c.source || "auto")}</span><br>
-        <small>${escapeHtml(c.youtube || "no YouTube")} · ${escapeHtml(c.tiktok || "no TikTok")}</small>
+        <small>${escapeHtml(c.youtube || "no YouTube")} / ${escapeHtml(c.tiktok || "no TikTok")}</small>
       </div>
       ${rowButtons(c)}
     </div>
@@ -88,10 +76,10 @@ function renderAdmin() {
       const kind = kindLabel(v.kind || detectKind(v.url, v.platform));
       return `<tr>
         <td>${escapeHtml((v.postedAt || "").replace("T", " "))}</td>
-        <td>${escapeHtml(c?.name || "—")}</td>
+        <td>${escapeHtml((c && c.name) || "-")}</td>
         <td><span class="pill ${kind.cls}">${kind.text}</span></td>
         <td class="metric">${fmtNum(v.views)}</td>
-        <td><button class="btn danger" data-del-video="${v.id}">✕</button></td>
+        <td><button class="btn danger" data-del-video="${v.id}">X</button></td>
       </tr>`;
     }).join("");
 }
@@ -127,19 +115,19 @@ document.getElementById("creatorForm").addEventListener("submit", (e) => {
   };
   state.pairs = state.pairs || [];
   const existingPair = state.pairs.findIndex((p) => p.id === row.id || (p.name === row.name && p.youtube === row.youtube));
-  if (existingPair >= 0) state.pairs[existingPair] = { ...state.pairs[existingPair], ...row };
+  if (existingPair >= 0) state.pairs[existingPair] = Object.assign({}, state.pairs[existingPair], row);
   else state.pairs.push(row);
   const saved = applyPair(state, row);
   editingCreatorId = null;
   form.reset();
   renderAdmin();
   if (document.getElementById("autoSyncOnSave") && document.getElementById("autoSyncOnSave").checked && saved) {
-    setParseStatus("Auto-sync " + saved.name + "…");
+    setParseStatus("Auto-sync " + saved.name);
     const windowOnly = !document.getElementById("parseWindowOnly") || document.getElementById("parseWindowOnly").checked;
     syncCreator(saved, windowOnly).then((res) => {
       const r = upsertVideos(saved.id, res.found);
       renderAdmin();
-      setParseStatus(saved.name + ": +" + r.added + " new, " + r.updated + " updated. " + res.notes.join(" · "), true);
+      setParseStatus(saved.name + ": +" + r.added + " new, " + r.updated + " updated. " + res.notes.join(" / "), true);
     }).catch((err) => setParseStatus(String(err.message || err), true));
   }
 });
@@ -157,11 +145,11 @@ document.getElementById("videoForm").addEventListener("submit", (e) => {
   state.videos.push({
     id: uid(),
     creatorId: form.creatorId.value,
-    url,
+    url: url,
     title: form.title.value.trim(),
     postedAt: form.postedAt.value,
     views: Number(form.views.value || 0),
-    kind,
+    kind: kind,
     platform: kind === "tiktok" ? "tiktok" : "youtube",
   });
   form.title.value = "";
@@ -172,7 +160,7 @@ document.getElementById("videoForm").addEventListener("submit", (e) => {
 
 document.getElementById("videoForm").url.addEventListener("input", (e) => {
   const kind = kindLabel(detectKind(e.target.value));
-  document.getElementById("kindHint").textContent = "Detected: " + kind.text + " — both YouTube videos and Shorts count.";
+  document.getElementById("kindHint").textContent = "Detected: " + kind.text;
 });
 
 document.addEventListener("click", (e) => {
@@ -183,12 +171,12 @@ document.addEventListener("click", (e) => {
   if (sync) {
     const creator = state.creators.find((x) => x.id === sync.dataset.sync);
     if (!creator) return;
-    setParseStatus("Syncing " + creator.name + "…");
+    setParseStatus("Syncing " + creator.name);
     syncCreator(creator, document.getElementById("parseWindowOnly").checked)
       .then((res) => {
         const r = upsertVideos(creator.id, res.found);
         renderAdmin();
-        setParseStatus(`${creator.name}: +${r.added} new, ${r.updated} updated. ${res.notes.join(" · ")}`);
+        setParseStatus(creator.name + ": +" + r.added + " new, " + r.updated + " updated. " + res.notes.join(" / "));
       })
       .catch((err) => setParseStatus(String(err.message || err)));
   }
@@ -229,19 +217,19 @@ document.getElementById("reloadBtn").addEventListener("click", () => loadLive().
 
 document.getElementById("parseLinksBtn").addEventListener("click", async () => {
   const blob = document.getElementById("parsePaste").value;
-  const creatorId = document.querySelector("#videoForm [name=creatorId]")?.value || "";
+  const creatorId = document.querySelector("#videoForm [name=creatorId]") ? document.querySelector("#videoForm [name=creatorId]").value : "";
   if (!document.getElementById("parsePaste").value.trim()) {
     setParseStatus("Paste video or channel links first.");
     return;
   }
   const windowOnly = document.getElementById("parseWindowOnly").checked;
-  setParseStatus("Auto-parsing pasted links…");
+  setParseStatus("Auto-parsing pasted links");
   try {
     const summary = await parseMixedText(blob, creatorId, windowOnly);
     renderAdmin();
     const extra = summary.notes.length ? "\n" + summary.notes.join("\n") : "";
     setParseStatus(
-      "Parsed " + summary.urls + " links → +" + summary.added + " new, " +
+      "Parsed " + summary.urls + " links -> +" + summary.added + " new, " +
       summary.updated + " updated, " + summary.skipped + " skipped." + extra
     );
   } catch (err) {
@@ -257,11 +245,11 @@ document.getElementById("syncAllBtn").addEventListener("click", async () => {
   const windowOnly = document.getElementById("parseWindowOnly").checked;
   const lines = [];
   for (const creator of state.creators) {
-    setParseStatus("Syncing " + creator.name + "…");
+    setParseStatus("Syncing " + creator.name);
     try {
       const res = await syncCreator(creator, windowOnly);
       const r = upsertVideos(creator.id, res.found);
-      lines.push(`${creator.name}: +${r.added}/${r.updated} · ${res.notes.join(", ")}`);
+      lines.push(creator.name + ": +" + r.added + "/" + r.updated + " / " + res.notes.join(", "));
     } catch (err) {
       lines.push(creator.name + ": " + (err.message || err));
     }
@@ -273,7 +261,7 @@ document.getElementById("syncAllBtn").addEventListener("click", async () => {
 document.getElementById("refreshViewsBtn").addEventListener("click", async () => {
   const ytUrls = state.videos.filter((v) => v.platform !== "tiktok").map((v) => v.url);
   const ttVids = state.videos.filter((v) => v.platform === "tiktok" || detectKind(v.url) === "tiktok");
-  setParseStatus("Refreshing views…");
+  setParseStatus("Refreshing views");
   try {
     if (ytUrls.length) {
       const fresh = await parseYouTubeUrls(ytUrls);
@@ -301,27 +289,27 @@ document.getElementById("publishBtn").addEventListener("click", async () => {
     return;
   }
   localStorage.setItem("cc-gh-token", token);
-  status.textContent = "Publishing…";
+  status.textContent = "Publishing...";
   try {
     async function putGithub(path, obj, message) {
-      const getUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`;
+      const getUrl = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + path + "?ref=" + GH_DATA_BRANCH;
       const current = await fetch(getUrl, { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" } });
       const currentJson = await current.json();
       const sha = currentJson.sha;
       const body = JSON.stringify({
-        message,
+        message: message,
         content: btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2)))),
-        sha,
-        branch: GH_BRANCH,
+        sha: sha,
+        branch: GH_DATA_BRANCH,
       });
-      const put = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+      const put = await fetch("https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + path, {
         method: "PUT",
         headers: {
           Authorization: "Bearer " + token,
           Accept: "application/vnd.github+json",
           "Content-Type": "application/json",
         },
-        body,
+        body: body,
       });
       if (!put.ok) {
         const err = await put.json().catch(() => ({}));
@@ -330,7 +318,7 @@ document.getElementById("publishBtn").addEventListener("click", async () => {
     }
     await putGithub(GH_PATH, payload(), "Update CC leaderboard data");
     await putGithub("leaderboard/pairs.json", pairsPayload(), "Update CC official pairs");
-    status.textContent = "Published. Public board reads GitHub directly now — refresh / wait ~10s, no Pages delay.";
+    status.textContent = "Published to board-data. No Pages rebuild. Refresh the public board.";
   } catch (err) {
     status.textContent = "Publish failed: " + (err.message || err);
   }
