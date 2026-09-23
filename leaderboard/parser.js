@@ -20,8 +20,11 @@ function sleep(ms) {
 }
 
 function extractUrls(text) {
-  const found = String(text || "").match(/https?:\/\/[^\s<>"'\]\)]+/gi) || [];
-  return [...new Set(found.map((u) => u.replace(/[),.;]+$/, "")))];
+  const raw = String(text || "");
+  const found = raw.match(/https?:\/\/[^\s<>"'\]\)]+/gi) || [];
+  const ids = raw.match(/\b(\d{18,20})\b/g) || [];
+  const fromIds = ids.map((id) => "https://www.tiktok.com/video/" + id);
+  return [...new Set([...found, ...fromIds].map((u) => u.replace(/[),.;]+$/, "")))];
 }
 
 function extractYouTubeId(url) {
@@ -38,7 +41,17 @@ function extractTikTokUser(value) {
   if (!value) return "";
   const m = String(value).match(/tiktok\.com\/@([^/?]+)/i);
   if (m) return m[1].replace(/^@/, "");
-  return String(value).trim().replace(/^@/, "").split(/[/?]/)[0];
+  const v = String(value).trim();
+  if (/^https?:/i.test(v)) return "";
+  return v.replace(/^@/, "").split(/[/?]/)[0];
+}
+
+function isTikTokVideoUrl(url) {
+  const u = String(url || "");
+  if (/tiktok\.com\/@[^/?]+\/video\//i.test(u)) return true;
+  if (/(vt|vm)\.tiktok\.com\//i.test(u)) return true;
+  if (/tiktok\.com\/video\/\d+/i.test(u)) return true;
+  return false;
 }
 
 function youtubeHandleFrom(value) {
@@ -186,7 +199,30 @@ async function ytVideoDetails(ids) {
       });
     }
   }
-  return out;
+  return attachYouTubeChannelMeta(out);
+}
+
+async function attachYouTubeChannelMeta(items) {
+  const ids = [...new Set(items.map((i) => i.channelId).filter(Boolean))];
+  if (!ids.length || !ytKey()) return items;
+  try {
+    const data = await ytGet("channels", { part: "snippet", id: ids.join(",") });
+    const map = {};
+    (data.items || []).forEach((ch) => {
+      map[ch.id] = {
+        title: ch.snippet?.title || "",
+        handle: String(ch.snippet?.customUrl || "").replace(/^@/, ""),
+      };
+    });
+    items.forEach((item) => {
+      const meta = map[item.channelId];
+      if (!meta) return;
+      item.channelTitle = item.channelTitle || meta.title;
+      item.channelHandle = meta.handle;
+    });
+  } catch {
+  }
+  return items;
 }
 
 async function parseYouTubeChannel(channelValue) {
@@ -199,6 +235,7 @@ async function parseYouTubeChannel(channelValue) {
   details.forEach((v) => {
     v.channelId = channel.id;
     v.channelTitle = channel.snippet?.title;
+    v.channelHandle = String(channel.snippet?.customUrl || "").replace(/^@/, "");
   });
   return details;
 }
@@ -237,17 +274,25 @@ async function parseTikTokUrl(url) {
       const d = data.data;
       if (!d) continue;
       const created = Number(d.create_time || 0);
-      const user = d.author || extractTikTokUser(url);
+      const rawAuthor = d.author;
+      const user = (rawAuthor && typeof rawAuthor === "object")
+        ? (rawAuthor.unique_id || rawAuthor.uniqueId || extractTikTokUser(url))
+        : (rawAuthor || extractTikTokUser(url));
+      const nickname = (rawAuthor && typeof rawAuthor === "object")
+        ? (rawAuthor.nickname || user)
+        : user;
       const id = d.id || extractTikTokId(url);
+      const handle = String(user || "").replace(/^@/, "");
       return {
         title: d.title || id || "TikTok",
-        url: user && id ? "https://www.tiktok.com/@" + String(user).replace(/^@/, "") + "/video/" + id : url,
+        url: handle && id ? "https://www.tiktok.com/@" + handle + "/video/" + id : url,
         views: Number(d.play_count || d.playCount || 0),
         postedAt: created ? toLocalInput(new Date(created * 1000)) : "",
         postedUnix: created || 0,
         kind: "tiktok",
         platform: "tiktok",
-        author: String(user || "").replace(/^@/, ""),
+        author: handle,
+        authorName: nickname,
       };
     } catch {
       await sleep(1100);
@@ -335,23 +380,62 @@ function setParseStatus(text, append) {
 }
 
 function matchCreatorForItem(item, url) {
-  const creators = state.creators || [];
-  const ttUser = (item && item.author) || extractTikTokUser(url || item?.url || "");
   const source = url || item?.url || "";
-  if (ttUser && (/tiktok/i.test(source) || item?.platform === "tiktok")) {
-    const hit = creators.find((c) => extractTikTokUser(c.tiktok).toLowerCase() === String(ttUser).toLowerCase());
-    if (hit) return hit;
+  const spec = {
+    author: (item && item.author) || extractTikTokUser(source),
+    tiktok: (item && item.author) || extractTikTokUser(source),
+    channelId: item?.channelId,
+    youtubeChannelId: item?.channelId,
+    channelHandle: item?.channelHandle,
+    youtube: item?.channelHandle ? "@" + item.channelHandle : source,
+  };
+  const hits = findCreatorHits(state.creators || [], spec);
+  return hits[0] || null;
+}
+
+function createCreatorFromItem(item, url) {
+  const source = url || item?.url || "";
+  const isTt = (item && item.platform === "tiktok") || /tiktok/i.test(source);
+  if (isTt) {
+    const handle = item?.author || extractTikTokUser(source);
+    const creator = {
+      id: uid(),
+      name: item?.authorName || handle || "TikTok creator",
+      youtube: "",
+      tiktok: handle ? "@" + String(handle).replace(/^@/, "") : "",
+      source: "auto",
+    };
+    state.creators.push(creator);
+    return creator;
   }
-  if (item?.channelId) {
-    const byId = creators.find((c) => c.youtubeChannelId === item.channelId);
-    if (byId) return byId;
+  const handle = item?.channelHandle || youtubeHandleFrom(source);
+  const creator = {
+    id: uid(),
+    name: item?.channelTitle || handle || "YouTube creator",
+    youtube: handle ? (handle.startsWith("UC") ? "https://www.youtube.com/channel/" + handle : "https://www.youtube.com/@" + handle) : source,
+    youtubeChannelId: item?.channelId || "",
+    tiktok: "",
+    source: "auto",
+  };
+  state.creators.push(creator);
+  return creator;
+}
+
+function ensureCreatorFromItem(item, url, fallbackCreatorId) {
+  const hit = matchCreatorForItem(item, url);
+  if (hit) {
+    if (item?.channelId && !hit.youtubeChannelId) hit.youtubeChannelId = item.channelId;
+    if (item?.channelHandle && !hit.youtube) hit.youtube = "https://www.youtube.com/@" + item.channelHandle;
+    if (item?.author && !hit.tiktok) hit.tiktok = "@" + String(item.author).replace(/^@/, "");
+    return { creator: hit, created: false };
   }
-  const handle = youtubeHandleFrom(source);
-  if (handle) {
-    const byHandle = creators.find((c) => youtubeHandleFrom(c.youtube).toLowerCase() === handle.toLowerCase());
-    if (byHandle) return byHandle;
+  if (item?.author || item?.channelId || item?.channelHandle || isYouTubeChannelUrl(url || "") || extractTikTokUser(url || "")) {
+    return { creator: createCreatorFromItem(item, url), created: true };
   }
-  return null;
+  const fallback = (state.creators || []).find((c) => c.id === fallbackCreatorId);
+  if (fallback) return { creator: fallback, created: false };
+  if (item || url) return { creator: createCreatorFromItem(item || {}, url), created: true };
+  return { creator: null, created: false };
 }
 
 async function syncCreator(creator, windowOnly) {
@@ -392,15 +476,13 @@ async function parseMixedText(text, fallbackCreatorId, windowOnly) {
   const channelUrls = urls.filter((u) => isYouTubeChannelUrl(u));
   const ytVideoUrls = urls.filter((u) => extractYouTubeId(u));
   const ttProfileUrls = urls.filter((u) => /tiktok\.com/i.test(u) && isTikTokProfileUrl(u));
-  const ttVideoUrls = urls.filter((u) => /tiktok\.com/i.test(u) && !isTikTokProfileUrl(u));
+  const ttVideoUrls = urls.filter((u) => isTikTokVideoUrl(u) || (/tiktok\.com/i.test(u) && !isTikTokProfileUrl(u) && !isYouTubeChannelUrl(u)));
 
   for (const url of channelUrls) {
-    const creator = matchCreatorForItem(null, url) || state.creators.find((c) => c.id === fallbackCreatorId);
-    if (!creator) {
-      summary.notes.push("No creator for YouTube channel " + url);
-      summary.skipped += 1;
-      continue;
-    }
+    const ensured = ensureCreatorFromItem({ platform: "youtube", channelHandle: youtubeHandleFrom(url) }, url, fallbackCreatorId);
+    const creator = ensured.creator;
+    if (!creator) { summary.skipped += 1; continue; }
+    if (ensured.created) summary.notes.push("Auto-added creator " + creator.name);
     setParseStatus("YouTube channel " + (creator.name || url) + "…", true);
     try {
       const vids = await parseYouTubeChannel(url);
@@ -420,16 +502,11 @@ async function parseMixedText(text, fallbackCreatorId, windowOnly) {
     try {
       const items = await parseYouTubeUrls(ytVideoUrls);
       for (const item of items) {
-        if (!inEvent(item, windowOnly)) {
-          summary.skipped += 1;
-          continue;
-        }
-        const creator = matchCreatorForItem(item, item.url) || state.creators.find((c) => c.id === fallbackCreatorId);
-        if (!creator) {
-          summary.notes.push("No creator for " + item.url);
-          summary.skipped += 1;
-          continue;
-        }
+        if (!inEvent(item, windowOnly)) { summary.skipped += 1; continue; }
+        const ensured = ensureCreatorFromItem(item, item.url, fallbackCreatorId);
+        const creator = ensured.creator;
+        if (!creator) { summary.skipped += 1; continue; }
+        if (ensured.created) summary.notes.push("Auto-added " + creator.name);
         const r = upsertVideos(creator.id, [item]);
         summary.added += r.added;
         summary.updated += r.updated;
@@ -441,12 +518,10 @@ async function parseMixedText(text, fallbackCreatorId, windowOnly) {
 
   for (const url of ttProfileUrls) {
     const user = extractTikTokUser(url);
-    const creator = matchCreatorForItem({ author: user, platform: "tiktok" }, url) || state.creators.find((c) => c.id === fallbackCreatorId);
-    if (!creator) {
-      summary.notes.push("No creator for TikTok @" + user);
-      summary.skipped += 1;
-      continue;
-    }
+    const ensured = ensureCreatorFromItem({ author: user, platform: "tiktok" }, url, fallbackCreatorId);
+    const creator = ensured.creator;
+    if (!creator) { summary.skipped += 1; continue; }
+    if (ensured.created) summary.notes.push("Auto-added @" + user);
     setParseStatus("TikTok profile @" + user + "…", true);
     const profile = await parseTikTokProfile(user);
     if (!profile) {
@@ -465,25 +540,14 @@ async function parseMixedText(text, fallbackCreatorId, windowOnly) {
     setParseStatus("TikTok " + (i + 1) + "/" + ttVideoUrls.length + "…", true);
     const item = await parseTikTokUrl(url);
     const resolved = item || {
-      title: url,
-      url,
-      views: 0,
-      postedAt: "",
-      postedUnix: 0,
-      kind: "tiktok",
-      platform: "tiktok",
-      author: extractTikTokUser(url),
+      title: url, url, views: 0, postedAt: "", postedUnix: 0,
+      kind: "tiktok", platform: "tiktok", author: extractTikTokUser(url),
     };
-    if (!inEvent(resolved, windowOnly)) {
-      summary.skipped += 1;
-      continue;
-    }
-    const creator = matchCreatorForItem(resolved, url) || state.creators.find((c) => c.id === fallbackCreatorId);
-    if (!creator) {
-      summary.notes.push("No creator for " + url);
-      summary.skipped += 1;
-      continue;
-    }
+    if (!inEvent(resolved, windowOnly)) { summary.skipped += 1; continue; }
+    const ensured = ensureCreatorFromItem(resolved, url, fallbackCreatorId);
+    const creator = ensured.creator;
+    if (!creator) { summary.skipped += 1; continue; }
+    if (ensured.created) summary.notes.push("Auto-added " + creator.name);
     const r = upsertVideos(creator.id, [resolved]);
     summary.added += r.added;
     summary.updated += r.updated;
