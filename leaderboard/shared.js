@@ -251,14 +251,21 @@ function decodeGithubFile(json) {
   return JSON.parse(new TextDecoder().decode(bytes));
 }
 
-async function fetchGithubJson(path) {
+async function fetchGithubJson(path, timeoutMs) {
   const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}&_=${Date.now()}`;
-  const res = await fetch(url, {
-    cache: "no-store",
-    headers: { Accept: "application/vnd.github+json" },
-  });
-  if (!res.ok) throw new Error("GitHub " + res.status + " for " + path);
-  return decodeGithubFile(await res.json());
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs || 2500);
+  try {
+    const res = await fetch(url, {
+      cache: "no-store",
+      signal: ctrl.signal,
+      headers: { Accept: "application/vnd.github+json" },
+    });
+    if (!res.ok) throw new Error("GitHub " + res.status + " for " + path);
+    return decodeGithubFile(await res.json());
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function fetchLocalJson(path) {
@@ -267,22 +274,7 @@ async function fetchLocalJson(path) {
   return res.json();
 }
 
-async function loadBoardData() {
-  let data;
-  let pairsDoc = { pairs: [] };
-  let source = "pages";
-  try {
-    const [liveData, livePairs] = await Promise.all([
-      fetchGithubJson("leaderboard/data.json"),
-      fetchGithubJson("leaderboard/pairs.json").catch(() => ({ pairs: [] })),
-    ]);
-    data = liveData;
-    pairsDoc = livePairs;
-    source = "github";
-  } catch {
-    data = await fetchLocalJson("data.json");
-    try { pairsDoc = await fetchLocalJson("pairs.json"); } catch { pairsDoc = { pairs: data.pairs || [] }; }
-  }
+function normalizeBoard(data, pairsDoc, source) {
   data.settings = {
     eventStartUnix: EVENT_START,
     eventEndUnix: EVENT_END,
@@ -291,8 +283,31 @@ async function loadBoardData() {
   };
   data.creators = data.creators || [];
   data.videos = data.videos || [];
-  data.pairs = pairsDoc.pairs || data.pairs || [];
+  data.pairs = (pairsDoc && pairsDoc.pairs) || data.pairs || [];
   data._source = source;
   applyAllPairs(data);
   return data;
+}
+
+async function loadPagesBoard() {
+  const data = await fetchLocalJson("data.json");
+  let pairsDoc = { pairs: data.pairs || [] };
+  try { pairsDoc = await fetchLocalJson("pairs.json"); } catch {}
+  return normalizeBoard(data, pairsDoc, "pages");
+}
+
+async function loadGithubBoard() {
+  const [liveData, livePairs] = await Promise.all([
+    fetchGithubJson("leaderboard/data.json", 2500),
+    fetchGithubJson("leaderboard/pairs.json", 2500).catch(() => ({ pairs: [] })),
+  ]);
+  return normalizeBoard(liveData, livePairs, "github");
+}
+
+async function loadBoardData() {
+  try {
+    return await loadPagesBoard();
+  } catch (err) {
+    return loadGithubBoard();
+  }
 }
