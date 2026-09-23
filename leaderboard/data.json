@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T16:44:48.917Z"
+    "updatedAt": "2026-09-23T17:13:43.803Z"
   },
   "creators": [
     {
@@ -87,6 +87,14 @@
       "name": "VendiSpider",
       "youtube": "https://www.youtube.com/@vendispiderguy",
       "youtubeChannelId": "UCRaUdYSUOSXDSxZuHPbE3rQ",
+      "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "name": "NytheX",
+      "youtube": "https://www.youtube.com/@nythex_ny",
+      "youtubeChannelId": "UCnI05zYAH5crnyKasg_LHCw",
       "tiktok": "",
       "source": "auto"
     }
@@ -839,6 +847,96 @@
       "title": "POV: Most Spammy Style in BLR 💀🔥 #bluelock #bluelockrivals #robloxshorts #blr",
       "postedAt": "2026-09-23T21:17",
       "views": 60,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "39c6ee48-7c9f-4042-9b85-3c2d91c8834a",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/d2LKHS9luIc",
+      "title": "They Said Loki Got Nerfed..Meanwhile Loki after getting Nerfed💔 #roblox #blr #bluelockrivals #blr",
+      "postedAt": "2026-09-20T23:13",
+      "views": 13268,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "4c0c7bb9-e3ad-4060-8968-2e22c75f4626",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/ynta5DDyDUo",
+      "title": "The Spamming Problem In Blue Lock Rivals and its ultimate Solution! #bluelockrivals #roblox #blr",
+      "postedAt": "2026-09-21T00:24",
+      "views": 25167,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "3466f2b8-1ffb-4887-8c06-84a0e311be91",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/27mvlHg1i1w",
+      "title": "Loki Vs Nel Chigiri Speed after Nerfs in Blue Lock Rivals!! #bluelockrivals #roblox #bluelock #blr",
+      "postedAt": "2026-09-21T00:49",
+      "views": 32089,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "a920c817-30aa-4bd3-8557-92ecd9298391",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/CjhjlSoYfeQ",
+      "title": "Pov:The Art of Using Igaguri as Ego GK in Blue Lock Rivals!! #bluelockrivals #roblox #bluelock #blr",
+      "postedAt": "2026-09-21T23:21",
+      "views": 25653,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "b17bec62-910f-4973-81d0-dc1241c11bd1",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/AbNQ_oTF63g",
+      "title": "Pov:The Art of Using Kaiser as Gk in Blue Lock Rivals!! #bluelockrivals #roblox #bluelock",
+      "postedAt": "2026-09-22T00:32",
+      "views": 25668,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "05908e22-ec25-4dfd-8ce3-61958edd4a6f",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/w_cOTxjmIw0",
+      "title": "Best Nel Isagi Shooting Tech in Blue Lock Rivals #bluelock #bluelockrivals #blr #roblox #shorts",
+      "postedAt": "2026-09-22T00:49",
+      "views": 22363,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "4fcb0e4f-bf63-4bf3-83ec-b0ce1441061d",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/DatuWpNanqE",
+      "title": "Pov:Exploiters in Blue Lock Rivals be like... #bluelockrivals #blr #roblox",
+      "postedAt": "2026-09-22T01:22",
+      "views": 25008,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "58fac8c0-e0d8-4bbb-813a-61c2a1bedc19",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/52s7GU5FsJg",
+      "title": "Nagi Now Vs Then in Blue Lock Rivals.. Prime Nel Nagi was a Thing.. #roblox #blr #bluelockrivals",
+      "postedAt": "2026-09-22T23:24",
+      "views": 10747,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "8312b6df-33d8-4ede-9aa1-d4801fc6d124",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/PmUOnVRDiTk",
+      "title": "Old Blue Lock Rivals Era of Gold.. #bluelockrivals #roblox #blr #bluelock",
+      "postedAt": "2026-09-23T02:39",
+      "views": 1709,
       "kind": "youtube-short",
       "platform": "youtube"
     }
