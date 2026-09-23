@@ -27,34 +27,10 @@ function render(data) {
   const byQualSum = ranked(data.creators, data.videos, s, "qualSum");
   const byQualMax = ranked(data.creators, data.videos, s, "qualMax");
 
-  fillBoard(
-    "boardViewsSum",
-    byViewsSum,
-    (r) => fmtNum(r.stats.viewsSum) + " views",
-    (r) => "YT " + fmtNum(r.stats.youtube.views) + " / TT " + fmtNum(r.stats.tiktok.views),
-    (r) => r.stats.viewsSum
-  );
-  fillBoard(
-    "boardVideosSum",
-    byQualSum,
-    (r) => r.stats.qualSum + " videos",
-    (r) => "YT " + r.stats.youtube.qualCount + " / TT " + r.stats.tiktok.qualCount,
-    (r) => r.stats.qualSum
-  );
-  fillBoard(
-    "boardViewsMax",
-    byViewsMax,
-    (r) => fmtNum(r.stats.viewsMax) + " views",
-    (r) => r.stats.viewsMaxPlatform,
-    (r) => r.stats.viewsMax
-  );
-  fillBoard(
-    "boardVideosMax",
-    byQualMax,
-    (r) => r.stats.qualMax + " videos",
-    (r) => r.stats.qualMaxPlatform,
-    (r) => r.stats.qualMax
-  );
+  fillBoard("boardViewsSum", byViewsSum, (r) => fmtNum(r.stats.viewsSum) + " views", (r) => "YT " + fmtNum(r.stats.youtube.views) + " / TT " + fmtNum(r.stats.tiktok.views), (r) => r.stats.viewsSum);
+  fillBoard("boardVideosSum", byQualSum, (r) => r.stats.qualSum + " videos", (r) => "YT " + r.stats.youtube.qualCount + " / TT " + r.stats.tiktok.qualCount, (r) => r.stats.qualSum);
+  fillBoard("boardViewsMax", byViewsMax, (r) => fmtNum(r.stats.viewsMax) + " views", (r) => r.stats.viewsMaxPlatform, (r) => r.stats.viewsMax);
+  fillBoard("boardVideosMax", byQualMax, (r) => r.stats.qualMax + " videos", (r) => r.stats.qualMaxPlatform, (r) => r.stats.qualMax);
 
   const q = (document.getElementById("search").value || "").toLowerCase();
   const rows = byViewsSum.filter((r) => r.creator.name.toLowerCase().includes(q));
@@ -110,6 +86,13 @@ function setLiveStatus(data) {
 let boardData = null;
 
 function boot(data) {
+  if (!data) return;
+  if (boardData && boardData.settings && data.settings) {
+    const have = Date.parse(boardData.settings.updatedAt || 0) || 0;
+    const incoming = Date.parse(data.settings.updatedAt || 0) || 0;
+    if (boardData._source === "github" && data._source === "pages" && incoming <= have) return;
+    if (incoming < have) return;
+  }
   boardData = data;
   render(data);
   setLiveStatus(data);
@@ -126,7 +109,6 @@ loadPagesBoard()
     }, 30000);
     loadGithubBoard().then(boot).catch(function () {});
     setInterval(() => {
-      loadPagesBoard().then(boot).catch(function () {});
       loadGithubBoard().then(boot).catch(function () {});
     }, 60000);
   })
