@@ -1,8 +1,5 @@
 const PASS_HASH = "7688c2ddeb19cb668212624c0a17a17b16a5108f55bb73ed309d3e16df5e6bf0";
-const GH_OWNER = "N29dev";
-const GH_REPO = "blr";
 const GH_PATH = "leaderboard/data.json";
-const GH_BRANCH = "main";
 
 let state = { settings: { eventStartUnix: EVENT_START, eventEndUnix: EVENT_END, minViews: MIN_VIEWS }, creators: [], videos: [], pairs: [] };
 let editingCreatorId = null;
@@ -333,7 +330,7 @@ document.getElementById("publishBtn").addEventListener("click", async () => {
     }
     await putGithub(GH_PATH, payload(), "Update CC leaderboard data");
     await putGithub("leaderboard/pairs.json", pairsPayload(), "Update CC official pairs");
-    status.textContent = "Published data.json + pairs.json. Public page updates in about a minute.";
+    status.textContent = "Published. Public board reads GitHub directly now — refresh / wait ~10s, no Pages delay.";
   } catch (err) {
     status.textContent = "Publish failed: " + (err.message || err);
   }
