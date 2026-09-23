@@ -3,7 +3,7 @@ function rankItem(row, i, primary, secondary, score) {
   return `
     <li class="${onPodium ? "top" : ""}">
       <span class="num">${i + 1}</span>
-      <div class="who">${escapeHtml(row.creator.name)}<small>${escapeHtml(secondary)}</small></div>
+      <div class="who">${avatarHtml(row.creator)}<span class="who-text">${escapeHtml(row.creator.name)}<small>${escapeHtml(secondary)}</small></span></div>
       <div class="metric">${escapeHtml(primary)}</div>
     </li>
   `;
@@ -65,7 +65,7 @@ function render(data) {
     const tt = tiktokUrl(c.tiktok);
     return `<tr>
       <td>${i + 1}</td>
-      <td><strong>${escapeHtml(c.name)}</strong>${c.source === "pair" || (c.youtube && c.tiktok) ? ' <span class="pill ok">YT+TT</span>' : ""}</td>
+      <td class="name-cell">${avatarHtml(c, "sm")}<span><strong>${escapeHtml(c.name)}</strong>${c.source === "pair" || (c.youtube && c.tiktok) ? ' <span class="pill ok">YT+TT</span>' : ""}</span></td>
       <td>
         ${yt ? `<a class="pill yt" href="${escapeHtml(yt)}" target="_blank" rel="noopener">YouTube</a>` : ""}
         ${tt ? `<a class="pill tt" href="${escapeHtml(tt)}" target="_blank" rel="noopener">TikTok</a>` : ""}
