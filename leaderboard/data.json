@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T19:53:14.820Z"
+    "updatedAt": "2026-09-23T22:49:03.144Z"
   },
   "creators": [
     {
@@ -133,6 +133,13 @@
       "name": "JUN-KIOR",
       "youtube": "",
       "tiktok": "@junkior_blr",
+      "source": "auto"
+    },
+    {
+      "id": "cca122ff-b65f-4c50-9902-214266aeeb98",
+      "name": "eoninhokkj",
+      "youtube": "",
+      "tiktok": "@ywnaosei",
       "source": "auto"
     }
   ],
@@ -1104,6 +1111,16 @@
       "title": "¿SKELETON NAGI O MC NAGI? 🍔🆚💀 #bluelockrivals #roblox #bluelock ",
       "postedAt": "2026-09-21T05:10",
       "views": 17720,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "d0e968b2-4489-4d10-a2f6-0379013f1100",
+      "creatorId": "cca122ff-b65f-4c50-9902-214266aeeb98",
+      "url": "https://www.tiktok.com/@ywnaosei/video/7688856421533879553",
+      "title": "Tudo De Karasu.... ib:  #tiktok #bluelock #fyp #bluelockrivals #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ",
+      "postedAt": "2026-09-24T03:11",
+      "views": 203,
       "kind": "tiktok",
       "platform": "tiktok"
     }
