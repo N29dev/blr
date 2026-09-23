@@ -299,3 +299,89 @@ async function loadBoardData() {
     return loadPagesBoard();
   }
 }
+
+function boardVideoKey(v) {
+  const u = String((v && v.url) || "").split("?")[0];
+  const tt = u.match(/\/video\/(\d+)/);
+  if (tt) return "tt:" + tt[1];
+  const yt = u.match(/(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([\w-]{11})/i);
+  if (yt) return "yt:" + yt[1];
+  return "url:" + u.toLowerCase();
+}
+
+function mergeCreatorRecord(keep, extra) {
+  if (!keep) return extra;
+  if (!extra) return keep;
+  keep.name = keep.name || extra.name;
+  keep.youtube = keep.youtube || extra.youtube || "";
+  keep.tiktok = keep.tiktok || extra.tiktok || "";
+  keep.youtubeChannelId = keep.youtubeChannelId || extra.youtubeChannelId || "";
+  keep.avatar = keep.avatar || extra.avatar || "";
+  if (keep.source === "pair" || extra.source === "pair") keep.source = "pair";
+  else keep.source = keep.source || extra.source || "auto";
+  return keep;
+}
+
+function mergeBoards(live, local, opts) {
+  opts = opts || {};
+  const deletedCreators = new Set(opts.deletedCreators || []);
+  const deletedVideos = new Set(opts.deletedVideos || []);
+  const creators = [];
+  function addCreator(c) {
+    if (!c || deletedCreators.has(c.id)) return;
+    const hits = findCreatorHits(creators, c);
+    if (hits.length) mergeCreatorRecord(hits[0], c);
+    else creators.push(Object.assign({}, c));
+  }
+  (live.creators || []).forEach(addCreator);
+  (local.creators || []).forEach(addCreator);
+  function resolveCreatorId(video) {
+    if (!video) return "";
+    const owner = (live.creators || []).concat(local.creators || []).find((c) => c.id === video.creatorId);
+    if (owner) {
+      const hits = findCreatorHits(creators, owner);
+      if (hits.length) return hits[0].id;
+    }
+    if (creators.some((c) => c.id === video.creatorId)) return video.creatorId;
+    return video.creatorId;
+  }
+  const videos = [];
+  const seen = new Map();
+  function addVideo(v) {
+    if (!v) return;
+    const key = boardVideoKey(v);
+    if (!key || deletedVideos.has(v.id) || deletedVideos.has(key)) return;
+    const copy = Object.assign({}, v, { creatorId: resolveCreatorId(v) });
+    const existing = seen.get(key);
+    if (existing) {
+      if (Number(copy.views || 0) > Number(existing.views || 0)) existing.views = copy.views;
+      existing.title = existing.title || copy.title;
+      existing.postedAt = existing.postedAt || copy.postedAt;
+      existing.url = existing.url || copy.url;
+      existing.kind = existing.kind || copy.kind;
+      existing.platform = existing.platform || copy.platform;
+    } else {
+      seen.set(key, copy);
+      videos.push(copy);
+    }
+  }
+  (live.videos || []).forEach(addVideo);
+  (local.videos || []).forEach(addVideo);
+  const pairMap = new Map();
+  [].concat(live.pairs || [], local.pairs || []).forEach((p) => {
+    if (!p) return;
+    const k = (p.id || "") + "|" + youtubeKey(p.youtube || "") + "|" + tiktokHandle(p.tiktok || "");
+    pairMap.set(k, Object.assign({}, pairMap.get(k) || {}, p));
+  });
+  return {
+    settings: {
+      eventStartUnix: EVENT_START,
+      eventEndUnix: EVENT_END,
+      minViews: MIN_VIEWS,
+      updatedAt: new Date().toISOString(),
+    },
+    creators: creators,
+    videos: videos,
+    pairs: Array.from(pairMap.values()),
+  };
+}
