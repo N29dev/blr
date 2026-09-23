@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T18:39:08.348Z"
+    "updatedAt": "2026-09-23T18:43:02.767Z"
   },
   "creators": [
     {
@@ -96,6 +96,13 @@
       "youtube": "https://www.youtube.com/@nythex_ny",
       "youtubeChannelId": "UCnI05zYAH5crnyKasg_LHCw",
       "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "name": "Mbappe",
+      "youtube": "",
+      "tiktok": "@meam540",
       "source": "auto"
     }
   ],
@@ -696,7 +703,7 @@
       "url": "https://www.youtube.com/shorts/PsaqeOK5XOc",
       "title": "Egoist GK as Demon Shidou in BLR??!! 😈🔥#blr #bluelockrivals #bluelock #robloxshorts",
       "postedAt": "2026-09-23T17:45",
-      "views": 2022,
+      "views": 4735,
       "kind": "youtube-short",
       "platform": "youtube"
     },
@@ -706,7 +713,7 @@
       "url": "https://www.youtube.com/shorts/vP01fHO-Bbc",
       "title": "POV: The Art of Aiku Spamming in BLR 😈🔥 #bluelock #bluelockrivals #blr #robloxshorts",
       "postedAt": "2026-09-22T19:24",
-      "views": 3374,
+      "views": 3751,
       "kind": "youtube-short",
       "platform": "youtube"
     },
@@ -947,6 +954,26 @@
       "title": "Naoya style secret👀 #naoya #style #bocchi🔥🔥 #bluelockrivals #blr",
       "postedAt": "2026-09-20T09:55",
       "views": 84103,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "9b100ce9-5481-4a62-b1de-e59c3db279d2",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7687535561732607262",
+      "title": "Blue Lock Rivals ITOSHI RIN Auto Corner Goal Concept⚽️🗡️ #bluelock #bluelockrivals #anime #roblox #fyp ",
+      "postedAt": "2026-09-20T13:45",
+      "views": 68885,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "79146f57-69a9-420e-a081-8cc9586b09e8",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7688239114902179102",
+      "title": "Blue Lock Rivals Snuffy Sneak Peek Looks Insane🤑✌️ #bluelock #bluelockrivals #anime #roblox #fyp ",
+      "postedAt": "2026-09-22T11:15",
+      "views": 6262,
       "kind": "tiktok",
       "platform": "tiktok"
     }
