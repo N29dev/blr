@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T19:19:42.447Z"
+    "updatedAt": "2026-09-23T19:36:40.394Z"
   },
   "creators": [
     {
@@ -1021,6 +1021,16 @@
       "postedAt": "2026-09-23T12:14",
       "views": 7402,
       "kind": "youtube-video",
+      "platform": "youtube"
+    },
+    {
+      "id": "a77f374a-479b-4a8d-89b0-57da25e72962",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/2rjLOzt27Jk",
+      "title": "Pov : The Art of Using Nel Bachira as Ego Gk! in Blue Lock Rivals #bluelock #bluelockrivals #roblox",
+      "postedAt": "2026-09-23T23:28",
+      "views": 124,
+      "kind": "youtube-short",
       "platform": "youtube"
     }
   ],
