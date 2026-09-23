@@ -55,16 +55,16 @@
       <section class="card">
         <div class="card-head"><h2>Auto parser</h2></div>
         <p class="note">
-          Paste links — the parser detects the owner and creates them if needed.
+          Paste links. The parser detects the owner and creates them if needed.
           Official YouTube+TikTok people go in <code>pairs.json</code> above so both platforms count as one person.
           YouTube key still needed for views. TikTok: paste video links.
         </p>
         <div class="form-grid">
           <label>YouTube Data API key
-            <input id="ytKey" type="password" placeholder="AIza…" autocomplete="off" />
+            <input id="ytKey" type="password" placeholder="AIza" autocomplete="off" />
           </label>
           <label>Paste anything: video links, channel URLs, TikTok links, Discord dump
-            <textarea id="parsePaste" rows="6" placeholder="https://www.youtube.com/@creator&#10;https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/shorts/...&#10;https://www.tiktok.com/@user/video/..."></textarea>
+            <textarea id="parsePaste" rows="6" placeholder="https://www.youtube.com/@creator"></textarea>
           </label>
           <label class="check-line"><input type="checkbox" id="parseWindowOnly" checked /> Only keep posts inside the event window</label>
           <label class="check-line"><input type="checkbox" id="autoSyncOnSave" checked /> Auto-sync a creator right after you save them</label>
@@ -90,7 +90,7 @@
           <label>Title <input name="title" placeholder="Optional" /></label>
           <label>Posted at <input name="postedAt" type="datetime-local" required /></label>
           <label>Current views <input name="views" type="number" min="0" required value="0" /></label>
-          <p class="note" id="kindHint">Paste a link — type is detected automatically (YT video / YT Short / TikTok).</p>
+          <p class="note" id="kindHint">Paste a link. Type is detected automatically (YT video / YT Short / TikTok).</p>
           <div class="row">
             <button class="btn primary" type="submit">Save video</button>
           </div>
@@ -102,10 +102,10 @@
         <p class="note">
           Saving here only edits this browser until you publish.
           Paste a GitHub token with access to <code>N29dev/blr</code>.
-          The public board reads the repo API directly, so it updates in seconds — not after the Pages rebuild.
+          The public board reads the repo API directly, so it updates in seconds, not after the Pages rebuild.
         </p>
         <label>GitHub token (stored only in this browser)
-          <input id="ghToken" type="password" placeholder="ghp_…" autocomplete="off" />
+          <input id="ghToken" type="password" placeholder="ghp_" autocomplete="off" />
         </label>
         <div class="row" style="margin-top:10px">
           <button class="btn primary" id="publishBtn" type="button">Publish live</button>
@@ -133,8 +133,8 @@
       <a class="link" href="/">BLR home</a>
     </div>
   </div>
-  <script src="shared.js"></script>
-  <script src="parser.js"></script>
-  <script src="admin.js"></script>
+  <script src="shared.js?v=3"></script>
+  <script src="parser.js?v=3"></script>
+  <script src="admin.js?v=3"></script>
 </body>
 </html>
