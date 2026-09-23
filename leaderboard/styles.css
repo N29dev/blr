@@ -61,13 +61,18 @@ h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.04em
 .pfp-wrap:has(.sm) { width: 26px; height: 26px; flex-basis: 26px; }
 .pfp, .pfp-fallback {
   width: 32px; height: 32px; border-radius: 50%;
-  object-fit: cover; background: #1a1f35; border: 1px solid var(--border);
+  object-fit: cover; background: #3b4674; border: 1px solid var(--border);
 }
 .pfp.sm, .pfp-fallback.sm { width: 26px; height: 26px; }
+.pfp {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; z-index: 1;
+}
+.pfp.on { opacity: 1; }
 .pfp-fallback {
   display: grid; place-items: center;
   font-size: 12px; font-weight: 800; color: #e2e8f0;
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 0;
 }
 .name-cell { display: flex; align-items: center; gap: 10px; }
 .metric { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--accent); }
@@ -106,7 +111,6 @@ input, select, textarea {
 .check-line { flex-direction: row !important; align-items: center; gap: 8px !important; color: var(--muted); font-size: 13px; }
 textarea { min-height: 110px; resize: vertical; }
 @media (max-width: 800px) { .boards { grid-template-columns: 1fr; } }
-
 .parse-log {
   margin-top: 10px;
   max-height: 180px;
