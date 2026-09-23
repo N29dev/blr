@@ -101,7 +101,8 @@
         <div class="card-head"><h2>Publish to blr.n29.kz/leaderboard</h2></div>
         <p class="note">
           Saving here only edits this browser until you publish.
-          Paste a GitHub token with access to <code>N29dev/blr</code> to write <code>leaderboard/data.json</code> and <code>leaderboard/pairs.json</code>.
+          Paste a GitHub token with access to <code>N29dev/blr</code>.
+          The public board reads the repo API directly, so it updates in seconds — not after the Pages rebuild.
         </p>
         <label>GitHub token (stored only in this browser)
           <input id="ghToken" type="password" placeholder="ghp_…" autocomplete="off" />
