@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T18:43:02.767Z"
+    "updatedAt": "2026-09-23T19:14:55.201Z"
   },
   "creators": [
     {
@@ -103,6 +103,14 @@
       "name": "Mbappe",
       "youtube": "",
       "tiktok": "@meam540",
+      "source": "auto"
+    },
+    {
+      "id": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "name": "SyzaRBLX",
+      "youtube": "https://www.youtube.com/@syzarblx",
+      "youtubeChannelId": "UCCuOlyNok3w7OPlrFxnaRAA",
+      "tiktok": "",
       "source": "auto"
     }
   ],
@@ -976,6 +984,16 @@
       "views": 6262,
       "kind": "tiktok",
       "platform": "tiktok"
+    },
+    {
+      "id": "29936f43-85fc-41df-b8eb-12033a579fed",
+      "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "url": "https://www.youtube.com/shorts/fkbVYvFrJvo",
+      "title": "Loki and Lavinho Got Nerfed… | Blue Lock Rivals!",
+      "postedAt": "2026-09-22T18:00",
+      "views": 34595,
+      "kind": "youtube-short",
+      "platform": "youtube"
     }
   ],
   "pairs": [
