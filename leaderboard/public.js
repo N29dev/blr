@@ -19,7 +19,7 @@ function fillBoard(id, rows, primaryFn, secondaryFn, scoreFn) {
 function render(data) {
   const s = data.settings;
   document.getElementById("windowLabel").textContent =
-    formatFull(s.eventStartUnix) + "  →  " + formatFull(s.eventEndUnix);
+    formatFull(s.eventStartUnix) + "  ->  " + formatFull(s.eventEndUnix);
   document.getElementById("countdown").textContent = countdownText(s.eventStartUnix, s.eventEndUnix);
 
   const byViewsSum = ranked(data.creators, data.videos, s, "viewsSum");
@@ -31,14 +31,14 @@ function render(data) {
     "boardViewsSum",
     byViewsSum,
     (r) => fmtNum(r.stats.viewsSum) + " views",
-    (r) => `YT ${fmtNum(r.stats.youtube.views)} · TT ${fmtNum(r.stats.tiktok.views)}`,
+    (r) => "YT " + fmtNum(r.stats.youtube.views) + " / TT " + fmtNum(r.stats.tiktok.views),
     (r) => r.stats.viewsSum
   );
   fillBoard(
     "boardVideosSum",
     byQualSum,
     (r) => r.stats.qualSum + " videos",
-    (r) => `YT ${r.stats.youtube.qualCount} · TT ${r.stats.tiktok.qualCount}`,
+    (r) => "YT " + r.stats.youtube.qualCount + " / TT " + r.stats.tiktok.qualCount,
     (r) => r.stats.qualSum
   );
   fillBoard(
@@ -63,20 +63,22 @@ function render(data) {
     const c = r.creator;
     const yt = youtubeUrl(c.youtube);
     const tt = tiktokUrl(c.tiktok);
-    return `<tr>
-      <td>${i + 1}</td>
-      <td class="name-cell">${avatarHtml(c, "sm")}<span><strong>${escapeHtml(c.name)}</strong>${c.source === "pair" || (c.youtube && c.tiktok) ? ' <span class="pill ok">YT+TT</span>' : ""}</span></td>
-      <td>
-        ${yt ? `<a class="pill yt" href="${escapeHtml(yt)}" target="_blank" rel="noopener">YouTube</a>` : ""}
-        ${tt ? `<a class="pill tt" href="${escapeHtml(tt)}" target="_blank" rel="noopener">TikTok</a>` : ""}
-      </td>
-      <td class="metric">${fmtNum(r.stats.youtube.views)}</td>
-      <td class="metric">${fmtNum(r.stats.tiktok.views)}</td>
-      <td class="metric">${fmtNum(r.stats.viewsSum)}</td>
-      <td class="metric">${fmtNum(r.stats.viewsMax)}</td>
-      <td>${r.stats.qualSum}</td>
-      <td>${r.stats.qualMax}</td>
-    </tr>`;
+    return "<tr>" +
+      "<td>" + (i + 1) + "</td>" +
+      "<td class=\"name-cell\">" + avatarHtml(c, "sm") + "<span><strong>" + escapeHtml(c.name) + "</strong>" +
+        (c.source === "pair" || (c.youtube && c.tiktok) ? " <span class=\"pill ok\">YT+TT</span>" : "") +
+      "</span></td>" +
+      "<td>" +
+        (yt ? "<a class=\"pill yt\" href=\"" + escapeHtml(yt) + "\" target=\"_blank\" rel=\"noopener\">YouTube</a>" : "") +
+        (tt ? "<a class=\"pill tt\" href=\"" + escapeHtml(tt) + "\" target=\"_blank\" rel=\"noopener\">TikTok</a>" : "") +
+      "</td>" +
+      "<td class=\"metric\">" + fmtNum(r.stats.youtube.views) + "</td>" +
+      "<td class=\"metric\">" + fmtNum(r.stats.tiktok.views) + "</td>" +
+      "<td class=\"metric\">" + fmtNum(r.stats.viewsSum) + "</td>" +
+      "<td class=\"metric\">" + fmtNum(r.stats.viewsMax) + "</td>" +
+      "<td>" + r.stats.qualSum + "</td>" +
+      "<td>" + r.stats.qualMax + "</td>" +
+    "</tr>";
   }).join("");
 
   const vids = [...data.videos].sort((a, b) => String(b.postedAt).localeCompare(String(a.postedAt)));
@@ -84,14 +86,14 @@ function render(data) {
     const c = data.creators.find((x) => x.id === v.creatorId);
     const kind = kindLabel(v.kind || detectKind(v.url, v.platform));
     const ok = inWindow(v.postedAt, s.eventStartUnix, s.eventEndUnix) && Number(v.views) >= Number(s.minViews);
-    return `<tr>
-      <td>${escapeHtml((v.postedAt || "").replace("T", " "))}</td>
-      <td>${escapeHtml(c?.name || "—")}</td>
-      <td><span class="pill ${kind.cls}">${kind.text}</span></td>
-      <td><a href="${escapeHtml(v.url)}" target="_blank" rel="noopener">${escapeHtml(v.title || v.url)}</a></td>
-      <td class="metric">${fmtNum(v.views)}</td>
-      <td>${ok ? '<span class="pill ok">Yes</span>' : '<span class="pill no">No</span>'}</td>
-    </tr>`;
+    return "<tr>" +
+      "<td>" + escapeHtml((v.postedAt || "").replace("T", " ")) + "</td>" +
+      "<td>" + escapeHtml((c && c.name) || "-") + "</td>" +
+      "<td><span class=\"pill " + kind.cls + "\">" + kind.text + "</span></td>" +
+      "<td><a href=\"" + escapeHtml(v.url) + "\" target=\"_blank\" rel=\"noopener\">" + escapeHtml(v.title || v.url) + "</a></td>" +
+      "<td class=\"metric\">" + fmtNum(v.views) + "</td>" +
+      "<td>" + (ok ? "<span class=\"pill ok\">Yes</span>" : "<span class=\"pill no\">No</span>") + "</td>" +
+    "</tr>";
   }).join("");
 }
 
@@ -100,9 +102,9 @@ function setLiveStatus(data) {
   if (!el) return;
   const when = data.settings && data.settings.updatedAt
     ? new Date(data.settings.updatedAt).toLocaleTimeString()
-    : "—";
-  const src = data._source === "github" ? "live (GitHub, no Pages wait)" : "Pages cache";
-  el.textContent = "Data " + src + " · published " + when;
+    : "-";
+  const src = data._source === "github" ? "live (GitHub)" : "Pages";
+  el.textContent = "Data " + src + " / published " + when;
 }
 
 let boardData = null;
@@ -113,7 +115,7 @@ function boot(data) {
   setLiveStatus(data);
 }
 
-loadBoardData()
+loadPagesBoard()
   .then((data) => {
     boot(data);
     document.getElementById("search").addEventListener("input", () => render(boardData));
@@ -122,10 +124,19 @@ loadBoardData()
       document.getElementById("countdown").textContent =
         countdownText(boardData.settings.eventStartUnix, boardData.settings.eventEndUnix);
     }, 30000);
+    loadGithubBoard().then(boot).catch(function () {});
     setInterval(() => {
-      loadBoardData().then(boot).catch(() => {});
-    }, 45000);
+      loadPagesBoard().then(boot).catch(function () {});
+      loadGithubBoard().then(boot).catch(function () {});
+    }, 60000);
   })
   .catch(() => {
-    document.getElementById("windowLabel").textContent = "Could not load public data.json";
+    loadGithubBoard()
+      .then((data) => {
+        boot(data);
+        document.getElementById("search").addEventListener("input", () => render(boardData));
+      })
+      .catch(() => {
+        document.getElementById("windowLabel").textContent = "Could not load public data.json";
+      });
   });
