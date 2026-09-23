@@ -1,9 +1,9 @@
 {
   "settings": {
-    "eventStartUnix": 1789876800,
+    "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T22:54:11.225Z"
+    "updatedAt": "2026-09-23T23:16:23.035Z"
   },
   "creators": [
     {
@@ -1120,7 +1120,17 @@
       "url": "https://www.tiktok.com/@ywnaosei/video/7688856421533879553",
       "title": "Tudo De Karasu.... ib:  #tiktok #bluelock #fyp #bluelockrivals #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii ",
       "postedAt": "2026-09-24T03:11",
-      "views": 210,
+      "views": 248,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "69dde3c5-1a69-46b2-bdb7-5a718e825551",
+      "creatorId": "4b0e9f25-bbe8-42ae-8e6d-954841f64801",
+      "url": "https://www.tiktok.com/@ywnaosei/video/7687449534061907216",
+      "title": "Marc Snuffy trailer blr #fyp #bluelock #bluelockrivals #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii #tiktok ",
+      "postedAt": "2026-09-20T08:10",
+      "views": 2314,
       "kind": "tiktok",
       "platform": "tiktok"
     }
