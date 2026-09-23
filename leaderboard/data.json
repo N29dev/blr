@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T15:15:24.490Z"
+    "updatedAt": "2026-09-23T15:18:32.955Z"
   },
   "creators": [
     {
@@ -81,6 +81,14 @@
       "youtubeChannelId": "UCZH9z6o18N_dAX0dkHxnYZw",
       "tiktok": "@chefiobloxianyt",
       "source": "pair"
+    },
+    {
+      "id": "41604f08-ee68-4b83-8c02-012ae3b2fd86",
+      "name": "VendiSpider",
+      "youtube": "https://www.youtube.com/@vendispiderguy",
+      "youtubeChannelId": "UCRaUdYSUOSXDSxZuHPbE3rQ",
+      "tiktok": "",
+      "source": "auto"
     }
   ],
   "videos": [
@@ -791,6 +799,26 @@
       "title": "(CODES) NEW SNUFFY MASTER CLASS | Blue Lock Rivals #roblox #bluelock #bluelockrivals #fyp #snuffy",
       "postedAt": "2026-09-20T04:55",
       "views": 4016,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "7fed2bf3-3cf7-4dc6-a7b9-2f59128fff86",
+      "creatorId": "41604f08-ee68-4b83-8c02-012ae3b2fd86",
+      "url": "https://www.youtube.com/shorts/XirZ0Etk_uc",
+      "title": "Diddy Rin Flow !😂#roblox #bluelock",
+      "postedAt": "2026-09-20T19:44",
+      "views": 182440,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "fecc794f-7f33-4778-8715-c69ef43c8380",
+      "creatorId": "41604f08-ee68-4b83-8c02-012ae3b2fd86",
+      "url": "https://www.youtube.com/shorts/IouVTfxmyo0",
+      "title": "Miku I'm a Good Boy! 😂#roblox #bluelock",
+      "postedAt": "2026-09-23T18:53",
+      "views": 4498,
       "kind": "youtube-short",
       "platform": "youtube"
     }
