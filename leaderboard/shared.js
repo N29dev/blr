@@ -82,10 +82,9 @@ function avatarHtml(creator, size) {
   const url = creatorAvatarUrl(creator);
   const initial = escapeHtml(creatorInitial(creator && creator.name));
   const img = url
-    ? `<img class="${cls}" src="${escapeHtml(url)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">`
+    ? `<img class="${cls}" src="${escapeHtml(url)}" alt="" referrerpolicy="no-referrer" loading="lazy" onload="this.classList.add('on')" onerror="this.remove()">`
     : "";
-  const showFallback = url ? "display:none" : "";
-  return `<span class="pfp-wrap">${img}<span class="pfp-fallback ${size === "sm" ? "sm" : ""}" style="${showFallback}">${initial}</span></span>`;
+  return `<span class="pfp-wrap">${img}<span class="pfp-fallback ${size === "sm" ? "sm" : ""}">${initial}</span></span>`;
 }
 
 function platformOf(video) {
