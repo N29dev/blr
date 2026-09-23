@@ -3,7 +3,7 @@
     "eventStartUnix": 1789876800,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-23T21:24:39.649Z"
+    "updatedAt": "2026-09-23T21:26:55.063Z"
   },
   "creators": [
     {
@@ -96,20 +96,6 @@
       "youtube": "https://www.youtube.com/@nythex_ny",
       "youtubeChannelId": "UCnI05zYAH5crnyKasg_LHCw",
       "tiktok": "",
-      "source": "auto"
-    },
-    {
-      "id": "3660b69d-a84f-45a8-b673-91041b85195d",
-      "name": "🐈‍⬛𝑬𝒍𝑮𝒂𝒕𝒐𝑩𝒓𝒐𝒔𝒕𝒀 ⚽",
-      "youtube": "",
-      "tiktok": "@brosty_oficial",
-      "source": "auto"
-    },
-    {
-      "id": "f8f13715-7f6a-473a-909e-79d08b9c8084",
-      "name": "eoninhokkj",
-      "youtube": "",
-      "tiktok": "@ywnaosei",
       "source": "auto"
     }
   ],
@@ -955,52 +941,12 @@
       "platform": "youtube"
     },
     {
-      "id": "d562c046-38a2-43b2-8103-1109fe2b2b36",
-      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
-      "url": "https://www.youtube.com/shorts/2rjLOzt27Jk",
-      "title": "Pov : The Art of Using Nel Bachira as Ego Gk! in Blue Lock Rivals #bluelock #bluelockrivals #roblox",
-      "postedAt": "2026-09-23T23:28",
-      "views": 1069,
-      "kind": "youtube-short",
-      "platform": "youtube"
-    },
-    {
-      "id": "bdb3a5c5-898a-4a07-91d3-456d2453e8b6",
-      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
-      "url": "https://www.youtube.com/shorts/Lcml87sfDbU",
-      "title": "Pov: That one Gk everyone Loves in Blue Lock Rivals! (Gk as a Passer) #blr #bluelockrivals #roblox",
-      "postedAt": "2026-09-24T01:24",
-      "views": 69,
-      "kind": "youtube-short",
-      "platform": "youtube"
-    },
-    {
-      "id": "fe41d697-51d1-47e9-931d-e0bcf6e1f147",
-      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
-      "url": "https://www.youtube.com/shorts/LAJb7NFcWzI",
-      "title": "Master Class Snuffy style New Leaks and Sneaks in Blue Lock Rivals! #bluelockrivals #blr #bluelock",
-      "postedAt": "2026-09-24T01:06",
-      "views": 258,
-      "kind": "youtube-short",
-      "platform": "youtube"
-    },
-    {
-      "id": "3967a7af-7a4c-4db4-9a83-d2383193659f",
-      "creatorId": "3660b69d-a84f-45a8-b673-91041b85195d",
-      "url": "https://www.tiktok.com/@brosty_oficial/video/7688110500801957136",
-      "title": "Guia De Ghostface! #bluelockrivals #blr #robloxfyp #fyp #ghostface",
-      "postedAt": "2026-09-22T02:56",
-      "views": 15744,
-      "kind": "tiktok",
-      "platform": "tiktok"
-    },
-    {
-      "id": "b9600377-6920-4fb9-8203-f94a8cfaf091",
-      "creatorId": "f8f13715-7f6a-473a-909e-79d08b9c8084",
-      "url": "https://www.tiktok.com/@ywnaosei/video/7688840752536833281",
-      "title": "eu deveria ter isso?  adm flow  ib: @Kamado  #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii #bluelockrivals #fyp #bluelock #tiktok ",
-      "postedAt": "2026-09-24T02:09",
-      "views": 87,
+      "id": "1b479059-89da-48fe-92a0-17e5b9d73ccc",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7687476494687538452",
+      "title": "Naoya style secret👀 #naoya #style #bocchi🔥🔥 #bluelockrivals #blr",
+      "postedAt": "2026-09-20T09:55",
+      "views": 84593,
       "kind": "tiktok",
       "platform": "tiktok"
     }
