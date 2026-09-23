@@ -8,10 +8,10 @@ function fmtNum(n) {
 
 function escapeHtml(s) {
   return String(s ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll("&", "&")
+    .replaceAll("<", "<")
+    .replaceAll(">", ">")
+    .replaceAll('"', """);
 }
 
 function formatFull(unix) {
@@ -57,6 +57,33 @@ function youtubeUrl(value) {
   if (value.startsWith("http")) return value;
   const h = value.startsWith("@") ? value : "@" + value;
   return `https://www.youtube.com/${h}`;
+}
+
+function creatorInitial(name) {
+  const t = String(name || "?").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  return (t[0] || "?").toUpperCase();
+}
+
+function creatorAvatarUrl(creator) {
+  if (!creator) return "";
+  if (creator.avatar) return creator.avatar;
+  const tt = tiktokHandle(creator.tiktok || "");
+  if (tt) return "https://unavatar.io/tiktok/" + encodeURIComponent(tt);
+  const yt = youtubeKey(creator.youtube || creator.channelHandle || "");
+  if (yt && !yt.startsWith("uc")) return "https://unavatar.io/youtube/" + encodeURIComponent(yt);
+  if (creator.youtubeChannelId) return "https://unavatar.io/youtube/" + encodeURIComponent(creator.youtubeChannelId);
+  return "";
+}
+
+function avatarHtml(creator, size) {
+  const cls = size === "sm" ? "pfp sm" : "pfp";
+  const url = creatorAvatarUrl(creator);
+  const initial = escapeHtml(creatorInitial(creator && creator.name));
+  const img = url
+    ? `<img class="${cls}" src="${escapeHtml(url)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">`
+    : "";
+  const showFallback = url ? "display:none" : "";
+  return `<span class="pfp-wrap">${img}<span class="pfp-fallback ${size === "sm" ? "sm" : ""}" style="${showFallback}">${initial}</span></span>`;
 }
 
 function platformOf(video) {
