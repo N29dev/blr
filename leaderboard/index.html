@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <div class="container">
@@ -20,50 +20,34 @@
       <p class="countdown" id="countdown">-</p>
       <p class="note" id="liveStatus">Loading live data...</p>
     </header>
-
     <p class="note">
       YouTube <strong>videos</strong> and YouTube <strong>Shorts</strong> both count as YouTube.
       <strong>Sum</strong> = TikTok + YouTube together.
       <strong>Max of two</strong> = only the stronger platform.
       Board B still needs 5,000 views and an in-window post time.
     </p>
-
     <p class="variant-label">Variant 1 · Sum of both platforms</p>
     <div class="boards">
       <section class="card">
-        <div class="card-head">
-          <h2>Views · sum</h2>
-          <span class="win">Top 5</span>
-        </div>
+        <div class="card-head"><h2>Views · sum</h2><span class="win">Top 5</span></div>
         <ol id="boardViewsSum" class="ranks"></ol>
       </section>
       <section class="card">
-        <div class="card-head">
-          <h2>Videos ≥ 5k · sum</h2>
-          <span class="win">Top 5</span>
-        </div>
+        <div class="card-head"><h2>Videos ≥ 5k · sum</h2><span class="win">Top 5</span></div>
         <ol id="boardVideosSum" class="ranks"></ol>
       </section>
     </div>
-
     <p class="variant-label">Variant 2 · Max of the two platforms</p>
     <div class="boards">
       <section class="card">
-        <div class="card-head">
-          <h2>Views · max</h2>
-          <span class="win">Top 5</span>
-        </div>
+        <div class="card-head"><h2>Views · max</h2><span class="win">Top 5</span></div>
         <ol id="boardViewsMax" class="ranks"></ol>
       </section>
       <section class="card">
-        <div class="card-head">
-          <h2>Videos ≥ 5k · max</h2>
-          <span class="win">Top 5</span>
-        </div>
+        <div class="card-head"><h2>Videos ≥ 5k · max</h2><span class="win">Top 5</span></div>
         <ol id="boardVideosMax" class="ranks"></ol>
       </section>
     </div>
-
     <section class="card">
       <div class="card-head">
         <h2>All creators</h2>
@@ -73,15 +57,7 @@
         <table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Creator</th>
-              <th>Links</th>
-              <th>YT views</th>
-              <th>TT views</th>
-              <th>Sum</th>
-              <th>Max</th>
-              <th>5k sum</th>
-              <th>5k max</th>
+              <th>#</th><th>Creator</th><th>Links</th><th>YT views</th><th>TT views</th><th>Sum</th><th>Max</th><th>5k sum</th><th>5k max</th>
             </tr>
           </thead>
           <tbody id="allTable"></tbody>
@@ -89,26 +65,19 @@
       </div>
       <p class="empty" id="emptyState">No creators published yet.</p>
     </section>
-
     <section class="card">
       <div class="card-head"><h2>Logged videos</h2></div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Posted</th>
-              <th>Creator</th>
-              <th>Type</th>
-              <th>Title</th>
-              <th>Views</th>
-              <th>Qualifies</th>
+              <th>Posted</th><th>Creator</th><th>Type</th><th>Title</th><th>Views</th><th>Qualifies</th>
             </tr>
           </thead>
           <tbody id="videoTable"></tbody>
         </table>
       </div>
     </section>
-
     <div class="links">
       <a class="link" href="/">BLR home</a>
       <a class="link" href="https://n29.kz">n29.kz</a>
@@ -116,7 +85,7 @@
     </div>
     <footer>2026 N29 · Public CC event board</footer>
   </div>
-  <script src="shared.js?v=4"></script>
-  <script src="public.js?v=4"></script>
+  <script src="shared.js?v=5"></script>
+  <script src="public.js?v=5"></script>
 </body>
 </html>
