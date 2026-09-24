@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-24T08:11:26.959Z"
+    "updatedAt": "2026-09-24T12:13:59.523Z"
   },
   "creators": [
     {
@@ -1221,6 +1221,56 @@
       "title": "NEL GAGAMARU TECH | BLUE LOCK RIVALS joking its no style tech #bluelockrivals #bluelock #blr #roblox #mambo #120fps #nelgagamaru #gk",
       "postedAt": "2026-09-24T03:33",
       "views": 9405,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "ace6e5cb-abf0-4c74-8f21-cfa11826fb98",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/Zz3M-_m7pIM",
+      "title": "New Snuffy Moves Looks Crazy in BLR 💀🔥 #bluelockrivals #bluelock #robloxshorts #blr",
+      "postedAt": "2026-09-24T10:48",
+      "views": 3995,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "f33e12f8-e281-485e-9b1f-785c892d6af2",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.youtube.com/shorts/BZrc786nq7w",
+      "title": "🐦‍🔥NEW MASTER SNUFFY… Blue Lock Rivals #roblox #bluelock #bluelockrivals #fyp",
+      "postedAt": "2026-09-24T15:19",
+      "views": 189,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "3ed5e694-fd25-4292-9a9f-74cf37d1b16f",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/xIQI_wvYRmc",
+      "title": "This New Snuffy Sneak looks Peak 💀🔥 #bluelock #bluelockrivals #blr #robloxshorts",
+      "postedAt": "2026-09-24T14:00",
+      "views": 3015,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "da7b2c24-5b38-41c7-8546-9df513abc30c",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.tiktok.com/@udaisoro/video/7689040610556169492",
+      "title": "NEW MASTER SNUFFY… #roblox #bluelock #bluelockrivals #fyp ",
+      "postedAt": "2026-09-24T15:04",
+      "views": 328,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "e575977b-a792-429a-baa4-0471519ea3cc",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7688974694774541599",
+      "title": "Blue Lock Rivals SNUFFY Major Sneak Peek 👀 #bluelock #bluelockrivals #anime #roblox #fyp ",
+      "postedAt": "2026-09-24T10:49",
+      "views": 8985,
       "kind": "tiktok",
       "platform": "tiktok"
     }
