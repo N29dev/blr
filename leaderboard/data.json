@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-24T12:16:37.877Z"
+    "updatedAt": "2026-09-24T18:10:54.384Z"
   },
   "creators": [
     {
@@ -140,6 +140,14 @@
       "name": "eoninhokkj",
       "youtube": "",
       "tiktok": "@ywnaosei",
+      "source": "auto"
+    },
+    {
+      "id": "04ae30ae-5d95-42b0-b3b0-72e72403bfe5",
+      "name": "Pofanuu",
+      "youtube": "https://www.youtube.com/@pofanuu",
+      "youtubeChannelId": "UCndUwKvCjfixl0eMDhZjUhQ",
+      "tiktok": "",
       "source": "auto"
     }
   ],
@@ -1221,6 +1229,166 @@
       "title": "NEL GAGAMARU TECH | BLUE LOCK RIVALS joking its no style tech #bluelockrivals #bluelock #blr #roblox #mambo #120fps #nelgagamaru #gk",
       "postedAt": "2026-09-24T03:33",
       "views": 11430,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "59720222-0be7-4c5d-963c-004440015d63",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/Zz3M-_m7pIM",
+      "title": "New Snuffy Moves Looks Crazy in BLR 💀🔥 #bluelockrivals #bluelock #robloxshorts #blr",
+      "postedAt": "2026-09-24T10:48",
+      "views": 9071,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "150054a0-619a-44a4-98cc-1c7750a04881",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.youtube.com/shorts/BZrc786nq7w",
+      "title": "🐦‍🔥NEW MASTER SNUFFY… Blue Lock Rivals #roblox #bluelock #bluelockrivals #fyp",
+      "postedAt": "2026-09-24T15:19",
+      "views": 1474,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "159d3767-097a-43f4-ae5b-f3b5653d8bb4",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/xIQI_wvYRmc",
+      "title": "This New Snuffy Sneak looks Peak 💀🔥 #bluelock #bluelockrivals #blr #robloxshorts",
+      "postedAt": "2026-09-24T14:00",
+      "views": 7389,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "5284814f-b22b-4e3b-889e-f3d86d62f6e4",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/BpRx0Ib4fRc",
+      "title": "Egoist GK as MC Nagi in BLR??!! 😈🔥#blr #bluelockrivals #bluelock #robloxshorts",
+      "postedAt": "2026-09-24T17:45",
+      "views": 11209,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "fad7c72e-308c-4ab2-8006-49bd827fb500",
+      "creatorId": "98eea52d-d2fd-463d-9320-88d853be9ae9",
+      "url": "https://www.youtube.com/shorts/bdnwMLkYZqw",
+      "title": "\"I GOT IT\" Nice Shot Bro 😭🥀 #bluelock #bluelockrivals #blr #robloxshorts",
+      "postedAt": "2026-09-24T20:45",
+      "views": 3451,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "be7d9de6-8dbf-4b4d-b068-66ea1acb7366",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/QPLAo1GG0xM",
+      "title": "BLUE LOCK RIVALS NEW SNUFFY SNEAKS! 3 NEW LEAKS 👀🔥 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-24T21:08",
+      "views": 1027,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "5ce14d1a-f59b-40df-bb82-970782af1e62",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/CG1c0N_RNiM",
+      "title": "Egoist GK as the Elf Emperor Kaiser?!?👀👑#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-24T04:30",
+      "views": 12893,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "50ee4994-4a94-4893-adc1-d4784ec774cd",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/NexlBFL7lao",
+      "title": "BLR: Snuffy's First move Sneak is here!!🔥👀#bluelockrivals #fluxyy #blr #bluelock #friends #sneakpeek",
+      "postedAt": "2026-09-24T16:30",
+      "views": 1497,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "97776266-71a4-4ff2-929a-a5e43d47d354",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/biYvG1zCmYY",
+      "title": "BLR: Another Sneak for Snuffy is here🔥👀#bluelockrivals #fluxyy #blr #bluelock #friends #sneakpeek",
+      "postedAt": "2026-09-24T17:30",
+      "views": 1199,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "1953117f-d6ea-4be7-b589-368bb6b54e42",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/-15I0PvYa44",
+      "title": "POV: Scoring skills imagination vs Reality💔🥀#bluelockrivals #fluxyy #blr #bluelock #funny #relatable",
+      "postedAt": "2026-09-24T21:15",
+      "views": 455,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "7706d7a8-273e-48ad-9c00-aca7d93b832f",
+      "creatorId": "04ae30ae-5d95-42b0-b3b0-72e72403bfe5",
+      "url": "https://www.youtube.com/watch?v=qJYBVJXiHUU",
+      "title": "LOKI E LAVINHO NERFADOS!!! na nova UPDATE do Blue Lock Rivals",
+      "postedAt": "2026-09-22T05:13",
+      "views": 12699,
+      "kind": "youtube-video",
+      "platform": "youtube"
+    },
+    {
+      "id": "baa7d386-7bf7-4516-a79c-d0cbbd109c58",
+      "creatorId": "c97999a0-43db-4f1e-8870-d702f4cd701f",
+      "url": "https://www.tiktok.com/@udaisoro/video/7689040610556169492",
+      "title": "NEW MASTER SNUFFY… #roblox #bluelock #bluelockrivals #fyp ",
+      "postedAt": "2026-09-24T15:04",
+      "views": 592,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "8fa0fcb8-5da1-40ea-ba6c-74384088d5ec",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7688974694774541599",
+      "title": "Blue Lock Rivals SNUFFY Major Sneak Peek 👀 #bluelock #bluelockrivals #anime #roblox #fyp ",
+      "postedAt": "2026-09-24T10:49",
+      "views": 14826,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "99286c39-c44c-417a-97fa-face0f5ec486",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7689135047932267790",
+      "title": "BLUE LOCK RIVALS NEW SNUFFY SNEAKS! 3 NEW LEAKS 👀🔥 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-24T21:11",
+      "views": 1058,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "8282fb86-7349-4879-b1f1-0607869a8bae",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7689071995840941343",
+      "title": "Blue Lock Rivals prime kaiser Impact is back 😭✌️ #bluelock #bluelockrivals #anime #roblox #fyp ",
+      "postedAt": "2026-09-24T17:06",
+      "views": 5242,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "dd06df07-ce77-4214-bafa-ce989d4534bd",
+      "creatorId": "b9a24035-e9eb-45ea-b6c5-626b5d497871",
+      "url": "https://www.tiktok.com/@0nlyhunger/video/7689021485222055189",
+      "title": "SNUFFY SNEAK PEAK | BLUE LOCK RIVALS #snuffymarc #snuffy #bluelockrivals #bluelock #blr #editingnews ・ Upload Method → @editingnews.com​",
+      "postedAt": "2026-09-24T13:50",
+      "views": 18525,
       "kind": "tiktok",
       "platform": "tiktok"
     }
