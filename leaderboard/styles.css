@@ -32,7 +32,32 @@ header { text-align: center; margin-bottom: 22px; }
 h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.04em; margin-bottom: 6px; }
 .subtitle, .window, .note { color: var(--muted); }
 .window { margin-top: 8px; font-size: .95rem; }
-.countdown { margin-top: 6px; font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--accent); }
+.window.utc { margin-top: 2px; font-size: .8rem; opacity: .8; }
+.countdown { margin-top: 8px; font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+.time-bar {
+  width: min(460px, 92%);
+  height: 8px;
+  margin: 10px auto 0;
+  background: #12182b;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.time-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #5865F2, #38bdf8);
+  box-shadow: 0 0 12px rgba(56, 189, 248, .35);
+  transition: width .25s linear;
+}
+.time-bar[data-phase="before"] .time-bar-fill { width: 0 !important; }
+.time-bar[data-phase="after"] .time-bar-fill { background: #64748b; box-shadow: none; }
+.time-bar-meta {
+  margin-top: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
 .note { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin: 16px 0 20px; font-size: .92rem; }
 .variant-label {
   margin: 8px 0 8px;
