@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-25T13:22:31.230Z"
+    "updatedAt": "2026-09-25T13:37:09.938Z"
   },
   "creators": [
     {
@@ -1461,6 +1461,26 @@
       "views": 768,
       "kind": "tiktok",
       "platform": "tiktok"
+    },
+    {
+      "id": "71efb135-e8d1-4a23-a5df-e6f9a7133534",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/J-FCnAI48UM",
+      "title": "What the exploiters tryna imitate nowadays🦎💀#bluelockrivals #fluxyy #blr #bluelock #memes #relatable",
+      "postedAt": "2026-09-25T05:30Z",
+      "views": 2691,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "f0f32469-9ab5-4be0-b744-d6905c5ca466",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/jcELT_sOATA",
+      "title": "Score without moving Challenge in BLR?!?💨🤔#bluelockrivals #fluxyy #blr #bluelock #memes #challenge",
+      "postedAt": "2026-09-25T13:30Z",
+      "views": 4,
+      "kind": "youtube-short",
+      "platform": "youtube"
     }
   ],
   "pairs": [
