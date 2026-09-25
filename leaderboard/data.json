@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-25T12:44:38.623Z"
+    "updatedAt": "2026-09-25T13:01:34.139Z"
   },
   "creators": [
     {
@@ -1399,6 +1399,26 @@
       "title": "Master Class Snuffy style New Leaks and Sneaks in Blue Lock Rivals! #bluelockrivals #blr #bluelock",
       "postedAt": "2026-09-25T00:21",
       "views": 2813,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "eb871165-1f27-4713-8cf7-01baa4abb99e",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/Lcml87sfDbU",
+      "title": "Pov: That one Gk everyone Loves in Blue Lock Rivals! (Gk as a Passer) #blr #bluelockrivals #roblox",
+      "postedAt": "2026-09-23T20:24Z",
+      "views": 7660,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "76fb1743-9fc8-4ce0-8ad1-81d6c535973b",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/cTBikhnnyFM",
+      "title": "Master Class Snuffy style New Leaks and Sneaks in Blue Lock Rivals! #bluelockrivals #blr #bluelock",
+      "postedAt": "2026-09-24T19:59Z",
+      "views": 7656,
       "kind": "youtube-short",
       "platform": "youtube"
     }
