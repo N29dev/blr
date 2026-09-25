@@ -16,11 +16,90 @@ function fillBoard(id, rows, primaryFn, secondaryFn, scoreFn) {
     : `<li class="empty">Waiting for creators.</li>`;
 }
 
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function formatLocal(unix) {
+  return new Date(Number(unix) * 1000).toLocaleString(undefined, {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+}
+
+function formatUtc(unix) {
+  return new Date(Number(unix) * 1000).toLocaleString("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+    timeZoneName: "short",
+  });
+}
+
+function humanClock(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (d > 0) return d + "d " + pad2(h) + "h " + pad2(m) + "m " + pad2(sec) + "s";
+  return pad2(h) + "h " + pad2(m) + "m " + pad2(sec) + "s";
+}
+
+function paintClock(settings) {
+  if (!settings) return;
+  const start = Number(settings.eventStartUnix) * 1000;
+  const end = Number(settings.eventEndUnix) * 1000;
+  const now = Date.now();
+  const total = Math.max(1, end - start);
+  const win = document.getElementById("windowLabel");
+  const utc = document.getElementById("windowUtc");
+  const cd = document.getElementById("countdown");
+  const fill = document.getElementById("timeBarFill");
+  const bar = document.getElementById("timeBar");
+  const meta = document.getElementById("timeBarPct");
+  if (win) win.textContent = "Your time: " + formatLocal(settings.eventStartUnix) + "  \u2192  " + formatLocal(settings.eventEndUnix);
+  if (utc) utc.textContent = "UTC: " + formatUtc(settings.eventStartUnix) + "  \u2192  " + formatUtc(settings.eventEndUnix);
+
+  let label;
+  let pct;
+  let phase;
+  if (now < start) {
+    phase = "before";
+    label = "Starts in " + humanClock(start - now);
+    pct = 0;
+  } else if (now >= end) {
+    phase = "after";
+    label = "Event ended";
+    pct = 100;
+  } else {
+    phase = "live";
+    label = "Ends in " + humanClock(end - now);
+    pct = ((now - start) / total) * 100;
+  }
+  if (cd) cd.textContent = label;
+  if (fill) fill.style.width = Math.min(100, Math.max(0, pct)).toFixed(3) + "%";
+  if (bar) bar.dataset.phase = phase;
+  if (meta) {
+    meta.textContent = phase === "before"
+      ? "Not started"
+      : phase === "after"
+        ? "100% elapsed"
+        : pct.toFixed(1) + "% elapsed";
+  }
+}
+
 function render(data) {
   const s = data.settings;
-  document.getElementById("windowLabel").textContent =
-    formatFull(s.eventStartUnix) + "  ->  " + formatFull(s.eventEndUnix);
-  document.getElementById("countdown").textContent = countdownText(s.eventStartUnix, s.eventEndUnix);
+  paintClock(s);
 
   const byViewsSum = ranked(data.creators, data.videos, s, "viewsSum");
   const byViewsMax = ranked(data.creators, data.videos, s, "viewsMax");
@@ -103,10 +182,8 @@ loadPagesBoard()
     boot(data);
     document.getElementById("search").addEventListener("input", () => render(boardData));
     setInterval(() => {
-      if (!boardData) return;
-      document.getElementById("countdown").textContent =
-        countdownText(boardData.settings.eventStartUnix, boardData.settings.eventEndUnix);
-    }, 30000);
+      if (boardData) paintClock(boardData.settings);
+    }, 250);
     loadGithubBoard().then(boot).catch(function () {});
     setInterval(() => {
       loadGithubBoard().then(boot).catch(function () {});
@@ -117,6 +194,9 @@ loadPagesBoard()
       .then((data) => {
         boot(data);
         document.getElementById("search").addEventListener("input", () => render(boardData));
+        setInterval(() => {
+          if (boardData) paintClock(boardData.settings);
+        }, 250);
       })
       .catch(() => {
         document.getElementById("windowLabel").textContent = "Could not load public data.json";
