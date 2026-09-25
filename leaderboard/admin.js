@@ -40,6 +40,11 @@ function rowButtons(c) {
       </div>`;
 }
 
+function postedLabel(iso) {
+  if (typeof formatPosted === "function") return formatPosted(iso);
+  return String(iso || "").replace("T", " ");
+}
+
 function renderAdmin() {
   const pairs = (state.creators || []).filter((c) => c.source === "pair" || (c.youtube && c.tiktok));
   const autos = (state.creators || []).filter((c) => !pairs.some((p) => p.id === c.id));
@@ -75,9 +80,10 @@ function renderAdmin() {
       const c = state.creators.find((x) => x.id === v.creatorId);
       const kind = kindLabel(v.kind || detectKind(v.url, v.platform));
       return `<tr>
-        <td>${escapeHtml((v.postedAt || "").replace("T", " "))}</td>
+        <td>${escapeHtml(postedLabel(v.postedAt))}</td>
         <td>${escapeHtml((c && c.name) || "-")}</td>
         <td><span class="pill ${kind.cls}">${kind.text}</span></td>
+        <td><a href="${escapeHtml(v.url || "#")}" target="_blank" rel="noopener">${escapeHtml(v.title || v.url || "")}</a></td>
         <td class="metric">${fmtNum(v.views)}</td>
         <td><button class="btn danger" data-del-video="${v.id}">X</button></td>
       </tr>`;
