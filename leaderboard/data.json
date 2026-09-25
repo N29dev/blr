@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-25T12:26:00.049Z"
+    "updatedAt": "2026-09-25T12:42:57.424Z"
   },
   "creators": [
     {
@@ -1058,7 +1058,7 @@
       "url": "https://www.youtube.com/shorts/2rjLOzt27Jk",
       "title": "Pov : The Art of Using Nel Bachira as Ego Gk! in Blue Lock Rivals #bluelock #bluelockrivals #roblox",
       "postedAt": "2026-09-23T23:28",
-      "views": 19718,
+      "views": 20001,
       "kind": "youtube-short",
       "platform": "youtube"
     },
@@ -1399,6 +1399,26 @@
       "title": "Master Class Snuffy style New Leaks and Sneaks in Blue Lock Rivals! #bluelockrivals #blr #bluelock",
       "postedAt": "2026-09-25T00:21",
       "views": 2813,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "c69cda98-6c73-47f4-a293-1d68800f89cc",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/LAJb7NFcWzI",
+      "title": "Master Class Snuffy style New Leaks and Sneaks in Blue Lock Rivals! #bluelockrivals #blr #bluelock",
+      "postedAt": "2026-09-24T01:06",
+      "views": 13641,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "1da83b47-bfd6-43b0-88fb-6ffb28dba1a9",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/cTBikhnnyFM",
+      "title": "Master Class Snuffy style New Leaks and Sneaks in Blue Lock Rivals! #bluelockrivals #blr #bluelock",
+      "postedAt": "2026-09-25T00:59",
+      "views": 7488,
       "kind": "youtube-short",
       "platform": "youtube"
     }
