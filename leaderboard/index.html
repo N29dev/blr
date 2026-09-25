@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=12" />
+  <link rel="stylesheet" href="styles.css?v=13" />
 </head>
 <body>
   <div class="container">
@@ -28,6 +28,7 @@
     <p class="note">
       Official window is <strong>20 Sep 2026 00:00 UTC</strong> → <strong>26 Sep 2026 15:59 UTC</strong>.
       Times above convert to your device timezone.
+      Logged video times are shown in <strong>UTC</strong>.
       YouTube <strong>videos</strong> and YouTube <strong>Shorts</strong> both count as YouTube.
       <strong>Sum</strong> = TikTok + YouTube together.
       <strong>Max of two</strong> = only the stronger platform.
@@ -77,12 +78,12 @@
         <h2>Logged videos</h2>
         <input id="videoSearch" class="search" placeholder="Search name, title, TikTok, YouTube..." />
       </div>
-      <p class="note" style="margin-top:0">Search your name. <strong>Counts</strong> = in window and ≥ 5k. Otherwise it shows why it does not score.</p>
+      <p class="note" style="margin-top:0">Search your name. Posted column is UTC. <strong>Counts</strong> = in window and ≥ 5k.</p>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Posted</th><th>Creator</th><th>Type</th><th>Title</th><th>Views</th><th>Why</th>
+              <th>Posted (UTC)</th><th>Creator</th><th>Type</th><th>Title</th><th>Views</th><th>Why</th>
             </tr>
           </thead>
           <tbody id="videoTable"></tbody>
@@ -97,7 +98,8 @@
     </div>
     <footer>2026 N29 · Public CC event board</footer>
   </div>
-  <script src="shared.js?v=12"></script>
-  <script src="public.js?v=12"></script>
+  <script src="shared.js?v=13"></script>
+  <script src="public.js?v=13"></script>
+  <script src="posted-format.js?v=13"></script>
 </body>
 </html>
