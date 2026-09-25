@@ -17,10 +17,14 @@
     return (hit && hit.name) || id || "unknown";
   }
 
+  function whenOf(item) {
+    if (typeof formatPosted === "function") return formatPosted(item && item.postedAt);
+    return item && item.postedAt ? String(item.postedAt).replace("T", " ") : "no-date";
+  }
+
   function lineFor(item, name, tag) {
     var views = Number((item && item.views) || 0).toLocaleString("en-US");
-    var when = item && item.postedAt ? String(item.postedAt).replace("T", " ") : "no-date";
-    return tag + " " + name + " | " + kindName(item) + " | " + views + " views | " + when + " | " + shortTitle(item);
+    return tag + " " + name + " | " + kindName(item) + " | " + views + " views | " + whenOf(item) + " | " + shortTitle(item);
   }
 
   function log(level, msg) {
@@ -72,7 +76,7 @@
         var kind = kindLabel(v.kind || detectKind(v.url, v.platform));
         var title = escapeHtml(v.title || v.url || "");
         return "<tr>" +
-          "<td>" + escapeHtml(String(v.postedAt || "").replace("T", " ")) + "</td>" +
+          "<td>" + escapeHtml(whenOf(v)) + "</td>" +
           "<td>" + escapeHtml((c && c.name) || "-") + "</td>" +
           "<td><span class=\"pill " + kind.cls + "\">" + kind.text + "</span></td>" +
           "<td><a href=\"" + escapeHtml(v.url || "#") + "\" target=\"_blank\" rel=\"noopener\">" + title + "</a></td>" +
