@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-25T23:06:36.901Z"
+    "updatedAt": "2026-09-25T23:07:55.800Z"
   },
   "creators": [
     {
@@ -1678,7 +1678,17 @@
       "url": "https://www.tiktok.com/@junkior_blr/video/7689244486488149268",
       "title": "MARCA GOL USANDO A NAGI CON ESTOS 3 TRUCOS!! 💀🥅 #bluelockrivals #bluelock #roblox ",
       "postedAt": "2026-09-24T23:15Z",
-      "views": 10667,
+      "views": 10673,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "1d5f85bf-5f38-48fb-a6e2-c431b405011e",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7689527149899844885",
+      "title": "EL MAYOR SECRETO DE BLUE LOCK RIVALS! 🪏🙀 #roblox #bluelockrivals #bluelock ",
+      "postedAt": "2026-09-25T17:32Z",
+      "views": 19387,
       "kind": "tiktok",
       "platform": "tiktok"
     }
