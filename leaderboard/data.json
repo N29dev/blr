@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-25T13:01:34.139Z"
+    "updatedAt": "2026-09-25T13:22:31.230Z"
   },
   "creators": [
     {
@@ -1421,6 +1421,46 @@
       "views": 7656,
       "kind": "youtube-short",
       "platform": "youtube"
+    },
+    {
+      "id": "2524945f-526d-4919-8ab6-7a95d8d7c4f0",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/hGEEEdT3-uc",
+      "title": "Being an egoist gk as firework bachira..💀🔥 #bluelockrivals #bluelock #roblox",
+      "postedAt": "2026-09-25T10:30Z",
+      "views": 1005,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "b083b16c-bc79-49d4-912a-d2d795b87400",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7689175313372433667",
+      "title": "being an egoist gk as reworked sae..💀🔥 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-24T18:47Z",
+      "views": 17931,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "c3b6af46-bd6e-4af2-8fb9-25f417bae79c",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/IuRQ7EI27lo",
+      "title": "Egoist GK using Godspeed + Krampus MV?!?👀💨#bluelockrivals #fluxyy #blr #bluelock #meme #memes #funny",
+      "postedAt": "2026-09-24T23:30Z",
+      "views": 2042,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "934bdc65-7e92-472e-87e2-a1fdcb8bb54e",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7689422409379892483",
+      "title": "Being an egoist gk as reworked rin..💀🔥 #bluelockrivals #bluelock #roblox ",
+      "postedAt": "2026-09-25T10:46Z",
+      "views": 768,
+      "kind": "tiktok",
+      "platform": "tiktok"
     }
   ],
   "pairs": [
