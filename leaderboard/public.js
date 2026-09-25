@@ -97,6 +97,16 @@ function paintClock(settings) {
   }
 }
 
+function qualifyInfo(video, settings) {
+  const inside = inWindow(video.postedAt, settings.eventStartUnix, settings.eventEndUnix);
+  const enough = Number(video.views) >= Number(settings.minViews);
+  if (inside && enough) return { ok: true, text: "Counts", cls: "ok" };
+  const why = [];
+  if (!inside) why.push("outside window");
+  if (!enough) why.push("under 5k");
+  return { ok: false, text: why.join(" + ") || "No", cls: "no" };
+}
+
 function render(data) {
   const s = data.settings;
   paintClock(s);
@@ -136,18 +146,33 @@ function render(data) {
     "</tr>";
   }).join("");
 
-  const vids = [...data.videos].sort((a, b) => String(b.postedAt).localeCompare(String(a.postedAt)));
+  const vq = (document.getElementById("videoSearch") && document.getElementById("videoSearch").value || "").toLowerCase().trim();
+  const vids = [...data.videos].sort((a, b) => String(b.postedAt).localeCompare(String(a.postedAt))).filter((v) => {
+    if (!vq) return true;
+    const c = data.creators.find((x) => x.id === v.creatorId);
+    const kind = kindLabel(v.kind || detectKind(v.url, v.platform));
+    const why = qualifyInfo(v, s);
+    const blob = [c && c.name, v.title, v.url, kind.text, why.text, v.postedAt].join(" ").toLowerCase();
+    return blob.indexOf(vq) >= 0;
+  });
+  const videoEmpty = document.getElementById("videoEmpty");
+  if (videoEmpty) {
+    videoEmpty.style.display = vids.length ? "none" : "block";
+    videoEmpty.textContent = vq
+      ? "No logged videos match \"" + vq + "\". If it is missing entirely, it was not parsed/published yet."
+      : "No videos logged yet.";
+  }
   document.getElementById("videoTable").innerHTML = vids.map((v) => {
     const c = data.creators.find((x) => x.id === v.creatorId);
     const kind = kindLabel(v.kind || detectKind(v.url, v.platform));
-    const ok = inWindow(v.postedAt, s.eventStartUnix, s.eventEndUnix) && Number(v.views) >= Number(s.minViews);
+    const why = qualifyInfo(v, s);
     return "<tr>" +
       "<td>" + escapeHtml((v.postedAt || "").replace("T", " ")) + "</td>" +
       "<td>" + escapeHtml((c && c.name) || "-") + "</td>" +
       "<td><span class=\"pill " + kind.cls + "\">" + kind.text + "</span></td>" +
       "<td><a href=\"" + escapeHtml(v.url) + "\" target=\"_blank\" rel=\"noopener\">" + escapeHtml(v.title || v.url) + "</a></td>" +
       "<td class=\"metric\">" + fmtNum(v.views) + "</td>" +
-      "<td>" + (ok ? "<span class=\"pill ok\">Yes</span>" : "<span class=\"pill no\">No</span>") + "</td>" +
+      "<td><span class=\"pill " + why.cls + "\">" + escapeHtml(why.text) + "</span></td>" +
     "</tr>";
   }).join("");
 }
@@ -164,6 +189,19 @@ function setLiveStatus(data) {
 
 let boardData = null;
 
+function bindFilters() {
+  const search = document.getElementById("search");
+  const videoSearch = document.getElementById("videoSearch");
+  if (search && !search.dataset.bound) {
+    search.dataset.bound = "1";
+    search.addEventListener("input", function () { if (boardData) render(boardData); });
+  }
+  if (videoSearch && !videoSearch.dataset.bound) {
+    videoSearch.dataset.bound = "1";
+    videoSearch.addEventListener("input", function () { if (boardData) render(boardData); });
+  }
+}
+
 function boot(data) {
   if (!data) return;
   if (boardData && boardData.settings && data.settings) {
@@ -175,12 +213,12 @@ function boot(data) {
   boardData = data;
   render(data);
   setLiveStatus(data);
+  bindFilters();
 }
 
 loadPagesBoard()
   .then((data) => {
     boot(data);
-    document.getElementById("search").addEventListener("input", () => render(boardData));
     setInterval(() => {
       if (boardData) paintClock(boardData.settings);
     }, 250);
@@ -193,7 +231,6 @@ loadPagesBoard()
     loadGithubBoard()
       .then((data) => {
         boot(data);
-        document.getElementById("search").addEventListener("input", () => render(boardData));
         setInterval(() => {
           if (boardData) paintClock(boardData.settings);
         }, 250);
