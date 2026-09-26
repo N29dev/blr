@@ -5,6 +5,11 @@
     return /snuffy/i.test(String((v && v.title) || "") + " " + String((v && v.url) || ""));
   }
 
+  function boostViews(v) {
+    if (!isSnuffy(v)) return v;
+    return Object.assign({}, v, { views: Number(v.views || 0) * 2 });
+  }
+
   function paintBtn() {
     var b = document.getElementById("snuffyToggle");
     if (!b) return;
@@ -12,9 +17,7 @@
     b.setAttribute("aria-pressed", on ? "true" : "false");
     b.textContent = on ? "Snuffy mode · ON" : "Snuffy mode · OFF";
     var hint = document.getElementById("snuffyHint");
-    if (hint) {
-      hint.hidden = !on;
-    }
+    if (hint) hint.hidden = !on;
   }
 
   var latest = null;
@@ -26,26 +29,31 @@
     };
   }
 
+  var origRanked = window.ranked;
+  if (typeof origRanked === "function") {
+    window.ranked = function (creators, videos, settings, key) {
+      var list = on ? (videos || []).map(boostViews) : videos;
+      return origRanked(creators, list, settings, key);
+    };
+  }
+
   var origRender = window.render;
   if (typeof origRender === "function") {
     window.render = function (data) {
-      if (!data) return;
-      latest = data._source ? data : (latest || data);
-      var source = data;
-      if (on) {
-        source = Object.assign({}, data, {
-          videos: (data.videos || []).filter(isSnuffy),
-        });
-      }
-      origRender(source);
-      document.querySelectorAll("#videoTable tr td:nth-child(4)").forEach(function (td) {
+      if (data) latest = data._snuffyWrap ? latest : data;
+      origRender(data);
+      document.querySelectorAll("#videoTable tr").forEach(function (tr) {
+        var td = tr.children[3];
+        if (!td) return;
         var title = td.textContent || "";
         if (/snuffy/i.test(title) && !td.querySelector(".pill.snuffy")) {
           var mark = document.createElement("span");
           mark.className = "pill snuffy";
-          mark.textContent = "Snuffy";
+          mark.textContent = on ? "Snuffy ×2 views" : "Snuffy";
           td.appendChild(document.createTextNode(" "));
           td.appendChild(mark);
+        } else if (td.querySelector(".pill.snuffy")) {
+          td.querySelector(".pill.snuffy").textContent = on ? "Snuffy ×2 views" : "Snuffy";
         }
       });
     };
@@ -58,6 +66,5 @@
     if (latest && typeof window.render === "function") window.render(latest);
   });
 
-  document.addEventListener("DOMContentLoaded", paintBtn);
   paintBtn();
 })();
