@@ -1,5 +1,6 @@
 (function () {
   var END = 1790481540;
+
   var origNorm = window.normalizeBoard;
   if (typeof origNorm === "function") {
     window.normalizeBoard = function (data, pairsDoc, source) {
@@ -8,6 +9,7 @@
       return out;
     };
   }
+
   var origInEvent = window.inEvent;
   if (typeof origInEvent === "function") {
     window.inEvent = function (item, windowOnly) {
@@ -19,11 +21,21 @@
       return unix >= EVENT_START && unix <= END;
     };
   }
+
   var origBoot = window.boot;
   if (typeof origBoot === "function") {
     window.boot = function (data) {
       if (data && data.settings) data.settings.eventEndUnix = END;
       origBoot(data);
+    };
+  }
+
+  var origPayload = window.payload;
+  if (typeof origPayload === "function") {
+    window.payload = function () {
+      var p = origPayload();
+      if (p && p.settings) p.settings.eventEndUnix = END;
+      return p;
     };
   }
 })();
