@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-26T15:16:31.282Z"
+    "updatedAt": "2026-09-26T15:30:29.719Z"
   },
   "creators": [
     {
@@ -1107,8 +1107,8 @@
       "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
       "url": "https://www.tiktok.com/@junkior_blr/video/7688176236895423765",
       "title": "¿CUÁL ES EL FLUJO MAS POTENTE DE BLR? 🌹🐇 #bluelockrivals #bluelock #roblox ",
-      "postedAt": "2026-09-22T07:10",
-      "views": 17933,
+      "postedAt": "2026-09-22T02:10Z",
+      "views": 17987,
       "kind": "tiktok",
       "platform": "tiktok"
     },
@@ -1117,8 +1117,8 @@
       "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
       "url": "https://www.tiktok.com/@junkior_blr/video/7687774097492675860",
       "title": "¿SKELETON NAGI O MC NAGI? 🍔🆚💀 #bluelockrivals #roblox #bluelock ",
-      "postedAt": "2026-09-21T05:10",
-      "views": 19787,
+      "postedAt": "2026-09-21T00:10Z",
+      "views": 19829,
       "kind": "tiktok",
       "platform": "tiktok"
     },
@@ -1678,7 +1678,7 @@
       "url": "https://www.tiktok.com/@junkior_blr/video/7689244486488149268",
       "title": "MARCA GOL USANDO A NAGI CON ESTOS 3 TRUCOS!! 💀🥅 #bluelockrivals #bluelock #roblox ",
       "postedAt": "2026-09-24T23:15Z",
-      "views": 12030,
+      "views": 12345,
       "kind": "tiktok",
       "platform": "tiktok"
     },
@@ -1911,6 +1911,46 @@
       "views": 21911,
       "kind": "youtube-short",
       "platform": "youtube"
+    },
+    {
+      "id": "00db84c3-e4d5-46f3-910d-b3ba2bce3380",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7687434647281716501",
+      "title": "La nueva actualización ya está aquí!! 🙀🆕 #bluelockrivals #roblox #bluelock ",
+      "postedAt": "2026-09-20T02:12Z",
+      "views": 24987,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "7f102fe4-4c8c-4fcc-9bb1-bd44fe6cb726",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7688854700313136405",
+      "title": "¡¡DALE POTENCIA AL IMPACTO KAISER CON ESTOS 3 TRUCOS!!🌹⚽ #roblox #bluelockrivals #bluelock ",
+      "postedAt": "2026-09-23T22:03Z",
+      "views": 18853,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "3be90730-e69d-4b22-ba27-f7f72d2a3d54",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7689527149899844885",
+      "title": "EL MAYOR SECRETO DE BLUE LOCK RIVALS! 🪏🙀 #roblox #bluelockrivals #bluelock ",
+      "postedAt": "2026-09-25T17:32Z",
+      "views": 32122,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "089b51a3-08d8-49c9-aa96-86c1604bc605",
+      "creatorId": "b694ca57-0f41-49c6-99e1-524bd1aab102",
+      "url": "https://www.tiktok.com/@junkior_blr/video/7689613960487734549",
+      "title": "SNUFFY LLEGA MAÑANA!! 🥅🐦‍🔥  #roblox #bluelockrivals #bluelock ",
+      "postedAt": "2026-09-25T23:09Z",
+      "views": 31810,
+      "kind": "tiktok",
+      "platform": "tiktok"
     }
   ],
   "pairs": [
