@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-26T13:54:02.904Z"
+    "updatedAt": "2026-09-26T15:16:31.282Z"
   },
   "creators": [
     {
@@ -1889,6 +1889,26 @@
       "title": "Chrollo's LAST Style... | Blue Lock Rivals",
       "postedAt": "2026-09-25T11:50Z",
       "views": 87815,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "816293dc-b43a-4698-bca5-400c5d54af82",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/LWvBXFdbghg",
+      "title": "BAROU NEVER DID THIS 😭🔥 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-25T11:00Z",
+      "views": 13188,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "83dd5fcd-e1c4-42b4-bbc2-ace552802335",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/0BiMYLSxKc0",
+      "title": "KARASU AUTO GOAL TECH! | Blue Lock Rivals #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-24T22:40Z",
+      "views": 21911,
       "kind": "youtube-short",
       "platform": "youtube"
     }
