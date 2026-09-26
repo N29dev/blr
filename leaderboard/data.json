@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790438340,
     "minViews": 5000,
-    "updatedAt": "2026-09-26T12:36:31.642Z"
+    "updatedAt": "2026-09-26T12:58:12.584Z"
   },
   "creators": [
     {
@@ -1026,9 +1026,9 @@
       "id": "29936f43-85fc-41df-b8eb-12033a579fed",
       "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
       "url": "https://www.youtube.com/shorts/fkbVYvFrJvo",
-      "title": "Loki and Lavinho Got Nerfed… | Blue Lock Rivals!",
-      "postedAt": "2026-09-22T18:00",
-      "views": 50559,
+      "title": "Snuffy Will Be The BEST Master?! | Blue Lock Rivals!",
+      "postedAt": "2026-09-22T13:00Z",
+      "views": 50769,
       "kind": "youtube-short",
       "platform": "youtube"
     },
@@ -1861,6 +1861,36 @@
       "views": 8536,
       "kind": "tiktok",
       "platform": "tiktok"
+    },
+    {
+      "id": "a465d9ce-0997-48f0-ac99-32d9b3ca36c3",
+      "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "url": "https://www.youtube.com/shorts/psJdaoCpiC4",
+      "title": "Snuffy Leaks are... INSANE! |  Blue Lock Rivals",
+      "postedAt": "2026-09-24T04:20Z",
+      "views": 82291,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "c9c1bfbc-a25e-494e-8e5a-79316df3096f",
+      "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "url": "https://www.youtube.com/shorts/wqxb5UV2Wng",
+      "title": "Don Lorenzo REWORK?! | Blue Lock Rivals",
+      "postedAt": "2026-09-24T13:45Z",
+      "views": 43465,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "0251a0e9-c151-4123-9d67-d60fd1a1c258",
+      "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "url": "https://www.youtube.com/shorts/XddEYDDewvc",
+      "title": "Chrollo's LAST Style... | Blue Lock Rivals",
+      "postedAt": "2026-09-25T11:50Z",
+      "views": 86900,
+      "kind": "youtube-short",
+      "platform": "youtube"
     }
   ],
   "pairs": [
