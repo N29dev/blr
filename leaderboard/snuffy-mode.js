@@ -7,7 +7,8 @@
 
   function boostViews(v) {
     if (!isSnuffy(v)) return v;
-    return Object.assign({}, v, { views: Number(v.views || 0) * 2 });
+    var raw = Number(v.views || 0);
+    return Object.assign({}, v, { views: raw * 2, _rawViews: raw });
   }
 
   function paintBtn() {
@@ -29,6 +30,19 @@
     };
   }
 
+  var origBucket = window.bucketStats;
+  if (typeof origBucket === "function") {
+    window.bucketStats = function (list, min) {
+      if (!on) return origBucket(list, min);
+      var views = (list || []).reduce(function (s, v) { return s + Number(v.views || 0); }, 0);
+      var qual = (list || []).filter(function (v) {
+        var raw = v._rawViews != null ? v._rawViews : v.views;
+        return Number(raw) >= min;
+      });
+      return { views: views, count: (list || []).length, qualCount: qual.length };
+    };
+  }
+
   var origRanked = window.ranked;
   if (typeof origRanked === "function") {
     window.ranked = function (creators, videos, settings, key) {
@@ -40,21 +54,21 @@
   var origRender = window.render;
   if (typeof origRender === "function") {
     window.render = function (data) {
-      if (data) latest = data._snuffyWrap ? latest : data;
+      if (data) latest = data;
       origRender(data);
       document.querySelectorAll("#videoTable tr").forEach(function (tr) {
         var td = tr.children[3];
         if (!td) return;
         var title = td.textContent || "";
-        if (/snuffy/i.test(title) && !td.querySelector(".pill.snuffy")) {
-          var mark = document.createElement("span");
+        if (!/snuffy/i.test(title)) return;
+        var mark = td.querySelector(".pill.snuffy");
+        if (!mark) {
+          mark = document.createElement("span");
           mark.className = "pill snuffy";
-          mark.textContent = on ? "Snuffy ×2 views" : "Snuffy";
           td.appendChild(document.createTextNode(" "));
           td.appendChild(mark);
-        } else if (td.querySelector(".pill.snuffy")) {
-          td.querySelector(".pill.snuffy").textContent = on ? "Snuffy ×2 views" : "Snuffy";
         }
+        mark.textContent = on ? "Snuffy ×2 views" : "Snuffy";
       });
     };
   }
