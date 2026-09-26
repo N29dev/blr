@@ -1,9 +1,9 @@
 {
   "settings": {
     "eventStartUnix": 1789862400,
-    "eventEndUnix": 1790438340,
+    "eventEndUnix": 1790481540,
     "minViews": 5000,
-    "updatedAt": "2026-09-26T15:30:29.719Z"
+    "updatedAt": "2026-09-26T21:23:28.867Z"
   },
   "creators": [
     {
@@ -148,6 +148,21 @@
       "youtube": "https://www.youtube.com/@pofanuu",
       "youtubeChannelId": "UCndUwKvCjfixl0eMDhZjUhQ",
       "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "c920ae60-ec62-487f-82ab-3dea7d19f290",
+      "name": "Med1",
+      "youtube": "https://www.youtube.com/@med1ofc",
+      "youtubeChannelId": "UCrpzV9l7aZFXRvJJsDhOvAQ",
+      "tiktok": "",
+      "source": "auto"
+    },
+    {
+      "id": "948fae71-025b-438e-9881-5d2ac8707939",
+      "name": "Santifloo_34",
+      "youtube": "",
+      "tiktok": "@santifloo_",
       "source": "auto"
     }
   ],
@@ -1949,6 +1964,226 @@
       "title": "SNUFFY LLEGA MAÑANA!! 🥅🐦‍🔥  #roblox #bluelockrivals #bluelock ",
       "postedAt": "2026-09-25T23:09Z",
       "views": 31810,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "ff224b02-4e38-4e90-91bb-cabd36b4c0d8",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/zQxYGb_mX7E",
+      "title": "POV: YOU’RE GK AS MC NAGI 🍟🧤 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-26T12:32Z",
+      "views": 4710,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "dd28571a-1359-4db6-9078-3639391b8443",
+      "creatorId": "c920ae60-ec62-487f-82ab-3dea7d19f290",
+      "url": "https://www.youtube.com/watch?v=bSWUqx9xE2o",
+      "title": "Usei 100 GIROS NORMAIS numa CONTA NOOB... e isso aconteceu!",
+      "postedAt": "2026-09-21T21:00Z",
+      "views": 23303,
+      "kind": "youtube-video",
+      "platform": "youtube"
+    },
+    {
+      "id": "e83d6f3c-35c5-4237-962d-16aa2e4f5abb",
+      "creatorId": "c920ae60-ec62-487f-82ab-3dea7d19f290",
+      "url": "https://www.youtube.com/watch?v=IpT4iwkKp2E",
+      "title": "MARC SNUFFY está CHEGANDO! Tudo sobre a NOVA UPDATE do Blue Lock Rivals!",
+      "postedAt": "2026-09-22T21:00Z",
+      "views": 29954,
+      "kind": "youtube-video",
+      "platform": "youtube"
+    },
+    {
+      "id": "39c56dd0-86eb-4d16-bad3-58286585ee8b",
+      "creatorId": "c920ae60-ec62-487f-82ab-3dea7d19f290",
+      "url": "https://www.youtube.com/watch?v=HVmORLwy30M",
+      "title": "5 ESTILOS que NUNCA deveriam chegar no Blue Lock Rivals 😰",
+      "postedAt": "2026-09-21T15:00Z",
+      "views": 153367,
+      "kind": "youtube-video",
+      "platform": "youtube"
+    },
+    {
+      "id": "e2ac9ed5-77b1-436a-adc1-c1e8cb4f42cf",
+      "creatorId": "c920ae60-ec62-487f-82ab-3dea7d19f290",
+      "url": "https://www.youtube.com/watch?v=yan93WvCUkI",
+      "title": "SAE vs RIN: quem é MELHOR no Blue Lock Rivals?! ⚽",
+      "postedAt": "2026-09-22T16:00Z",
+      "views": 68622,
+      "kind": "youtube-video",
+      "platform": "youtube"
+    },
+    {
+      "id": "6a6b7456-795b-4c55-bfa7-f628a273f94b",
+      "creatorId": "47e88461-4d95-4a7b-8cc0-826ce404ea07",
+      "url": "https://www.youtube.com/shorts/JMYJvqcJxSg",
+      "title": "Snuffy Showcase | Blue Lock Rivals #roblox #bluelockrivals",
+      "postedAt": "2026-09-26T18:14Z",
+      "views": 1560,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "1e981041-f50f-43a2-97eb-abf74e50bb79",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/8gOQYquDWpc",
+      "title": "Pov: The Art of Using New Snuffy as Ego Gk! in Blue Lock Rivals! #bluelock #bluelockrivals",
+      "postedAt": "2026-09-26T18:38Z",
+      "views": 3664,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "330f0e1b-8e3a-416a-a3f5-426f3b6539cd",
+      "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "url": "https://www.youtube.com/shorts/LVTq7KZktbI",
+      "title": "Snuffy Is INSANE! (SHOWCASE) | Blue Lock Rivals",
+      "postedAt": "2026-09-26T17:00Z",
+      "views": 55913,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "53124689-81a5-4deb-9f56-1b38733c4452",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/y1x2KlJY0UE",
+      "title": "Snuffy showcase in BLR..💀🔥 #bluelockrivals #bluelock #roblox #snuffy",
+      "postedAt": "2026-09-26T18:57Z",
+      "views": 2436,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "314dc009-6582-44c3-bb91-9c873f479411",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/3Oedz87b1PY",
+      "title": "New Snuffy x Nel King Chemical Reaction Tutorial in Blue Lock Rivals! #bluelock #bluelockrivals",
+      "postedAt": "2026-09-26T20:52Z",
+      "views": 488,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "ac437d8e-8769-4202-a71a-a6d31145ce2c",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.youtube.com/shorts/yrna2f_yRiM",
+      "title": "Being an egoist gk using SNUFFY..💀🔥 #bluelockrivals #bluelock #roblox #snuffy",
+      "postedAt": "2026-09-26T20:35Z",
+      "views": 680,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "7ca066d6-cffc-4729-b85a-5f355bfbef47",
+      "creatorId": "ffdd06e8-aa8d-43aa-bea2-1a7b5da1fa67",
+      "url": "https://www.youtube.com/shorts/l30UAI5iBHA",
+      "title": "New Snuffy Showcase in Blue Lock Rivals! #bluelock #bluelockrivals",
+      "postedAt": "2026-09-26T20:24Z",
+      "views": 886,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "de070fb5-40cf-45d1-84b3-ff5d535ab951",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/ab3T-nCkNec",
+      "title": "Its IMPOSSIBLE to get Snuffy in BLR!😭🥀#bluelockrivals #fluxyy #blr #bluelock #meme #gamble #gambling",
+      "postedAt": "2026-09-26T19:30Z",
+      "views": 1477,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "f9b9f955-d7eb-458a-aa18-f08e7da75e49",
+      "creatorId": "8d1cf0e4-f5b4-479c-8420-5886d79a8105",
+      "url": "https://www.youtube.com/shorts/nLSO2Myut_0",
+      "title": "Egoist GK as the Crown Messenger in BLR(snuffy)🤔#bluelockrivals #fluxyy #blr #bluelock #meme #egoist",
+      "postedAt": "2026-09-26T20:45Z",
+      "views": 510,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "ce1549d7-fffa-44e9-941e-a2254dde565b",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7689810138831555870",
+      "title": "Blue Lock Rivals Gagamaru Auto Goal Concept🐻💙 #bluelock #bluelockrivals #anime #roblox #fyp ",
+      "postedAt": "2026-09-26T11:51Z",
+      "views": 13506,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "1b94f691-055a-4e32-9055-2c550acab4fc",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7689830893476744462",
+      "title": "POV: YOU’RE GK AS MC NAGI 🍟🧤 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-26T13:11Z",
+      "views": 17873,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "82e6a166-7f47-4a4b-9c83-3662bcecebb3",
+      "creatorId": "4b0e9f25-bbe8-42ae-8e6d-954841f64801",
+      "url": "https://www.tiktok.com/@ywnaosei/video/7689917155839692084",
+      "title": "SNUFFY SHOWCASE IN BLUE LOCK RIVALS  #bluelockrivals #fyp #bluelock #paratiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii #snuffy ",
+      "postedAt": "2026-09-26T18:46Z",
+      "views": 802,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "04f6301c-0fcb-44fd-9c98-8654d628b017",
+      "creatorId": "c34d960b-9c4c-4df6-8e15-8466508fc5ca",
+      "url": "https://www.tiktok.com/@meam540/video/7689904504908614942",
+      "title": "Blue Lock Rivals New Master Style Snuffy Showcase🧠⚽️ #bluelock #bluelockrivals #anime #fyp #roblox ",
+      "postedAt": "2026-09-26T17:57Z",
+      "views": 31535,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "594bd865-d2c5-463e-9e40-62398c9de413",
+      "creatorId": "948fae71-025b-438e-9881-5d2ac8707939",
+      "url": "https://www.tiktok.com/@santifloo_/video/7689921625076092180",
+      "title": "EL MENSAJERO DE LA CORONA SNUFFY SNUFFY THE CROWN'S MESSENGER #bluelock #bluelockrivals #roblox #robloxtiktok #anime #robloxgames #blr #santifloo_34",
+      "postedAt": "2026-09-26T19:03Z",
+      "views": 4681,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "906ad33e-9204-4829-a29d-e9a9f8565123",
+      "creatorId": "5df48c40-465a-45bd-8aa1-bdab1b0fe266",
+      "url": "https://www.tiktok.com/@jc_hitori/video/7689934133232995604",
+      "title": "como hacer la reaccion quimica de snuffy y barou #snuffy #barou #reaccion #quimica #bocchi🔥🔥 #bluelockrivals #blr",
+      "postedAt": "2026-09-26T19:52Z",
+      "views": 42262,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "47d6a7be-9283-4baf-ae28-709ab3cd4743",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7689927823041039638",
+      "title": "Snuffy showcase in BLR..💀🔥 #bluelockrivals #bluelock #roblox #snuffy",
+      "postedAt": "2026-09-26T19:27Z",
+      "views": 1801,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "99ee2840-b48b-4594-9c62-984fd819a424",
+      "creatorId": "ead63db0-f436-4150-9f20-01bd64fcce55",
+      "url": "https://www.tiktok.com/@zyron0.2/video/7689952890856672514",
+      "title": "Being an egoist gk as SNUFFY..💀🔥 #bluelockrivals #bluelock #roblox #snuffy ",
+      "postedAt": "2026-09-26T21:04Z",
+      "views": 175,
       "kind": "tiktok",
       "platform": "tiktok"
     }
