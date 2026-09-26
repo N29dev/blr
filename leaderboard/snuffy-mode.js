@@ -5,11 +5,6 @@
     return /snuffy/i.test(String((v && v.title) || "") + " " + String((v && v.url) || ""));
   }
 
-  function boostViews(v) {
-    if (!isSnuffy(v)) return v;
-    return Object.assign({}, v, { views: Number(v.views || 0) * 2 });
-  }
-
   function paintBtn() {
     var b = document.getElementById("snuffyToggle");
     if (!b) return;
@@ -32,15 +27,16 @@
   var origRanked = window.ranked;
   if (typeof origRanked === "function") {
     window.ranked = function (creators, videos, settings, key) {
-      var list = on ? (videos || []).map(boostViews) : videos;
-      return origRanked(creators, list, settings, key);
-    };
-  }
-
-  var origQualify = window.qualifyInfo;
-  if (typeof origQualify === "function") {
-    window.qualifyInfo = function (video, settings) {
-      return origQualify(on ? boostViews(video) : video, settings);
+      if (!on) return origRanked(creators, videos, settings, key);
+      if (key !== "qualSum" && key !== "qualMax") {
+        return origRanked(creators, videos, settings, key);
+      }
+      var min = Number((settings && settings.minViews) || 5000);
+      var extra = [];
+      (videos || []).forEach(function (v) {
+        if (isSnuffy(v) && Number(v.views || 0) >= min) extra.push(v);
+      });
+      return origRanked(creators, (videos || []).concat(extra), settings, key);
     };
   }
 
@@ -60,7 +56,9 @@
           td.appendChild(document.createTextNode(" "));
           td.appendChild(mark);
         }
-        mark.textContent = on ? "Snuffy ×2 views" : "Snuffy";
+        var viewsTd = tr.children[4];
+        var views = Number(String((viewsTd && viewsTd.textContent) || "0").replace(/[^0-9]/g, "")) || 0;
+        mark.textContent = on && views >= 5000 ? "Snuffy ×2 videos" : "Snuffy";
       });
     };
   }
