@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790481540,
     "minViews": 5000,
-    "updatedAt": "2026-09-27T03:52:47.175Z"
+    "updatedAt": "2026-09-27T03:54:39.540Z"
   },
   "creators": [
     {
@@ -2405,6 +2405,16 @@
       "title": "Flujo De Snuffy! #bluelockrivals #blr #robloxfyp #fyp #snuffy",
       "postedAt": "2026-09-26T23:11Z",
       "views": 8156,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "40964cad-37f2-471c-bdb6-8fe7a609a26c",
+      "creatorId": "b9a24035-e9eb-45ea-b6c5-626b5d497871",
+      "url": "https://www.tiktok.com/@0nlyhunger/video/7689994489980685589",
+      "title": "SNUFFY SHOWCASE | BLUE LOCK RIVALS #snuffy #bluelockrivals #bluelock #blr #mambo",
+      "postedAt": "2026-09-26T23:46Z",
+      "views": 3327,
       "kind": "tiktok",
       "platform": "tiktok"
     }
