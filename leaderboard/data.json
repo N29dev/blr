@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790481540,
     "minViews": 5000,
-    "updatedAt": "2026-09-27T04:04:18.195Z"
+    "updatedAt": "2026-09-27T04:10:04.996Z"
   },
   "creators": [
     {
@@ -2417,6 +2417,16 @@
       "views": 3456,
       "kind": "tiktok",
       "platform": "tiktok"
+    },
+    {
+      "id": "b8a88d62-ba9f-407c-ac78-9a2df6429358",
+      "creatorId": "41604f08-ee68-4b83-8c02-012ae3b2fd86",
+      "url": "https://www.youtube.com/shorts/JOAynX-qDLw",
+      "title": "Fem Snuffy😂#roblox #bluelock",
+      "postedAt": "2026-09-27T01:17Z",
+      "views": 19779,
+      "kind": "youtube-short",
+      "platform": "youtube"
     }
   ],
   "pairs": [
