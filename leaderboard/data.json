@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790481540,
     "minViews": 5000,
-    "updatedAt": "2026-09-26T23:54:29.720Z"
+    "updatedAt": "2026-09-27T00:01:10.730Z"
   },
   "creators": [
     {
@@ -163,6 +163,13 @@
       "name": "Santifloo_34",
       "youtube": "",
       "tiktok": "@santifloo_",
+      "source": "auto"
+    },
+    {
+      "id": "1378aa21-8901-41d2-8b0d-b1b3818d1fc7",
+      "name": "Zenax",
+      "youtube": "",
+      "tiktok": "@zenax.mog",
       "source": "auto"
     }
   ],
@@ -2244,6 +2251,76 @@
       "title": "todo lo que te da el flujo de snuffy #snuffy#flow #bocchi🔥🔥 #bluelockrivals #blr",
       "postedAt": "2026-09-26T21:41Z",
       "views": 33575,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "34c8035c-4510-42a8-8d12-36cf710513b7",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.youtube.com/shorts/vQabtXvdz54",
+      "title": "WHAT ARE THEY FEEDING THESE STRIKERS 😭💀 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-24T11:37Z",
+      "views": 23569,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "50fe2d54-fbb8-4113-b05d-051af648e5e6",
+      "creatorId": "787337c0-f10d-4979-b823-2e1aa8416080",
+      "url": "https://www.youtube.com/shorts/sKRvUzmRr7g",
+      "title": "Is Snuffy IMPOSSIBLE To Spin!",
+      "postedAt": "2026-09-26T23:50Z",
+      "views": 454,
+      "kind": "youtube-short",
+      "platform": "youtube"
+    },
+    {
+      "id": "5eb3d3fa-227a-4916-98f3-3e540335cbf7",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7688927519323606285",
+      "title": "BEST KRAMPUS BAROU SHOOTING TECH! | Blue Lock Rivals #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-24T02:46Z",
+      "views": 6440,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "5a4de8a8-a060-4f67-b96a-6c312119ab47",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7689069809673260301",
+      "title": "WHAT ARE THEY FEEDING THESE STRIKERS 😭💀 #roblox #bluelockrivals #blr #bluelock #shorts Ft. @Joker♠️ (not staged btw)",
+      "postedAt": "2026-09-24T11:58Z",
+      "views": 9040,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "d1527b86-06e7-4223-a202-54df0f0d694f",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7689237084657208589",
+      "title": "KARASU AUTO GOAL TECH! | Blue Lock Rivals #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-24T22:47Z",
+      "views": 6149,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "2c085218-e36c-46e3-8f60-900fdd1cfd2e",
+      "creatorId": "3d80f060-3cf6-4b07-80ca-aa01a0fa08a8",
+      "url": "https://www.tiktok.com/@chefiobloxianyt/video/7689424495756479757",
+      "title": "BAROU NEVER DID THIS 😭🔥 #roblox #bluelockrivals #blr #bluelock #shorts",
+      "postedAt": "2026-09-25T10:55Z",
+      "views": 4612,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "843e6001-50ca-4028-a87c-26ee55e65645",
+      "creatorId": "1378aa21-8901-41d2-8b0d-b1b3818d1fc7",
+      "url": "https://www.tiktok.com/@zenax.mog/video/7689997250780466452",
+      "title": "SNUFFY LLEGO!!!! #fypシ #viral #roblox #robloxgames #bluelockrivalsroblox #bluelock #futbol #tutorial #juegos #gaming #zenax #updates #pc",
+      "postedAt": "2026-09-26T23:56Z",
+      "views": 3,
       "kind": "tiktok",
       "platform": "tiktok"
     }
