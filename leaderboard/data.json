@@ -3,7 +3,7 @@
     "eventStartUnix": 1789862400,
     "eventEndUnix": 1790481540,
     "minViews": 5000,
-    "updatedAt": "2026-09-27T01:38:52.062Z"
+    "updatedAt": "2026-09-27T03:27:48.182Z"
   },
   "creators": [
     {
@@ -177,6 +177,13 @@
       "name": "Syza",
       "youtube": "",
       "tiktok": "@syzarblx",
+      "source": "auto"
+    },
+    {
+      "id": "4a4da87c-cc72-45cd-b060-9754927fd87d",
+      "name": "🐈‍⬛𝑬𝒍𝑮𝒂𝒕𝒐𝑩𝒓𝒐𝒔𝒕𝒀 ⚽",
+      "youtube": "",
+      "tiktok": "@brosty_oficial",
       "source": "auto"
     }
   ],
@@ -2378,6 +2385,26 @@
       "title": "Blue Lock Rivals New Snuffy X Barou Auto Goal Chemical Reaction Showcase #bluelock #bluelockrivals #anime #roblox #fyp ",
       "postedAt": "2026-09-26T21:32Z",
       "views": 17915,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "c541499c-2ce6-44dd-ba2c-f2037cf0232c",
+      "creatorId": "4a4da87c-cc72-45cd-b060-9754927fd87d",
+      "url": "https://www.tiktok.com/@brosty_oficial/video/7689949394157915399",
+      "title": "NUEVA UPDATE DE BLR! #bluelockrivals #blr #robloxfyp #fyp #snuffy",
+      "postedAt": "2026-09-26T20:51Z",
+      "views": 10555,
+      "kind": "tiktok",
+      "platform": "tiktok"
+    },
+    {
+      "id": "5bac4c8d-0e60-45bd-9c0a-91fc8a890ad0",
+      "creatorId": "4a4da87c-cc72-45cd-b060-9754927fd87d",
+      "url": "https://www.tiktok.com/@brosty_oficial/video/7689985422977551623",
+      "title": "Flujo De Snuffy! #bluelockrivals #blr #robloxfyp #fyp #snuffy",
+      "postedAt": "2026-09-26T23:11Z",
+      "views": 7347,
       "kind": "tiktok",
       "platform": "tiktok"
     }
