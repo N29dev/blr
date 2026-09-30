@@ -275,6 +275,80 @@
       color: var(--text);
     }
 
+    button.btn-tool {
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    button.btn-tool:disabled {
+      opacity: 0.55;
+      cursor: wait;
+      transform: none;
+      filter: none;
+    }
+
+    .patcher {
+      margin-top: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .patch-file {
+      width: 100%;
+      padding: 12px;
+      border: 1px dashed rgba(125, 211, 252, 0.35);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.16);
+      color: var(--muted);
+      font: inherit;
+    }
+
+    .patch-file::file-selector-button {
+      margin-right: 12px;
+      border: 0;
+      border-radius: 9px;
+      padding: 8px 12px;
+      background: rgba(125, 211, 252, 0.16);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .patch-meta {
+      display: flex;
+      gap: 10px 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .patch-status {
+      min-height: 1.5em;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+    }
+
+    .patch-status.error {
+      color: #fca5a5;
+    }
+
+    .patch-credit {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .patch-credit a {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    #patch-download[hidden] {
+      display: none;
+    }
+
     .links {
       display: flex;
       gap: 12px;
@@ -390,19 +464,34 @@
     <div class="section">
       <h2 class="section-title">Creator Tools</h2>
       <div class="tool-card">
-        <div class="tool-kicker">CompressBase integration</div>
-        <h2>CompressBase Method</h2>
+        <div class="tool-kicker">CompressBase Method API</div>
+        <h2>Patch an MP4</h2>
         <p>
-          Use CompressBase's upload method for cleaner high-motion video uploads, or open
-          the official Method API documentation for developer integration details.
+          Choose an MP4 and patch its metadata using CompressBase. The video/audio payload stays
+          on your device; the patched MP4 is rebuilt locally in your browser.
         </p>
-        <div class="tool-actions">
-          <a href="https://compressbase.com/upload-method" target="_blank" rel="noopener noreferrer" class="btn-tool">
-            Open Upload Method ↗
-          </a>
-          <a href="https://compressbase.com/method-api" target="_blank" rel="noopener noreferrer" class="btn-tool secondary">
-            Method API Docs ↗
-          </a>
+
+        <div class="patcher">
+          <input id="patch-video" class="patch-file" type="file" accept="video/mp4,.mp4">
+
+          <div class="patch-meta">
+            <span id="patch-file-info">MP4 only · up to 8 GiB</span>
+          </div>
+
+          <div class="tool-actions">
+            <button id="patch-button" class="btn-tool" type="button">Patch video</button>
+            <a id="patch-download" class="btn-tool secondary" hidden>Download patched video</a>
+            <a href="https://compressbase.com/method-api" target="_blank" rel="noopener noreferrer" class="btn-tool secondary">
+              API docs ↗
+            </a>
+          </div>
+
+          <p id="patch-status" class="patch-status" role="status" aria-live="polite"></p>
+
+          <!-- Required by CompressBase: keep this credit visible beside the patching tool. -->
+          <p class="patch-credit">
+            Powered by <a href="https://compressbase.com/" target="_blank" rel="noopener noreferrer">CompressBase</a>
+          </p>
         </div>
       </div>
     </div>
@@ -485,6 +574,87 @@
     }
 
     loadRobloxProfile();
+  </script>
+
+  <script type="module">
+    import { patchVideo } from 'https://compressbase.com/method-api/client.mjs';
+
+    const patchInput = document.getElementById('patch-video');
+    const patchButton = document.getElementById('patch-button');
+    const patchDownload = document.getElementById('patch-download');
+    const patchStatus = document.getElementById('patch-status');
+    const patchFileInfo = document.getElementById('patch-file-info');
+
+    let patchedObjectUrl = null;
+
+    function formatBytes(bytes) {
+      const units = ['B', 'KiB', 'MiB', 'GiB'];
+      let value = bytes;
+      let unit = 0;
+      while (value >= 1024 && unit < units.length - 1) {
+        value /= 1024;
+        unit++;
+      }
+      return (unit === 0 ? value : value.toFixed(value >= 10 ? 1 : 2)) + ' ' + units[unit];
+    }
+
+    function clearPatchedDownload() {
+      patchDownload.hidden = true;
+      patchDownload.removeAttribute('href');
+      if (patchedObjectUrl) {
+        URL.revokeObjectURL(patchedObjectUrl);
+        patchedObjectUrl = null;
+      }
+    }
+
+    patchInput.addEventListener('change', () => {
+      clearPatchedDownload();
+      patchStatus.textContent = '';
+      patchStatus.classList.remove('error');
+
+      const file = patchInput.files[0];
+      patchFileInfo.textContent = file
+        ? file.name + ' · ' + formatBytes(file.size)
+        : 'MP4 only · up to 8 GiB';
+    });
+
+    patchButton.addEventListener('click', async () => {
+      const file = patchInput.files[0];
+      if (!file) {
+        patchStatus.textContent = 'Choose an MP4 first.';
+        patchStatus.classList.add('error');
+        return;
+      }
+
+      patchButton.disabled = true;
+      clearPatchedDownload();
+      patchStatus.classList.remove('error');
+      patchStatus.textContent = 'Patching metadata…';
+
+      try {
+        const output = await patchVideo(file, {
+          signal: AbortSignal.timeout(180000),
+          onStatus: message => {
+            patchStatus.textContent = message;
+          }
+        });
+
+        patchedObjectUrl = URL.createObjectURL(output);
+        patchDownload.href = patchedObjectUrl;
+        patchDownload.download = file.name.replace(/\.mp4$/i, '') + '_patched.mp4';
+        patchDownload.hidden = false;
+        patchStatus.textContent = 'Ready. Your video stayed on this device.';
+      } catch (error) {
+        patchStatus.classList.add('error');
+        patchStatus.textContent = error instanceof Error ? error.message : 'Patch failed.';
+      } finally {
+        patchButton.disabled = false;
+      }
+    });
+
+    window.addEventListener('pagehide', () => {
+      if (patchedObjectUrl) URL.revokeObjectURL(patchedObjectUrl);
+    });
   </script>
 </body>
 </html>
