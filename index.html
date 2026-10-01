@@ -418,6 +418,117 @@
       overflow-wrap: anywhere;
     }
 
+    .tiktok-analytics {
+      margin-top: 2px;
+      padding: 16px;
+      border: 1px solid rgba(125, 211, 252, 0.22);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.14);
+      display: grid;
+      gap: 15px;
+    }
+
+    .tiktok-analytics[hidden] {
+      display: none;
+    }
+
+    .tiktok-analytics-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .tiktok-author-line {
+      display: flex;
+      gap: 7px;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .tiktok-author-line strong {
+      font-size: 1.05rem;
+    }
+
+    .tiktok-handle,
+    .tiktok-date {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .tiktok-caption {
+      margin-top: 5px;
+      color: var(--text) !important;
+      font-size: 0.91rem !important;
+      font-weight: 600;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .tiktok-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .tiktok-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .tiktok-stat {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.035);
+      padding: 10px 11px;
+      min-width: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .tiktok-stat strong {
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+
+    .tiktok-quality {
+      border-top: 1px solid var(--border);
+      padding-top: 13px;
+    }
+
+    .tiktok-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .tiktok-resolution {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 3px;
+    }
+
+    .tiktok-quality-line {
+      color: #cbd5e1;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .tiktok-video-id {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .tiktok-video-id code {
+      color: var(--accent);
+      font: 700 0.86rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+
     .tool-note {
       color: var(--muted);
       font-size: 0.78rem;
@@ -610,22 +721,37 @@
 
           <p id="tiktok-status" class="patch-status" role="status" aria-live="polite"></p>
 
-          <div id="tiktok-results" class="video-info-grid" hidden>
-            <div class="video-info">
-              <span>Author</span>
-              <strong id="tiktok-author">-</strong>
+          <div id="tiktok-results" class="tiktok-analytics" hidden>
+            <div class="tiktok-analytics-title">TikTok Video Analytics</div>
+
+            <div>
+              <div class="tiktok-author-line">
+                <strong id="tiktok-author-name">Unknown</strong>
+                <span id="tiktok-author-handle" class="tiktok-handle"></span>
+              </div>
+              <p id="tiktok-title" class="tiktok-caption">-</p>
+              <div class="tiktok-meta">
+                <span id="tiktok-date">-</span> · <span id="tiktok-duration">-</span>
+              </div>
             </div>
-            <div class="video-info">
-              <span>Resolution</span>
-              <strong id="tiktok-resolution">-</strong>
+
+            <div class="tiktok-stat-row">
+              <div class="tiktok-stat">👁 <strong id="tiktok-views">0</strong> views</div>
+              <div class="tiktok-stat">❤️ <strong id="tiktok-likes">0</strong> likes</div>
+              <div class="tiktok-stat">💬 <strong id="tiktok-comments">0</strong> comments</div>
+              <div class="tiktok-stat">↗ <strong id="tiktok-shares">0</strong> shares</div>
             </div>
-            <div class="video-info">
-              <span>Views</span>
-              <strong id="tiktok-views">-</strong>
+
+            <div class="tiktok-quality">
+              <span class="tiktok-label">Quality</span>
+              <strong id="tiktok-resolution" class="tiktok-resolution">Unavailable</strong>
+              <div id="tiktok-quality-main" class="tiktok-quality-line">Quality unavailable</div>
+              <div id="tiktok-quality-tech" class="tiktok-quality-line">Technical details unavailable</div>
             </div>
-            <div class="video-info">
-              <span>Likes</span>
-              <strong id="tiktok-likes">-</strong>
+
+            <div class="tiktok-video-id">
+              <span class="tiktok-label">Video ID</span>
+              <code id="tiktok-video-id">-</code>
             </div>
           </div>
 
@@ -722,10 +848,19 @@
     const tiktokOpen = document.getElementById('tiktok-open');
     const tiktokStatus = document.getElementById('tiktok-status');
     const tiktokResults = document.getElementById('tiktok-results');
-    const tiktokAuthor = document.getElementById('tiktok-author');
-    const tiktokResolution = document.getElementById('tiktok-resolution');
+    const tiktokAuthorName = document.getElementById('tiktok-author-name');
+    const tiktokAuthorHandle = document.getElementById('tiktok-author-handle');
+    const tiktokTitle = document.getElementById('tiktok-title');
+    const tiktokDate = document.getElementById('tiktok-date');
+    const tiktokDuration = document.getElementById('tiktok-duration');
     const tiktokViews = document.getElementById('tiktok-views');
     const tiktokLikes = document.getElementById('tiktok-likes');
+    const tiktokComments = document.getElementById('tiktok-comments');
+    const tiktokShares = document.getElementById('tiktok-shares');
+    const tiktokResolution = document.getElementById('tiktok-resolution');
+    const tiktokQualityMain = document.getElementById('tiktok-quality-main');
+    const tiktokQualityTech = document.getElementById('tiktok-quality-tech');
+    const tiktokVideoId = document.getElementById('tiktok-video-id');
 
     function isTikTokUrl(value) {
       try {
@@ -740,6 +875,38 @@
     function formatTikTokCount(value) {
       const number = Number(value || 0);
       return Number.isFinite(number) ? number.toLocaleString('en-US') : '-';
+    }
+
+    function formatTikTokDuration(seconds) {
+      const value = Math.max(0, Math.round(Number(seconds || 0)));
+      if (!value) return 'Duration unavailable';
+      const minutes = Math.floor(value / 60);
+      const rest = String(value % 60).padStart(2, '0');
+      return minutes + ':' + rest;
+    }
+
+    function formatTikTokDate(timestamp) {
+      const value = Number(timestamp || 0);
+      if (!value) return 'Date unavailable';
+      return new Intl.DateTimeFormat('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(new Date(value * 1000));
+    }
+
+    function formatMediaBytes(bytes) {
+      const value = Number(bytes || 0);
+      if (!Number.isFinite(value) || value <= 0) return null;
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let size = value;
+      let unit = 0;
+      while (size >= 1024 && unit < units.length - 1) {
+        size /= 1024;
+        unit++;
+      }
+      const digits = unit >= 2 ? (size >= 10 ? 1 : 2) : 0;
+      return size.toFixed(digits) + ' ' + units[unit];
     }
 
     function wait(ms) {
@@ -777,36 +944,171 @@
       return null;
     }
 
-    function detectVideoResolution(url) {
+    function chooseTikTokStream(data) {
+      const candidates = [
+        {
+          url: data.hdplay || data.hdPlay || '',
+          size: Number(data.hd_size || data.hdSize || 0)
+        },
+        {
+          url: data.play || '',
+          size: Number(data.size || data.play_size || data.playSize || 0)
+        },
+        {
+          url: data.wmplay || data.wmPlay || '',
+          size: Number(data.wm_size || data.wmSize || 0)
+        }
+      ];
+      return candidates.find(item => item.url) || { url: '', size: 0 };
+    }
+
+    function normalizeCodec(value) {
+      const codec = String(value || '').trim().toLowerCase();
+      if (!codec) return null;
+      if (codec.includes('avc1') || codec.includes('h264') || codec.includes('h.264')) return 'H.264';
+      if (codec.includes('hvc1') || codec.includes('hev1') || codec.includes('hevc') || codec.includes('h265') || codec.includes('h.265')) return 'H.265';
+      if (codec.includes('av01') || codec.includes('av1')) return 'AV1';
+      if (codec.includes('vp09') || codec.includes('vp9')) return 'VP9';
+      return String(value);
+    }
+
+    function findCodecInBytes(bytes) {
+      if (!bytes || !bytes.length) return null;
+      const patterns = [
+        ['avc1', 'H.264'],
+        ['avc3', 'H.264'],
+        ['hvc1', 'H.265'],
+        ['hev1', 'H.265'],
+        ['av01', 'AV1'],
+        ['vp09', 'VP9']
+      ];
+
+      for (const [pattern, label] of patterns) {
+        const needle = Array.from(pattern, char => char.charCodeAt(0));
+        outer:
+        for (let i = 0; i <= bytes.length - needle.length; i++) {
+          for (let j = 0; j < needle.length; j++) {
+            if (bytes[i + j] !== needle[j]) continue outer;
+          }
+          return label;
+        }
+      }
+      return null;
+    }
+
+    async function inspectStreamBytes(url) {
+      if (!url) return { codec: null, size: 0 };
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 6000);
+        const response = await fetch(url, {
+          headers: { Range: 'bytes=0-524287' },
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+
+        if (!response.ok) return { codec: null, size: 0 };
+
+        const headerSize = Number(response.headers.get('content-length') || 0);
+        if (response.status === 200 && headerSize > 1024 * 1024) {
+          return { codec: null, size: headerSize };
+        }
+
+        const buffer = new Uint8Array(await response.arrayBuffer());
+        return {
+          codec: findCodecInBytes(buffer),
+          size: response.status === 200 ? headerSize : 0
+        };
+      } catch {
+        return { codec: null, size: 0 };
+      }
+    }
+
+    function inspectVideoStream(url) {
       return new Promise(resolve => {
         if (!url) {
-          resolve(null);
+          resolve({ width: 0, height: 0, duration: 0, fps: 0 });
           return;
         }
 
         const video = document.createElement('video');
+        const result = { width: 0, height: 0, duration: 0, fps: 0 };
         let finished = false;
+        let frameHandle = null;
 
-        const finish = value => {
+        const finish = () => {
           if (finished) return;
           finished = true;
           clearTimeout(timer);
+          if (frameHandle && typeof video.cancelVideoFrameCallback === 'function') {
+            video.cancelVideoFrameCallback(frameHandle);
+          }
+          video.pause();
           video.removeAttribute('src');
           video.load();
-          resolve(value);
+          resolve(result);
         };
 
-        const timer = setTimeout(() => finish(null), 8000);
+        const estimateFps = async () => {
+          if (typeof video.requestVideoFrameCallback !== 'function') {
+            finish();
+            return;
+          }
 
-        video.preload = 'metadata';
+          try {
+            await video.play();
+          } catch {
+            finish();
+            return;
+          }
+
+          const deltas = [];
+          let lastMediaTime = null;
+          let frames = 0;
+
+          const onFrame = (now, metadata) => {
+            const current = Number(metadata.mediaTime);
+            if (lastMediaTime !== null) {
+              const delta = current - lastMediaTime;
+              if (delta > 0.005 && delta < 0.1) deltas.push(delta);
+            }
+            lastMediaTime = current;
+            frames++;
+
+            if (deltas.length >= 12 || frames >= 24) {
+              if (deltas.length) {
+                const sorted = deltas.slice().sort((a, b) => a - b);
+                const median = sorted[Math.floor(sorted.length / 2)];
+                const measured = 1 / median;
+                const common = [24, 25, 30, 50, 60, 120];
+                const closest = common.reduce((best, value) =>
+                  Math.abs(value - measured) < Math.abs(best - measured) ? value : best
+                );
+                result.fps = Math.abs(closest - measured) <= 3 ? closest : Math.round(measured);
+              }
+              finish();
+              return;
+            }
+
+            frameHandle = video.requestVideoFrameCallback(onFrame);
+          };
+
+          frameHandle = video.requestVideoFrameCallback(onFrame);
+        };
+
+        const timer = setTimeout(finish, 9000);
+
+        video.preload = 'auto';
         video.muted = true;
         video.playsInline = true;
         video.addEventListener('loadedmetadata', () => {
-          const width = Number(video.videoWidth || 0);
-          const height = Number(video.videoHeight || 0);
-          finish(width && height ? { width, height } : null);
+          result.width = Number(video.videoWidth || 0);
+          result.height = Number(video.videoHeight || 0);
+          result.duration = Number.isFinite(video.duration) ? Number(video.duration) : 0;
+          estimateFps();
         }, { once: true });
-        video.addEventListener('error', () => finish(null), { once: true });
+        video.addEventListener('error', finish, { once: true });
         video.src = url;
       });
     }
@@ -845,26 +1147,54 @@
           ? (rawAuthor.nickname || '')
           : '';
 
-        const directVideoUrl = data.hdplay || data.play || data.wmplay || '';
+        const stream = chooseTikTokStream(data);
         const apiWidth = Number(data.width || data.video_width || data.videoWidth || 0);
         const apiHeight = Number(data.height || data.video_height || data.videoHeight || 0);
+        const apiDuration = Number(data.duration || data.video_duration || data.videoDuration || 0);
+        const apiFps = Number(data.fps || data.video_fps || data.videoFps || 0);
+        const apiCodec = normalizeCodec(data.codec || data.video_codec || data.videoCodec);
 
-        let resolution = apiWidth && apiHeight ? { width: apiWidth, height: apiHeight } : null;
-        if (!resolution && directVideoUrl) {
-          tiktokStatus.textContent = 'Stats loaded. Detecting video resolution…';
-          resolution = await detectVideoResolution(directVideoUrl);
-        }
+        tiktokStatus.textContent = 'Stats loaded. Inspecting video quality…';
 
-        tiktokAuthor.textContent = username
-          ? (nickname && nickname !== username ? nickname + ' (@' + username + ')' : '@' + username)
-          : (nickname || 'Unknown');
+        const [media, byteInfo] = await Promise.all([
+          inspectVideoStream(stream.url),
+          apiCodec ? Promise.resolve({ codec: apiCodec, size: 0 }) : inspectStreamBytes(stream.url)
+        ]);
+
+        const width = apiWidth || media.width;
+        const height = apiHeight || media.height;
+        const duration = apiDuration || media.duration;
+        const fps = apiFps || media.fps;
+        const codec = apiCodec || byteInfo.codec;
+        const fileSize = stream.size || byteInfo.size;
+        const bitrateMbps = fileSize && duration ? (fileSize * 8 / duration / 1000000) : 0;
+
+        tiktokAuthorName.textContent = nickname || username || 'Unknown';
+        tiktokAuthorHandle.textContent = username ? '@' + username : '';
+        tiktokTitle.textContent = data.title || 'Untitled TikTok';
+        tiktokDate.textContent = formatTikTokDate(data.create_time || data.createTime);
+        tiktokDuration.textContent = formatTikTokDuration(duration);
         tiktokViews.textContent = formatTikTokCount(data.play_count || data.playCount);
         tiktokLikes.textContent = formatTikTokCount(data.digg_count || data.diggCount);
-        tiktokResolution.textContent = resolution
-          ? resolution.width + ' × ' + resolution.height
+        tiktokComments.textContent = formatTikTokCount(data.comment_count || data.commentCount);
+        tiktokShares.textContent = formatTikTokCount(data.share_count || data.shareCount);
+
+        tiktokResolution.textContent = width && height
+          ? width + ' × ' + height
           : 'Unavailable';
 
+        const qualityLabel = width && height ? Math.min(width, height) + 'p' : 'Resolution unavailable';
+        const fpsLabel = fps ? Math.round(fps) + ' FPS' : 'FPS unavailable';
+        tiktokQualityMain.textContent = qualityLabel + ' · ' + fpsLabel;
+
+        const codecLabel = codec || 'Codec unavailable';
+        const bitrateLabel = bitrateMbps ? bitrateMbps.toFixed(bitrateMbps >= 10 ? 1 : 2) + ' Mbps' : 'Bitrate unavailable';
+        const sizeLabel = formatMediaBytes(fileSize) || 'Size unavailable';
+        tiktokQualityTech.textContent = codecLabel + ' · ' + bitrateLabel + ' · ' + sizeLabel;
+
         const videoId = data.id || data.video_id || '';
+        tiktokVideoId.textContent = videoId || 'Unavailable';
+
         const canonicalUrl = username && videoId
           ? 'https://www.tiktok.com/@' + username + '/video/' + videoId
           : rawUrl;
@@ -872,7 +1202,7 @@
         tiktokOpen.href = canonicalUrl;
         tiktokOpen.hidden = false;
         tiktokResults.hidden = false;
-        tiktokStatus.textContent = 'Video info loaded.';
+        tiktokStatus.textContent = 'Video analytics loaded.';
       } catch (error) {
         tiktokStatus.classList.add('error');
         tiktokStatus.textContent = error instanceof Error ? error.message : 'TikTok check failed.';
