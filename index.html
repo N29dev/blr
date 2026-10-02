@@ -914,7 +914,7 @@
     }
 
     async function fetchTikTokInfo(url) {
-      const endpoint = 'https://www.tikwm.com/api/?url=' + encodeURIComponent(url);
+      const endpoint = 'https://www.tikwm.com/api/?hd=1&url=' + encodeURIComponent(url);
 
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
@@ -996,33 +996,230 @@
       return null;
     }
 
-    async function inspectStreamBytes(url) {
-      if (!url) return { codec: null, size: 0 };
+    function readMp4Type(bytes, offset) {
+      if (offset < 0 || offset + 4 > bytes.length) return '';
+      return String.fromCharCode(bytes[offset], bytes[offset + 1], bytes[offset + 2], bytes[offset + 3]);
+    }
+
+    function readMp4Box(bytes, offset, limit) {
+      if (offset < 0 || offset + 8 > limit) return null;
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      let size = view.getUint32(offset);
+      const type = readMp4Type(bytes, offset + 4);
+      let header = 8;
+
+      if (size === 1) {
+        if (offset + 16 > limit) return null;
+        const high = view.getUint32(offset + 8);
+        const low = view.getUint32(offset + 12);
+        size = high * 4294967296 + low;
+        header = 16;
+      } else if (size === 0) {
+        size = limit - offset;
+      }
+
+      if (!Number.isFinite(size) || size < header || offset + size > limit) return null;
+      return {
+        type,
+        start: offset,
+        payload: offset + header,
+        end: offset + size,
+        size,
+        header
+      };
+    }
+
+    function mp4Children(bytes, start, end) {
+      const boxes = [];
+      let offset = start;
+
+      while (offset + 8 <= end) {
+        const box = readMp4Box(bytes, offset, end);
+        if (!box) break;
+        boxes.push(box);
+        offset = box.end;
+      }
+
+      return boxes;
+    }
+
+    function mp4Child(bytes, start, end, type) {
+      return mp4Children(bytes, start, end).find(box => box.type === type) || null;
+    }
+
+    function findMp4Moov(bytes) {
+      for (let i = 4; i + 4 <= bytes.length; i++) {
+        if (
+          bytes[i] === 0x6d &&
+          bytes[i + 1] === 0x6f &&
+          bytes[i + 2] === 0x6f &&
+          bytes[i + 3] === 0x76
+        ) {
+          const box = readMp4Box(bytes, i - 4, bytes.length);
+          if (box && box.type === 'moov') return box;
+        }
+      }
+      return null;
+    }
+
+    function parseTkhd(bytes, box) {
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const p = box.payload;
+      if (p + 4 > box.end) return { width: 0, height: 0 };
+      const version = bytes[p];
+      const widthOffset = p + (version === 1 ? 88 : 76);
+      if (widthOffset + 8 > box.end) return { width: 0, height: 0 };
+      return {
+        width: Math.round(view.getUint32(widthOffset) / 65536),
+        height: Math.round(view.getUint32(widthOffset + 4) / 65536)
+      };
+    }
+
+    function parseMdhdTimescale(bytes, box) {
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const p = box.payload;
+      if (p + 4 > box.end) return 0;
+      const version = bytes[p];
+      const offset = p + (version === 1 ? 20 : 12);
+      return offset + 4 <= box.end ? view.getUint32(offset) : 0;
+    }
+
+    function parseHdlrType(bytes, box) {
+      const offset = box.payload + 8;
+      return offset + 4 <= box.end ? readMp4Type(bytes, offset) : '';
+    }
+
+    function parseSttsFps(bytes, box, timescale) {
+      if (!timescale) return 0;
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const p = box.payload;
+      if (p + 8 > box.end) return 0;
+
+      const entries = view.getUint32(p + 4);
+      let offset = p + 8;
+      let totalSamples = 0;
+      let totalTicks = 0;
+
+      for (let i = 0; i < entries && offset + 8 <= box.end; i++, offset += 8) {
+        const count = view.getUint32(offset);
+        const delta = view.getUint32(offset + 4);
+        totalSamples += count;
+        totalTicks += count * delta;
+      }
+
+      if (!totalSamples || !totalTicks) return 0;
+      return totalSamples * timescale / totalTicks;
+    }
+
+    function parseMp4Track(bytes, trak) {
+      const tkhd = mp4Child(bytes, trak.payload, trak.end, 'tkhd');
+      const mdia = mp4Child(bytes, trak.payload, trak.end, 'mdia');
+      if (!mdia) return null;
+
+      const hdlr = mp4Child(bytes, mdia.payload, mdia.end, 'hdlr');
+      if (!hdlr || parseHdlrType(bytes, hdlr) !== 'vide') return null;
+
+      const mdhd = mp4Child(bytes, mdia.payload, mdia.end, 'mdhd');
+      const timescale = mdhd ? parseMdhdTimescale(bytes, mdhd) : 0;
+
+      const minf = mp4Child(bytes, mdia.payload, mdia.end, 'minf');
+      const stbl = minf ? mp4Child(bytes, minf.payload, minf.end, 'stbl') : null;
+      const stts = stbl ? mp4Child(bytes, stbl.payload, stbl.end, 'stts') : null;
+
+      const dimensions = tkhd ? parseTkhd(bytes, tkhd) : { width: 0, height: 0 };
+      return {
+        width: dimensions.width,
+        height: dimensions.height,
+        fps: stts ? parseSttsFps(bytes, stts, timescale) : 0
+      };
+    }
+
+    function parseMp4Metadata(bytes) {
+      const result = {
+        width: 0,
+        height: 0,
+        fps: 0,
+        codec: findCodecInBytes(bytes)
+      };
+
+      const moov = findMp4Moov(bytes);
+      if (!moov) return result;
+
+      const tracks = mp4Children(bytes, moov.payload, moov.end)
+        .filter(box => box.type === 'trak');
+
+      for (const trak of tracks) {
+        const video = parseMp4Track(bytes, trak);
+        if (!video) continue;
+        result.width = video.width;
+        result.height = video.height;
+        result.fps = video.fps;
+        break;
+      }
+
+      return result;
+    }
+
+    async function fetchVideoRange(url, start, endInclusive) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 7000);
+
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 6000);
         const response = await fetch(url, {
-          headers: { Range: 'bytes=0-524287' },
+          headers: { Range: 'bytes=' + start + '-' + endInclusive },
           cache: 'no-store',
           signal: controller.signal
         });
-        clearTimeout(timeout);
 
-        if (!response.ok) return { codec: null, size: 0 };
+        if (!response.ok) return null;
 
-        const headerSize = Number(response.headers.get('content-length') || 0);
-        if (response.status === 200 && headerSize > 1024 * 1024) {
-          return { codec: null, size: headerSize };
-        }
+        const contentLength = Number(response.headers.get('content-length') || 0);
 
-        const buffer = new Uint8Array(await response.arrayBuffer());
-        return {
-          codec: findCodecInBytes(buffer),
-          size: response.status === 200 ? headerSize : 0
-        };
+        // Do not accidentally download an entire large video if the server ignores Range.
+        if (response.status === 200 && contentLength > 5 * 1024 * 1024) return null;
+
+        return new Uint8Array(await response.arrayBuffer());
       } catch {
-        return { codec: null, size: 0 };
+        return null;
+      } finally {
+        clearTimeout(timeout);
       }
+    }
+
+    async function inspectStreamBytes(url, knownSize) {
+      const empty = { codec: null, size: 0, width: 0, height: 0, fps: 0 };
+      if (!url) return empty;
+
+      const firstBytes = await fetchVideoRange(url, 0, 2 * 1024 * 1024 - 1);
+      let firstMeta = firstBytes ? parseMp4Metadata(firstBytes) : empty;
+
+      if (firstMeta.width && firstMeta.height && firstMeta.fps) {
+        return {
+          ...firstMeta,
+          size: Number(knownSize || 0)
+        };
+      }
+
+      const size = Number(knownSize || 0);
+      if (size > 2 * 1024 * 1024) {
+        const tailStart = Math.max(0, size - 4 * 1024 * 1024);
+        const tailBytes = await fetchVideoRange(url, tailStart, size - 1);
+        if (tailBytes) {
+          const tailMeta = parseMp4Metadata(tailBytes);
+          firstMeta = {
+            codec: firstMeta.codec || tailMeta.codec,
+            width: firstMeta.width || tailMeta.width,
+            height: firstMeta.height || tailMeta.height,
+            fps: firstMeta.fps || tailMeta.fps
+          };
+        }
+      }
+
+      return {
+        ...empty,
+        ...firstMeta,
+        size
+      };
     }
 
     function inspectVideoStream(url) {
@@ -1158,13 +1355,13 @@
 
         const [media, byteInfo] = await Promise.all([
           inspectVideoStream(stream.url),
-          apiCodec ? Promise.resolve({ codec: apiCodec, size: 0 }) : inspectStreamBytes(stream.url)
+          inspectStreamBytes(stream.url, stream.size)
         ]);
 
-        const width = apiWidth || media.width;
-        const height = apiHeight || media.height;
+        const width = apiWidth || byteInfo.width || media.width;
+        const height = apiHeight || byteInfo.height || media.height;
         const duration = apiDuration || media.duration;
-        const fps = apiFps || media.fps;
+        const fps = apiFps || byteInfo.fps || media.fps;
         const codec = apiCodec || byteInfo.codec;
         const fileSize = stream.size || byteInfo.size;
         const bitrateMbps = fileSize && duration ? (fileSize * 8 / duration / 1000000) : 0;
