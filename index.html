@@ -568,6 +568,141 @@
       font-weight: 700;
     }
 
+    .compressor-card {
+      grid-column: 1 / -1;
+    }
+
+    .compress-drop {
+      margin-top: 20px;
+      min-height: 150px;
+      border: 1px dashed rgba(125, 211, 252, 0.42);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.14);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.15s;
+    }
+
+    .compress-drop:hover,
+    .compress-drop.dragover {
+      border-color: rgba(125, 211, 252, 0.8);
+      background: rgba(125, 211, 252, 0.07);
+    }
+
+    .compress-drop-inner {
+      display: grid;
+      gap: 7px;
+      justify-items: center;
+    }
+
+    .compress-drop-title {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .compress-drop-subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    #compress-video {
+      display: none;
+    }
+
+    .compress-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 220px) 1fr;
+      gap: 14px;
+      align-items: end;
+      margin-top: 16px;
+    }
+
+    .compress-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .compress-field label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .compress-file-info {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      color: #cbd5e1;
+      font-size: 0.86rem;
+    }
+
+    .compress-results {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .compress-results[hidden] {
+      display: none;
+    }
+
+    .compress-preview {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.18);
+      padding: 12px;
+      min-width: 0;
+    }
+
+    .compress-preview video {
+      width: 100%;
+      max-height: 280px;
+      border-radius: 10px;
+      background: #05060b;
+      display: block;
+    }
+
+    .compress-preview-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      margin-bottom: 9px;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .compress-preview-head strong {
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    .compress-summary {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid rgba(125, 211, 252, 0.22);
+      border-radius: 12px;
+      background: rgba(125, 211, 252, 0.06);
+      color: #cbd5e1;
+      font-size: 0.88rem;
+    }
+
+    .compress-summary strong {
+      color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      .compress-controls,
+      .compress-results {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .links {
       display: flex;
       gap: 12px;
@@ -693,34 +828,26 @@
         <div class="tool-kicker">CompressBase Method API</div>
         <h2>Patch an MP4</h2>
         <p>
-          Patch MP4 metadata without uploading the video/audio, or downscale locally first and then
-          apply the same CompressBase patch. Processing stays on your device.
+          Choose an MP4 and patch its metadata using CompressBase. The video/audio payload stays
+          on your device; the patched MP4 is rebuilt locally in your browser.
         </p>
 
         <div class="patcher">
-          <input id="patch-video" class="patch-file" type="file" accept="video/*">
+          <input id="patch-video" class="patch-file" type="file" accept="video/mp4,.mp4">
 
           <div class="patch-meta">
-            <span id="patch-file-info">Video · patch supports MP4 · up to 8 GiB</span>
+            <span id="patch-file-info">MP4 only · up to 8 GiB</span>
           </div>
 
           <div class="tool-actions">
             <button id="patch-button" class="btn-tool" type="button">Patch video</button>
-            <button id="patch-downscale" class="btn-tool secondary" type="button">Downscale &amp; patch</button>
-            <button id="patch-cancel" class="btn-tool secondary" type="button" disabled>Cancel</button>
             <a id="patch-download" class="btn-tool secondary" hidden>Download patched video</a>
             <a href="https://compressbase.com/method-api" target="_blank" rel="noopener noreferrer" class="btn-tool secondary">
               API docs ↗
             </a>
           </div>
 
-          <progress id="patch-progress" class="patch-progress" max="100" value="0" hidden></progress>
           <p id="patch-status" class="patch-status" role="status" aria-live="polite"></p>
-
-          <p class="tool-note">
-            Downscale &amp; patch uses local encoding, supports up to 4K / 10 minutes, and preserves source FPS including 60 / 120.
-            Output size depends on the device.
-          </p>
 
           <!-- Required by CompressBase: keep this credit visible beside the patching tool. -->
           <p class="patch-credit">
@@ -796,6 +923,69 @@
             resolution is detected in your browser from the returned video stream.
           </p>
         </div>
+      </div>
+
+      <div class="tool-card compressor-card">
+        <div class="tool-kicker">Local Video Compressor</div>
+        <h2>Compress a video</h2>
+        <p>
+          Reduce video file size directly in your browser. Nothing is uploaded. The compressor
+          keeps the original resolution and exports a broadly compatible H.264 MP4.
+        </p>
+
+        <label id="compress-drop" class="compress-drop" for="compress-video">
+          <input id="compress-video" type="file" accept="video/*,.mkv,.avi">
+          <span class="compress-drop-inner">
+            <span class="btn-tool">Select video</span>
+            <span class="compress-drop-title">or drop a file here</span>
+            <span class="compress-drop-subtitle">MP4, MOV, WebM, MKV, AVI and other FFmpeg-supported formats</span>
+          </span>
+        </label>
+
+        <div class="compress-controls">
+          <div class="compress-field">
+            <label for="compress-quality">Compression</label>
+            <select id="compress-quality" class="tool-input">
+              <option value="high">High quality</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="small">Smaller file</option>
+            </select>
+          </div>
+          <div id="compress-file-info" class="compress-file-info">Choose a video to start.</div>
+        </div>
+
+        <div class="tool-actions">
+          <button id="compress-button" class="btn-tool" type="button" disabled>Compress video</button>
+          <button id="compress-cancel" class="btn-tool secondary" type="button" disabled>Cancel</button>
+          <a id="compress-download" class="btn-tool secondary" hidden>Download compressed video</a>
+        </div>
+
+        <progress id="compress-progress" class="patch-progress" max="100" value="0" hidden></progress>
+        <p id="compress-status" class="patch-status" role="status" aria-live="polite"></p>
+
+        <div id="compress-results" class="compress-results" hidden>
+          <div class="compress-preview">
+            <div class="compress-preview-head">
+              <strong>Original</strong>
+              <span id="compress-original-size">-</span>
+            </div>
+            <video id="compress-original-preview" controls playsinline preload="metadata"></video>
+          </div>
+          <div class="compress-preview">
+            <div class="compress-preview-head">
+              <strong>Compressed</strong>
+              <span id="compress-output-size">-</span>
+            </div>
+            <video id="compress-output-preview" controls playsinline preload="metadata"></video>
+          </div>
+        </div>
+
+        <div id="compress-summary" class="compress-summary" hidden></div>
+
+        <p class="tool-note">
+          Powered by FFmpeg.wasm. The ~31 MB compression engine loads on first use. Browser encoding
+          is CPU-heavy and can be slower than native apps, especially for long or high-resolution videos.
+        </p>
       </div>
       </div>
     </div>
@@ -1452,21 +1642,16 @@
 
   <script type="module">
     import { patchVideo } from 'https://compressbase.com/method-api/client.mjs';
-    import { downscaleVideo } from 'https://compressbase.com/method-api/downscale.mjs';
 
     const patchInput = document.getElementById('patch-video');
     const patchButton = document.getElementById('patch-button');
-    const patchDownscaleButton = document.getElementById('patch-downscale');
-    const patchCancelButton = document.getElementById('patch-cancel');
     const patchDownload = document.getElementById('patch-download');
-    const patchProgress = document.getElementById('patch-progress');
     const patchStatus = document.getElementById('patch-status');
     const patchFileInfo = document.getElementById('patch-file-info');
 
     let patchedObjectUrl = null;
-    let patchController = null;
 
-    function formatBytes(bytes) {
+    function patchFormatBytes(bytes) {
       const units = ['B', 'KiB', 'MiB', 'GiB'];
       let value = bytes;
       let unit = 0;
@@ -1486,113 +1671,358 @@
       }
     }
 
-    function setPatchBusy(busy) {
-      patchButton.disabled = busy;
-      patchDownscaleButton.disabled = busy;
-      patchCancelButton.disabled = !busy;
-    }
-
-    function isMp4(file) {
-      return file.type === 'video/mp4' || /\.mp4$/i.test(file.name);
-    }
-
     patchInput.addEventListener('change', () => {
-      if (patchController) patchController.abort(new DOMException('Canceled.', 'AbortError'));
       clearPatchedDownload();
       patchStatus.textContent = '';
       patchStatus.classList.remove('error');
-      patchProgress.hidden = true;
-      patchProgress.value = 0;
 
       const file = patchInput.files[0];
       patchFileInfo.textContent = file
-        ? file.name + ' · ' + formatBytes(file.size)
-        : 'Video · patch supports MP4 · up to 8 GiB';
+        ? file.name + ' · ' + patchFormatBytes(file.size)
+        : 'MP4 only · up to 8 GiB';
     });
 
-    patchCancelButton.addEventListener('click', () => {
-      if (patchController) {
-        patchController.abort(new DOMException('Canceled.', 'AbortError'));
-      }
-    });
-
-    async function runPatch({ downscale = false } = {}) {
+    patchButton.addEventListener('click', async () => {
       const file = patchInput.files[0];
       if (!file) {
-        patchStatus.textContent = 'Choose a video first.';
+        patchStatus.textContent = 'Choose an MP4 first.';
         patchStatus.classList.add('error');
         return;
       }
 
-      if (!downscale && !isMp4(file)) {
-        patchStatus.textContent = 'Patch video supports MP4 files. Use Downscale & patch for this file.';
-        patchStatus.classList.add('error');
-        return;
-      }
-
+      patchButton.disabled = true;
       clearPatchedDownload();
       patchStatus.classList.remove('error');
-      patchProgress.value = 0;
-      patchProgress.hidden = !downscale;
-      patchController = new AbortController();
-      setPatchBusy(true);
+      patchStatus.textContent = 'Patching metadata…';
 
       try {
-        let mp4 = file;
-
-        if (downscale) {
-          patchStatus.textContent = 'Preparing local downscale…';
-          mp4 = await downscaleVideo(file, {
-            signal: patchController.signal,
-            onStatus: message => {
-              patchStatus.textContent = message;
-            },
-            onProgress: fraction => {
-              patchProgress.value = Math.max(0, Math.min(95, Number(fraction || 0) * 95));
-            }
-          });
-          patchController.signal.throwIfAborted();
-        }
-
-        patchStatus.textContent = 'Patching metadata…';
-        const output = await patchVideo(mp4, {
-          signal: patchController.signal,
+        const output = await patchVideo(file, {
+          signal: AbortSignal.timeout(180000),
           onStatus: message => {
             patchStatus.textContent = message;
           }
         });
 
-        patchController.signal.throwIfAborted();
-
-        if (downscale) patchProgress.value = 100;
         patchedObjectUrl = URL.createObjectURL(output);
         patchDownload.href = patchedObjectUrl;
-
-        const baseName = file.name.replace(/\.[^.]+$/i, '');
-        patchDownload.download = baseName + (downscale ? '_downscaled_patched.mp4' : '_patched.mp4');
+        patchDownload.download = file.name.replace(/\.mp4$/i, '') + '_patched.mp4';
         patchDownload.hidden = false;
-        patchStatus.textContent = downscale
-          ? 'Ready. Downscaled and patched locally.'
-          : 'Ready. Your video stayed on this device.';
+        patchStatus.textContent = 'Ready. Your video stayed on this device.';
       } catch (error) {
         patchStatus.classList.add('error');
-        if (patchController?.signal.aborted || error?.name === 'AbortError') {
-          patchStatus.textContent = 'Processing canceled.';
-        } else {
-          patchStatus.textContent = error instanceof Error ? error.message : 'Processing failed.';
-        }
+        patchStatus.textContent = error instanceof Error ? error.message : 'Patch failed.';
       } finally {
-        patchController = null;
-        setPatchBusy(false);
+        patchButton.disabled = false;
+      }
+    });
+
+    window.addEventListener('pagehide', () => {
+      if (patchedObjectUrl) URL.revokeObjectURL(patchedObjectUrl);
+    });
+  </script>
+
+  <script type="module">
+    import { FFmpeg } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
+    import { fetchFile, toBlobURL } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js';
+
+    const compressInput = document.getElementById('compress-video');
+    const compressDrop = document.getElementById('compress-drop');
+    const compressQuality = document.getElementById('compress-quality');
+    const compressButton = document.getElementById('compress-button');
+    const compressCancel = document.getElementById('compress-cancel');
+    const compressDownload = document.getElementById('compress-download');
+    const compressProgress = document.getElementById('compress-progress');
+    const compressStatus = document.getElementById('compress-status');
+    const compressFileInfo = document.getElementById('compress-file-info');
+    const compressResults = document.getElementById('compress-results');
+    const compressSummary = document.getElementById('compress-summary');
+    const originalPreview = document.getElementById('compress-original-preview');
+    const outputPreview = document.getElementById('compress-output-preview');
+    const originalSize = document.getElementById('compress-original-size');
+    const outputSize = document.getElementById('compress-output-size');
+
+    let selectedFile = null;
+    let originalUrl = null;
+    let outputUrl = null;
+    let ffmpeg = null;
+    let ffmpegLoaded = false;
+    let compressing = false;
+
+    function formatBytes(bytes) {
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let value = Number(bytes || 0);
+      let unit = 0;
+      while (value >= 1000 && unit < units.length - 1) {
+        value /= 1000;
+        unit++;
+      }
+      const digits = unit === 0 ? 0 : value >= 10 ? 1 : 2;
+      return value.toFixed(digits) + ' ' + units[unit];
+    }
+
+    function formatDuration(seconds) {
+      if (!Number.isFinite(seconds) || seconds <= 0) return '';
+      const total = Math.round(seconds);
+      const minutes = Math.floor(total / 60);
+      const rest = String(total % 60).padStart(2, '0');
+      return minutes + ':' + rest;
+    }
+
+    function clearOutput() {
+      compressDownload.hidden = true;
+      compressDownload.removeAttribute('href');
+      compressResults.hidden = true;
+      compressSummary.hidden = true;
+      outputPreview.removeAttribute('src');
+      outputPreview.load();
+
+      if (outputUrl) {
+        URL.revokeObjectURL(outputUrl);
+        outputUrl = null;
       }
     }
 
-    patchButton.addEventListener('click', () => runPatch());
-    patchDownscaleButton.addEventListener('click', () => runPatch({ downscale: true }));
+    function setBusy(busy) {
+      compressing = busy;
+      compressButton.disabled = busy || !selectedFile;
+      compressCancel.disabled = !busy;
+      compressInput.disabled = busy;
+      compressQuality.disabled = busy;
+    }
+
+    function setupFFmpeg() {
+      const instance = new FFmpeg();
+      instance.on('progress', ({ progress }) => {
+        if (!compressing) return;
+        const pct = Math.max(0, Math.min(100, Math.round(Number(progress || 0) * 100)));
+        compressProgress.value = pct;
+        if (pct > 0) compressStatus.textContent = 'Compressing… ' + pct + '%';
+      });
+      return instance;
+    }
+
+    async function ensureFFmpeg() {
+      if (ffmpegLoaded && ffmpeg) return;
+
+      compressStatus.textContent = 'Loading compression engine (~31 MB)…';
+      ffmpeg = setupFFmpeg();
+
+      const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
+      const [coreURL, wasmURL] = await Promise.all([
+        toBlobURL(baseURL + '/ffmpeg-core.js', 'text/javascript'),
+        toBlobURL(baseURL + '/ffmpeg-core.wasm', 'application/wasm')
+      ]);
+
+      await ffmpeg.load({
+        classWorkerURL: new URL('./ffmpeg-worker.js', window.location.href).href,
+        coreURL,
+        wasmURL
+      });
+
+      ffmpegLoaded = true;
+    }
+
+    function readVideoMetadata(file) {
+      return new Promise(resolve => {
+        const url = URL.createObjectURL(file);
+        const video = document.createElement('video');
+        let done = false;
+
+        const finish = result => {
+          if (done) return;
+          done = true;
+          URL.revokeObjectURL(url);
+          video.removeAttribute('src');
+          video.load();
+          resolve(result);
+        };
+
+        const timer = setTimeout(() => finish({ width: 0, height: 0, duration: 0 }), 6000);
+
+        video.preload = 'metadata';
+        video.muted = true;
+        video.playsInline = true;
+        video.onloadedmetadata = () => {
+          clearTimeout(timer);
+          finish({
+            width: Number(video.videoWidth || 0),
+            height: Number(video.videoHeight || 0),
+            duration: Number.isFinite(video.duration) ? Number(video.duration) : 0
+          });
+        };
+        video.onerror = () => {
+          clearTimeout(timer);
+          finish({ width: 0, height: 0, duration: 0 });
+        };
+        video.src = url;
+      });
+    }
+
+    async function useFile(file) {
+      if (!file || (!file.type.startsWith('video/') && !/\.(mp4|mov|m4v|webm|mkv|avi|flv)$/i.test(file.name))) {
+        compressStatus.textContent = 'Choose a video file.';
+        compressStatus.classList.add('error');
+        return;
+      }
+
+      selectedFile = file;
+      clearOutput();
+      compressStatus.textContent = '';
+      compressStatus.classList.remove('error');
+      compressProgress.hidden = true;
+      compressProgress.value = 0;
+
+      if (originalUrl) URL.revokeObjectURL(originalUrl);
+      originalUrl = URL.createObjectURL(file);
+      originalPreview.src = originalUrl;
+      originalSize.textContent = formatBytes(file.size);
+
+      const meta = await readVideoMetadata(file);
+      const details = [
+        formatBytes(file.size),
+        meta.width && meta.height ? meta.width + '×' + meta.height : '',
+        formatDuration(meta.duration)
+      ].filter(Boolean);
+
+      compressFileInfo.textContent = file.name + ' · ' + details.join(' · ');
+      compressButton.disabled = false;
+
+      if (file.size > 1.5 * 1024 ** 3) {
+        compressStatus.textContent = 'Large file: browser memory may not be enough. Native FFmpeg is safer above ~1.5 GiB.';
+      }
+    }
+
+    compressInput.addEventListener('change', () => {
+      useFile(compressInput.files[0]);
+    });
+
+    for (const type of ['dragenter', 'dragover']) {
+      compressDrop.addEventListener(type, event => {
+        event.preventDefault();
+        if (!compressing) compressDrop.classList.add('dragover');
+      });
+    }
+
+    for (const type of ['dragleave', 'drop']) {
+      compressDrop.addEventListener(type, event => {
+        event.preventDefault();
+        compressDrop.classList.remove('dragover');
+      });
+    }
+
+    compressDrop.addEventListener('drop', event => {
+      if (compressing) return;
+      const file = event.dataTransfer?.files?.[0];
+      if (file) useFile(file);
+    });
+
+    compressCancel.addEventListener('click', () => {
+      if (!compressing || !ffmpeg) return;
+      ffmpeg.terminate();
+      ffmpeg = null;
+      ffmpegLoaded = false;
+      compressing = false;
+      setBusy(false);
+      compressProgress.hidden = true;
+      compressStatus.classList.remove('error');
+      compressStatus.textContent = 'Compression canceled.';
+    });
+
+    compressButton.addEventListener('click', async () => {
+      if (!selectedFile) return;
+
+      clearOutput();
+      compressStatus.classList.remove('error');
+      compressProgress.hidden = false;
+      compressProgress.value = 0;
+      setBusy(true);
+
+      const settings = {
+        high: { crf: '23', audio: '160k' },
+        balanced: { crf: '28', audio: '128k' },
+        small: { crf: '32', audio: '96k' }
+      }[compressQuality.value] || { crf: '28', audio: '128k' };
+
+      const extMatch = selectedFile.name.match(/\.[a-z0-9]+$/i);
+      const inputName = 'input' + (extMatch ? extMatch[0].toLowerCase() : '.mp4');
+      const outputName = 'output.mp4';
+
+      try {
+        await ensureFFmpeg();
+        compressStatus.textContent = 'Preparing video…';
+
+        await ffmpeg.writeFile(inputName, await fetchFile(selectedFile));
+
+        compressStatus.textContent = 'Compressing…';
+        const code = await ffmpeg.exec([
+          '-i', inputName,
+          '-map', '0:v:0',
+          '-map', '0:a?',
+          '-c:v', 'libx264',
+          '-preset', 'veryfast',
+          '-crf', settings.crf,
+          '-pix_fmt', 'yuv420p',
+          '-c:a', 'aac',
+          '-b:a', settings.audio,
+          '-movflags', '+faststart',
+          '-map_metadata', '0',
+          outputName
+        ]);
+
+        if (code !== 0) throw new Error('FFmpeg could not compress this video.');
+
+        const data = await ffmpeg.readFile(outputName);
+        const blob = new Blob([data], { type: 'video/mp4' });
+
+        outputUrl = URL.createObjectURL(blob);
+        outputPreview.src = outputUrl;
+        outputSize.textContent = formatBytes(blob.size);
+        compressResults.hidden = false;
+
+        compressDownload.href = outputUrl;
+        compressDownload.download = selectedFile.name.replace(/\.[^.]+$/, '') + '_compressed.mp4';
+        compressDownload.hidden = false;
+
+        const change = selectedFile.size
+          ? (1 - blob.size / selectedFile.size) * 100
+          : 0;
+
+        if (change >= 0) {
+          compressSummary.innerHTML =
+            '<strong>' + change.toFixed(1) + '% smaller</strong> · ' +
+            formatBytes(selectedFile.size) + ' → ' + formatBytes(blob.size);
+        } else {
+          compressSummary.innerHTML =
+            '<strong>' + Math.abs(change).toFixed(1) + '% larger</strong> · this source was already highly compressed. ' +
+            formatBytes(selectedFile.size) + ' → ' + formatBytes(blob.size);
+        }
+
+        compressSummary.hidden = false;
+        compressProgress.value = 100;
+        compressStatus.textContent = 'Done. Your video never left this device.';
+
+        await Promise.allSettled([
+          ffmpeg.deleteFile(inputName),
+          ffmpeg.deleteFile(outputName)
+        ]);
+      } catch (error) {
+        if (!compressing) return;
+        compressStatus.classList.add('error');
+        compressStatus.textContent = error instanceof Error
+          ? error.message
+          : 'Compression failed.';
+      } finally {
+        if (compressing) {
+          compressing = false;
+          setBusy(false);
+        }
+      }
+    });
 
     window.addEventListener('pagehide', () => {
-      if (patchController) patchController.abort();
-      if (patchedObjectUrl) URL.revokeObjectURL(patchedObjectUrl);
+      if (ffmpeg && compressing) ffmpeg.terminate();
+      if (originalUrl) URL.revokeObjectURL(originalUrl);
+      if (outputUrl) URL.revokeObjectURL(outputUrl);
     });
   </script>
 </body>
