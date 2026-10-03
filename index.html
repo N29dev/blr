@@ -696,6 +696,21 @@
       color: var(--accent);
     }
 
+    .recommendation-note {
+      margin-top: 14px;
+      padding: 11px 13px;
+      border: 1px solid rgba(125, 211, 252, 0.24);
+      border-radius: 12px;
+      background: rgba(125, 211, 252, 0.07);
+      color: #cbd5e1 !important;
+      font-size: 0.84rem !important;
+      line-height: 1.5;
+    }
+
+    .recommendation-note strong {
+      color: var(--accent);
+    }
+
     @media (max-width: 640px) {
       .compress-controls,
       .compress-results {
@@ -831,6 +846,10 @@
           Choose an MP4 and patch its metadata using CompressBase. The video/audio payload stays
           on your device; the patched MP4 is rebuilt locally in your browser.
         </p>
+        <p class="recommendation-note">
+          <strong>Large video?</strong> Use the Video Compressor below first, then patch the compressed MP4.
+          We recommend <strong>High quality</strong> compression to reduce the file size while keeping as much quality as possible.
+        </p>
 
         <div class="patcher">
           <input id="patch-video" class="patch-file" type="file" accept="video/mp4,.mp4">
@@ -932,6 +951,10 @@
           Reduce video file size directly in your browser. Nothing is uploaded. The compressor
           keeps the original resolution and exports a broadly compatible H.264 MP4.
         </p>
+        <p class="recommendation-note">
+          If your video file is large, <strong>compress it here first</strong> before using the CompressBase patcher.
+          <strong>High quality is recommended</strong> for the best balance of smaller file size and preserved video quality.
+        </p>
 
         <label id="compress-drop" class="compress-drop" for="compress-video">
           <input id="compress-video" type="file" accept="video/*,.mkv,.avi">
@@ -946,8 +969,8 @@
           <div class="compress-field">
             <label for="compress-quality">Compression</label>
             <select id="compress-quality" class="tool-input">
-              <option value="high">High quality</option>
-              <option value="balanced" selected>Balanced</option>
+              <option value="high" selected>High quality · Recommended</option>
+              <option value="balanced">Balanced</option>
               <option value="small">Smaller file</option>
             </select>
           </div>
