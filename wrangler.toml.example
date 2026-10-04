@@ -1,0 +1,17 @@
+name = "blr-tiktok-api"
+main = "tiktok-worker.js"
+compatibility_date = "2026-10-04"
+
+# Keep the existing GitHub Pages site. Cloudflare only intercepts this API path.
+routes = [
+  { pattern = "blr.n29.kz/api/tiktok/*", zone_name = "n29.kz" }
+]
+
+[vars]
+SITE_URL = "https://blr.n29.kz"
+TIKTOK_REDIRECT_URI = "https://blr.n29.kz/api/tiktok/oauth/callback"
+
+# Add these as secrets, never commit their real values:
+# npx wrangler secret put TIKTOK_CLIENT_KEY
+# npx wrangler secret put TIKTOK_CLIENT_SECRET
+# npx wrangler secret put SESSION_SECRET
