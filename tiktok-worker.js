@@ -211,17 +211,21 @@ async function proxyUpload(request, env) {
   const uploadUrl = request.headers.get("X-TikTok-Upload-URL");
   const contentRange = request.headers.get("Content-Range");
   const contentType = request.headers.get("Content-Type") || "video/mp4";
+  const contentLength = request.headers.get("Content-Length");
 
   if (!uploadUrl || !contentRange || !/^https:\/\/[^/]*tiktokapis\.com\//i.test(uploadUrl)) {
     return json({ error: "Invalid TikTok upload request." }, 400);
   }
 
+  const uploadHeaders = new Headers({
+    "Content-Type": contentType,
+    "Content-Range": contentRange
+  });
+  if (contentLength) uploadHeaders.set("Content-Length", contentLength);
+
   const forwarded = await fetch(uploadUrl, {
     method: "PUT",
-    headers: {
-      "Content-Type": contentType,
-      "Content-Range": contentRange
-    },
+    headers: uploadHeaders,
     body: request.body
   });
 
