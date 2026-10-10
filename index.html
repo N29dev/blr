@@ -583,6 +583,141 @@
       font-weight: 700;
     }
 
+
+    .tiktok-publisher-card {
+      grid-column: 1 / -1;
+    }
+
+    .tiktok-connect-row {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .tiktok-connect-state {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .tiktok-publish-body {
+      margin-top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .tiktok-publish-body[hidden] {
+      display: none;
+    }
+
+    .tiktok-creator-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .tiktok-creator-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #151827;
+    }
+
+    .tiktok-creator-name {
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .tiktok-creator-handle {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .tiktok-publish-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tiktok-publish-field {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .tiktok-publish-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .tiktok-publish-field label,
+    .tiktok-option-title {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .tiktok-textarea {
+      min-height: 104px;
+      resize: vertical;
+    }
+
+    .tiktok-select {
+      appearance: auto;
+    }
+
+    .tiktok-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .tiktok-check-option {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 10px 11px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.03);
+      color: #cbd5e1;
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .tiktok-check-option input {
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+
+    .tiktok-consent {
+      border-color: rgba(125, 211, 252, 0.28);
+      background: rgba(125, 211, 252, 0.06);
+    }
+
+    .tiktok-publish-meta {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .tiktok-publish-id {
+      font: 700 0.78rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--accent);
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 640px) {
+      .tiktok-publish-grid,
+      .tiktok-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .compressor-card {
       grid-column: 1 / -1;
     }
@@ -967,6 +1102,112 @@
             Public videos only. Stats are fetched through the same TikWM endpoint already used by the BLR leaderboard;
             resolution is detected in your browser from the returned video stream.
           </p>
+        </div>
+      </div>
+
+
+      <div id="tiktok-publisher" class="tool-card tiktok-publisher-card">
+        <div class="tool-kicker">TikTok Content Posting API</div>
+        <h2>Post to TikTok</h2>
+        <p>
+          Connect your TikTok account, choose a local video, add the caption and upload it directly from this website.
+        </p>
+        <p class="recommendation-note">
+          <strong>Testing note:</strong> TikTok limits unaudited Direct Post apps to private posts.
+          Keep the TikTok account private while posting and use <strong>Only me</strong>; you can change the account and video privacy later.
+        </p>
+
+        <div class="tiktok-connect-row">
+          <a id="tiktok-connect" class="btn-tool" href="/api/tiktok/oauth/start">Connect TikTok</a>
+          <button id="tiktok-disconnect" class="btn-tool secondary" type="button" hidden>Disconnect</button>
+          <span id="tiktok-connect-state" class="tiktok-connect-state">Checking connection…</span>
+        </div>
+
+        <div id="tiktok-publish-body" class="tiktok-publish-body" hidden>
+          <div class="tiktok-creator-card">
+            <img id="tiktok-publish-avatar" class="tiktok-creator-avatar" alt="" hidden>
+            <div>
+              <div id="tiktok-publish-name" class="tiktok-creator-name">TikTok creator</div>
+              <div id="tiktok-publish-handle" class="tiktok-creator-handle"></div>
+            </div>
+          </div>
+
+          <div class="tiktok-publish-grid">
+            <div class="tiktok-publish-field full">
+              <label for="tiktok-publish-video">Video</label>
+              <input id="tiktok-publish-video" class="patch-file" type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm">
+              <div id="tiktok-publish-file-meta" class="tiktok-publish-meta">MP4 recommended · H.264 recommended · up to 4 GB</div>
+            </div>
+
+            <div class="tiktok-publish-field full">
+              <label for="tiktok-publish-caption">Caption</label>
+              <textarea
+                id="tiktok-publish-caption"
+                class="tool-input tiktok-textarea"
+                maxlength="2200"
+                placeholder="Don Lorenzo Before Update | BLUE LOCK RIVALS #blr"
+              ></textarea>
+              <div class="tiktok-publish-meta"><span id="tiktok-caption-count">0</span>/2200</div>
+            </div>
+
+            <div class="tiktok-publish-field">
+              <label for="tiktok-publish-privacy">Privacy</label>
+              <select id="tiktok-publish-privacy" class="tool-input tiktok-select"></select>
+            </div>
+
+            <div class="tiktok-publish-field">
+              <label>Creator limit</label>
+              <div id="tiktok-max-duration" class="tool-input">Loading…</div>
+            </div>
+
+            <div class="tiktok-publish-field full">
+              <div class="tiktok-option-title">Post settings</div>
+              <div class="tiktok-options">
+                <label class="tiktok-check-option">
+                  <input id="tiktok-allow-comments" type="checkbox" checked>
+                  <span>Allow comments</span>
+                </label>
+                <label class="tiktok-check-option">
+                  <input id="tiktok-allow-duet" type="checkbox" checked>
+                  <span>Allow Duet</span>
+                </label>
+                <label class="tiktok-check-option">
+                  <input id="tiktok-allow-stitch" type="checkbox" checked>
+                  <span>Allow Stitch</span>
+                </label>
+                <label class="tiktok-check-option">
+                  <input id="tiktok-aigc" type="checkbox">
+                  <span>AI-generated content</span>
+                </label>
+                <label class="tiktok-check-option">
+                  <input id="tiktok-own-business" type="checkbox">
+                  <span>Promotes my own business</span>
+                </label>
+                <label class="tiktok-check-option">
+                  <input id="tiktok-paid-partnership" type="checkbox">
+                  <span>Paid partnership / branded content</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="tiktok-publish-field full">
+              <label class="tiktok-check-option tiktok-consent">
+                <input id="tiktok-upload-consent" type="checkbox">
+                <span>I confirm I want this video uploaded and posted to the connected TikTok account.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="tool-actions">
+            <button id="tiktok-post-button" class="btn-tool" type="button">Post to TikTok</button>
+            <button id="tiktok-refresh-creator" class="btn-tool secondary" type="button">Refresh account settings</button>
+          </div>
+
+          <progress id="tiktok-upload-progress" class="patch-progress" max="100" value="0" hidden></progress>
+          <p id="tiktok-publish-status" class="patch-status" role="status" aria-live="polite"></p>
+          <div id="tiktok-publish-id-wrap" class="tiktok-publish-meta" hidden>
+            Publish ID: <span id="tiktok-publish-id" class="tiktok-publish-id"></span>
+          </div>
         </div>
       </div>
 
@@ -1687,6 +1928,399 @@
     tiktokUrlInput.addEventListener('keydown', event => {
       if (event.key === 'Enter') checkTikTokVideo();
     });
+  </script>
+
+
+  <script>
+    (() => {
+      const connectButton = document.getElementById('tiktok-connect');
+      const disconnectButton = document.getElementById('tiktok-disconnect');
+      const connectState = document.getElementById('tiktok-connect-state');
+      const publishBody = document.getElementById('tiktok-publish-body');
+      const avatar = document.getElementById('tiktok-publish-avatar');
+      const creatorName = document.getElementById('tiktok-publish-name');
+      const creatorHandle = document.getElementById('tiktok-publish-handle');
+      const videoInput = document.getElementById('tiktok-publish-video');
+      const fileMeta = document.getElementById('tiktok-publish-file-meta');
+      const caption = document.getElementById('tiktok-publish-caption');
+      const captionCount = document.getElementById('tiktok-caption-count');
+      const privacy = document.getElementById('tiktok-publish-privacy');
+      const maxDuration = document.getElementById('tiktok-max-duration');
+      const allowComments = document.getElementById('tiktok-allow-comments');
+      const allowDuet = document.getElementById('tiktok-allow-duet');
+      const allowStitch = document.getElementById('tiktok-allow-stitch');
+      const aigc = document.getElementById('tiktok-aigc');
+      const ownBusiness = document.getElementById('tiktok-own-business');
+      const paidPartnership = document.getElementById('tiktok-paid-partnership');
+      const consent = document.getElementById('tiktok-upload-consent');
+      const postButton = document.getElementById('tiktok-post-button');
+      const refreshCreatorButton = document.getElementById('tiktok-refresh-creator');
+      const progress = document.getElementById('tiktok-upload-progress');
+      const status = document.getElementById('tiktok-publish-status');
+      const publishIdWrap = document.getElementById('tiktok-publish-id-wrap');
+      const publishIdText = document.getElementById('tiktok-publish-id');
+
+      let creator = null;
+      let selectedVideoMeta = null;
+      let publishing = false;
+
+      const privacyLabels = {
+        PUBLIC_TO_EVERYONE: 'Everyone',
+        MUTUAL_FOLLOW_FRIENDS: 'Friends',
+        FOLLOWER_OF_CREATOR: 'Followers',
+        SELF_ONLY: 'Only me'
+      };
+
+      function formatBytes(bytes) {
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let value = Number(bytes || 0);
+        let unit = 0;
+        while (value >= 1000 && unit < units.length - 1) {
+          value /= 1000;
+          unit++;
+        }
+        return (unit ? value.toFixed(value >= 10 ? 1 : 2) : String(Math.round(value))) + ' ' + units[unit];
+      }
+
+      async function api(path, options = {}) {
+        const response = await fetch('/api/tiktok' + path, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+          ...options,
+          headers: {
+            ...(options.body && typeof options.body === 'string' ? { 'Content-Type': 'application/json' } : {}),
+            ...(options.headers || {})
+          }
+        });
+
+        let data = {};
+        const type = response.headers.get('content-type') || '';
+        if (type.includes('application/json')) {
+          data = await response.json().catch(() => ({}));
+        } else {
+          data = { text: await response.text().catch(() => '') };
+        }
+
+        if (!response.ok) {
+          throw new Error(data.error || data.message || ('Request failed (' + response.status + ')'));
+        }
+        return data;
+      }
+
+      function setConnected(connected) {
+        connectButton.hidden = connected;
+        disconnectButton.hidden = !connected;
+        publishBody.hidden = !connected;
+        connectState.textContent = connected ? 'TikTok connected' : 'TikTok not connected';
+      }
+
+      function showOAuthMessage() {
+        const url = new URL(window.location.href);
+        const result = url.searchParams.get('tiktok');
+        const message = url.searchParams.get('message');
+
+        if (result === 'error') {
+          status.classList.add('error');
+          status.textContent = message || 'TikTok connection failed.';
+        } else if (result === 'connected') {
+          status.classList.remove('error');
+          status.textContent = 'TikTok connected.';
+        }
+
+        if (result) {
+          url.searchParams.delete('tiktok');
+          url.searchParams.delete('message');
+          history.replaceState(null, '', url.pathname + url.search + url.hash);
+        }
+      }
+
+      async function loadSession() {
+        try {
+          const session = await api('/session');
+          setConnected(Boolean(session.connected));
+          if (session.connected) await loadCreator();
+        } catch (error) {
+          setConnected(false);
+          connectState.textContent = 'TikTok backend is not deployed yet';
+        }
+      }
+
+      async function loadCreator() {
+        refreshCreatorButton.disabled = true;
+        status.classList.remove('error');
+        status.textContent = 'Loading TikTok account settings…';
+
+        try {
+          const data = await api('/creator', { method: 'POST', body: '{}' });
+          creator = data;
+
+          creatorName.textContent = data.creator_nickname || data.creator_username || 'TikTok creator';
+          creatorHandle.textContent = data.creator_username ? '@' + data.creator_username : '';
+
+          if (data.creator_avatar_url) {
+            avatar.src = data.creator_avatar_url;
+            avatar.alt = creatorName.textContent;
+            avatar.hidden = false;
+          } else {
+            avatar.hidden = true;
+          }
+
+          privacy.innerHTML = '';
+          const options = Array.isArray(data.privacy_level_options) ? data.privacy_level_options : ['SELF_ONLY'];
+          for (const value of options) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = privacyLabels[value] || value;
+            privacy.appendChild(option);
+          }
+          if (options.includes('SELF_ONLY')) privacy.value = 'SELF_ONLY';
+
+          allowComments.disabled = Boolean(data.comment_disabled);
+          allowDuet.disabled = Boolean(data.duet_disabled);
+          allowStitch.disabled = Boolean(data.stitch_disabled);
+          if (allowComments.disabled) allowComments.checked = false;
+          if (allowDuet.disabled) allowDuet.checked = false;
+          if (allowStitch.disabled) allowStitch.checked = false;
+
+          const seconds = Number(data.max_video_post_duration_sec || 0);
+          maxDuration.textContent = seconds ? Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0') : 'TikTok account limit';
+
+          status.textContent = 'Ready to post.';
+          validateVideoDuration();
+        } catch (error) {
+          status.classList.add('error');
+          status.textContent = error.message;
+          if (/connect|token|authoriz/i.test(error.message)) setConnected(false);
+        } finally {
+          refreshCreatorButton.disabled = false;
+        }
+      }
+
+      function readVideoMetadata(file) {
+        return new Promise(resolve => {
+          const url = URL.createObjectURL(file);
+          const video = document.createElement('video');
+          const done = result => {
+            URL.revokeObjectURL(url);
+            video.removeAttribute('src');
+            video.load();
+            resolve(result);
+          };
+          video.preload = 'metadata';
+          video.onloadedmetadata = () => done({
+            duration: Number.isFinite(video.duration) ? video.duration : 0,
+            width: video.videoWidth || 0,
+            height: video.videoHeight || 0
+          });
+          video.onerror = () => done({ duration: 0, width: 0, height: 0 });
+          video.src = url;
+        });
+      }
+
+      function validateVideoDuration() {
+        if (!selectedVideoMeta || !creator) return true;
+        const max = Number(creator.max_video_post_duration_sec || 0);
+        if (max && selectedVideoMeta.duration > max + 0.25) {
+          status.classList.add('error');
+          status.textContent = 'This video is longer than the connected TikTok account allows (' + max + ' seconds).';
+          return false;
+        }
+        return true;
+      }
+
+      function chunkPlan(size) {
+        if (size < 5_000_000) {
+          return { chunkSize: size, count: 1 };
+        }
+        if (size <= 64_000_000) {
+          return { chunkSize: size, count: 1 };
+        }
+
+        const chunkSize = 32_000_000;
+        const count = Math.floor(size / chunkSize);
+        return { chunkSize, count: Math.max(1, count) };
+      }
+
+      async function uploadChunks(file, uploadUrl, plan) {
+        let uploaded = 0;
+
+        for (let index = 0; index < plan.count; index++) {
+          const start = index * plan.chunkSize;
+          const end = index === plan.count - 1
+            ? file.size
+            : Math.min(file.size, start + plan.chunkSize);
+
+          const chunk = file.slice(start, end);
+          const response = await fetch('/api/tiktok/upload', {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': file.type || 'video/mp4',
+              'Content-Range': 'bytes ' + start + '-' + (end - 1) + '/' + file.size,
+              'X-TikTok-Upload-URL': uploadUrl
+            },
+            body: chunk
+          });
+
+          if (!response.ok) {
+            const message = await response.text().catch(() => '');
+            throw new Error('TikTok upload failed on chunk ' + (index + 1) + ' (' + response.status + ')' + (message ? ': ' + message : ''));
+          }
+
+          uploaded = end;
+          progress.value = Math.round(uploaded / file.size * 100);
+          status.textContent = 'Uploading to TikTok… ' + progress.value + '%';
+        }
+      }
+
+      async function waitForPublish(publishId) {
+        for (let attempt = 0; attempt < 40; attempt++) {
+          const data = await api('/publish/status', {
+            method: 'POST',
+            body: JSON.stringify({ publish_id: publishId })
+          });
+
+          const current = data.status || 'PROCESSING_UPLOAD';
+          if (current === 'PUBLISH_COMPLETE') {
+            status.classList.remove('error');
+            status.textContent = 'Posted successfully. Open TikTok to review the private post.';
+            return;
+          }
+          if (current === 'FAILED') {
+            throw new Error(data.fail_reason ? 'TikTok failed: ' + data.fail_reason : 'TikTok failed to publish the video.');
+          }
+
+          status.textContent = current === 'PROCESSING_UPLOAD'
+            ? 'TikTok is processing the upload…'
+            : 'TikTok status: ' + current.replaceAll('_', ' ').toLowerCase();
+
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+
+        status.textContent = 'Upload finished. TikTok is still processing it; check TikTok in a moment.';
+      }
+
+      caption.addEventListener('input', () => {
+        captionCount.textContent = String(caption.value.length);
+      });
+
+      videoInput.addEventListener('change', async () => {
+        const file = videoInput.files[0];
+        selectedVideoMeta = null;
+
+        if (!file) {
+          fileMeta.textContent = 'MP4 recommended · H.264 recommended · up to 4 GB';
+          return;
+        }
+
+        if (file.size > 4_000_000_000) {
+          fileMeta.textContent = file.name + ' · ' + formatBytes(file.size) + ' · too large for TikTok API';
+          status.classList.add('error');
+          status.textContent = 'TikTok Content Posting API accepts videos up to 4 GB.';
+          return;
+        }
+
+        selectedVideoMeta = await readVideoMetadata(file);
+        const duration = selectedVideoMeta.duration ? selectedVideoMeta.duration.toFixed(1) + 's' : '';
+        const dimensions = selectedVideoMeta.width && selectedVideoMeta.height
+          ? selectedVideoMeta.width + '×' + selectedVideoMeta.height
+          : '';
+        fileMeta.textContent = [file.name, formatBytes(file.size), dimensions, duration].filter(Boolean).join(' · ');
+        status.classList.remove('error');
+        status.textContent = '';
+        validateVideoDuration();
+      });
+
+      disconnectButton.addEventListener('click', async () => {
+        disconnectButton.disabled = true;
+        try {
+          await api('/disconnect', { method: 'POST', body: '{}' });
+          creator = null;
+          setConnected(false);
+          status.textContent = 'TikTok disconnected.';
+        } catch (error) {
+          status.classList.add('error');
+          status.textContent = error.message;
+        } finally {
+          disconnectButton.disabled = false;
+        }
+      });
+
+      refreshCreatorButton.addEventListener('click', loadCreator);
+
+      postButton.addEventListener('click', async () => {
+        if (publishing) return;
+
+        const file = videoInput.files[0];
+        if (!file) {
+          status.classList.add('error');
+          status.textContent = 'Choose a video first.';
+          return;
+        }
+        if (!consent.checked) {
+          status.classList.add('error');
+          status.textContent = 'Confirm the upload consent first.';
+          return;
+        }
+        if (!creator) {
+          status.classList.add('error');
+          status.textContent = 'Refresh TikTok account settings first.';
+          return;
+        }
+        if (!validateVideoDuration()) return;
+
+        publishing = true;
+        postButton.disabled = true;
+        refreshCreatorButton.disabled = true;
+        progress.hidden = false;
+        progress.value = 0;
+        publishIdWrap.hidden = true;
+        status.classList.remove('error');
+        status.textContent = 'Starting TikTok upload…';
+
+        try {
+          const plan = chunkPlan(file.size);
+          const init = await api('/publish/init', {
+            method: 'POST',
+            body: JSON.stringify({
+              title: caption.value,
+              privacy_level: privacy.value,
+              disable_comment: !allowComments.checked,
+              disable_duet: !allowDuet.checked,
+              disable_stitch: !allowStitch.checked,
+              is_aigc: aigc.checked,
+              brand_organic_toggle: ownBusiness.checked,
+              brand_content_toggle: paidPartnership.checked,
+              video_size: file.size,
+              chunk_size: plan.chunkSize,
+              total_chunk_count: plan.count
+            })
+          });
+
+          if (!init.upload_url || !init.publish_id) {
+            throw new Error('TikTok did not return an upload URL.');
+          }
+
+          publishIdText.textContent = init.publish_id;
+          publishIdWrap.hidden = false;
+
+          await uploadChunks(file, init.upload_url, plan);
+          progress.value = 100;
+          status.textContent = 'Upload complete. Waiting for TikTok…';
+          await waitForPublish(init.publish_id);
+        } catch (error) {
+          status.classList.add('error');
+          status.textContent = error.message;
+        } finally {
+          publishing = false;
+          postButton.disabled = false;
+          refreshCreatorButton.disabled = false;
+        }
+      });
+
+      showOAuthMessage();
+      loadSession();
+    })();
   </script>
 
   <script type="module">
