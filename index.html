@@ -315,6 +315,21 @@
       cursor: pointer;
     }
 
+    .patch-variant {
+      display: grid;
+      gap: 6px;
+    }
+
+    .patch-variant label {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .patch-variant select option {
+      background: #0d1224;
+      color: var(--text);
+    }
+
     .patch-meta {
       display: flex;
       gap: 10px 14px;
@@ -853,6 +868,17 @@
 
         <div class="patcher">
           <input id="patch-video" class="patch-file" type="file" accept="video/mp4,.mp4">
+
+          <div class="patch-variant">
+            <label for="posting-device">Choose a variant:</label>
+            <select id="posting-device" class="tool-input">
+              <option value="variant-1">Variant 1 — Not Aggressive</option>
+              <option value="variant-2">Variant 2 — Mid Aggressive</option>
+              <option value="variant-3">Variant 3 — Hard Aggressive</option>
+              <option value="variant-4">Variant 4 — HOLY AGGRESSIVE</option>
+              <option value="variant-5">Variant 5 — Compatible with iPhone and iPad</option>
+            </select>
+          </div>
 
           <div class="patch-meta">
             <span id="patch-file-info">MP4 only · up to 8 GiB</span>
@@ -1667,6 +1693,7 @@
     import { patchVideo } from 'https://compressbase.com/method-api/client.mjs';
 
     const patchInput = document.getElementById('patch-video');
+    const patchPostingDevice = document.getElementById('posting-device');
     const patchButton = document.getElementById('patch-button');
     const patchDownload = document.getElementById('patch-download');
     const patchStatus = document.getElementById('patch-status');
@@ -1705,6 +1732,12 @@
         : 'MP4 only · up to 8 GiB';
     });
 
+    patchPostingDevice.addEventListener('change', () => {
+      clearPatchedDownload();
+      patchStatus.textContent = '';
+      patchStatus.classList.remove('error');
+    });
+
     patchButton.addEventListener('click', async () => {
       const file = patchInput.files[0];
       if (!file) {
@@ -1713,13 +1746,23 @@
         return;
       }
 
+      const postingDevice = patchPostingDevice.value;
+      if (!postingDevice) {
+        patchStatus.textContent = 'Choose a variant first.';
+        patchStatus.classList.add('error');
+        return;
+      }
+
       patchButton.disabled = true;
+      patchPostingDevice.disabled = true;
+      patchInput.disabled = true;
       clearPatchedDownload();
       patchStatus.classList.remove('error');
       patchStatus.textContent = 'Patching metadata…';
 
       try {
         const output = await patchVideo(file, {
+          postingDevice,
           signal: AbortSignal.timeout(180000),
           onStatus: message => {
             patchStatus.textContent = message;
@@ -1736,6 +1779,8 @@
         patchStatus.textContent = error instanceof Error ? error.message : 'Patch failed.';
       } finally {
         patchButton.disabled = false;
+        patchPostingDevice.disabled = false;
+        patchInput.disabled = false;
       }
     });
 
