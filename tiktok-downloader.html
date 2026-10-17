@@ -38,7 +38,8 @@ input[type=file]{padding:11px;font-size:.87rem}summary{cursor:pointer;color:var(
 <div id="details" hidden>
 <div class="video"><img id="cover" class="cover" alt="TikTok thumbnail"><div class="meta">
 <div id="author" class="author"></div><div id="title" class="title"></div><div id="summary" class="details"></div>
-<a id="original-link" target="_blank" rel="noopener noreferrer" href="#">Open TikTok ↗</a></div></div>
+<a id="original-link" target="_blank" rel="noopener noreferrer" href="#">Open TikTok ↗</a> ·
+<a id="raw-source" target="_blank" rel="noopener noreferrer" href="#">Open raw MP4 ↗</a></div></div>
 <div class="field quality"><label for="quality">Download quality</label>
 <select id="quality"><option value="best">Original / Best available · No resize</option>
 <option value="720">720p · H.264 MP4</option><option value="480">480p · H.264 MP4</option></select></div>
@@ -55,6 +56,8 @@ input[type=file]{padding:11px;font-size:.87rem}summary{cursor:pointer;color:var(
 <section class="panel"><h2>Already downloaded a broken MP4?</h2>
 <p class="note">If your TikTok video was patched and now shows 0:00, select the existing file here to repair its container without downloading again.</p>
 <div class="field"><label for="file">Select MP4 to repair</label><input id="file" type="file" accept="video/mp4,.mp4,video/*"></div>
+<div class="field" style="margin-top:14px"><label for="local-quality">Output quality</label>
+<select id="local-quality"><option value="best">Original resolution</option><option value="720">720p</option><option value="480">480p</option></select></div>
 <div class="action-row" style="margin-top:14px"><button id="fix-file" type="button">Fix local video</button></div>
 </section>
 <section class="panel"><details><summary>About the repair and download limits</summary>
@@ -72,7 +75,7 @@ function status(s,isError=false){$('status').textContent=s;$('status').classList
 function bytes(n){const v=Number(n||0);return v>=1048576?(v/1048576).toFixed(1)+' MiB':(v/1024).toFixed(1)+' KiB'}
 function time(s){const n=Math.round(Number(s||0));return n?Math.floor(n/60)+':'+String(n%60).padStart(2,'0'):'Unknown'}
 function isTikTokUrl(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&(u.hostname==='tiktok.com'||u.hostname.endsWith('.tiktok.com'))}catch{return false}}
-function setBusy(v){busy=v;$('lookup').disabled=v;$('process').disabled=v;$('fix-file').disabled=v;$('quality').disabled=v;$('file').disabled=v;$('cancel').disabled=!v}
+function setBusy(v){busy=v;$('lookup').disabled=v;$('process').disabled=v;$('fix-file').disabled=v;$('quality').disabled=v;$('file').disabled=v;$('local-quality').disabled=v;$('cancel').disabled=!v}
 function clearResult(){if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}
 $('result').hidden=true;$('output-preview').pause();$('output-preview').removeAttribute('src');$('output-preview').load();$('download').removeAttribute('href')}
 function candidate(value){if(typeof value!=='string'||!value)return '';try{const u=new URL(value, 'https://www.tikwm.com/');return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}}
@@ -99,7 +102,7 @@ async function loadInfo(){
   const coverUrl=candidate(d.cover||d.origin_cover||d.ai_dynamic_cover);
   if(coverUrl)$('cover').src=coverUrl;else $('cover').removeAttribute('src');
   $('cover').hidden=!coverUrl;
-  $('original-link').href=link;$('details').hidden=false;
+  $('original-link').href=link;$('raw-source').href=sources(d)[0].url;$('details').hidden=false;
   status('Video found. Choose a resolution, then download and repair.');
  }catch(e){status('Could not load TikTok video: '+(e?.message||e),true)}finally{setBusy(false)}
 }
@@ -251,7 +254,7 @@ async function process(inputFile,quality,id){
  }
 }
 $('process').addEventListener('click',()=>process(null,$('quality').value, String(videoData?.id||videoData?.video_id||'video').replace(/[^0-9a-z_-]/gi,'')));
-$('fix-file').addEventListener('click',()=>{const f=$('file').files?.[0];if(!f){status('Select a local MP4 first.',true);return}process(f,'best',f.name.replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]/gi,'_').slice(0,60))});
+$('fix-file').addEventListener('click',()=>{const f=$('file').files?.[0];if(!f){status('Select a local MP4 first.',true);return}process(f,$('local-quality').value,f.name.replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]/gi,'_').slice(0,60))});
 $('cancel').addEventListener('click',()=>{abort?.abort();if(ff){ff.terminate();ff=null;ffReady=false}status('Canceling…')});
 try { const incoming=new URL(location.href).searchParams.get('url');if(incoming&&isTikTokUrl(incoming)){$('url').value=incoming;loadInfo()} } catch {}
 window.addEventListener('pagehide',()=>{if(objectUrl)URL.revokeObjectURL(objectUrl);if(ff)ff.terminate()});
