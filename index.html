@@ -922,7 +922,7 @@
 
           <div class="tool-actions">
             <button id="tiktok-check" class="btn-tool" type="button">Check video</button>
-            <a href="./tiktok-downloader.html" class="btn-tool secondary">Download &amp; fix ↗</a>
+            <a id="tiktok-download-link" href="./tiktok-downloader.html" class="btn-tool secondary">Download &amp; fix ↗</a>
             <a id="tiktok-open" class="btn-tool secondary" target="_blank" rel="noopener noreferrer" hidden>
               Open TikTok ↗
             </a>
@@ -1704,6 +1704,13 @@
       }
     }
 
+    const tiktokDownloadLink = document.getElementById('tiktok-download-link');
+    tiktokDownloadLink.addEventListener('click', () => {
+      const input = tiktokUrlInput.value.trim();
+      tiktokDownloadLink.href = isTikTokUrl(input)
+        ? './tiktok-downloader.html?url=' + encodeURIComponent(input)
+        : './tiktok-downloader.html';
+    });
     tiktokCheckButton.addEventListener('click', checkTikTokVideo);
     tiktokUrlInput.addEventListener('keydown', event => {
       if (event.key === 'Enter') checkTikTokVideo();
