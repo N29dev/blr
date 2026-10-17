@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MP4 Clip Downloader · N29</title>
+<meta name="description" content="Download a selected part of an MP4 using HTTP range requests, directly in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b18;--card:#11182b;--border:rgba(125,211,252,.24);--accent:#7dd3fc;--text:#f7f8ff;--muted:#a0aec0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,system-ui,sans-serif;background:radial-gradient(ellipse 80% 40% at 50% -15%,rgba(88,101,242,.2),transparent),linear-gradient(#070914,#10172b);line-height:1.5}
+a{color:var(--accent);text-decoration:none}.wrap{width:min(860px,92%);margin:38px auto 80px}
+.back{display:inline-block;margin-bottom:24px;font-weight:600;font-size:.9rem}
+header{margin-bottom:24px}.eyebrow{color:var(--accent);letter-spacing:.1em;text-transform:uppercase;font-weight:800;font-size:.75rem}
+h1{font-size:clamp(2rem,5vw,2.8rem);letter-spacing:-.045em;margin:5px 0 7px}.muted,p{color:var(--muted)}
+.panel{background:linear-gradient(140deg,rgba(125,211,252,.09),rgba(88,101,242,.045));border:1px solid var(--border);border-radius:20px;padding:26px}
+.field{display:grid;gap:7px;min-width:0}.field label{font-size:.88rem;font-weight:700}
+input{width:100%;border:1px solid var(--border);background:#080e1d;color:var(--text);padding:13px 14px;border-radius:11px;font:inherit;outline:0}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.08)}
+input::placeholder{color:#748095}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.row>.field{flex:1}
+.btn{border:0;background:var(--accent);color:#061421;padding:12px 18px;border-radius:11px;font:700 .91rem Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.btn.secondary{background:#1c2940;color:var(--text);border:1px solid var(--border)}
+.btn:disabled{opacity:.5;cursor:not-allowed}.btn:hover:not(:disabled){filter:brightness(1.07)}
+video{display:block;width:100%;max-height:410px;border-radius:14px;background:#020408;margin:20px 0 16px}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 0}
+.field small,.note{color:var(--muted);font-size:.81rem}.action-row{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 5px}
+.status{min-height:1.5em;margin-top:14px;font-size:.9rem;color:#cbd5e1;overflow-wrap:anywhere}
+.status.error{color:#fca5a5}progress{width:100%;height:9px;accent-color:var(--accent);margin-top:10px}
+.info{margin-top:17px;padding:15px;border:1px solid rgba(125,211,252,.16);border-radius:13px;background:rgba(0,0,0,.17);font-size:.84rem;color:var(--muted)}
+.info strong{color:var(--text)}[hidden]{display:none!important}
+@media(max-width:600px){.times{grid-template-columns:1fr}.row>.field{flex-basis:100%}.panel{padding:17px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="./">← Back to Creator Tools</a>
+<header><div class="eyebrow">N29 · Creator Tools</div><h1>MP4 Clip Downloader</h1><p>Paste a direct MP4 link and export only the time range you choose.</p></header>
+<section class="panel">
+<div class="row">
+<div class="field"><label for="url">Direct MP4 URL</label><input id="url" type="url" inputmode="url" placeholder="https://example.com/video.mp4" spellcheck="false"></div>
+<button id="load" class="btn" type="button">Load video</button>
+</div>
+<p class="note">Supports publicly accessible MP4 links with browser CORS access and HTTP byte-range support. It cannot bypass video-host restrictions.</p>
+<div id="editor" hidden>
+<video id="preview" controls playsinline preload="metadata"></video>
+<div class="times">
+<div class="field"><label for="start">Clip starts at</label><input id="start" value="00:00:00" placeholder="00:00:00"><button id="set-start" class="btn secondary" type="button">Use current video time</button></div>
+<div class="field"><label for="end">Clip ends at</label><input id="end" value="00:00:15" placeholder="00:00:15"><button id="set-end" class="btn secondary" type="button">Use current video time</button></div>
+</div>
+<p id="duration" class="note"></p>
+<div class="action-row">
+<button id="export" class="btn" type="button">Download selected clip</button>
+<button id="cancel" class="btn secondary" type="button" disabled>Cancel export</button>
+<a id="download" class="btn secondary" hidden download="clip.mp4">Download MP4</a>
+</div>
+<progress id="progress" max="100" value="0" hidden></progress>
+</div>
+<p id="status" class="status" role="status" aria-live="polite">Choose a video link to begin.</p>
+<div class="info"><strong>How it works:</strong> The browser requests the MP4 metadata and the byte ranges needed for your clip, instead of intentionally downloading the whole video. Exact trimming may require re-encoding using your browser's media codecs. Some additional surrounding data may be fetched. If the host blocks CORS, range requests or playback, a backend is required.</div>
+</section>
+</main>
+<script type="module">
+import { Input, UrlSource, ALL_FORMATS, Output, Mp4OutputFormat, BufferTarget, Conversion } from 'https://cdn.jsdelivr.net/npm/mediabunny@1.61.3/dist/bundles/mediabunny.mjs';
+const $ = id => document.getElementById(id);
+let sourceUrl='', input=null, conversion=null, clipUrl='', totalDuration=null, job=0;
+function message(text,error=false){$('status').textContent=text;$('status').classList.toggle('error',error)}
+function formatTime(value){const s=Math.max(0,Math.floor(value));return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')}
+function parseTime(text){
+  const parts=text.trim().split(':').map(x=>x.trim());
+  if(!parts.length||parts.length>3||parts.some(p=>!/^\d+(?:\.\d+)?$/.test(p))) return NaN;
+  let secs=0;for(const part of parts) secs=secs*60+Number(part);
+  return secs;
+}
+function clearDownload(){if(clipUrl)URL.revokeObjectURL(clipUrl);clipUrl='';$('download').hidden=true;$('download').removeAttribute('href')}
+function cleanupInput(){if(input){try{input.dispose()}catch{} input=null}}
+function validUrl(value){const u=new URL(value);if(!['http:','https:'].includes(u.protocol))throw Error('Use an HTTP or HTTPS URL.');return u.href}
+function networkError(error){
+  const detail=error?.message||String(error);
+  return /fetch|network|cors|http|403|401|404|range/i.test(detail)
+   ? 'The video host blocked this request, or CORS/range support is unavailable. Try another direct MP4 URL. Details: '+detail
+   : detail;
+}
+async function checkRanges(url){
+  let res;
+  try{res=await fetch(url,{method:'GET',headers:{Range:'bytes=0-0'},mode:'cors',cache:'no-store',credentials:'omit'})}
+  catch{throw Error('Browser access is blocked (likely CORS or a network restriction). This host requires a server-side clipper.')}
+  const ok=res.status===206;
+  if(res.body)await res.body.cancel();
+  if(!ok)throw Error('This server returned HTTP '+res.status+' instead of 206 Partial Content. Partial MP4 downloading is not available for this URL.');
+}
+$('load').addEventListener('click',async()=>{
+ const token=++job;$('load').disabled=true;$('export').disabled=true;
+ $('editor').hidden=true;clearDownload();cleanupInput();totalDuration=null;
+ try{
+  sourceUrl=validUrl($('url').value.trim());
+  message('Checking access and partial-download support…');
+  await checkRanges(sourceUrl);if(token!==job)return;
+  input=new Input({source:new UrlSource(sourceUrl),formats:ALL_FORMATS});
+  message('Reading MP4 metadata…');
+  if(!await input.canRead())throw Error('The URL did not return a supported media file.');
+  const videoTrack=await input.getPrimaryVideoTrack();
+  if(!videoTrack)throw Error('No video track found.');
+  totalDuration=await input.getDurationFromMetadata();
+  if(!Number.isFinite(totalDuration)||totalDuration<=0)totalDuration=await input.computeDuration();
+  if(token!==job)return;
+  $('preview').src=sourceUrl;$('preview').load();
+  $('start').value='00:00:00';
+  $('end').value=formatTime(Math.min(totalDuration,15));
+  $('duration').textContent='Video duration: '+formatTime(totalDuration)+'. Choose a start and end, or pause the video and use the buttons.';
+  $('editor').hidden=false;$('export').disabled=false;
+  message('Video loaded. Select your clip range.');
+ }catch(err){cleanupInput();message(networkError(err),true)}
+ finally{$('load').disabled=false}
+});
+$('url').addEventListener('keydown',e=>{if(e.key==='Enter')$('load').click()});
+$('set-start').addEventListener('click',()=>{$('start').value=formatTime($('preview').currentTime||0)});
+$('set-end').addEventListener('click',()=>{$('end').value=formatTime($('preview').currentTime||0)});
+$('start').addEventListener('change',()=>{const t=parseTime($('start').value);if(Number.isFinite(t)&&t>=0)$('preview').currentTime=t});
+$('preview').addEventListener('timeupdate',()=>{const end=parseTime($('end').value);if(Number.isFinite(end)&&$('preview').currentTime>=end&&!$('preview').paused)$('preview').pause()});
+$('export').addEventListener('click',async()=>{
+ const start=parseTime($('start').value),end=parseTime($('end').value);
+ if(!input){message('Load an MP4 first.',true);return}
+ if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end<=start||(totalDuration!==null&&end>totalDuration+.1)){
+  message('Enter a valid range. End must be after start and within the video duration.',true);return;
+ }
+ clearDownload();$('export').disabled=true;$('load').disabled=true;$('cancel').disabled=false;
+ $('progress').hidden=false;$('progress').value=0;
+ try{
+  const output=new Output({format:new Mp4OutputFormat({fastStart:'in-memory'}),target:new BufferTarget()});
+  message('Preparing your MP4 clip…');
+  conversion=await Conversion.init({input,output,trim:{start,end},tracks:'primary',tags:{}});
+  if(!conversion.isValid)throw Error('This video cannot be exported in your browser (unsupported audio/video codec).');
+  conversion.onProgress=p=>{$('progress').value=Math.round(Math.max(0,Math.min(1,p))*100);message('Exporting selected clip… '+$('progress').value+'%')};
+  await conversion.execute();
+  const bytes=output.target.buffer;
+  if(!bytes||!bytes.byteLength)throw Error('No MP4 output was produced.');
+  clipUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));
+  $('download').href=clipUrl;$('download').download='n29_clip_'+Math.floor(start)+'-'+Math.ceil(end)+'.mp4';
+  $('download').hidden=false;message('Ready — '+(bytes.byteLength/1048576).toFixed(1)+' MiB. Your clip is ready to save.');
+  $('download').click();
+ }catch(err){if(/cancel/i.test(err?.name||'')||/cancel/i.test(err?.message||''))message('Export canceled.');else message(networkError(err),true)}
+ finally{conversion=null;$('export').disabled=false;$('load').disabled=false;$('cancel').disabled=true;$('progress').hidden=true}
+});
+$('cancel').addEventListener('click',async()=>{if(conversion){$('cancel').disabled=true;await conversion.cancel().catch(()=>{})}});
+window.addEventListener('pagehide',()=>{clearDownload();cleanupInput()});
+</script>
+</body>
+</html>
