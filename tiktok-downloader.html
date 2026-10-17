@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TikTok MP4 Downloader · N29</title>
+<meta name="description" content="Download a TikTok MP4 at best available, 720p, or 480p. Automatically repair broken duration metadata.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090c19;--card:#11182b;--border:rgba(125,211,252,.24);--accent:#7dd3fc;--text:#f7f8ff;--muted:#a0aec0}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse 80% 40% at 50% -12%,rgba(88,101,242,.20),transparent),linear-gradient(#070914,#0f1629);color:var(--text);font:15px/1.55 Inter,system-ui,sans-serif}
+a{color:var(--accent);text-decoration:none}.wrap{width:min(850px,92%);margin:38px auto 80px}.back{display:inline-block;margin-bottom:23px;font-weight:650;font-size:.9rem}
+.eyebrow{text-transform:uppercase;color:var(--accent);font-size:.75rem;font-weight:800;letter-spacing:.1em}h1{font-size:clamp(1.9rem,5vw,2.8rem);letter-spacing:-.04em;margin:5px 0 8px}h2{font-size:1.13rem;margin:0 0 9px}p,.muted{color:var(--muted)}
+.panel{border:1px solid var(--border);background:linear-gradient(140deg,rgba(125,211,252,.09),rgba(88,101,242,.045));border-radius:19px;padding:24px;margin-top:18px}
+.field{display:grid;gap:7px;flex:1;min-width:0}.field label{font-size:.87rem;font-weight:700}
+input,select{width:100%;border:1px solid var(--border);border-radius:11px;background:#070e1d;color:var(--text);font:inherit;padding:12px 13px;outline:0}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.08)}input::placeholder{color:#718096}
+.row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.row>.field{flex:1 1 240px}
+button,.download-button{display:inline-flex;align-items:center;justify-content:center;border:0;background:var(--accent);color:#081422;border-radius:11px;padding:12px 17px;font:800 .91rem Inter,system-ui,sans-serif;cursor:pointer}
+button.secondary,.download-button.secondary{background:#202c44;color:var(--text);border:1px solid var(--border)}
+button:disabled{opacity:.5;cursor:not-allowed}.download-button:hover,button:hover:not(:disabled){filter:brightness(1.07)}
+.video{display:grid;grid-template-columns:180px 1fr;gap:18px;margin:16px 0}.cover{width:100%;aspect-ratio:9/16;object-fit:cover;background:#030713;border-radius:12px;max-height:288px}
+.meta{min-width:0;overflow-wrap:anywhere}.meta .author{color:var(--accent);font-weight:800}.meta .title{color:var(--text);font-weight:650}.details{color:var(--muted);font-size:.83rem;margin-top:12px}
+.quality{margin:16px 0}.action-row{display:flex;gap:11px;flex-wrap:wrap}.note{font-size:.81rem;color:var(--muted)}.status{min-height:1.5em;font-size:.89rem;color:#cbd5e1;margin:13px 0 6px;overflow-wrap:anywhere}.status.error{color:#fca5a5}
+progress{display:block;width:100%;height:9px;accent-color:var(--accent);margin-top:10px}
+.result{margin-top:16px;padding:16px;border:1px solid rgba(125,211,252,.22);border-radius:13px;background:rgba(125,211,252,.045)}
+.result video{display:block;width:100%;max-height:450px;background:#02040a;border-radius:11px;margin:12px 0}
+.label{display:block;color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;font-weight:800;margin-bottom:5px}
+input[type=file]{padding:11px;font-size:.87rem}summary{cursor:pointer;color:var(--accent);font-weight:700}.info{font-size:.82rem;color:var(--muted)}
+[hidden]{display:none!important}@media(max-width:580px){.panel{padding:17px}.video{grid-template-columns:104px 1fr;gap:13px}.cover{max-height:185px}}
+</style></head>
+<body><main class="wrap">
+<a class="back" href="./">← Back to Creator Tools</a><header><div class="eyebrow">N29 · Creator Tools</div>
+<h1>TikTok MP4 Downloader</h1><p>Download a public TikTok video, choose the resolution, and export a repaired MP4 with readable duration metadata.</p></header>
+<section class="panel">
+<div class="row"><div class="field"><label for="url">TikTok video URL</label>
+<input id="url" type="url" inputmode="url" placeholder="https://www.tiktok.com/@user/video/…" autocomplete="off" spellcheck="false"></div>
+<button id="lookup" type="button">Find video</button></div>
+<p class="note">Public TikTok posts only. Uses the TikWM endpoint already used by your site. Download only content you're allowed to use.</p>
+<div id="details" hidden>
+<div class="video"><img id="cover" class="cover" alt="TikTok thumbnail"><div class="meta">
+<div id="author" class="author"></div><div id="title" class="title"></div><div id="summary" class="details"></div>
+<a id="original-link" target="_blank" rel="noopener noreferrer" href="#">Open TikTok ↗</a></div></div>
+<div class="field quality"><label for="quality">Download quality</label>
+<select id="quality"><option value="best">Original / Best available · No resize</option>
+<option value="720">720p · H.264 MP4</option><option value="480">480p · H.264 MP4</option></select></div>
+<div class="action-row"><button id="process" type="button">Download &amp; auto-fix MP4</button>
+<button id="cancel" class="secondary" type="button" disabled>Cancel</button></div>
+<p class="note">Original keeps the source resolution, if possible. 720p and 480p cap the shorter video dimension (no upscaling). All output is checked for non-zero duration. A source may be re-encoded if simple metadata repair is insufficient.</p>
+</div>
+<p id="status" class="status" role="status" aria-live="polite">Paste a TikTok URL to begin.</p>
+<progress id="progress" value="0" max="100" hidden></progress>
+<div id="result" class="result" hidden><strong>Repaired MP4 ready</strong>
+<div id="result-meta" class="details"></div><video id="output-preview" controls playsinline preload="metadata"></video>
+<a id="download" class="download-button" download="tiktok_fixed.mp4">Download fixed MP4</a></div>
+</section>
+<section class="panel"><h2>Already downloaded a broken MP4?</h2>
+<p class="note">If your TikTok video was patched and now shows 0:00, select the existing file here to repair its container without downloading again.</p>
+<div class="field"><label for="file">Select MP4 to repair</label><input id="file" type="file" accept="video/mp4,.mp4,video/*"></div>
+<div class="action-row" style="margin-top:14px"><button id="fix-file" type="button">Fix local video</button></div>
+</section>
+<section class="panel"><details><summary>About the repair and download limits</summary>
+<p class="info">A fast remux reconstructs MP4 timing metadata and moves its index for compatibility. If the source contains unsupported video codecs, broken timestamps, or a requested smaller size, the video is converted to H.264 + AAC instead. Remuxing without re-encoding preserves video quality, but conversion does not.</p>
+<p class="info">This tool processes media on your own device. It needs the video host to allow browser downloads with CORS. If the server blocks CORS, download the file another way, then use "Fix local video" above. The browser cannot repair a completely missing/damaged media stream. Large files may exceed browser memory.</p>
+<p class="info">"Original" means highest-quality variant returned by TikWM, not a guaranteed untouched TikTok upload. 720p/480p are generated from that source when necessary, rather than claiming that TikTok provides separate versions.</p>
+</details></section></main>
+<script type="module">
+import { FFmpeg } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
+import { toBlobURL } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js';
+const $=id=>document.getElementById(id);
+let videoData=null, ff=null, ffReady=false, busy=false, abort=null, objectUrl=null, lastLog='', startedOperation=0;
+const MAX_SIZE=650*1024*1024;
+function status(s,isError=false){$('status').textContent=s;$('status').classList.toggle('error',isError)}
+function bytes(n){const v=Number(n||0);return v>=1048576?(v/1048576).toFixed(1)+' MiB':(v/1024).toFixed(1)+' KiB'}
+function time(s){const n=Math.round(Number(s||0));return n?Math.floor(n/60)+':'+String(n%60).padStart(2,'0'):'Unknown'}
+function isTikTokUrl(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&(u.hostname==='tiktok.com'||u.hostname.endsWith('.tiktok.com'))}catch{return false}}
+function setBusy(v){busy=v;$('lookup').disabled=v;$('process').disabled=v;$('fix-file').disabled=v;$('quality').disabled=v;$('file').disabled=v;$('cancel').disabled=!v}
+function clearResult(){if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}
+$('result').hidden=true;$('output-preview').pause();$('output-preview').removeAttribute('src');$('output-preview').load();$('download').removeAttribute('href')}
+function candidate(value){if(typeof value!=='string'||!value)return '';try{const u=new URL(value, 'https://www.tikwm.com/');return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function sources(data){
+ const list=[
+ {url:candidate(data.hdplay||data.hdPlay),name:'HD',size:Number(data.hd_size||data.hdSize||0)},
+ {url:candidate(data.play),name:'Standard',size:Number(data.size||data.play_size||0)},
+ {url:candidate(data.wmplay||data.wmPlay),name:'Watermarked fallback',size:Number(data.wm_size||0)}
+ ];return list.filter(x=>x.url).filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i);
+}
+async function loadInfo(){
+ const link=$('url').value.trim();if(!isTikTokUrl(link)){status('Paste a valid TikTok video URL.',true);return}
+ setBusy(true);videoData=null;$('details').hidden=true;clearResult();status('Reading TikTok video information…');
+ try{
+  const res=await fetch('https://www.tikwm.com/api/?hd=1&url='+encodeURIComponent(link),{cache:'no-store'});
+  if(!res.ok)throw Error('TikWM API returned HTTP '+res.status);
+  const payload=await res.json();
+  if(!payload.data||!sources(payload.data).length)throw Error(String(payload.msg||'No downloadable MP4 stream was returned.'));
+  videoData=payload.data;const d=videoData;
+  const user=typeof d.author==='object'?(d.author.unique_id||d.author.nickname||''):String(d.author||'');
+  $('author').textContent=user?'@'+String(user).replace(/^@/,''):'TikTok video';
+  $('title').textContent=d.title||'Untitled video';
+  $('summary').textContent=[time(d.duration),sources(d).map(s=>s.name).join(' / '),d.hd_size?'HD available':''].filter(Boolean).join(' · ');
+  $('cover').src=candidate(d.cover||d.origin_cover||d.ai_dynamic_cover)||'';
+  $('cover').hidden=!$('cover').src;
+  $('original-link').href=link;$('details').hidden=false;
+  status('Video found. Choose a resolution, then download and repair.');
+ }catch(e){status('Could not load TikTok video: '+(e?.message||e),true)}finally{setBusy(false)}
+}
+$('lookup').addEventListener('click',loadInfo);
+$('url').addEventListener('keydown',e=>{if(e.key==='Enter')loadInfo()});
+$('url').addEventListener('input',()=>{videoData=null;$('details').hidden=true;clearResult()});
+function progress(v){$('progress').hidden=false;$('progress').value=Math.min(100,Math.max(0,Math.round(v)))}
+function detectCodec(file){
+ return file.arrayBuffer().then(buffer=>{
+  const all=new Uint8Array(buffer);const sections=[all.subarray(0,Math.min(all.length,2097152)),all.subarray(Math.max(0,all.length-2097152))];
+  const texts=sections.map(arr=>new TextDecoder('latin1').decode(arr));
+  for(const code of ['hvc1','hev1','av01','vp09','vp08'])if(texts.some(t=>t.includes(code)))return code;
+  if(texts.some(t=>t.includes('avc1')||t.includes('avc3')))return 'avc1';
+  return 'unknown';
+ });
+}
+async function downloadMedia(list){
+ let lastError=null;
+ for(const item of list){
+  if(abort?.signal.aborted)throw new DOMException('Canceled','AbortError');
+  try{
+   status('Downloading '+item.name+' source…');const res=await fetch(item.url,{signal:abort.signal,mode:'cors',credentials:'omit',cache:'no-store'});
+   if(!res.ok)throw Error('HTTP '+res.status);
+   const declared=Number(res.headers.get('content-length')||item.size||0);
+   if(declared>MAX_SIZE)throw Error('Source is too large for browser conversion ('+bytes(declared)+').');
+   if(!res.body)throw Error('Browser streaming is not available.');
+   const reader=res.body.getReader(),chunks=[];let received=0;
+   while(true){
+    const next=await reader.read();if(next.done)break;
+    chunks.push(next.value);received+=next.value.byteLength;
+    if(received>MAX_SIZE){reader.cancel();throw Error('Source exceeds browser memory safety limit.')}
+    if(declared)progress(Math.min(28,28*received/declared));
+    status('Downloading '+item.name+'… '+bytes(received)+(declared?' / '+bytes(declared):''));
+   }
+   const blob=new Blob(chunks,{type:'video/mp4'});
+   if(blob.size<1024)throw Error('Returned file was empty.');
+   return {file:new File([blob],'source.mp4',{type:'video/mp4'}),name:item.name};
+  }catch(e){
+   if(e?.name==='AbortError')throw e;
+   lastError=e;
+   // Retry alternate stream (HD/standard) when one host rejects browser requests.
+  }
+ }
+ throw Error('Browser could not fetch any video stream. This is often a CORS or CDN restriction. Download the MP4 in another way and repair it below. '+(lastError?.message||''));
+}
+async function ensureFF(){
+ if(ffReady&&ff)return ff;
+ status('Loading FFmpeg processing engine (~31 MB)…');
+ ff=new FFmpeg();
+ ff.on('log', ({message})=>{lastLog=(lastLog+'\n'+message).slice(-6000)});
+ ff.on('progress',({progress:p})=>{
+  if(busy&&Number.isFinite(p))progress(35+Math.min(0.65,Math.max(0,p))*60);
+ });
+ const base='https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
+ const [coreURL,wasmURL]=await Promise.all([toBlobURL(base+'/ffmpeg-core.js','text/javascript'),toBlobURL(base+'/ffmpeg-core.wasm','application/wasm')]);
+ await ff.load({classWorkerURL:new URL('./ffmpeg-worker.js',location.href).href,coreURL,wasmURL});
+ ffReady=true;return ff;
+}
+function dimensions(blob){
+ return new Promise(resolve=>{
+  const url=URL.createObjectURL(blob),v=document.createElement('video');
+  let done=false;const finish=(width=0,height=0,duration=0)=>{
+   if(done)return;done=true;clearTimeout(timer);v.pause();v.removeAttribute('src');v.load();URL.revokeObjectURL(url);resolve({width,height,duration});
+  };
+  const timer=setTimeout(()=>finish(),8000);
+  v.preload='metadata';v.muted=true;v.onloadedmetadata=()=>finish(v.videoWidth||0,v.videoHeight||0,Number.isFinite(v.duration)?v.duration:0);
+  v.onerror=()=>finish();v.src=url;
+ });
+}
+async function runCommand(args,errorContext){
+ lastLog='';const code=await ff.exec(args);if(code!==0)throw Error(errorContext+' (exit '+code+'). '+lastLog.slice(-650));
+}
+function encodeArgs(size,dim){
+ const target=Number(size);const width=Number(dim.width||0),height=Number(dim.height||0);
+ let filter;
+ if(!target)filter=null;
+ else if(width>0&&height>0){
+  const scale=Math.min(1,target/Math.min(width,height));
+  const w=Math.max(2,Math.round(width*scale/2)*2),h=Math.max(2,Math.round(height*scale/2)*2);
+  filter='scale='+w+':'+h+':flags=lanczos';
+ } else filter='scale='+target+':-2:flags=lanczos';
+ return [
+  '-fflags','+genpts','-i','source.mp4','-map','0:v:0','-map','0:a?',
+  '-c:v','libx264','-preset','veryfast','-crf',size==='0'?'19':'21',
+  '-pix_fmt','yuv420p',...(filter?['-vf',filter]:[]),
+  '-c:a','aac','-b:a','160k','-map_metadata','-1','-map_chapters','-1',
+  '-movflags','+faststart','-avoid_negative_ts','make_zero','-y','final.mp4'
+ ];
+}
+async function prepareOutput(file,quality){
+ await ensureFF();if(!busy)throw Error('Canceled');
+ if(file.size>MAX_SIZE)throw Error('File exceeds browser safety limit of '+bytes(MAX_SIZE));
+ const codec=await detectCodec(file),dim=await dimensions(file);
+ status('Preparing file for timing repair…');
+ progress(33);await ff.writeFile('source.mp4',new Uint8Array(await file.arrayBuffer()));
+ const wantScale=quality==='720'||quality==='480';
+ let remuxed=false,method='H.264/AAC conversion';
+ try{
+  if(!wantScale&&codec==='avc1'){
+   status('Repairing MP4 container without re-encoding…');
+   try{
+    await runCommand(['-fflags','+genpts','-i','source.mp4','-map','0:v:0','-map','0:a?','-c','copy','-map_metadata','-1','-map_chapters','-1','-avoid_negative_ts','make_zero','-movflags','+faststart','-y','final.mp4'],'Lossless repair failed');
+    const raw=await ff.readFile('final.mp4');
+    const preview=await dimensions(new Blob([raw],{type:'video/mp4'}));
+    if(preview.duration>0.1&&raw.byteLength>1024){
+      remuxed=true;method='Lossless MP4 remux';progress(96);
+    }else{await ff.deleteFile('final.mp4');status('Duration is still invalid. Rebuilding video timestamps…')}
+   }catch(e){try{await ff.deleteFile('final.mp4')}catch{};status('Metadata copy did not fix duration. Re-encoding…')}
+  }
+  if(!remuxed){
+   status(wantScale?'Converting to '+quality+'p H.264/AAC…':'Re-encoding with corrected timestamps…');
+   await runCommand(encodeArgs(wantScale?quality:'0',dim),'Video conversion failed');
+  }
+  const data=await ff.readFile('final.mp4');
+  if(!data||data.byteLength<1024)throw Error('The repaired MP4 was empty.');
+  const output=new Blob([data],{type:'video/mp4'});
+  const checked=await dimensions(output);
+  if(!(checked.duration>0.1))throw Error('Output still has invalid duration. The input media may have damaged timestamps or missing frames. No broken file will be offered.');
+  if(checked.width<1||checked.height<1)throw Error('Output video track could not be validated.');
+  return {blob:output,meta:checked,method,codec};
+ }finally{
+  await Promise.allSettled([ff.deleteFile('source.mp4'),ff.deleteFile('final.mp4')]);
+ }
+}
+async function process(inputFile,quality,id){
+ if(busy)return;
+ clearResult();progress(0);setBusy(true);abort=new AbortController();
+ try{
+  let file=inputFile,src='Uploaded video';
+  if(!file){
+   if(!videoData)throw Error('Find a TikTok video first.');
+   const found=await downloadMedia(sources(videoData));file=found.file;src=found.name;
+  }
+  if(abort.signal.aborted)throw new DOMException('Canceled','AbortError');
+  status('Repairing video locally…');
+  const final=await prepareOutput(file,quality);
+  if(abort.signal.aborted)throw new DOMException('Canceled','AbortError');
+  objectUrl=URL.createObjectURL(final.blob);
+  $('output-preview').src=objectUrl;
+  $('download').href=objectUrl;
+  $('download').download='n29_tiktok_'+(id||'video')+'_'+(quality==='best'?'original':quality+'p')+'_fixed.mp4';
+  $('result-meta').textContent=final.meta.width+'×'+final.meta.height+' · '+time(final.meta.duration)+' · '+bytes(final.blob.size)+' · '+final.method+' · '+src+' source';
+  $('result').hidden=false;progress(100);
+  status('MP4 repaired and validated. Duration: '+time(final.meta.duration)+'. Ready to download.');
+  $('download').click();
+ }catch(e){
+  if(e?.name==='AbortError'||/cancel/i.test(e?.message||''))status('Canceled.');else status(e?.message||'Download failed.',true);
+ }finally{
+  abort=null;setBusy(false);$('progress').hidden=true;
+ }
+}
+$('process').addEventListener('click',()=>process(null,$('quality').value, String(videoData?.id||videoData?.video_id||'video').replace(/[^0-9a-z_-]/gi,'')));
+$('fix-file').addEventListener('click',()=>{const f=$('file').files?.[0];if(!f){status('Select a local MP4 first.',true);return}process(f,'best',f.name.replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]/gi,'_').slice(0,60))});
+$('cancel').addEventListener('click',()=>{abort?.abort();if(ff){ff.terminate();ff=null;ffReady=false}status('Canceling…')});
+window.addEventListener('pagehide',()=>{if(objectUrl)URL.revokeObjectURL(objectUrl);if(ff)ff.terminate()});
+</script></body></html>
