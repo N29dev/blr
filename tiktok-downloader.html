@@ -92,12 +92,13 @@ async function loadInfo(){
   const payload=await res.json();
   if(!payload.data||!sources(payload.data).length)throw Error(String(payload.msg||'No downloadable MP4 stream was returned.'));
   videoData=payload.data;const d=videoData;
-  const user=typeof d.author==='object'?(d.author.unique_id||d.author.nickname||''):String(d.author||'');
+  const user=d.author&&typeof d.author==='object'?(d.author.unique_id||d.author.nickname||''):String(d.author||'');
   $('author').textContent=user?'@'+String(user).replace(/^@/,''):'TikTok video';
   $('title').textContent=d.title||'Untitled video';
   $('summary').textContent=[time(d.duration),sources(d).map(s=>s.name).join(' / '),d.hd_size?'HD available':''].filter(Boolean).join(' · ');
-  $('cover').src=candidate(d.cover||d.origin_cover||d.ai_dynamic_cover)||'';
-  $('cover').hidden=!$('cover').src;
+  const coverUrl=candidate(d.cover||d.origin_cover||d.ai_dynamic_cover);
+  if(coverUrl)$('cover').src=coverUrl;else $('cover').removeAttribute('src');
+  $('cover').hidden=!coverUrl;
   $('original-link').href=link;$('details').hidden=false;
   status('Video found. Choose a resolution, then download and repair.');
  }catch(e){status('Could not load TikTok video: '+(e?.message||e),true)}finally{setBusy(false)}
@@ -107,9 +108,8 @@ $('url').addEventListener('keydown',e=>{if(e.key==='Enter')loadInfo()});
 $('url').addEventListener('input',()=>{videoData=null;$('details').hidden=true;clearResult()});
 function progress(v){$('progress').hidden=false;$('progress').value=Math.min(100,Math.max(0,Math.round(v)))}
 function detectCodec(file){
- return file.arrayBuffer().then(buffer=>{
-  const all=new Uint8Array(buffer);const sections=[all.subarray(0,Math.min(all.length,2097152)),all.subarray(Math.max(0,all.length-2097152))];
-  const texts=sections.map(arr=>new TextDecoder('latin1').decode(arr));
+ return Promise.all([file.slice(0,2097152).arrayBuffer(),file.slice(Math.max(0,file.size-2097152)).arrayBuffer()]).then(buffers=>{
+  const texts=buffers.map(arr=>new TextDecoder('latin1').decode(arr));
   for(const code of ['hvc1','hev1','av01','vp09','vp08'])if(texts.some(t=>t.includes(code)))return code;
   if(texts.some(t=>t.includes('avc1')||t.includes('avc3')))return 'avc1';
   return 'unknown';
@@ -189,7 +189,7 @@ function encodeArgs(size,dim){
  ];
 }
 async function prepareOutput(file,quality){
- await ensureFF();if(!busy)throw Error('Canceled');
+ const engine=await ensureFF();if(abort?.signal.aborted||!busy)throw new DOMException('Canceled','AbortError');
  if(file.size>MAX_SIZE)throw Error('File exceeds browser safety limit of '+bytes(MAX_SIZE));
  const codec=await detectCodec(file),dim=await dimensions(file);
  status('Preparing file for timing repair…');
@@ -220,7 +220,7 @@ async function prepareOutput(file,quality){
   if(checked.width<1||checked.height<1)throw Error('Output video track could not be validated.');
   return {blob:output,meta:checked,method,codec};
  }finally{
-  await Promise.allSettled([ff.deleteFile('source.mp4'),ff.deleteFile('final.mp4')]);
+  await Promise.allSettled([engine.deleteFile('source.mp4'),engine.deleteFile('final.mp4')]);
  }
 }
 async function process(inputFile,quality,id){
@@ -245,7 +245,7 @@ async function process(inputFile,quality,id){
   status('MP4 repaired and validated. Duration: '+time(final.meta.duration)+'. Ready to download.');
   $('download').click();
  }catch(e){
-  if(e?.name==='AbortError'||/cancel/i.test(e?.message||''))status('Canceled.');else status(e?.message||'Download failed.',true);
+  if(abort?.signal.aborted||e?.name==='AbortError'||/cancel/i.test(e?.message||''))status('Canceled.');else status(e?.message||'Download failed.',true);
  }finally{
   abort=null;setBusy(false);$('progress').hidden=true;
  }
@@ -253,5 +253,6 @@ async function process(inputFile,quality,id){
 $('process').addEventListener('click',()=>process(null,$('quality').value, String(videoData?.id||videoData?.video_id||'video').replace(/[^0-9a-z_-]/gi,'')));
 $('fix-file').addEventListener('click',()=>{const f=$('file').files?.[0];if(!f){status('Select a local MP4 first.',true);return}process(f,'best',f.name.replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]/gi,'_').slice(0,60))});
 $('cancel').addEventListener('click',()=>{abort?.abort();if(ff){ff.terminate();ff=null;ffReady=false}status('Canceling…')});
+try { const incoming=new URL(location.href).searchParams.get('url');if(incoming&&isTikTokUrl(incoming)){$('url').value=incoming;loadInfo()} } catch {}
 window.addEventListener('pagehide',()=>{if(objectUrl)URL.revokeObjectURL(objectUrl);if(ff)ff.terminate()});
 </script></body></html>
