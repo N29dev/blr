@@ -111,7 +111,9 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
     get('welcome').textContent=user?'Welcome, '+user.name:'Community servers';
     get('post').disabled=!config.canPost;
     get('information').textContent=!cfg.available?'Customs database must be connected to Glutony first.':
-      !cfg.canPost?'Website posting awaits OAuth / Turnstile setup.':'1 active match · 10-minute cooldown · up to 3 daily · expires in 4 hours';
+      !cfg.canPost?'Website posting awaits OAuth / Turnstile setup.':
+      user?.isAdmin?'Admin mode · no posting cooldown or daily quota · 1 active match · expires in 4 hours':
+      '1 active match · 10-minute cooldown · up to 3 daily · expires in 4 hours';
     render();
    }catch(e){
     get('cards').replaceChildren(el('div','empty','Customs is not ready yet: '+e.message));
@@ -225,6 +227,7 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
    captchaStatus('Checking your browser…');
    challengeId=window.turnstile.render('#turnstile',{
     sitekey:config.sitekey,
+    action:mode==='report'?'customs_report':'customs_post',
     theme:'dark',
     size:'normal',
     appearance:'always',
