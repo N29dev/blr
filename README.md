@@ -40,8 +40,8 @@ Custom match board: [blr.n29.kz/servers/customs/](https://blr.n29.kz/servers/cus
 
 - [Public server browser](https://blr.n29.kz/servers/) now includes **Main**, **8v8**, and **Pro** tabs.
 - The **Main** place uses BL:R root Place ID `18668065416`. To protect Roblox and RoValra APIs, the Worker returns at most **24 sampled joinable servers** from one Roblox server-list page. It is **not** all live root servers.
-- **🌐 Region globe** launches an interactive 3D globe with drag/swipe rotation, wheel zoom, and clickable country markers. Selecting a country filters the active mode's server cards. The server list remains available if the globe assets fail to load.
-- The globe places markers at approximate **country centers** from RoValra region data, **not verified exact datacenter coordinates**. Unknown regions are never assigned fake pins.
+- **🌐 Region globe** now groups **every distinct resolved city/region in the sampled servers** under **NA, SA, Brazil, Europe, Asia**, plus Oceania and Africa/Middle East. Cities within the same country have separate markers, e.g. Atlanta vs. Los Angeles. Drag/swipe to rotate, wheel to zoom, select a city or its whole continental group to filter the active server cards. The server list works even if globe assets fail to load.
+- Marker positions use **approximate city centers** where the RoValra city is recognized, otherwise an approximate country center. These are **not verified datacenter coordinates**. Unknown regions are never assigned fake pins. A 36-location smoke test covers separate markers and grouping, but the live list cannot guarantee all possible datacenters because it only displays servers found in the bounded Roblox API scan.
 - Country polygons are bundled in `servers/world.geojson`, with attribution in `servers/world-data-license.txt`. The lightweight D3 map engine is loaded only when opening the globe.
 - To see **Main** in Discord slash command choices, the Glutony owner must **re-register `/blr`** after the Worker deploy: changing code does not automatically change a registered Discord command.
 
