@@ -63,9 +63,8 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   <label>Roblox private server share URL<input id="link" type="url" required maxlength="220" placeholder="https://www.roblox.com/share?code=...&amp;type=Server"></label>
   <label>Host region (not verified server datacenter)<input id="region" maxlength="35" placeholder="NA / EU / Asia / Any region"></label>
   <label>Notes (optional)<textarea id="note" maxlength="180" placeholder="Need 5 players, no style/flow, GK practice…"></textarea></label>
-  <div class="field-note">Optional player count (host-reported, not automatically measured by Roblox). Leave both blank if unknown.</div>
-  <label>Players currently in match<input id="player-current" type="number" inputmode="numeric" min="0" max="100" step="1" placeholder="e.g. 4"></label>
-  <label>Maximum players<input id="player-capacity" type="number" inputmode="numeric" min="1" max="100" step="1" placeholder="e.g. 10"></label>
+  <div class="field-note">Optional current player count (host-reported, not measured by Roblox). All private servers have 20 total slots.</div>
+  <label>Players currently in match (out of 20)<input id="player-current" type="number" inputmode="numeric" min="0" max="20" step="1" placeholder="e.g. 4"></label>
  </div>
  <div class="captcha-panel">
   <div class="captcha-label">🔒 Anti-spam verification</div>
@@ -79,10 +78,9 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
 </dialog>
 <dialog id="count-dialog" aria-labelledby="count-title">
 <div class="dhead"><h2 id="count-title">Update players</h2><button id="count-close" type="button">×</button></div>
-<p class="field-note" style="margin-bottom:18px">Only the host can update this count, once every 60 seconds. This is a manual report, not live server telemetry.</p>
+<p class="field-note" style="margin-bottom:18px">All private servers have a 20-player capacity. Only the host can update the current count, once every 60 seconds. This is not live Roblox telemetry.</p>
 <form id="count-form">
- <label>Current players<input id="count-current" type="number" inputmode="numeric" required min="0" max="100" step="1"></label>
- <label>Maximum players<input id="count-capacity" type="number" inputmode="numeric" required min="1" max="100" step="1"></label>
+ <label>Current players (out of 20)<input id="count-current" type="number" inputmode="numeric" required min="0" max="20" step="1"></label>
  <div id="count-error" class="status" role="status"></div>
  <button id="count-submit" class="primary" type="submit">Save player count</button>
 </form>
@@ -146,11 +144,11 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   for(const item of items){
    const card=el('article','card'),header=el('div','cardhead'),h=el('h3','',item.title);
    header.append(h,el('span','region','Host: '+(item.region||'Any region')));card.append(header);
-   const hasCount=Number.isInteger(item.playerCurrent)&&Number.isInteger(item.playerCapacity);
+   const hasCount=Number.isInteger(item.playerCurrent)&&item.playerCurrent>=0&&item.playerCurrent<=20;
    const statusText=hasCount
-     ?'👥 '+item.playerCurrent+'/'+item.playerCapacity+' players · host reported'+
+     ?'👥 '+item.playerCurrent+'/20 players · host reported'+
       (Number.isFinite(item.playerReportedAt)?' · '+Math.floor(Math.max(0,Date.now()-item.playerReportedAt)/60000)+'m ago':'')
-     :'👥 Players not reported';
+     :'👥 ?/20 players · not reported';
    card.append(el('p','host','Hosted by '+item.ownerName),el('div','host-count',statusText),el('div','note',item.note||'Looking for teammates'),el('div','expires','⏱ Expires in '+timeLeft(item.expiresAt)));
    const actions=el('div','row'),url=invite(item.link);
    const join=el('a','action','Join server ↗');
@@ -172,7 +170,6 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
    if(!user||!mine.has(item.id))return;
    countTarget=item.id;
    get('count-current').value=Number.isInteger(item.playerCurrent)?String(item.playerCurrent):'';
-   get('count-capacity').value=Number.isInteger(item.playerCapacity)?String(item.playerCapacity):'';
    get('count-error').textContent='';
    get('count-dialog').showModal();
  }
@@ -184,7 +181,7 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
    try{
      await api('/api/customs/'+encodeURIComponent(countTarget)+'/players',{
        method:'PATCH',headers:auth(),
-       body:JSON.stringify({currentPlayers:get('count-current').value,capacity:get('count-capacity').value})
+       body:JSON.stringify({currentPlayers:get('count-current').value})
      });
      get('count-dialog').close();await load();
    }catch(e){error.textContent=e.message;}
@@ -335,8 +332,7 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
    const path=mode==='report'?'/api/customs/'+encodeURIComponent(target)+'/report':'/api/customs';
    const body=mode==='report'?{turnstile:challenge}:{
      title:get('title').value,link:get('link').value,region:get('region').value,
-     note:get('note').value,currentPlayers:get('player-current').value,
-     capacity:get('player-capacity').value,turnstile:challenge
+     note:get('note').value,currentPlayers:get('player-current').value,turnstile:challenge
    };
    await api(path,{method:'POST',headers:auth(),body:JSON.stringify(body)});
    get('dialog').close();get('form').reset();await load();
