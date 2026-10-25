@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b18"><meta name="description" content="Find people to play custom Blue Lock: Rivals matches with. Community-shared Roblox private servers, protected against spam.">
+<title>BL:R Customs · Glutony</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080b18;--panel:#131b30;--text:#f8f9ff;--muted:#a1aec4;--border:rgba(255,255,255,.12);--accent:#7480ff;--green:#57d9a7}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font:15px/1.55 Inter,system-ui,sans-serif;background:radial-gradient(ellipse 80% 40% at 50% -10%,rgba(88,101,242,.22),transparent),linear-gradient(#070914,#10172b);color:var(--text)}
+a{color:inherit;text-decoration:none}button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}
+.wrap{width:min(1050px,calc(100% - 30px));margin:0 auto;padding-bottom:60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:24px 0 38px}.brand{font-size:18px;font-weight:900}.top a:last-child{color:#b5c6df;font-size:13px;font-weight:700}
+.eyebrow{color:#7dd3fc;font-size:12px;letter-spacing:.11em;font-weight:800}.hero h1{font-size:clamp(32px,6vw,55px);letter-spacing:-.06em;line-height:1.1;margin:8px 0 12px}.hero p{color:var(--muted);max-width:680px;margin:0}
+.tabs{display:flex;gap:8px;margin:25px 0 20px}.tabs a{padding:12px 18px;border-radius:12px;background:#172036;color:#aab8d1;font-weight:800;border:1px solid var(--border)}.tabs a.selected{background:#303b62;color:white;border-color:#4a5b91}
+.panel{border:1px solid var(--border);border-radius:17px;background:rgba(255,255,255,.035);padding:20px}
+.controls{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:19px}.controls strong{display:block}.controls small{font-size:12px;color:var(--muted);display:block;margin-top:4px}
+.buttons{display:flex;gap:8px;flex-wrap:wrap}button,.button{border-radius:11px;border:1px solid var(--border);background:#26334f;color:white;padding:10px 14px;font-weight:800;font-size:13px}.primary{background:#5865f2;border-color:#5865f2}
+.searchbar{display:flex;gap:10px;align-items:center;margin:24px 0 19px}.searchbar input{flex:1;min-width:0;background:#10192d;border:1px solid var(--border);padding:13px;border-radius:11px;color:white}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{min-width:0;border-radius:18px;background:linear-gradient(140deg,#172139,#111a2c);border:1px solid rgba(255,255,255,.12);padding:20px}
+.cardhead{display:flex;justify-content:space-between;gap:8px;align-items:start}.card h3{font-size:19px;letter-spacing:-.035em;margin:0;overflow-wrap:anywhere}.region{color:#92dfc2;font-size:11px;white-space:nowrap;font-weight:800;background:rgba(87,217,167,.09);border:1px solid rgba(87,217,167,.18);padding:5px 8px;border-radius:20px}
+.host{font-size:12px;color:#aabbd3;margin:7px 0 15px}.note{font-size:14px;min-height:45px;color:#d8e0f0;overflow-wrap:anywhere}.expires{color:#94a3bf;font-size:12px;margin-top:10px}.row{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:21px}
+.action{display:inline-block;text-align:center;border-radius:10px;background:#5865f2;padding:10px 14px;font-weight:750;font-size:13px}.action.secondary{background:#2d3c58}.action.remove{background:#632d3e}
+.empty{padding:42px 15px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:17px;grid-column:1/-1}
+.hint{font-size:12px;color:var(--muted);margin:25px 0;border-radius:13px;border:1px solid rgba(125,211,252,.18);padding:14px 16px;line-height:1.7}
+.hint a{color:#7dd3fc}.foot{font-size:12px;color:#8191ab;margin-top:35px;text-align:center}
+dialog{color:white;border:1px solid #425171;background:#172137;width:min(520px,calc(100% - 22px));max-height:calc(100dvh - 28px);overflow:auto;border-radius:18px;padding:24px}
+dialog::backdrop{background:rgba(0,0,0,.73);backdrop-filter:blur(4px)}.dhead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:17px}.dhead h2{margin:0;font-size:21px}
+form{display:grid;gap:13px}label{display:grid;gap:5px;color:#cdd7e9;font-size:12px;font-weight:700}label input,label textarea{padding:11px;border:1px solid #3e4b67;background:#10192c;color:white;border-radius:9px;max-width:100%;width:100%}
+textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;min-height:18px}
+[hidden]{display:none!important}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.tabs a{padding:11px 14px}.panel{padding:15px}.top{padding:18px 0 28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="top"><a class="brand" href="/">⚽ N29 / BL:R</a><a href="/servers/">← Public Servers</a></nav>
+<header class="hero"><div class="eyebrow">GLUTONY · COMMUNITY</div><h1>Custom matches<span style="color:#8686ff">.</span></h1>
+<p>Share your Roblox private server so players can join your match. No more waiting for friends or getting stuck in random public lobbies.</p></header>
+<div class="tabs"><a href="/servers/">⚽ 8v8 / Pro</a><a href="/servers/customs/" class="selected" aria-current="page">🤝 Customs</a></div>
+<div class="panel controls">
+ <div><strong id="welcome">Community servers</strong><small id="information">One listing per Discord account · expires after 4 hours</small></div>
+ <div class="buttons"><button id="login">Sign in with Discord</button><button class="primary" id="post" disabled>+ Host a match</button><button id="refresh">↻ Refresh</button></div>
+</div>
+<div class="searchbar"><input type="search" id="search" placeholder="Search match, host or region…" aria-label="Search custom matches"><span id="counter" style="font-size:12px;color:#9caac0;white-space:nowrap">Loading…</span></div>
+<main class="grid" id="cards" aria-live="polite"><div class="empty">Loading community matches…</div></main>
+<div class="hint">⚠️ <b>Community-submitted links are not verified.</b> Only open links to Roblox. A new private-server share link does not reveal which game it belongs to, so Glutony cannot guarantee that a host linked BL:R. <a href="https://en.help.roblox.com/hc/en-us/articles/205345050-Private-VIP-Servers-FAQ" target="_blank" rel="noopener noreferrer">Roblox private server help</a>. Never give anyone your Roblox password or session cookie.</div>
+<div class="foot">Unofficial BL:R community project · <a href="https://github.com/N29dev/Glutony">Glutony</a></div>
+</div>
+<dialog id="dialog" aria-labelledby="dialog-title">
+<div class="dhead"><h2 id="dialog-title">Host a match</h2><button id="close" type="button">×</button></div>
+<form id="form">
+ <div id="fields">
+  <label>Match title<input id="title" required minlength="4" maxlength="64" placeholder="Training, casual matches, 8v8 practice…"></label>
+  <label>Roblox private server share URL<input id="link" type="url" required maxlength="220" placeholder="https://www.roblox.com/share?code=...&amp;type=Server"></label>
+  <label>Region<input id="region" maxlength="35" placeholder="NA / EU / Asia / Any region"></label>
+  <label>Notes (optional)<textarea id="note" maxlength="180" placeholder="Need 5 players, no style/flow, GK practice…"></textarea></label>
+ </div>
+ <div id="turnstile"></div><div id="form-error" class="status" role="status"></div>
+ <button id="submit" type="submit" class="primary">Post match</button>
+</form>
+</dialog>
+<script>
+(()=>{
+ 'use strict';
+ const API='https://glutony.scp343hey.workers.dev';
+ const get=id=>document.getElementById(id);
+ let list=[],mine=new Set(),user=null,config=null,token=sessionStorage.getItem('glutony_customs_session')||'',mode='create',target=null,challenge='',challengeId=null;
+ if(location.hash.startsWith('#customs_session=')){
+   token=decodeURIComponent(location.hash.slice('#customs_session='.length));
+   sessionStorage.setItem('glutony_customs_session',token);
+   history.replaceState({},'',location.pathname+location.search);
+ }
+ const auth=()=>({'content-type':'application/json','authorization':'Bearer '+token});
+ const el=(tag,cls,content)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(content!==undefined)node.textContent=content;return node;};
+ async function api(path,opts){
+   const res=await fetch(API+path,{cache:'no-store',...opts});
+   let value;try{value=await res.json();}catch{throw Error('Service did not respond.');}
+   if(!res.ok)throw Error(value.error||'Request failed.');
+   return value;
+ }
+ const invite=value=>{try{const u=new URL(value);return u.protocol==='https:'&&['www.roblox.com','roblox.com'].includes(u.hostname)&&u.pathname==='/share'&&u.searchParams.get('type')==='Server'?u.href:null;}catch{return null;}};
+ async function load(){
+   get('refresh').disabled=true;
+   get('counter').textContent='Loading…';
+   try{
+    const [cfg,data]=await Promise.all([api('/api/customs/config'),api('/api/customs')]);
+    config=cfg;list=Array.isArray(data.listings)?data.listings:[];
+    if(token){
+      try{user=await api('/api/customs/me',{headers:auth()});}
+      catch{token='';user=null;sessionStorage.removeItem('glutony_customs_session');}
+    }
+    mine=new Set();
+    if(user){try{const m=await api('/api/customs/mine',{headers:auth()});mine=new Set(m.ids||[]);}catch{}}
+    get('login').textContent=user?'Sign out · '+user.name:'Sign in with Discord';
+    get('welcome').textContent=user?'Welcome, '+user.name:'Community servers';
+    get('post').disabled=!config.canPost;
+    get('information').textContent=!cfg.available?'Customs database must be connected to Glutony first.':
+      !cfg.canPost?'Website posting awaits OAuth / Turnstile setup.':'1 active match · 10-minute cooldown · up to 3 daily · expires in 4 hours';
+    render();
+   }catch(e){
+    get('cards').replaceChildren(el('div','empty','Customs is not ready yet: '+e.message));
+    get('counter').textContent='Unavailable';
+   }finally{get('refresh').disabled=false;}
+ }
+ function timeLeft(until){
+   const n=Math.max(0,Math.ceil((until-Date.now())/60000));
+   return n>=60?Math.floor(n/60)+'h '+n%60+'m':n+'m';
+ }
+ function render(){
+  get('cards').replaceChildren();
+  const q=get('search').value.toLowerCase().trim();
+  const items=list.filter(x=>x.expiresAt>Date.now()&&(!q||[x.title,x.region,x.ownerName,x.note].some(v=>String(v||'').toLowerCase().includes(q))));
+  get('counter').textContent=items.length+' matches';
+  if(!items.length){get('cards').append(el('div','empty',q?'Nothing found. Try another search.':'No active custom matches. Post one to find teammates!'));return;}
+  for(const item of items){
+   const card=el('article','card'),header=el('div','cardhead'),h=el('h3','',item.title);
+   header.append(h,el('span','region',item.region||'Any region'));card.append(header);
+   card.append(el('p','host','Hosted by '+item.ownerName),el('div','note',item.note||'Looking for teammates'),el('div','expires','⏱ Expires in '+timeLeft(item.expiresAt)));
+   const actions=el('div','row'),url=invite(item.link);
+   const join=el('a','action','Join server ↗');
+   if(url){join.href=url;join.target='_blank';join.rel='noopener noreferrer';}
+   else{join.style.opacity='.5';join.removeAttribute('href');}
+   actions.append(join);
+   const report=el('button','action secondary','Report');report.type='button';
+   report.addEventListener('click',()=>openForm('report',item.id));actions.append(report);
+   if(mine.has(item.id)){
+     const remove=el('button','action remove','Remove');remove.type='button';
+     remove.addEventListener('click',()=>removeItem(item.id));actions.append(remove);
+   }
+   card.append(actions);get('cards').append(card);
+  }
+ }
+ async function removeItem(id){
+  if(!user)return;
+  if(!confirm('Remove this custom match?'))return;
+  try{await api('/api/customs/'+encodeURIComponent(id),{method:'DELETE',headers:auth()});await load();}
+  catch(e){alert(e.message);}
+ }
+ async function openForm(next,id){
+  if(!user){location.href=(config?.login||API+'/auth/discord/start');return;}
+  if(!config?.canPost){alert('Customs submission is not configured yet.');return;}
+  mode=next;target=id;challenge='';get('form-error').textContent='';
+  get('dialog-title').textContent=next==='report'?'Report match':'Host a match';
+  get('fields').hidden=next==='report';
+  get('submit').textContent=next==='report'?'Submit report':'Post match';
+  get('dialog').showModal();
+  await loadChallenge();
+ }
+ async function loadChallenge(){
+  const node=get('turnstile');node.replaceChildren();challenge='';challengeId=null;
+  if(!config?.sitekey){node.textContent='Anti-spam protection not configured.';return;}
+  if(!window.turnstile){
+   await new Promise(resolve=>{const script=document.createElement('script');script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';script.onload=resolve;script.onerror=resolve;document.head.append(script);});
+  }
+  if(!window.turnstile){node.textContent='Could not load the anti-spam check.';return;}
+  challengeId=window.turnstile.render(node,{sitekey:config.sitekey,theme:'dark',callback:v=>{challenge=v;},'expired-callback':()=>{challenge='';}});
+ }
+ get('login').addEventListener('click',()=>{
+  if(user){user=null;mine.clear();token='';sessionStorage.removeItem('glutony_customs_session');get('login').textContent='Sign in with Discord';render();}
+  else location.href=config?.login||API+'/auth/discord/start';
+ });
+ get('post').addEventListener('click',()=>openForm('create'));
+ get('refresh').addEventListener('click',load);
+ get('search').addEventListener('input',render);
+ get('close').addEventListener('click',()=>get('dialog').close());
+ get('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const error=get('form-error'),button=get('submit');
+  if(!challenge){error.textContent='Please complete the anti-spam check.';return;}
+  button.disabled=true;error.textContent='Submitting…';
+  try{
+   const path=mode==='report'?'/api/customs/'+encodeURIComponent(target)+'/report':'/api/customs';
+   const body=mode==='report'?{turnstile:challenge}:{title:get('title').value,link:get('link').value,region:get('region').value,note:get('note').value,turnstile:challenge};
+   await api(path,{method:'POST',headers:auth(),body:JSON.stringify(body)});
+   get('dialog').close();get('form').reset();await load();
+  }catch(err){error.textContent=err.message;challenge='';if(window.turnstile&&challengeId!==null)window.turnstile.reset(challengeId);}
+  finally{button.disabled=false;}
+ });
+ load();
+ setInterval(()=>{if(!document.hidden)load();},60000);
+})();
+</script>
+</body>
+</html>
