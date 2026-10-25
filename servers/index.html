@@ -81,7 +81,7 @@
     dialog.globe-dialog{width:min(1070px,calc(100vw - 24px));max-height:calc(100dvh - 20px)}
     .globe-dialog .dialog-in{padding:21px}
     .globe-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:start}
-    .globe-body{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(210px,.7fr);gap:14px;margin-top:14px}
+    .globe-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.85fr);gap:14px;margin-top:14px;min-height:0;min-width:0;height:min(68dvh,660px)}
     .globe-canvas{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(125,211,252,.13);border-radius:17px;background:radial-gradient(circle at 48% 48%,#263a64 0,#151d33 64%,#111829 95%);overflow:hidden}
     #globe-svg{display:block;width:100%;max-width:620px;aspect-ratio:1/1;touch-action:none;user-select:none;cursor:grab}
     #globe-svg:active{cursor:grabbing}
@@ -91,21 +91,38 @@
     .globe-country:nth-child(even){fill:#72899e}
     .globe-dot{fill:#62cbff;stroke:#e0f5ff;stroke-width:2;cursor:pointer;filter:drop-shadow(0 0 6px #49c6fb)}
     .globe-dot:hover,.globe-dot:focus{fill:#5de6aa;stroke:white;outline:none;stroke-width:3}
-    .globe-aside{display:flex;flex-direction:column;gap:9px;min-height:0}
+    .globe-aside{display:flex;flex-direction:column;gap:9px;min-height:0;min-width:0;overflow:hidden}
     .globe-meta{font-size:12px;color:#a9bfd7;font-weight:750}
-    .globe-regions{min-height:100px;max-height:520px;overflow-y:auto;display:flex;flex-direction:column;gap:7px}
-    .globe-region{border:1px solid rgba(255,255,255,.1);background:#202f48;color:#eaf3ff;border-radius:11px;text-align:left;padding:11px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .globe-region:hover{border-color:#84dfff;background:#2b3e59}
+    .globe-regions{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;display:flex;flex-direction:column;gap:7px;padding-right:4px}
+    .globe-region{width:100%;min-width:0;border:1px solid rgba(255,255,255,.1);background:#202f48;color:#eaf3ff;border-radius:11px;text-align:left;padding:11px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .globe-region:hover,.globe-region:focus-visible{border-color:#84dfff;background:#2b3e59}.globe-region.selected{border-color:#66cdf7;background:#294a66}
     .globe-region-name{font-weight:750;font-size:12px}.globe-region-count{color:#79ceff;font-size:11px;white-space:nowrap}
-    .globe-area{border:1px solid rgba(255,255,255,.10);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.025)}
-    .globe-area-title{display:flex;justify-content:space-between;align-items:center;gap:7px;background:#263653;color:#f1f6ff;cursor:pointer;font-weight:850;font-size:12px;padding:11px 12px}
+    .globe-area{flex-shrink:0;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:rgba(255,255,255,.025)}
+    .globe-area-title{display:flex;justify-content:space-between;align-items:center;gap:7px;background:#263653;color:#f1f6ff;cursor:pointer;font-weight:850;font-size:12px;padding:11px 12px;border-radius:12px}.globe-area[open]>.globe-area-title{border-radius:12px 12px 0 0}
     .globe-area .globe-region{width:calc(100% - 12px);margin:6px;border-radius:8px;font-size:11px}
     .globe-area .globe-area-all{background:rgba(89,102,244,.18);border-color:rgba(89,102,244,.38);color:#e3ebff}
     .globe-region-name{overflow-wrap:anywhere}
     .globe-empty{font-size:12px;color:#a7b6cd;padding:16px;border:1px dashed rgba(255,255,255,.12);border-radius:12px}
     .globe-note{margin:13px 0 2px;font-size:12px;line-height:1.65;color:#a0b5ca}
     .globe-loading{position:absolute;left:16px;bottom:14px;padding:9px 12px;color:#c5eaff;background:rgba(6,16,34,.83);border-radius:11px;font-size:12px}
-    @media(max-width:730px){.globe-body{grid-template-columns:1fr}.globe-regions{max-height:210px}.globe-dialog .dialog-in{padding:15px}#globe-svg{max-height:54dvh}.mode small{display:none}}
+    .globe-tooltip{position:absolute;z-index:4;pointer-events:none;min-width:160px;max-width:245px;background:rgba(8,15,30,.96);border:1px solid #4b7b9f;box-shadow:0 8px 30px rgba(0,0,0,.4);border-radius:11px;padding:10px 12px;font-size:12px;color:#eaf6ff;overflow-wrap:anywhere}
+    .globe-tooltip strong{display:block;font-size:13px}.globe-tooltip small{display:block;color:#a3bed7;margin-top:3px}
+    .globe-dot.selected{fill:#56e0b4;stroke:white;stroke-width:3}
+    .globe-inspector{border:1px solid rgba(102,205,247,.40);border-radius:13px;background:#1b2a43;padding:11px;min-height:0;max-height:49%;overflow-y:auto;overscroll-behavior:contain;flex-shrink:0}
+    .globe-inspector-title{font-weight:850;color:#f3fbff;font-size:14px;overflow-wrap:anywhere}
+    .globe-inspector-meta{font-size:11px;color:#a9bdd4;margin:4px 0 10px}
+    .globe-inspector-servers{display:flex;flex-direction:column;gap:6px}
+    .globe-inspector-server{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-radius:9px;border:1px solid rgba(255,255,255,.10);padding:9px;background:#101e32}
+    .globe-inspector-server-info{font-size:12px;color:#deebfa;font-weight:750}
+    .globe-inspector-server-info small{display:block;color:#9bb3d1;font-size:11px;font-weight:500;margin-top:2px}
+    .globe-inspector-action{padding:7px 10px;border:1px solid #5965c5;background:#4357a0;border-radius:8px;color:#fff;font-size:11px;font-weight:750}
+    .globe-inspector-filter{width:100%;margin-top:9px;background:rgba(90,112,224,.25)}
+    .globe-help{color:#8da3be;font-size:11px;margin-top:5px}
+    .globe-aside-footer{flex-shrink:0;padding-top:7px;border-top:1px solid rgba(255,255,255,.1)}
+    .globe-aside-footer .refresh{width:100%}
+    .globe-dialog .dialog-in{display:flex;flex-direction:column;min-height:0}
+    .globe-region:focus-visible,.globe-inspector-action:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}
+    @media(max-width:730px){.globe-body{grid-template-columns:1fr;height:auto;gap:10px}.globe-aside{height:min(43dvh,350px)}.globe-inspector{max-height:52%}.globe-dialog .dialog-in{padding:15px}#globe-svg{max-height:44dvh}.mode small{display:none}}
     @media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{width:calc(100% - 26px)}.topnav{padding:20px 0 23px}.navlinks a{padding:9px}.hero h1{font-size:38px}.metrics{gap:8px}.metric{padding:13px 11px}.metric strong{font-size:23px}.metric small{font-size:11px}.mode-panel{max-width:none}.server{padding:18px}.sort{flex:1;min-width:165px}.refresh{flex:0 0 auto}}
     @media(max-width:370px){.navlinks a:last-child{display:none}.cardfoot{flex-wrap:wrap}.version{width:100%}.detail-facts{grid-template-columns:1fr}}
     @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.server{transition:none}}
@@ -176,15 +193,17 @@
       <div class="globe-body">
         <div class="globe-canvas">
           <svg id="globe-svg" viewBox="0 0 620 620" aria-label="Interactive rotatable globe of approximate country locations" role="img"></svg>
+          <div id="globe-tooltip" class="globe-tooltip" hidden></div>
           <div id="globe-loading" class="globe-loading">Loading globe…</div>
         </div>
         <div class="globe-aside">
           <div id="globe-resolved" class="globe-meta">0 regions resolved</div>
-          <div id="globe-regions" class="globe-regions" aria-label="Select a country to filter the server list"></div>
-          <button id="globe-filter-clear" class="refresh" type="button">Show all regions</button>
+          <div id="globe-inspector" class="globe-inspector" hidden aria-live="polite"></div>
+          <div id="globe-regions" class="globe-regions" aria-label="Explore server regions"></div>
+          <div class="globe-aside-footer"><button id="globe-filter-clear" class="refresh" type="button">Show all regions</button></div>
         </div>
       </div>
-      <p class="globe-note"><span id="globe-hint">Drag or swipe to rotate, scroll to zoom, and click a dot to filter.</span> Pins show approximate <b>city locations</b> when recognized, otherwise country centers for RoValra-resolved servers. They are <b>not exact Roblox datacenter coordinates</b>. This map groups all regions present in the scanned server sample; it does not claim that every possible location currently has a server.</p>
+      <p class="globe-note"><span id="globe-hint">Drag or swipe to rotate, scroll to zoom, and select a dot for server details.</span> Pins show approximate <b>city locations</b> when recognized, otherwise country centers for RoValra-resolved servers. They are <b>not exact Roblox datacenter coordinates</b>. This map groups all regions present in the scanned server sample; it does not claim that every possible location currently has a server.</p>
     </div>
   </dialog>
   <dialog id="server-dialog" aria-labelledby="detail-title">
@@ -213,7 +232,7 @@
     </div>
   </dialog>
 
-  <script defer src="/servers/globe.js?v=2"></script>
+  <script defer src="/servers/globe.js?v=3"></script>
   <script>
   (() => {
     'use strict';
@@ -508,6 +527,10 @@
         ui.search.value='';
         render();
         el('section-title').scrollIntoView({behavior:'smooth',block:'start'});
+      },selectedServer=>{
+        window.GlutonyGlobe?.close();
+        const stillListed=serverList.find(s=>s.id===selectedServer.id);
+        if(stillListed)openDetail(stillListed);
       });
     });
     const clearRegion=()=>{
