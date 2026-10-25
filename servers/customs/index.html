@@ -30,6 +30,12 @@ dialog{color:white;border:1px solid #425171;background:#172137;width:min(520px,c
 dialog::backdrop{background:rgba(0,0,0,.73);backdrop-filter:blur(4px)}.dhead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:17px}.dhead h2{margin:0;font-size:21px}
 form{display:grid;gap:13px}label{display:grid;gap:5px;color:#cdd7e9;font-size:12px;font-weight:700}label input,label textarea{padding:11px;border:1px solid #3e4b67;background:#10192c;color:white;border-radius:9px;max-width:100%;width:100%}
 textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;min-height:18px}
+.captcha-panel{display:grid;gap:9px;border:1px solid rgba(125,211,252,.18);border-radius:12px;background:rgba(125,211,252,.035);padding:14px;min-height:95px}
+.captcha-label{font-size:12px;font-weight:800;color:#d6e3f5}.captcha-state{font-size:12px;color:#a6bad2;line-height:1.55}
+.captcha-state.failed{color:#f9b7ad}.captcha-state.ok{color:#7be4bb}
+.captcha-try{justify-self:start;font-size:12px;background:#314463;padding:7px 12px}
+#turnstile{min-height:12px;max-width:100%;overflow:visible}
+#submit:disabled{opacity:.56}
 [hidden]{display:none!important}
 @media(max-width:680px){.grid{grid-template-columns:1fr}.tabs a{padding:11px 14px}.panel{padding:15px}.top{padding:18px 0 28px}}
 </style>
@@ -58,7 +64,13 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   <label>Region<input id="region" maxlength="35" placeholder="NA / EU / Asia / Any region"></label>
   <label>Notes (optional)<textarea id="note" maxlength="180" placeholder="Need 5 players, no style/flow, GK practice…"></textarea></label>
  </div>
- <div id="turnstile"></div><div id="form-error" class="status" role="status"></div>
+ <div class="captcha-panel">
+  <div class="captcha-label">🔒 Anti-spam verification</div>
+  <div id="captcha-state" class="captcha-state" role="status" aria-live="polite">Open a form to start verification.</div>
+  <div id="turnstile"></div>
+  <button id="captcha-retry" class="captcha-try" type="button" hidden>↻ Retry verification</button>
+ </div>
+ <div id="form-error" class="status" role="status"></div>
  <button id="submit" type="submit" class="primary">Post match</button>
 </form>
 </dialog>
@@ -68,6 +80,7 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
  const API='https://glutony.scp343hey.workers.dev';
  const get=id=>document.getElementById(id);
  let list=[],mine=new Set(),user=null,config=null,token=sessionStorage.getItem('glutony_customs_session')||'',mode='create',target=null,challenge='',challengeId=null;
+ let challengeLoad=null, challengeAttempt=0, challengeWatch=null;
  if(location.hash.startsWith('#customs_session=')){
    token=decodeURIComponent(location.hash.slice('#customs_session='.length));
    sessionStorage.setItem('glutony_customs_session',token);
@@ -143,21 +156,121 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   if(!user){location.href=(config?.login||API+'/auth/discord/start');return;}
   if(!config?.canPost){alert('Customs submission is not configured yet.');return;}
   mode=next;target=id;challenge='';get('form-error').textContent='';
+  get('form').reset();
+  get('submit').disabled=true;
   get('dialog-title').textContent=next==='report'?'Report match':'Host a match';
   get('fields').hidden=next==='report';
   get('submit').textContent=next==='report'?'Submit report':'Post match';
   get('dialog').showModal();
   await loadChallenge();
  }
- async function loadChallenge(){
-  const node=get('turnstile');node.replaceChildren();challenge='';challengeId=null;
-  if(!config?.sitekey){node.textContent='Anti-spam protection not configured.';return;}
-  if(!window.turnstile){
-   await new Promise(resolve=>{const script=document.createElement('script');script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';script.onload=resolve;script.onerror=resolve;document.head.append(script);});
-  }
-  if(!window.turnstile){node.textContent='Could not load the anti-spam check.';return;}
-  challengeId=window.turnstile.render(node,{sitekey:config.sitekey,theme:'dark',callback:v=>{challenge=v;},'expired-callback':()=>{challenge='';}});
+ function captchaStatus(message,kind=''){
+  const el=get('captcha-state');
+  el.textContent=message;
+  el.className='captcha-state'+(kind?' '+kind:'');
  }
+ function captchaError(code){
+  const s=String(code||'').replace(/[^\d]/g,'').slice(0,6);
+  if(s==='110200')return 'Hostname not authorized (110200). Add blr.n29.kz to your Turnstile widget in Cloudflare.';
+  if(['110100','110110','400020','400021','400070'].includes(s))return 'Turnstile sitekey/configuration error ('+s+'). Check the widget and configured hostname.';
+  if(s==='200500')return 'Could not load the Turnstile iframe (200500). A blocker, VPN, or network may be interfering.';
+  if(s==='110600'||s==='110620')return 'Security check timed out ('+s+'). Tap Retry verification.';
+  return 'Verification failed'+(s?' (code '+s+')':'')+'. Tap Retry or try a different browser.';
+ }
+ function showCaptchaProblem(message){
+  challenge='';
+  get('submit').disabled=true;
+  captchaStatus(message,'failed');
+  get('captcha-retry').hidden=false;
+ }
+ function ensureTurnstile(){
+  if(window.turnstile&&typeof window.turnstile.render==='function')return Promise.resolve();
+  if(!challengeLoad){
+   challengeLoad=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async=true;
+    let settled=false;
+    const timer=setTimeout(()=>finish(new Error('Turnstile script timed out. Check extensions, VPN, or network blocking challenges.cloudflare.com.')),12000);
+    function finish(error){
+     if(settled)return;
+     settled=true;clearTimeout(timer);
+     if(error){script.remove();reject(error);}
+     else resolve();
+    }
+    script.onload=()=>window.turnstile&&typeof window.turnstile.render==='function'
+      ?finish():finish(new Error('Turnstile loaded but did not initialize. Reload the page.'));
+    script.onerror=()=>finish(new Error('Turnstile script was blocked. Allow challenges.cloudflare.com or try a different browser.'));
+    document.head.append(script);
+   }).catch(error=>{challengeLoad=null;throw error;});
+  }
+  return challengeLoad;
+ }
+ async function loadChallenge(){
+  const attempt=++challengeAttempt;
+  if(challengeWatch){clearTimeout(challengeWatch);challengeWatch=null;}
+  if(window.turnstile&&challengeId!==null){
+   try{window.turnstile.remove(challengeId);}catch(e){console.warn('Turnstile cleanup:',e);}
+  }
+  challenge='';challengeId=null;
+  const node=get('turnstile');node.replaceChildren();
+  get('submit').disabled=true;get('captcha-retry').hidden=true;
+  captchaStatus('Loading Cloudflare security verification…');
+  if(!config?.sitekey){showCaptchaProblem('Turnstile sitekey missing from the Glutony API.');return;}
+  try{
+   await ensureTurnstile();
+   if(attempt!==challengeAttempt||!get('dialog').open)return;
+   captchaStatus('Checking your browser…');
+   challengeId=window.turnstile.render('#turnstile',{
+    sitekey:config.sitekey,
+    theme:'dark',
+    size:'normal',
+    appearance:'always',
+    execution:'render',
+    callback:token=>{
+     if(attempt!==challengeAttempt)return;
+     challenge=token;
+     get('submit').disabled=false;
+     get('captcha-retry').hidden=true;
+     get('form-error').textContent='';
+     captchaStatus('✓ Verified. You can submit your match.','ok');
+    },
+    'error-callback':code=>{
+     if(attempt===challengeAttempt)showCaptchaProblem(captchaError(code));
+     console.warn('Cloudflare Turnstile code:',code);
+     return true;
+    },
+    'expired-callback':()=>{
+     if(attempt===challengeAttempt)showCaptchaProblem('Verification expired. Tap Retry verification.');
+    },
+    'timeout-callback':()=>{
+     if(attempt===challengeAttempt)showCaptchaProblem('Verification timed out. Tap Retry verification.');
+    }
+   });
+   if(challengeId===undefined||challengeId===null)throw new Error('Turnstile did not create a widget. Please retry.');
+   // If the widget is blocked silently, give an actionable status instead of an empty box.
+   challengeWatch=setTimeout(()=>{
+    if(attempt===challengeAttempt&&!challenge&&get('dialog').open){
+     captchaStatus('Still checking? If the widget is blank, allow challenges.cloudflare.com, disable blockers for this page, or tap Retry.');
+     get('captcha-retry').hidden=false;
+    }
+   },18000);
+  }catch(error){
+   if(attempt===challengeAttempt){
+    console.warn('Turnstile initialization failed:',error);
+    showCaptchaProblem(error?.message||'Could not initialize security verification.');
+   }
+  }
+ }
+ get('captcha-retry').addEventListener('click',loadChallenge);
+ get('dialog').addEventListener('close',()=>{
+  challengeAttempt++;
+  if(challengeWatch){clearTimeout(challengeWatch);challengeWatch=null;}
+  if(window.turnstile&&challengeId!==null){
+   try{window.turnstile.remove(challengeId);}catch{}
+  }
+  challenge='';challengeId=null;get('turnstile').replaceChildren();
+ });
  get('login').addEventListener('click',()=>{
   if(user){user=null;mine.clear();token='';sessionStorage.removeItem('glutony_customs_session');get('login').textContent='Sign in with Discord';render();}
   else location.href=config?.login||API+'/auth/discord/start';
@@ -169,15 +282,23 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
  get('form').addEventListener('submit',async e=>{
   e.preventDefault();
   const error=get('form-error'),button=get('submit');
-  if(!challenge){error.textContent='Please complete the anti-spam check.';return;}
+  if(!challenge){error.textContent='The security check is not verified yet. Check the message above or tap Retry verification.';return;}
   button.disabled=true;error.textContent='Submitting…';
   try{
    const path=mode==='report'?'/api/customs/'+encodeURIComponent(target)+'/report':'/api/customs';
    const body=mode==='report'?{turnstile:challenge}:{title:get('title').value,link:get('link').value,region:get('region').value,note:get('note').value,turnstile:challenge};
    await api(path,{method:'POST',headers:auth(),body:JSON.stringify(body)});
    get('dialog').close();get('form').reset();await load();
-  }catch(err){error.textContent=err.message;challenge='';if(window.turnstile&&challengeId!==null)window.turnstile.reset(challengeId);}
-  finally{button.disabled=false;}
+  }catch(err){
+   error.textContent=err.message;
+   challenge='';
+   get('submit').disabled=true;
+   if(window.turnstile&&challengeId!==null){
+    try{window.turnstile.reset(challengeId);}catch{get('captcha-retry').hidden=false;}
+    captchaStatus('Rechecking your browser…');
+   }else get('captcha-retry').hidden=false;
+  }
+  finally{button.disabled=!challenge;}
  });
  load();
  setInterval(()=>{if(!document.hidden)load();},60000);
