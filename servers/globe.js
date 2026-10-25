@@ -34,7 +34,7 @@ const CITY_COORDS={
  'buenos aires':[-58.3816,-34.6037],'santiago':[-70.6693,-33.4489],
  'bogota':[-74.0721,4.711],'lima':[-77.0428,-12.0464],
  'montevideo':[-56.1645,-34.9011],'cordoba':[-64.1888,-31.4201],
- 'frankfurt':[8.6821,50.1109],'paris':[2.3522,48.8566],
+ 'frankfurt':[8.6821,50.1109],'frankfurt am main':[8.6821,50.1109],'frankfurt main':[8.6821,50.1109],'paris':[2.3522,48.8566],
  'amsterdam':[4.9041,52.3676],'london':[-0.1276,51.5072],
  'warsaw':[21.0122,52.2297],'stockholm':[18.0686,59.3293],
  'madrid':[-3.7038,40.4168],'dublin':[-6.2603,53.3498],
@@ -95,7 +95,7 @@ function coordForName(raw){
  return CITY_COORDS[clean]||CITY_COORDS[clean.replace(/\b(city|metro|county)\b/g,'').trim()]||null;
 }
 
-const state={open:false,loaded:false,loading:null,countries:[],lookup:new Map(),groups:[],servers:[],select:null,projection:null,shapes:null,rotation:[-14,-19],scale:263,drag:null,suppress:false,raf:0};
+const state={open:false,loaded:false,loading:null,countries:[],lookup:new Map(),groups:[],servers:[],select:null,showServer:null,selectedKey:null,projection:null,shapes:null,rotation:[-14,-19],scale:263,drag:null,suppress:false,raf:0};
 const element=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n;};
 const svgElement=(tag,attributes={},label)=>{const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attributes))n.setAttribute(k,v);if(label!==undefined)n.textContent=label;return n;};
 const setStatus=message=>{$('globe-status').textContent=message;};
@@ -118,46 +118,117 @@ function grouping(servers){
  }
  return [...regions.values()].sort((a,b)=>AREA_ORDER.indexOf(a.area)-AREA_ORDER.indexOf(b.area)||b.count-a.count||a.label.localeCompare(b.label));
 }
+
+function serversIn(group) {
+ const ids=new Set(group.ids||[]);
+ return state.servers.filter(s=>ids.has(s.id));
+}
+function summary(group) {
+ const servers=serversIn(group);
+ const players=servers.reduce((a,s)=>a+(Number.isFinite(s.playing)?s.playing:0),0);
+ const free=servers.reduce((a,s)=>a+(Number.isFinite(s.free)?s.free:0),0);
+ const pings=servers.map(s=>s.ping).filter(Number.isFinite);
+ const ping=pings.length?Math.round(pings.reduce((a,n)=>a+n,0)/pings.length):null;
+ return {servers,players,free,ping};
+}
 function choose(group){
- if(typeof state.select==='function')state.select({serverIds:group.ids.slice(),countryCode:group.code,country:group.country,city:group.city,label:group.label,area:group.area,key:group.key});
+ if(typeof state.select==='function')state.select({
+  serverIds:group.ids.slice(),countryCode:group.code,country:group.country,
+  city:group.city,label:group.label,area:group.area,key:group.key
+ });
  close();
 }
+function renderInspector(){
+ const panel=$('globe-inspector');
+ if(!panel)return;
+ const g=state.groups.find(g=>g.key===state.selectedKey);
+ panel.replaceChildren();
+ if(!g){panel.hidden=true;return;}
+ panel.hidden=false;
+ const info=summary(g);
+ panel.append(element('div','globe-inspector-title',g.label+(g.country&&g.city?' · '+g.country:'')));
+ panel.append(element('div','globe-inspector-meta',
+  g.count+' server'+(g.count===1?'':'s')+' · '+info.players+' players · '+info.free+
+  ' free slots · '+(info.ping===null?'Ping N/A':info.ping+' ms average ping')));
+ const list=element('div','globe-inspector-servers');
+ for(const [i,server] of info.servers.entries()){
+  const row=element('div','globe-inspector-server');
+  const count=Number.isFinite(server.playing)&&Number.isFinite(server.maxPlayers)
+    ?server.playing+'/'+server.maxPlayers+' players':'Players unknown';
+  const infoText=element('div','globe-inspector-server-info','#'+(i+1)+' · '+count);
+  const ping=Number.isFinite(server.ping)?Math.round(server.ping)+' ms':'Ping N/A';
+  const version=Number.isInteger(server.version)?' · v'+server.version:'';
+  infoText.append(element('small','',ping+version+' · ID '+String(server.id||'').slice(0,8)+'…'));
+  const view=element('button','globe-inspector-action','View server');
+  view.type='button';
+  view.addEventListener('click',()=>{if(typeof state.showServer==='function')state.showServer(server);});
+  row.append(infoText,view);list.append(row);
+ }
+ panel.append(list);
+ const filter=element('button','globe-inspector-action globe-inspector-filter','Filter to '+g.label+' ('+info.servers.length+')');
+ filter.type='button';filter.addEventListener('click',()=>choose(g));
+ panel.append(filter);
+ panel.append(element('div','globe-help','Approximate city marker · RoValra region · Roblox-reported player count and ping.'));
+}
+function inspect(group){
+ state.selectedKey=group.key;renderInspector();
+ for(const btn of $('globe-regions').querySelectorAll('[data-region-key]')){
+  btn.classList.toggle('selected',btn.getAttribute('data-region-key')===group.key);
+ }
+ redraw();
+}
+function showTooltip(g,event){
+ const tip=$('globe-tooltip'),canvas=$('globe-svg')?.parentElement;
+ if(!tip||!canvas)return;
+ const info=summary(g);
+ tip.replaceChildren(
+  element('strong','',g.label+(g.country&&g.city?' · '+g.country:'')),
+  element('small','',g.count+' server'+(g.count===1?'':'s')+' · '+info.players+' players · '+info.free+' free slots'),
+  element('small','',(info.ping===null?'Ping N/A':info.ping+' ms avg')+' · Click for server details')
+ );
+ tip.hidden=false;
+ if(event&&Number.isFinite(event.clientX)){
+  const rect=canvas.getBoundingClientRect();
+  tip.style.left=Math.max(6,Math.min(rect.width-235,event.clientX-rect.left+14))+'px';
+  tip.style.top=Math.max(6,Math.min(rect.height-90,event.clientY-rect.top+12))+'px';
+ }
+}
+function hideTooltip(){if($('globe-tooltip'))$('globe-tooltip').hidden=true;}
 function countryList(){
  const list=$('globe-regions');list.replaceChildren();
- const resolved=state.groups.reduce((sum,g)=>sum+g.count,0);
- $('globe-resolved').textContent=state.groups.length+' distinct resolved locations · '+resolved+'/'+state.servers.length+' scanned servers';
+ const n=state.groups.reduce((sum,g)=>sum+g.count,0);
+ $('globe-resolved').textContent=state.groups.length+' locations · '+n+'/'+state.servers.length+' sampled servers';
  if(!state.groups.length){
-  list.append(element('div','globe-empty','No resolved regions yet. Refresh later to try another RoValra lookup.'));
-  return;
+  list.append(element('div','globe-empty','No resolved regions yet. Refresh later to retry.'));
+  renderInspector();return;
  }
  for(const area of AREA_ORDER){
   const all=state.groups.filter(g=>g.area===area);
   if(!all.length)continue;
   const total=all.reduce((sum,g)=>sum+g.count,0);
   const section=element('details','globe-area');
-  section.open=true;
-  const head=element('summary','globe-area-title');
-  head.append(element('span','',AREA_LABEL[area]),element('span','globe-region-count',total+' servers'));
-  section.append(head);
-  const groupRow=element('button','globe-region globe-area-all');
-  groupRow.type='button';
-  groupRow.append(element('span','globe-region-name','All '+AREA_LABEL[area]),element('span','globe-region-count',all.length+' locations'));
-  groupRow.addEventListener('click',()=>{
-   choose({ids:all.flatMap(g=>g.ids),code:null,country:null,city:null,label:AREA_LABEL[area],area,key:area});
-  });
-  section.append(groupRow);
+  section.open=all.some(g=>g.key===state.selectedKey);
+  const header=element('summary','globe-area-title');
+  header.append(element('span','',AREA_LABEL[area]),element('span','globe-region-count',total+' servers'));
+  section.append(header);
+  const allButton=element('button','globe-region globe-area-all');
+  allButton.type='button';
+  allButton.append(element('span','globe-region-name','Filter all '+AREA_LABEL[area]),element('span','globe-region-count',all.length+' locations'));
+  allButton.addEventListener('click',()=>choose({ids:all.flatMap(g=>g.ids),code:null,country:null,city:null,label:AREA_LABEL[area],area,key:area}));
+  section.append(allButton);
   for(const g of all){
    const btn=element('button','globe-region');
-   btn.type='button';
-   const display=g.country&&g.city?g.label+' · '+g.country:g.label;
-   const text=element('span','globe-region-name',display);
-   btn.append(text,element('span','globe-region-count',g.count+' server'+(g.count===1?'':'s')));
-   btn.title='Show '+display+' servers in this sample';
-   btn.addEventListener('click',()=>choose(g));
+   btn.type='button';btn.setAttribute('data-region-key',g.key);
+   if(g.key===state.selectedKey)btn.classList.add('selected');
+   btn.append(element('span','globe-region-name',g.country&&g.city?g.label+' · '+g.country:g.label),
+              element('span','globe-region-count',g.count+' server'+(g.count===1?'':'s')));
+   btn.title='Inspect '+g.label+' servers';
+   btn.addEventListener('click',()=>inspect(g));
    section.append(btn);
   }
   list.append(section);
  }
+ renderInspector();
 }
 function loadScript(url){
  return new Promise((resolve,reject)=>{
@@ -241,7 +312,7 @@ function draw(){
   const point=p(geo);
   if(!point||!point.every(Number.isFinite))continue;
   const radius=Math.min(12,4+Math.sqrt(group.count)*1.5);
-  const dot=svgElement('circle',{cx:point[0].toFixed(2),cy:point[1].toFixed(2),r:radius.toFixed(1),class:'globe-dot','data-globe-key':group.key,tabindex:'0',role:'button','aria-label':group.label+': '+group.count+' servers'});
+  const dot=svgElement('circle',{cx:point[0].toFixed(2),cy:point[1].toFixed(2),r:radius.toFixed(1),class:'globe-dot'+(group.key===state.selectedKey?' selected':''),'data-globe-key':group.key,tabindex:'0',role:'button','aria-label':group.label+': '+group.count+' servers'});
   dot.append(svgElement('title',{},group.label+' · '+(group.country||'')+' · '+group.count+' servers (approximate '+group.accuracy+' position)'));
   s.points.append(dot);
  }
@@ -271,11 +342,13 @@ function onClick(e){
  const dot=e.target.closest?.('[data-globe-key]');
  if(!dot)return;
  const g=state.groups.find(x=>x.key===dot.getAttribute('data-globe-key'));
- if(g)choose(g);
+ if(g)inspect(g);
 }
-async function open(servers,filter){
+async function open(servers,filter,showServer){
  state.open=true;
  state.select=filter;
+ state.showServer=showServer;
+ state.selectedKey=null;
  state.servers=Array.isArray(servers)?servers:[];
  state.groups=grouping(state.servers);
  countryList();
@@ -295,20 +368,35 @@ async function open(servers,filter){
 function refresh(servers){
  state.servers=Array.isArray(servers)?servers:[];
  state.groups=grouping(state.servers);
+ if(state.selectedKey&&!state.groups.some(g=>g.key===state.selectedKey))state.selectedKey=null;
  if(state.open){countryList();if(state.loaded)redraw();}
 }
 function close(){
  state.open=false;
  state.drag=null;
+ hideTooltip();
  if(state.raf){cancelAnimationFrame(state.raf);state.raf=0;}
  if($('globe-dialog')?.open)$('globe-dialog').close();
 }
 function init(){
  const svg=$('globe-svg');if(!svg||!$('globe-dialog'))return;
- svg.addEventListener('pointerdown',onDown);
- svg.addEventListener('pointermove',onMove);
+ svg.addEventListener('pointerdown',e=>{hideTooltip();onDown(e);});
+ svg.addEventListener('pointermove',e=>{
+  onMove(e);
+  if(state.drag){hideTooltip();return;}
+  const dot=e.target.closest?.('[data-globe-key]');
+  const group=dot&&state.groups.find(g=>g.key===dot.getAttribute('data-globe-key'));
+  if(group)showTooltip(group,e);else hideTooltip();
+ });
  for(const name of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(name,onUp);
  svg.addEventListener('click',onClick);
+ svg.addEventListener('pointerleave',hideTooltip);
+ svg.addEventListener('focusout',hideTooltip);
+ svg.addEventListener('focusin',e=>{
+  const dot=e.target.closest?.('[data-globe-key]');
+  const group=dot&&state.groups.find(g=>g.key===dot.getAttribute('data-globe-key'));
+  if(group)showTooltip(group);
+ });
  svg.addEventListener('wheel',e=>{
   if(!state.open||!state.loaded)return;
   e.preventDefault();state.scale=Math.max(175,Math.min(325,state.scale*(e.deltaY>0?.92:1.08)));redraw();
@@ -326,7 +414,7 @@ function init(){
  });
  $('globe-close').addEventListener('click',close);
  $('globe-reset').addEventListener('click',()=>{state.rotation=[-14,-19];state.scale=263;redraw();});
- $('globe-dialog').addEventListener('close',()=>{state.open=false;if(state.raf)cancelAnimationFrame(state.raf);state.raf=0;});
+ $('globe-dialog').addEventListener('close',()=>{state.open=false;hideTooltip();if(state.raf)cancelAnimationFrame(state.raf);state.raf=0;});
 }
 window.GlutonyGlobe={open,refresh,close};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
