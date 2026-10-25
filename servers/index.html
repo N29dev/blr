@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080b18">
-  <meta name="description" content="Browse public Blue Lock: Rivals 8v8 and Pro servers, compare regions and available slots, and find a match. Powered by Glutony.">
+  <meta name="description" content="Browse public Blue Lock: Rivals Main, 8v8 and Pro servers, compare regions and available slots, and find a match. Powered by Glutony.">
   <title>BL:R Server Browser · N29</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,8 +26,8 @@
     .hero b{color:var(--text)}
     .statusline{display:flex;gap:10px;align-items:center;margin-top:20px;color:var(--muted);font-size:12px;font-weight:600;flex-wrap:wrap}
     .dot{display:inline-block;background:var(--green);height:7px;width:7px;border-radius:50%;box-shadow:0 0 0 4px rgba(87,217,167,.12)}.dot.off{background:var(--red);box-shadow:0 0 0 4px rgba(255,128,138,.14)}
-    .mode-panel{margin-top:25px;border:1px solid var(--line);border-radius:18px;padding:8px;background:rgba(255,255,255,.03);display:flex;gap:8px;max-width:490px}
-    .mode{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;border:0;color:#9fabc1;background:transparent;border-radius:12px;padding:13px 10px;font-weight:800}
+    .mode-panel{margin-top:25px;border:1px solid var(--line);border-radius:18px;padding:8px;background:rgba(255,255,255,.03);display:flex;gap:8px;max-width:760px;flex-wrap:wrap}
+    .mode{flex:1 1 145px;display:flex;align-items:center;justify-content:center;gap:9px;border:0;color:#9fabc1;background:transparent;border-radius:12px;padding:13px 10px;font-weight:800}
     .mode[aria-selected="true"]{background:#29345c;color:white;box-shadow:0 5px 18px rgba(0,0,0,.22)}
     .mode:hover:not([aria-selected="true"]){background:rgba(255,255,255,.06)}
     .mode small{font-size:11px;color:#a7b5ce;font-weight:600}
@@ -74,6 +74,33 @@
     .actions{display:flex;gap:9px;flex-wrap:wrap}.action{border:0;flex:1;min-width:110px;text-align:center;border-radius:11px;padding:12px 13px;background:#5966f4;color:white;font-weight:800;font-size:13px}
     .action.secondary{background:#293651;color:#e5ecff}.action:hover{filter:brightness(1.09)}
     .warn{font-size:12px;color:#a8b6cc;margin:15px 0 0}
+    .globe-trigger{min-height:45px;border:1px solid rgba(125,211,252,.36);background:rgba(88,101,242,.15);border-radius:12px;padding:10px 15px;color:#d0dcff;font-weight:850}
+    .globe-trigger:hover{background:rgba(88,101,242,.25)}
+    .clear-region{min-height:40px;border:1px solid rgba(125,211,252,.35);background:#202f4a;border-radius:10px;color:#bddef7;font-weight:750;padding:8px 12px}
+    [hidden]{display:none!important}
+    dialog.globe-dialog{width:min(1070px,calc(100vw - 24px));max-height:calc(100dvh - 20px)}
+    .globe-dialog .dialog-in{padding:21px}
+    .globe-heading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:start}
+    .globe-body{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(210px,.7fr);gap:14px;margin-top:14px}
+    .globe-canvas{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(125,211,252,.13);border-radius:17px;background:radial-gradient(circle at 48% 48%,#263a64 0,#151d33 64%,#111829 95%);overflow:hidden}
+    #globe-svg{display:block;width:100%;max-width:620px;aspect-ratio:1/1;touch-action:none;user-select:none;cursor:grab}
+    #globe-svg:active{cursor:grabbing}
+    .globe-sphere{fill:#132840;stroke:rgba(125,211,252,.36);stroke-width:2}
+    .globe-graticule{fill:none;stroke:rgba(133,170,213,.12);stroke-width:.7}
+    .globe-country{fill:#607e98;stroke:#193047;stroke-width:.65}
+    .globe-country:nth-child(even){fill:#72899e}
+    .globe-dot{fill:#62cbff;stroke:#e0f5ff;stroke-width:2;cursor:pointer;filter:drop-shadow(0 0 6px #49c6fb)}
+    .globe-dot:hover,.globe-dot:focus{fill:#5de6aa;stroke:white;outline:none;stroke-width:3}
+    .globe-aside{display:flex;flex-direction:column;gap:9px;min-height:0}
+    .globe-meta{font-size:12px;color:#a9bfd7;font-weight:750}
+    .globe-regions{min-height:100px;max-height:520px;overflow-y:auto;display:flex;flex-direction:column;gap:7px}
+    .globe-region{border:1px solid rgba(255,255,255,.1);background:#202f48;color:#eaf3ff;border-radius:11px;text-align:left;padding:11px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .globe-region:hover{border-color:#84dfff;background:#2b3e59}
+    .globe-region-name{font-weight:750;font-size:12px}.globe-region-count{color:#79ceff;font-size:11px;white-space:nowrap}
+    .globe-empty{font-size:12px;color:#a7b6cd;padding:16px;border:1px dashed rgba(255,255,255,.12);border-radius:12px}
+    .globe-note{margin:13px 0 2px;font-size:12px;line-height:1.65;color:#a0b5ca}
+    .globe-loading{position:absolute;left:16px;bottom:14px;padding:9px 12px;color:#c5eaff;background:rgba(6,16,34,.83);border-radius:11px;font-size:12px}
+    @media(max-width:730px){.globe-body{grid-template-columns:1fr}.globe-regions{max-height:210px}.globe-dialog .dialog-in{padding:15px}#globe-svg{max-height:54dvh}.mode small{display:none}}
     @media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{width:calc(100% - 26px)}.topnav{padding:20px 0 23px}.navlinks a{padding:9px}.hero h1{font-size:38px}.metrics{gap:8px}.metric{padding:13px 11px}.metric strong{font-size:23px}.metric small{font-size:11px}.mode-panel{max-width:none}.server{padding:18px}.sort{flex:1;min-width:165px}.refresh{flex:0 0 auto}}
     @media(max-width:370px){.navlinks a:last-child{display:none}.cardfoot{flex-wrap:wrap}.version{width:100%}.detail-facts{grid-template-columns:1fr}}
     @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.server{transition:none}}
@@ -97,6 +124,7 @@
     </header>
 
     <div class="mode-panel" role="tablist" aria-label="Game mode">
+      <button id="mode-main" type="button" role="tab" aria-selected="false" class="mode">🏟️ Main <small>24 sampled</small></button>
       <button id="mode-8v8" type="button" role="tab" aria-selected="true" class="mode">⚽ 8v8 <small>16 players</small></button>
       <button id="mode-pro" type="button" role="tab" aria-selected="false" class="mode">🏆 Pro <small>10 players</small></button>
       <a href="/servers/customs/" class="mode" style="text-decoration:none">🤝 Customs <small>Community</small></a>
@@ -116,6 +144,8 @@
         <option value="ping">Lowest server ping</option>
         <option value="version">Newest version</option>
       </select>
+      <button id="globe-open" class="globe-trigger" type="button">🌐 Region globe</button>
+      <button id="clear-region" class="clear-region" type="button" hidden>✕ Clear region</button>
       <button id="refresh" class="refresh" type="button">↻ Refresh</button>
     </div>
 
@@ -129,6 +159,29 @@
     <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span>Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="/">Back to N29</a></span></footer>
   </div>
 
+  <dialog id="globe-dialog" class="globe-dialog" aria-labelledby="globe-title">
+    <div class="dialog-in">
+      <div class="globe-heading">
+        <div><h2 id="globe-title" style="font-size:22px;margin:0">🌐 Region globe</h2><p id="globe-status" class="globe-meta" role="status">Preparing…</p></div>
+        <div style="display:flex;gap:8px">
+          <button id="globe-reset" class="close" type="button" style="font-size:12px">Reset view</button>
+          <button id="globe-close" class="close" type="button" aria-label="Close globe">×</button>
+        </div>
+      </div>
+      <div class="globe-body">
+        <div class="globe-canvas">
+          <svg id="globe-svg" viewBox="0 0 620 620" aria-label="Interactive rotatable globe of approximate country locations" role="img"></svg>
+          <div id="globe-loading" class="globe-loading">Loading globe…</div>
+        </div>
+        <div class="globe-aside">
+          <div id="globe-resolved" class="globe-meta">0 regions resolved</div>
+          <div id="globe-regions" class="globe-regions" aria-label="Select a country to filter the server list"></div>
+          <button id="globe-filter-clear" class="refresh" type="button">Show all regions</button>
+        </div>
+      </div>
+      <p class="globe-note"><span id="globe-hint">Drag or swipe to rotate, scroll to zoom, and click a dot to filter.</span> Pins show approximate <b>country centers</b> for RoValra-resolved servers, <b>not exact Roblox datacenters</b>. Servers with unknown regions have no pin.</p>
+    </div>
+  </dialog>
   <dialog id="server-dialog" aria-labelledby="detail-title">
     <div class="dialog-in">
       <div class="dialog-head">
@@ -155,11 +208,12 @@
     </div>
   </dialog>
 
+  <script defer src="/servers/globe.js"></script>
   <script>
   (() => {
     'use strict';
     const API = 'https://glutony.scp343hey.workers.dev';
-    const VALID_MODES = ['8v8','pro'];
+    const VALID_MODES = ['main','8v8','pro'];
     const el = id => document.getElementById(id);
     const ui = {
       list:el('servers'), search:el('search'), sort:el('sort'), refresh:el('refresh'),
@@ -171,6 +225,7 @@
     let mode = VALID_MODES.includes(params.get('mode')) ? params.get('mode') : '8v8';
     let pendingServer = params.get('server') || '';
     let serverList = [];
+    let regionFilter = null;
     let requestController = null;
     let requestNum = 0;
     let currentServer = null;
@@ -211,7 +266,9 @@
     }
     function changeMode(next) {
       if(!VALID_MODES.includes(next)||next===mode)return;
-      mode=next; pendingServer=''; ui.search.value='';
+      mode=next; pendingServer=''; ui.search.value='';regionFilter=null;
+      el('clear-region').hidden=true;
+      if(window.GlutonyGlobe)window.GlutonyGlobe.close();
       if(ui.dialog.open)ui.dialog.close();
       updateAddress();
       syncTabs();
@@ -223,7 +280,7 @@
         tab.setAttribute('aria-selected',String(mode===value));
         tab.tabIndex=mode===value?0:-1;
       }
-      ui.title.textContent=mode==='pro'?'Pro public servers':'8v8 public servers';
+      ui.title.textContent=mode==='main'?'Main lobby · sampled servers':mode==='pro'?'Pro public servers':'8v8 public servers';
     }
     function skeleton() {
       ui.list.replaceChildren(node('div','skeleton'),node('div','skeleton'),node('div','skeleton'),node('div','skeleton'));
@@ -236,7 +293,7 @@
     }
     function render() {
       const term=ui.search.value.trim().toLowerCase();
-      const filtered=serverList.filter(s => !term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v => String(v||'').toLowerCase().includes(term)));
+      const filtered=serverList.filter(s => (!regionFilter||(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase())) && (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v => String(v||'').toLowerCase().includes(term))));
       const sort=ui.sort.value;
       filtered.sort((a,b) => {
         if(sort==='space')return b.free-a.free||b.playing-a.playing;
@@ -244,7 +301,7 @@
         if(sort==='version')return (b.version||0)-(a.version||0)||b.playing-a.playing;
         return b.playing-a.playing||b.free-a.free;
       });
-      ui.results.textContent=filtered.length+' of '+serverList.length+' servers';
+      ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+regionFilter.country:'');
       ui.list.replaceChildren();
       if(!filtered.length){
         empty(term?'No matches found':'No joinable servers','Try a different search or press Refresh.');
@@ -320,6 +377,7 @@
         }
         if(metadataChanged){
           render();
+          window.GlutonyGlobe?.refresh(serverList);
           if(currentServer && ui.dialog.open) {
             el('detail-title').textContent=flagFor(currentServer.countryCode)+' '+regionLabel(currentServer);
             el('detail-region').textContent=regionLabel(currentServer);
@@ -341,7 +399,7 @@
       if(requestController)requestController.abort();
       const myRequest=++requestNum;
       requestController=new AbortController();
-      status('Loading live '+(mode==='pro'?'Pro':'8v8')+' servers…');
+      status('Loading live '+(mode==='main'?'Main':mode==='pro'?'Pro':'8v8')+' servers…');
       ui.refresh.disabled=true;ui.refresh.textContent='Loading…';
       ui.countServers.textContent='—';ui.countPlayers.textContent='—';ui.countSpots.textContent='—';
       skeleton();
@@ -355,10 +413,11 @@
         ui.countServers.textContent=String(serverList.length);
         ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
-        status('Online · '+(mode==='pro'?'Pro':'8v8')+' servers ready');
+        status('Online · '+(mode==='main'?'Main':mode==='pro'?'Pro':'8v8')+' servers ready');
         const age=Date.parse(data.updatedAt);
         ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
         render();
+        window.GlutonyGlobe?.refresh(serverList);
         scheduleRegionRecheck();
         if(pendingServer) {
           const match=serverList.find(s=>s.id.toLowerCase()===pendingServer.toLowerCase());
@@ -378,7 +437,7 @@
     function openDetail(s) {
       currentServer=s;
       el('detail-title').textContent=flagFor(s.countryCode)+' '+regionLabel(s);
-      el('detail-mode').textContent=mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
+      el('detail-mode').textContent=mode==='main'?'BL:R Main lobby · Public':mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
       el('detail-players').textContent=s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open';
       el('detail-bar').style.width=(100*s.playing/s.maxPlayers)+'%';
       el('detail-region').textContent=regionLabel(s);
@@ -432,6 +491,23 @@
       }
       setTimeout(()=>{el('share-server').textContent='Copy link';},1600);
     });
+    el('globe-open').addEventListener('click',()=>{
+      if(!window.GlutonyGlobe){alert('Globe is still loading. Try again in a moment.');return;}
+      window.GlutonyGlobe.open(serverList,chosen=>{
+        regionFilter=chosen;
+        el('clear-region').hidden=false;
+        el('clear-region').textContent='✕ '+chosen.country;
+        ui.search.value='';
+        render();
+        el('section-title').scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+    const clearRegion=()=>{
+      regionFilter=null;el('clear-region').hidden=true;ui.search.value='';
+      render();window.GlutonyGlobe?.close();
+    };
+    el('clear-region').addEventListener('click',clearRegion);
+    el('globe-filter-clear').addEventListener('click',clearRegion);
     for(const value of VALID_MODES)el('mode-'+value).addEventListener('click',()=>changeMode(value));
     ui.search.addEventListener('input',render);
     ui.sort.addEventListener('change',render);
