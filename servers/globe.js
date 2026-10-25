@@ -62,14 +62,23 @@ const SA=new Set('AR CL CO PE UY PY BO EC VE GY SR GF FK'.split(' '));
 const EU=new Set('GB IE FR DE NL BE LU CH AT IT ES PT PL CZ SK HU RO BG GR DK SE NO FI IS EE LV LT SI HR BA RS ME MK AL XK MT CY UA BY MD RU TR GE AM AZ'.split(' '));
 const AS=new Set('JP KR KP CN HK MO TW SG IN MY ID TH VN PH KH LA MM BD PK NP LK MN KZ UZ KG TJ TM AF'.split(' '));
 const OC=new Set('AU NZ FJ PG NC GU MP PF WS TO VU SB'.split(' '));
+const COUNTRY_NAMES={
+ NA:'united states|united states of america|usa|canada|mexico|guatemala|belize|costa rica|panama|nicaragua|honduras|el salvador|cuba|jamaica|dominican republic|puerto rico|bahamas|bermuda|haiti|trinidad and tobago',
+ SA:'argentina|chile|colombia|peru|uruguay|paraguay|bolivia|ecuador|venezuela|guyana|suriname|french guiana',
+ Europe:'united kingdom|great britain|england|ireland|france|germany|netherlands|belgium|luxembourg|switzerland|austria|italy|spain|portugal|poland|czechia|czech republic|slovakia|hungary|romania|bulgaria|greece|denmark|sweden|norway|finland|iceland|estonia|latvia|lithuania|slovenia|croatia|serbia|bosnia and herzegovina|albania|ukraine|russia|turkey|belarus|georgia|armenia|azerbaijan',
+ Asia:'japan|south korea|north korea|china|hong kong|macau|taiwan|singapore|india|malaysia|indonesia|thailand|vietnam|philippines|cambodia|laos|myanmar|bangladesh|pakistan|nepal|sri lanka|mongolia|kazakhstan|uzbekistan',
+ Oceania:'australia|new zealand|fiji|papua new guinea|new caledonia'
+};
+const COUNTRY_NAME_SETS=Object.fromEntries(Object.entries(COUNTRY_NAMES).map(([key,names])=>[key,new Set(names.split('|'))]));
 function continent(code,name){
- if(code==='BR'||norm(name)==='brazil')return 'Brazil';
- if(NA.has(code))return 'NA';
- if(SA.has(code))return 'SA';
- if(EU.has(code))return 'Europe';
- if(AS.has(code))return 'Asia';
- if(OC.has(code))return 'Oceania';
- if(code)return 'Africa & Middle East';
+ const n=normalized(name);
+ if(code==='BR'||n==='brazil'||n==='brasil')return 'Brazil';
+ if(NA.has(code)||COUNTRY_NAME_SETS.NA.has(n))return 'NA';
+ if(SA.has(code)||COUNTRY_NAME_SETS.SA.has(n))return 'SA';
+ if(EU.has(code)||COUNTRY_NAME_SETS.Europe.has(n))return 'Europe';
+ if(AS.has(code)||COUNTRY_NAME_SETS.Asia.has(n))return 'Asia';
+ if(OC.has(code)||COUNTRY_NAME_SETS.Oceania.has(n))return 'Oceania';
+ if(code||n)return 'Africa & Middle East';
  return 'Other';
 }
 function canonicalCity(server){
