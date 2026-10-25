@@ -97,6 +97,11 @@
     .globe-region{border:1px solid rgba(255,255,255,.1);background:#202f48;color:#eaf3ff;border-radius:11px;text-align:left;padding:11px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
     .globe-region:hover{border-color:#84dfff;background:#2b3e59}
     .globe-region-name{font-weight:750;font-size:12px}.globe-region-count{color:#79ceff;font-size:11px;white-space:nowrap}
+    .globe-area{border:1px solid rgba(255,255,255,.10);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.025)}
+    .globe-area-title{display:flex;justify-content:space-between;align-items:center;gap:7px;background:#263653;color:#f1f6ff;cursor:pointer;font-weight:850;font-size:12px;padding:11px 12px}
+    .globe-area .globe-region{width:calc(100% - 12px);margin:6px;border-radius:8px;font-size:11px}
+    .globe-area .globe-area-all{background:rgba(89,102,244,.18);border-color:rgba(89,102,244,.38);color:#e3ebff}
+    .globe-region-name{overflow-wrap:anywhere}
     .globe-empty{font-size:12px;color:#a7b6cd;padding:16px;border:1px dashed rgba(255,255,255,.12);border-radius:12px}
     .globe-note{margin:13px 0 2px;font-size:12px;line-height:1.65;color:#a0b5ca}
     .globe-loading{position:absolute;left:16px;bottom:14px;padding:9px 12px;color:#c5eaff;background:rgba(6,16,34,.83);border-radius:11px;font-size:12px}
@@ -179,7 +184,7 @@
           <button id="globe-filter-clear" class="refresh" type="button">Show all regions</button>
         </div>
       </div>
-      <p class="globe-note"><span id="globe-hint">Drag or swipe to rotate, scroll to zoom, and click a dot to filter.</span> Pins show approximate <b>country centers</b> for RoValra-resolved servers, <b>not exact Roblox datacenters</b>. Servers with unknown regions have no pin.</p>
+      <p class="globe-note"><span id="globe-hint">Drag or swipe to rotate, scroll to zoom, and click a dot to filter.</span> Pins show approximate <b>city locations</b> when recognized, otherwise country centers for RoValra-resolved servers. They are <b>not exact Roblox datacenter coordinates</b>. This map groups all regions present in the scanned server sample; it does not claim that every possible location currently has a server.</p>
     </div>
   </dialog>
   <dialog id="server-dialog" aria-labelledby="detail-title">
@@ -293,7 +298,7 @@
     }
     function render() {
       const term=ui.search.value.trim().toLowerCase();
-      const filtered=serverList.filter(s => (!regionFilter||(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase())) && (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v => String(v||'').toLowerCase().includes(term))));
+      const filtered=serverList.filter(s => (!regionFilter||(Array.isArray(regionFilter.serverIds)?regionFilter.serverIds.includes(s.id):(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase()))) && (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v => String(v||'').toLowerCase().includes(term))));
       const sort=ui.sort.value;
       filtered.sort((a,b) => {
         if(sort==='space')return b.free-a.free||b.playing-a.playing;
@@ -301,7 +306,7 @@
         if(sort==='version')return (b.version||0)-(a.version||0)||b.playing-a.playing;
         return b.playing-a.playing||b.free-a.free;
       });
-      ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+regionFilter.country:'');
+      ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'');
       ui.list.replaceChildren();
       if(!filtered.length){
         empty(term?'No matches found':'No joinable servers','Try a different search or press Refresh.');
@@ -396,6 +401,9 @@
     async function load() {
       stopRegionRecheck();
       regionAttempts = 0;
+      // New scan may replace Job IDs; never leave a region filter using stale IDs.
+      regionFilter=null;
+      el('clear-region').hidden=true;
       if(requestController)requestController.abort();
       const myRequest=++requestNum;
       requestController=new AbortController();
@@ -496,7 +504,7 @@
       window.GlutonyGlobe.open(serverList,chosen=>{
         regionFilter=chosen;
         el('clear-region').hidden=false;
-        el('clear-region').textContent='✕ '+chosen.country;
+        el('clear-region').textContent='✕ '+(chosen.label||chosen.country||'Region');
         ui.search.value='';
         render();
         el('section-title').scrollIntoView({behavior:'smooth',block:'start'});
