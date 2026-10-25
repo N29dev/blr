@@ -9,7 +9,7 @@ const $=id=>document.getElementById(id);
 const NS='http://www.w3.org/2000/svg';
 const sources=['https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js','https://unpkg.com/d3@7.9.0/dist/d3.min.js'];
 const normalized=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-const alias={'united states':'united states of america',usa:'united states of america',us:'united states of america',uk:'united kingdom','great britain':'united kingdom','korea republic of':'south korea','russian federation':'russia',uae:'united arab emirates','czech republic':'czechia','hong kong':'china','hong kong sar':'china',turkiye:'turkey'};
+const alias={'united states':'usa','united states of america':'usa',usa:'usa',us:'usa',uk:'england','united kingdom':'england','great britain':'england','korea republic of':'south korea','russian federation':'russia',uae:'united arab emirates',czechia:'czech republic','czech republic':'czech republic','hong kong':'china','hong kong sar':'china',turkiye:'turkey',bahamas:'the bahamas','tanzania':'united republic of tanzania'};
 const norm=value=>alias[normalized(value)]||normalized(value);
 const state={open:false,loaded:false,loading:null,countries:[],lookup:new Map(),groups:[],servers:[],select:null,projection:null,shapes:null,rotation:[-14,-19],scale:263,drag:null,suppress:false,raf:0};
 const element=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n;};
@@ -79,6 +79,10 @@ async function prepare(){
  return state.loading;
 }
 function locate(group){
+ // Small jurisdictions can be absent from low-resolution country polygons.
+ // These are approximate geographic centers, never precise server locations.
+ const fallback={SG:[103.8198,1.3521],HK:[114.17,22.32],MO:[113.55,22.19]};
+ if(group.code&&fallback[group.code])return fallback[group.code];
  const candidates=[group.country];
  if(group.code){try{candidates.push(new Intl.DisplayNames(['en'],{type:'region'}).of(group.code));}catch{}}
  for(const name of candidates){
