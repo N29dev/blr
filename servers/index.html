@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b18">
+  <meta name="description" content="Browse public Blue Lock: Rivals 8v8 and Pro servers, compare regions and available slots, and find a match. Powered by Glutony.">
+  <title>BL:R Server Browser · N29</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--bg:#080b18;--panel:#141b30;--panel2:#10172a;--line:rgba(255,255,255,.1);--text:#f8f9ff;--muted:#9caac0;--sky:#7dd3fc;--purple:#8b88ff;--green:#57d9a7;--red:#ff808a}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 90% 43% at 53% -17%,rgba(88,101,242,.24),transparent),linear-gradient(#070914,#10182a);font:15px/1.55 Inter,system-ui,sans-serif;color:var(--text)}
+    a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+    .wrap{max-width:1160px;width:calc(100% - 42px);margin:0 auto;padding-bottom:70px}
+    .topnav{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:29px 0 34px}
+    .brand{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:900;letter-spacing:-.035em}
+    .brand-icon{display:grid;place-items:center;width:37px;height:37px;border-radius:12px;background:linear-gradient(145deg,#5664f3,#7c72db);font-size:19px}
+    .navlinks{display:flex;align-items:center;gap:9px}.navlinks a{border:1px solid var(--line);border-radius:10px;padding:9px 13px;color:#c9d4e7;font-size:13px;font-weight:700}
+    .navlinks a:hover{background:rgba(255,255,255,.08)}
+    .eyebrow{color:var(--sky);font-weight:800;letter-spacing:.115em;font-size:12px;text-transform:uppercase}
+    .hero{padding:7px 0 22px}.hero h1{font-size:clamp(34px,5.6vw,58px);font-weight:900;letter-spacing:-.06em;line-height:1.09;margin:8px 0 13px}
+    .hero p{max-width:660px;margin:0;color:var(--muted);font-size:15px}
+    .hero b{color:var(--text)}
+    .statusline{display:flex;gap:10px;align-items:center;margin-top:20px;color:var(--muted);font-size:12px;font-weight:600;flex-wrap:wrap}
+    .dot{display:inline-block;background:var(--green);height:7px;width:7px;border-radius:50%;box-shadow:0 0 0 4px rgba(87,217,167,.12)}.dot.off{background:var(--red);box-shadow:0 0 0 4px rgba(255,128,138,.14)}
+    .mode-panel{margin-top:25px;border:1px solid var(--line);border-radius:18px;padding:8px;background:rgba(255,255,255,.03);display:flex;gap:8px;max-width:490px}
+    .mode{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;border:0;color:#9fabc1;background:transparent;border-radius:12px;padding:13px 10px;font-weight:800}
+    .mode[aria-selected="true"]{background:#29345c;color:white;box-shadow:0 5px 18px rgba(0,0,0,.22)}
+    .mode:hover:not([aria-selected="true"]){background:rgba(255,255,255,.06)}
+    .mode small{font-size:11px;color:#a7b5ce;font-weight:600}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:23px 0 25px}
+    .metric{padding:18px 19px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.025))}
+    .metric strong{font-size:27px;font-weight:900;letter-spacing:-.04em;display:block;line-height:1.25}.metric small{display:block;color:var(--muted);font-weight:650;margin-top:5px}
+    .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
+    .field{min-height:45px;border:1px solid rgba(255,255,255,.13);background:#10172a;border-radius:12px;color:#eff4ff;padding:10px 13px;outline:none}
+    .search{flex:1;min-width:185px}.search::placeholder{color:#7c8ca6}.sort{min-width:210px}.sort option{background:#141b30}
+    .refresh{min-height:45px;border:1px solid rgba(125,211,252,.36);background:rgba(125,211,252,.1);color:#c0eafe;font-weight:800;border-radius:12px;padding:10px 16px}
+    .refresh:hover{background:rgba(125,211,252,.18)}.refresh:disabled{opacity:.65;cursor:wait}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:25px 0 15px}
+    .section-head h2{font-size:19px;margin:0;letter-spacing:-.035em}
+    .section-head small{font-size:12px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .server{background:linear-gradient(150deg,rgba(22,31,53,.97),rgba(15,22,42,.96));border:1px solid rgba(255,255,255,.11);border-radius:18px;padding:21px;transition:border-color .15s,transform .15s;min-width:0}
+    .server:hover{border-color:rgba(125,211,252,.36);transform:translateY(-2px)}
+    .server-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.server-region{display:flex;align-items:center;gap:12px;min-width:0}
+    .flag{font-size:29px;line-height:1}.location{font-weight:850;letter-spacing:-.03em;overflow-wrap:anywhere;font-size:17px;line-height:1.3}
+    .subplace{font-size:12px;color:#93a4bc;margin-top:3px}.pill{background:rgba(87,217,167,.09);color:#8deac8;border:1px solid rgba(87,217,167,.18);font-size:11px;font-weight:800;white-space:nowrap;padding:6px 9px;border-radius:20px}
+    .server-count{display:flex;align-items:baseline;gap:10px;margin:22px 0 11px}.server-count strong{font-size:24px;letter-spacing:-.04em}.server-count span{font-size:13px;color:var(--muted)}
+    .bar{width:100%;height:7px;border-radius:99px;background:#283148;overflow:hidden}.bar-inner{height:100%;width:0;background:linear-gradient(90deg,#62cffa,#7c7efa);border-radius:99px;transition:width .25s}
+    .facts{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0 19px}.fact{background:rgba(255,255,255,.045);border-radius:8px;color:#c4cede;padding:6px 9px;font-size:12px;font-weight:650}
+    .cardfoot{display:flex;justify-content:space-between;align-items:center;gap:9px}.version{font:600 12px ui-monospace,SFMono-Regular,monospace;color:#91a4bd}
+    .view{border:0;border-radius:10px;background:#5865f2;color:white;font-size:13px;font-weight:850;padding:10px 15px}.view:hover{background:#6976ff}
+    .empty{border:1px dashed rgba(255,255,255,.16);border-radius:16px;background:rgba(255,255,255,.026);padding:40px 20px;text-align:center;color:var(--muted);grid-column:1/-1}
+    .empty strong{display:block;color:white;font-size:18px;margin-bottom:5px}
+    .skeleton{height:232px;background:linear-gradient(100deg,#141a2d 25%,#1e2943 45%,#141a2d 65%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:18px;border:1px solid var(--line)}
+    @keyframes shimmer{to{background-position-x:-200%}}
+    .notice{margin-top:23px;border:1px solid rgba(125,211,252,.16);border-radius:14px;color:#a5b3c8;background:rgba(125,211,252,.04);padding:13px 16px;font-size:12px}
+    .notice a,.footer a{color:var(--sky)}
+    .footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:#74849d;font-size:12px;margin-top:32px}
+    dialog{width:min(560px,calc(100vw - 28px));border:1px solid #394666;background:#151e33;color:white;border-radius:20px;padding:0;box-shadow:0 35px 110px rgba(0,0,0,.68);max-height:calc(100dvh - 32px);overflow:auto}
+    dialog::backdrop{background:rgba(0,0,0,.74);backdrop-filter:blur(4px)}
+    .dialog-in{padding:26px}.dialog-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+    .dialog-head h2{font-size:22px;line-height:1.3;margin:0 0 4px;letter-spacing:-.04em}.dialog-head p{margin:0;font-size:12px;color:var(--muted)}
+    .close{background:rgba(255,255,255,.09);border:1px solid var(--line);border-radius:9px;padding:6px 11px;color:white;font-weight:800;font-size:17px}
+    .detail-stat{font-size:25px;font-weight:900;margin:23px 0 9px}
+    .detail-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:22px 0}.detail-facts div{background:#0e172b;border:1px solid var(--line);padding:13px 14px;border-radius:11px}
+    .detail-facts small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.detail-facts strong{font-size:13px;overflow-wrap:anywhere}
+    .headshots{display:flex;gap:8px;flex-wrap:wrap;min-height:45px;margin-bottom:14px}.headshots img,.headshots .placeholder{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#253049;border:1px solid #44516d}
+    .headshots .placeholder{display:grid;place-items:center;color:#a0aec0;font-size:12px}
+    .detail-id{font:11px ui-monospace,SFMono-Regular,monospace;color:#91a5c1;overflow-wrap:anywhere;margin:12px 0 16px}
+    .actions{display:flex;gap:9px;flex-wrap:wrap}.action{border:0;flex:1;min-width:110px;text-align:center;border-radius:11px;padding:12px 13px;background:#5966f4;color:white;font-weight:800;font-size:13px}
+    .action.secondary{background:#293651;color:#e5ecff}.action:hover{filter:brightness(1.09)}
+    .warn{font-size:12px;color:#a8b6cc;margin:15px 0 0}
+    @media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{width:calc(100% - 26px)}.topnav{padding:20px 0 23px}.navlinks a{padding:9px}.hero h1{font-size:38px}.metrics{gap:8px}.metric{padding:13px 11px}.metric strong{font-size:23px}.metric small{font-size:11px}.mode-panel{max-width:none}.server{padding:18px}.sort{flex:1;min-width:165px}.refresh{flex:0 0 auto}}
+    @media(max-width:370px){.navlinks a:last-child{display:none}.cardfoot{flex-wrap:wrap}.version{width:100%}.detail-facts{grid-template-columns:1fr}}
+    @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.server{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="topnav" aria-label="Site navigation">
+      <a class="brand" href="/"><span class="brand-icon">⚽</span> N29 <span style="color:#7586a5;font-weight:600">/ BL:R</span></a>
+      <div class="navlinks">
+        <a href="/">← Home</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1563907646757666926&amp;integration_type=1&amp;scope=applications.commands" target="_blank" rel="noopener noreferrer">Glutony App ↗</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="eyebrow">GLUTONY · SERVER BROWSER</div>
+      <h1>Find your next match<span style="color:var(--purple)">.</span></h1>
+      <p>Browse available <b>Blue Lock: Rivals</b> servers, compare regions and open slots, and find players. No Roblox login required here.</p>
+      <div class="statusline"><span id="dot" class="dot"></span><span id="live-status" role="status" aria-live="polite">Connecting to Glutony…</span><span>·</span><span id="last-updated">Waiting for servers</span></div>
+    </header>
+
+    <div class="mode-panel" role="tablist" aria-label="Game mode">
+      <button id="mode-8v8" type="button" role="tab" aria-selected="true" class="mode">⚽ 8v8 <small>16 players</small></button>
+      <button id="mode-pro" type="button" role="tab" aria-selected="false" class="mode">🏆 Pro <small>10 players</small></button>
+    </div>
+
+    <section class="metrics" aria-label="Server statistics">
+      <div class="metric"><strong id="count-servers">—</strong><small>Available servers</small></div>
+      <div class="metric"><strong id="count-players">—</strong><small>Players online</small></div>
+      <div class="metric"><strong id="count-spots">—</strong><small>Free slots</small></div>
+    </section>
+
+    <div class="toolbar">
+      <input id="search" class="field search" type="search" autocomplete="off" placeholder="Search city, country, version…" aria-label="Search servers">
+      <select id="sort" class="field sort" aria-label="Sort servers">
+        <option value="players">Most players</option>
+        <option value="space">Most free slots</option>
+        <option value="ping">Lowest server ping</option>
+        <option value="version">Newest version</option>
+      </select>
+      <button id="refresh" class="refresh" type="button">↻ Refresh</button>
+    </div>
+
+    <div class="section-head"><h2 id="section-title">8v8 public servers</h2><small id="results-label">Loading…</small></div>
+    <main id="servers" class="grid" aria-live="polite">
+      <div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div>
+    </main>
+    <div class="notice">
+      <b>About the data:</b> Locations, versions and first-seen times come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a> when available. Ping is Roblox-reported server ping, <em>not</em> your personal latency. Roblox can sometimes ignore the requested instance ID when joining.
+    </div>
+    <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span>Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="/">Back to N29</a></span></footer>
+  </div>
+
+  <dialog id="server-dialog" aria-labelledby="detail-title">
+    <div class="dialog-in">
+      <div class="dialog-head">
+        <div><h2 id="detail-title">Server details</h2><p id="detail-mode">BL:R public server</p></div>
+        <button id="close-dialog" class="close" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <div class="detail-stat" id="detail-players">—</div>
+      <div class="bar"><div id="detail-bar" class="bar-inner"></div></div>
+      <div class="detail-facts">
+        <div><small>Region</small><strong id="detail-region">—</strong></div>
+        <div><small>Server ping</small><strong id="detail-ping">—</strong></div>
+        <div><small>Place version</small><strong id="detail-version">—</strong></div>
+        <div><small>Uptime estimate</small><strong id="detail-uptime">—</strong></div>
+      </div>
+      <div style="color:#a3b3c9;font-size:12px;font-weight:700;margin-bottom:8px">PLAYER PREVIEWS <span id="detail-avatar-label"></span></div>
+      <div id="headshots" class="headshots" aria-live="polite"></div>
+      <div id="detail-id" class="detail-id"></div>
+      <div class="actions">
+        <a id="join-pc" class="action" target="_blank" rel="noopener noreferrer">Join PC ↗</a>
+        <a id="join-mobile" class="action" target="_blank" rel="noopener noreferrer">Join Mobile ↗</a>
+        <button id="share-server" class="action secondary" type="button">Copy link</button>
+      </div>
+      <p class="warn">Roblox might ignore the target server ID and place you in another lobby. Verify the region after joining.</p>
+    </div>
+  </dialog>
+
+  <script>
+  (() => {
+    'use strict';
+    const API = 'https://glutony.scp343hey.workers.dev';
+    const VALID_MODES = ['8v8','pro'];
+    const el = id => document.getElementById(id);
+    const ui = {
+      list:el('servers'), search:el('search'), sort:el('sort'), refresh:el('refresh'),
+      status:el('live-status'), dot:el('dot'), updated:el('last-updated'),
+      countServers:el('count-servers'), countPlayers:el('count-players'), countSpots:el('count-spots'),
+      title:el('section-title'), results:el('results-label'), dialog:el('server-dialog')
+    };
+    const params = new URLSearchParams(location.search);
+    let mode = VALID_MODES.includes(params.get('mode')) ? params.get('mode') : '8v8';
+    let pendingServer = params.get('server') || '';
+    let serverList = [];
+    let requestController = null;
+    let requestNum = 0;
+    let currentServer = null;
+    const flagFor = code => {
+      if (typeof code !== 'string' || !/^[A-Z]{2}$/.test(code)) return '🌐';
+      return String.fromCodePoint(...Array.from(code).map(c => 127397 + c.charCodeAt(0)));
+    };
+    const pingLabel = ping => Number.isFinite(ping) ? Math.round(ping)+' ms' : 'N/A';
+    const versionLabel = v => Number.isInteger(v) && v>0 ? 'v'+v : 'Unknown';
+    const ago = date => {
+      if (!date) return 'Unknown';
+      const t = Date.parse(date.endsWith('Z') ? date : date+'Z');
+      if (!Number.isFinite(t) || t>Date.now() || Date.now()-t>90*864e5) return 'Unknown';
+      const min = Math.floor((Date.now()-t)/60000);
+      if (min>=1440) return '~'+Math.floor(min/1440)+'d '+Math.floor(min%1440/60)+'h';
+      if (min>=60) return '~'+Math.floor(min/60)+'h '+min%60+'m';
+      return '~'+min+'m';
+    };
+    const safeHostLink = href => {
+      try {const url=new URL(href);return url.protocol==='https:' && url.hostname==='glutony.scp343hey.workers.dev' && url.pathname==='/join' ? url.href : null;}catch{return null;}
+    };
+    const regionLabel = s => s.region || [s.city,s.state,s.country].filter(Boolean).join(', ') || 'Unknown region';
+    const briefRegion = s => s.city ? s.city + (s.state&&s.state!==s.city?', '+s.state:'') : (s.country||'Unknown region');
+    const node = (tag, cls, text) => {const x=document.createElement(tag); if(cls)x.className=cls; if(text!==undefined)x.textContent=text;return x;};
+    function status(message, error) {ui.status.textContent=message; ui.dot.classList.toggle('off',!!error);}
+    function updateAddress(serverId) {
+      const url=new URL(location.href);
+      url.searchParams.set('mode',mode);
+      if(serverId)url.searchParams.set('server',serverId);else url.searchParams.delete('server');
+      history.replaceState({},'',url.pathname+url.search);
+    }
+    function changeMode(next) {
+      if(!VALID_MODES.includes(next)||next===mode)return;
+      mode=next; pendingServer=''; ui.search.value='';
+      if(ui.dialog.open)ui.dialog.close();
+      updateAddress();
+      syncTabs();
+      load();
+    }
+    function syncTabs() {
+      for(const value of VALID_MODES) {
+        const tab=el('mode-'+value);
+        tab.setAttribute('aria-selected',String(mode===value));
+        tab.tabIndex=mode===value?0:-1;
+      }
+      ui.title.textContent=mode==='pro'?'Pro public servers':'8v8 public servers';
+    }
+    function skeleton() {
+      ui.list.replaceChildren(node('div','skeleton'),node('div','skeleton'),node('div','skeleton'),node('div','skeleton'));
+      ui.results.textContent='Loading…';
+    }
+    function empty(title, subtitle) {
+      ui.list.replaceChildren();
+      const wrap=node('div','empty'),strong=node('strong','',title);
+      wrap.append(strong,node('div','',subtitle));ui.list.append(wrap);
+    }
+    function render() {
+      const term=ui.search.value.trim().toLowerCase();
+      const filtered=serverList.filter(s => !term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v => String(v||'').toLowerCase().includes(term)));
+      const sort=ui.sort.value;
+      filtered.sort((a,b) => {
+        if(sort==='space')return b.free-a.free||b.playing-a.playing;
+        if(sort==='ping')return (a.ping??Infinity)-(b.ping??Infinity)||b.playing-a.playing;
+        if(sort==='version')return (b.version||0)-(a.version||0)||b.playing-a.playing;
+        return b.playing-a.playing||b.free-a.free;
+      });
+      ui.results.textContent=filtered.length+' of '+serverList.length+' servers';
+      ui.list.replaceChildren();
+      if(!filtered.length){
+        empty(term?'No matches found':'No joinable servers','Try a different search or press Refresh.');
+        return;
+      }
+      const fragment=document.createDocumentFragment();
+      for (const s of filtered) {
+        const card=node('article','server');
+        const top=node('div','server-top'), locationRow=node('div','server-region');
+        const flag=node('span','flag',flagFor(s.countryCode)), loc=node('div',''), title=node('div','location',briefRegion(s));
+        loc.append(title,node('div','subplace',s.country||'Region unavailable'));
+        locationRow.append(flag,loc);
+        top.append(locationRow,node('span','pill',s.free+' open'));
+        card.append(top);
+        const count=node('div','server-count');const countText=node('strong','',s.playing+'/'+s.maxPlayers);
+        count.append(countText,node('span','','players'));card.append(count);
+        const bar=node('div','bar'), fill=node('div','bar-inner');
+        fill.style.width=Math.max(0,Math.min(100,100*s.playing/Math.max(1,s.maxPlayers)))+'%';bar.append(fill);card.append(bar);
+        const facts=node('div','facts');
+        facts.append(node('span','fact','◉ '+pingLabel(s.ping)+' server ping'));
+        if(s.firstSeen)facts.append(node('span','fact','◷ '+ago(s.firstSeen)));
+        card.append(facts);
+        const foot=node('div','cardfoot');
+        foot.append(node('span','version',versionLabel(s.version)));
+        const button=node('button','view','View server ↗');button.type='button';button.addEventListener('click',()=>openDetail(s));
+        foot.append(button);card.append(foot);fragment.append(card);
+      }
+      ui.list.append(fragment);
+    }
+    async function load() {
+      if(requestController)requestController.abort();
+      const myRequest=++requestNum;
+      requestController=new AbortController();
+      status('Loading live '+(mode==='pro'?'Pro':'8v8')+' servers…');
+      ui.refresh.disabled=true;ui.refresh.textContent='Loading…';
+      ui.countServers.textContent='—';ui.countPlayers.textContent='—';ui.countSpots.textContent='—';
+      skeleton();
+      try {
+        const url=API+'/api/servers?mode='+encodeURIComponent(mode);
+        const resp=await fetch(url,{signal:requestController.signal,cache:'no-store',headers:{'accept':'application/json'}});
+        const data=await resp.json();
+        if(!resp.ok || !Array.isArray(data.servers))throw Error(data.error||'Server API unavailable');
+        if(myRequest!==requestNum)return;
+        serverList=data.servers.filter(s => typeof s.id==='string' && Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing);
+        ui.countServers.textContent=String(serverList.length);
+        ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
+        ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
+        status('Online · '+(mode==='pro'?'Pro':'8v8')+' servers ready');
+        const age=Date.parse(data.updatedAt);
+        ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
+        render();
+        if(pendingServer) {
+          const match=serverList.find(s=>s.id.toLowerCase()===pendingServer.toLowerCase());
+          pendingServer='';
+          if(match)openDetail(match);
+        }
+      } catch(err) {
+        if(err.name==='AbortError'||myRequest!==requestNum)return;
+        status('Could not load servers',true);ui.updated.textContent='Connection unavailable';
+        empty('Server list unavailable','Glutony might still be deploying. Press Refresh to try again.');
+        ui.results.textContent='Not available';
+        console.warn('Glutony server browser:',err);
+      } finally {
+        if(myRequest===requestNum){ui.refresh.disabled=false;ui.refresh.textContent='↻ Refresh';}
+      }
+    }
+    function openDetail(s) {
+      currentServer=s;
+      el('detail-title').textContent=flagFor(s.countryCode)+' '+regionLabel(s);
+      el('detail-mode').textContent=mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
+      el('detail-players').textContent=s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open';
+      el('detail-bar').style.width=(100*s.playing/s.maxPlayers)+'%';
+      el('detail-region').textContent=regionLabel(s);
+      el('detail-ping').textContent=pingLabel(s.ping)+' (reported)';
+      el('detail-version').textContent=versionLabel(s.version);
+      el('detail-uptime').textContent=ago(s.firstSeen);
+      el('detail-id').textContent='Server ID: '+s.id;
+      const pc=safeHostLink(s.joinPc), mobile=safeHostLink(s.joinMobile);
+      for(const [id,href] of [['join-pc',pc],['join-mobile',mobile]]) {
+        const link=el(id);link.href=href||'#';link.style.opacity=href?'1':'.45';link.setAttribute('aria-disabled',String(!href));
+      }
+      el('detail-avatar-label').textContent='';
+      const shotWrap=el('headshots');shotWrap.replaceChildren(node('span','subplace','Loading previews…'));
+      updateAddress(s.id);
+      if(!ui.dialog.open)ui.dialog.showModal();
+      fetchAvatars(s,mode);
+    }
+    async function fetchAvatars(s,requestedMode) {
+      const group=el('headshots');
+      try {
+        const response=await fetch(API+'/api/servers/avatars?mode='+encodeURIComponent(requestedMode)+'&id='+encodeURIComponent(s.id));
+        const data=await response.json();
+        if(currentServer?.id!==s.id||mode!==requestedMode||!ui.dialog.open)return;
+        group.replaceChildren();
+        const images=Array.isArray(data.images)?data.images.slice(0,4):[];
+        for(const src of images) {
+          try {
+            const u=new URL(src);
+            if(u.protocol!=='https:' || !(u.hostname==='rbxcdn.com'||u.hostname.endsWith('.rbxcdn.com')))continue;
+            const img=node('img');img.src=u.href;img.alt='Roblox player avatar';img.loading='lazy';group.append(img);
+          }catch{}
+        }
+        if(!group.childElementCount)group.append(node('span','subplace','No public player previews available'));
+        else if(s.playing>group.childElementCount)group.append(node('span','placeholder','+'+(s.playing-group.childElementCount)));
+      }catch{
+        if(currentServer?.id===s.id)group.replaceChildren(node('span','subplace','Previews unavailable'));
+      }
+    }
+    el('close-dialog').addEventListener('click',()=>ui.dialog.close());
+    ui.dialog.addEventListener('click',e=>{if(e.target===ui.dialog)ui.dialog.close();});
+    ui.dialog.addEventListener('close',()=>{currentServer=null;updateAddress();});
+    el('share-server').addEventListener('click',async()=>{
+      if(!currentServer)return;
+      const url=new URL(location.href);
+      url.searchParams.set('mode',mode);url.searchParams.set('server',currentServer.id);
+      try {
+        await navigator.clipboard.writeText(url.href);
+        el('share-server').textContent='Copied!';
+      }catch{
+        el('share-server').textContent='Copy failed';
+      }
+      setTimeout(()=>{el('share-server').textContent='Copy link';},1600);
+    });
+    for(const value of VALID_MODES)el('mode-'+value).addEventListener('click',()=>changeMode(value));
+    ui.search.addEventListener('input',render);
+    ui.sort.addEventListener('change',render);
+    ui.refresh.addEventListener('click',load);
+    syncTabs();
+    load();
+  })();
+  </script>
+</body>
+</html>
