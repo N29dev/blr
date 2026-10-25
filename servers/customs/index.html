@@ -160,6 +160,8 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   get('submit').disabled=true;
   get('dialog-title').textContent=next==='report'?'Report match':'Host a match';
   get('fields').hidden=next==='report';
+  // Hidden required inputs still block native form submission unless disabled.
+  for(const input of get('fields').querySelectorAll('input,textarea')) input.disabled=next==='report';
   get('submit').textContent=next==='report'?'Submit report':'Post match';
   get('dialog').showModal();
   await loadChallenge();
