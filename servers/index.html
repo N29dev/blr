@@ -192,7 +192,7 @@
       </div>
       <div class="globe-body">
         <div class="globe-canvas">
-          <svg id="globe-svg" viewBox="0 0 620 620" aria-label="Interactive rotatable globe of approximate country locations" role="img"></svg>
+          <svg id="globe-svg" viewBox="0 0 620 620" aria-label="Interactive rotatable globe of approximate server region locations" role="group"></svg>
           <div id="globe-tooltip" class="globe-tooltip" hidden></div>
           <div id="globe-loading" class="globe-loading">Loading globe…</div>
         </div>
@@ -533,12 +533,13 @@
         if(stillListed)openDetail(stillListed);
       });
     });
-    const clearRegion=()=>{
+    const clearRegion=(closeGlobe=true)=>{
       regionFilter=null;el('clear-region').hidden=true;ui.search.value='';
-      render();window.GlutonyGlobe?.close();
+      render();
+      if(closeGlobe)window.GlutonyGlobe?.close();
     };
-    el('clear-region').addEventListener('click',clearRegion);
-    el('globe-filter-clear').addEventListener('click',clearRegion);
+    el('clear-region').addEventListener('click',()=>clearRegion(true));
+    el('globe-filter-clear').addEventListener('click',()=>clearRegion(false));
     for(const value of VALID_MODES)el('mode-'+value).addEventListener('click',()=>changeMode(value));
     ui.search.addEventListener('input',render);
     ui.sort.addEventListener('change',render);
