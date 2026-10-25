@@ -21,7 +21,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .card{min-width:0;border-radius:18px;background:linear-gradient(140deg,#172139,#111a2c);border:1px solid rgba(255,255,255,.12);padding:20px}
 .cardhead{display:flex;justify-content:space-between;gap:8px;align-items:start}.card h3{font-size:19px;letter-spacing:-.035em;margin:0;overflow-wrap:anywhere}.region{color:#92dfc2;font-size:11px;white-space:nowrap;font-weight:800;background:rgba(87,217,167,.09);border:1px solid rgba(87,217,167,.18);padding:5px 8px;border-radius:20px}
-.host{font-size:12px;color:#aabbd3;margin:7px 0 15px}.note{font-size:14px;min-height:45px;color:#d8e0f0;overflow-wrap:anywhere}.expires{color:#94a3bf;font-size:12px;margin-top:10px}.row{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:21px}
+.host{font-size:12px;color:#aabbd3;margin:7px 0 12px}.host-count{font-size:13px;color:#b4e9d1;font-weight:750;margin:5px 0 10px}.host-count small{color:var(--muted);font-weight:500}.note{font-size:14px;min-height:45px;color:#d8e0f0;overflow-wrap:anywhere}.expires{color:#94a3bf;font-size:12px;margin-top:10px}.row{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:21px}
 .action{display:inline-block;text-align:center;border-radius:10px;background:#5865f2;padding:10px 14px;font-weight:750;font-size:13px}.action.secondary{background:#2d3c58}.action.remove{background:#632d3e}
 .empty{padding:42px 15px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:17px;grid-column:1/-1}
 .hint{font-size:12px;color:var(--muted);margin:25px 0;border-radius:13px;border:1px solid rgba(125,211,252,.18);padding:14px 16px;line-height:1.7}
@@ -29,7 +29,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 dialog{color:white;border:1px solid #425171;background:#172137;width:min(520px,calc(100% - 22px));max-height:calc(100dvh - 28px);overflow:auto;border-radius:18px;padding:24px}
 dialog::backdrop{background:rgba(0,0,0,.73);backdrop-filter:blur(4px)}.dhead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:17px}.dhead h2{margin:0;font-size:21px}
 form{display:grid;gap:13px}label{display:grid;gap:5px;color:#cdd7e9;font-size:12px;font-weight:700}label input,label textarea{padding:11px;border:1px solid #3e4b67;background:#10192c;color:white;border-radius:9px;max-width:100%;width:100%}
-textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;min-height:18px}
+textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;min-height:18px}.field-note{font-size:11px;color:var(--muted);line-height:1.5}
 .captcha-panel{display:grid;gap:9px;border:1px solid rgba(125,211,252,.18);border-radius:12px;background:rgba(125,211,252,.035);padding:14px;min-height:95px}
 .captcha-label{font-size:12px;font-weight:800;color:#d6e3f5}.captcha-state{font-size:12px;color:#a6bad2;line-height:1.55}
 .captcha-state.failed{color:#f9b7ad}.captcha-state.ok{color:#7be4bb}
@@ -52,7 +52,7 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
 </div>
 <div class="searchbar"><input type="search" id="search" placeholder="Search match, host or region…" aria-label="Search custom matches"><span id="counter" style="font-size:12px;color:#9caac0;white-space:nowrap">Loading…</span></div>
 <main class="grid" id="cards" aria-live="polite"><div class="empty">Loading community matches…</div></main>
-<div class="hint">⚠️ <b>Community-submitted links are not verified.</b> Only open links to Roblox. A new private-server share link does not reveal which game it belongs to, so Glutony cannot guarantee that a host linked BL:R. <a href="https://en.help.roblox.com/hc/en-us/articles/205345050-Private-VIP-Servers-FAQ" target="_blank" rel="noopener noreferrer">Roblox private server help</a>. Never give anyone your Roblox password or session cookie.</div>
+<div class="hint">⚠️ <b>Customs information is host-reported.</b> Player counts are not live Roblox data, and "Region" means the region selected by the host — not the verified physical Roblox datacenter. <b>Community-submitted links are not verified.</b> Only open links to Roblox. A new private-server share link does not reveal which game it belongs to, so Glutony cannot guarantee that a host linked BL:R. <a href="https://en.help.roblox.com/hc/en-us/articles/205345050-Private-VIP-Servers-FAQ" target="_blank" rel="noopener noreferrer">Roblox private server help</a>. Never give anyone your Roblox password or session cookie.</div>
 <div class="foot">Unofficial BL:R community project · <a href="https://github.com/N29dev/Glutony">Glutony</a></div>
 </div>
 <dialog id="dialog" aria-labelledby="dialog-title">
@@ -63,6 +63,9 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   <label>Roblox private server share URL<input id="link" type="url" required maxlength="220" placeholder="https://www.roblox.com/share?code=...&amp;type=Server"></label>
   <label>Region<input id="region" maxlength="35" placeholder="NA / EU / Asia / Any region"></label>
   <label>Notes (optional)<textarea id="note" maxlength="180" placeholder="Need 5 players, no style/flow, GK practice…"></textarea></label>
+  <div class="field-note">Optional player count (host-reported, not automatically measured by Roblox). Leave both blank if unknown.</div>
+  <label>Players currently in match<input id="player-current" type="number" inputmode="numeric" min="0" max="100" step="1" placeholder="e.g. 4"></label>
+  <label>Maximum players<input id="player-capacity" type="number" inputmode="numeric" min="1" max="100" step="1" placeholder="e.g. 10"></label>
  </div>
  <div class="captcha-panel">
   <div class="captcha-label">🔒 Anti-spam verification</div>
@@ -74,12 +77,22 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
  <button id="submit" type="submit" class="primary">Post match</button>
 </form>
 </dialog>
+<dialog id="count-dialog" aria-labelledby="count-title">
+<div class="dhead"><h2 id="count-title">Update players</h2><button id="count-close" type="button">×</button></div>
+<p class="field-note" style="margin-bottom:18px">Only the host can update this count, once every 60 seconds. This is a manual report, not live server telemetry.</p>
+<form id="count-form">
+ <label>Current players<input id="count-current" type="number" inputmode="numeric" required min="0" max="100" step="1"></label>
+ <label>Maximum players<input id="count-capacity" type="number" inputmode="numeric" required min="1" max="100" step="1"></label>
+ <div id="count-error" class="status" role="status"></div>
+ <button id="count-submit" class="primary" type="submit">Save player count</button>
+</form>
+</dialog>
 <script>
 (()=>{
  'use strict';
  const API='https://glutony.scp343hey.workers.dev';
  const get=id=>document.getElementById(id);
- let list=[],mine=new Set(),user=null,config=null,token=sessionStorage.getItem('glutony_customs_session')||'',mode='create',target=null,challenge='',challengeId=null;
+ let list=[],mine=new Set(),user=null,config=null,token=sessionStorage.getItem('glutony_customs_session')||'',mode='create',target=null,challenge='',challengeId=null,countTarget=null;
  let challengeLoad=null, challengeAttempt=0, challengeWatch=null;
  if(location.hash.startsWith('#customs_session=')){
    token=decodeURIComponent(location.hash.slice('#customs_session='.length));
@@ -132,8 +145,13 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   if(!items.length){get('cards').append(el('div','empty',q?'Nothing found. Try another search.':'No active custom matches. Post one to find teammates!'));return;}
   for(const item of items){
    const card=el('article','card'),header=el('div','cardhead'),h=el('h3','',item.title);
-   header.append(h,el('span','region',item.region||'Any region'));card.append(header);
-   card.append(el('p','host','Hosted by '+item.ownerName),el('div','note',item.note||'Looking for teammates'),el('div','expires','⏱ Expires in '+timeLeft(item.expiresAt)));
+   header.append(h,el('span','region','Host: '+(item.region||'Any region')));card.append(header);
+   const hasCount=Number.isInteger(item.playerCurrent)&&Number.isInteger(item.playerCapacity);
+   const statusText=hasCount
+     ?'👥 '+item.playerCurrent+'/'+item.playerCapacity+' players · host reported'+
+      (Number.isFinite(item.playerReportedAt)?' · '+Math.floor(Math.max(0,Date.now()-item.playerReportedAt)/60000)+'m ago':'')
+     :'👥 Players not reported';
+   card.append(el('p','host','Hosted by '+item.ownerName),el('div','host-count',statusText),el('div','note',item.note||'Looking for teammates'),el('div','expires','⏱ Expires in '+timeLeft(item.expiresAt)));
    const actions=el('div','row'),url=invite(item.link);
    const join=el('a','action','Join server ↗');
    if(url){join.href=url;join.target='_blank';join.rel='noopener noreferrer';}
@@ -142,12 +160,36 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
    const report=el('button','action secondary','Report');report.type='button';
    report.addEventListener('click',()=>openForm('report',item.id));actions.append(report);
    if(mine.has(item.id)){
+     const update=el('button','action secondary','Update players');
+     update.type='button';update.addEventListener('click',()=>openCountModal(item));actions.append(update);
      const remove=el('button','action remove','Remove');remove.type='button';
      remove.addEventListener('click',()=>removeItem(item.id));actions.append(remove);
    }
    card.append(actions);get('cards').append(card);
   }
  }
+ function openCountModal(item){
+   if(!user||!mine.has(item.id))return;
+   countTarget=item.id;
+   get('count-current').value=Number.isInteger(item.playerCurrent)?String(item.playerCurrent):'';
+   get('count-capacity').value=Number.isInteger(item.playerCapacity)?String(item.playerCapacity):'';
+   get('count-error').textContent='';
+   get('count-dialog').showModal();
+ }
+ get('count-close').addEventListener('click',()=>get('count-dialog').close());
+ get('count-form').addEventListener('submit',async event=>{
+   event.preventDefault();
+   const button=get('count-submit'),error=get('count-error');
+   button.disabled=true;error.textContent='Saving…';
+   try{
+     await api('/api/customs/'+encodeURIComponent(countTarget)+'/players',{
+       method:'PATCH',headers:auth(),
+       body:JSON.stringify({currentPlayers:get('count-current').value,capacity:get('count-capacity').value})
+     });
+     get('count-dialog').close();await load();
+   }catch(e){error.textContent=e.message;}
+   finally{button.disabled=false;}
+ });
  async function removeItem(id){
   if(!user)return;
   if(!confirm('Remove this custom match?'))return;
@@ -291,7 +333,11 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
   button.disabled=true;error.textContent='Submitting…';
   try{
    const path=mode==='report'?'/api/customs/'+encodeURIComponent(target)+'/report':'/api/customs';
-   const body=mode==='report'?{turnstile:challenge}:{title:get('title').value,link:get('link').value,region:get('region').value,note:get('note').value,turnstile:challenge};
+   const body=mode==='report'?{turnstile:challenge}:{
+     title:get('title').value,link:get('link').value,region:get('region').value,
+     note:get('note').value,currentPlayers:get('player-current').value,
+     capacity:get('player-capacity').value,turnstile:challenge
+   };
    await api(path,{method:'POST',headers:auth(),body:JSON.stringify(body)});
    get('dialog').close();get('form').reset();await load();
   }catch(err){
