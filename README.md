@@ -35,3 +35,13 @@ Custom match board: [blr.n29.kz/servers/customs/](https://blr.n29.kz/servers/cus
 
 **Required one-time backend configuration:** [Glutony Customs setup guide](https://github.com/N29dev/Glutony/blob/main/CUSTOMS_SETUP.md). Until D1, OAuth and Turnstile are configured, public submissions remain disabled.
 
+
+## Public servers: Main + interactive globe
+
+- [Public server browser](https://blr.n29.kz/servers/) now includes **Main**, **8v8**, and **Pro** tabs.
+- The **Main** place uses BL:R root Place ID `18668065416`. To protect Roblox and RoValra APIs, the Worker returns at most **24 sampled joinable servers** from one Roblox server-list page. It is **not** all live root servers.
+- **🌐 Region globe** launches an interactive 3D globe with drag/swipe rotation, wheel zoom, and clickable country markers. Selecting a country filters the active mode's server cards. The server list remains available if the globe assets fail to load.
+- The globe places markers at approximate **country centers** from RoValra region data, **not verified exact datacenter coordinates**. Unknown regions are never assigned fake pins.
+- Country polygons are bundled in `servers/world.geojson`, with attribution in `servers/world-data-license.txt`. The lightweight D3 map engine is loaded only when opening the globe.
+- To see **Main** in Discord slash command choices, the Glutony owner must **re-register `/blr`** after the Worker deploy: changing code does not automatically change a registered Discord command.
+
