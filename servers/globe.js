@@ -95,7 +95,7 @@ function coordForName(raw){
  return CITY_COORDS[clean]||CITY_COORDS[clean.replace(/\b(city|metro|county)\b/g,'').trim()]||null;
 }
 
-const state={open:false,loaded:false,loading:null,countries:[],lookup:new Map(),groups:[],servers:[],select:null,showServer:null,selectedKey:null,projection:null,shapes:null,rotation:[-14,-19],scale:263,drag:null,suppress:false,raf:0};
+const state={open:false,loaded:false,loading:null,countries:[],lookup:new Map(),groups:[],servers:[],select:null,showServer:null,selectedKey:null,expandedAreas:new Set(),projection:null,shapes:null,rotation:[-14,-19],scale:263,drag:null,suppress:false,raf:0};
 const element=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n;};
 const svgElement=(tag,attributes={},label)=>{const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attributes))n.setAttribute(k,v);if(label!==undefined)n.textContent=label;return n;};
 const setStatus=message=>{$('globe-status').textContent=message;};
@@ -181,11 +181,19 @@ function showTooltip(g,event){
  const tip=$('globe-tooltip'),canvas=$('globe-svg')?.parentElement;
  if(!tip||!canvas)return;
  const info=summary(g);
- tip.replaceChildren(
-  element('strong','',g.label+(g.country&&g.city?' · '+g.country:'')),
-  element('small','',g.count+' server'+(g.count===1?'':'s')+' · '+info.players+' players · '+info.free+' free slots'),
-  element('small','',(info.ping===null?'Ping N/A':info.ping+' ms avg')+' · Click for server details')
- );
+ tip.replaceChildren(element('strong','',g.label+(g.country&&g.city?' · '+g.country:'')));
+ if(info.servers.length===1){
+  const server=info.servers[0];
+  const players=Number.isFinite(server.playing)&&Number.isFinite(server.maxPlayers)
+    ?server.playing+'/'+server.maxPlayers+' players':'Players unknown';
+  const ping=Number.isFinite(server.ping)?Math.round(server.ping)+' ms ping':'Ping N/A';
+  tip.append(element('small','',players+' · '+ping));
+  if(Number.isInteger(server.version))tip.append(element('small','','Version '+server.version));
+ }else{
+  tip.append(element('small','',g.count+' servers · '+info.players+' total players · '+info.free+' free slots'));
+  tip.append(element('small','',info.ping===null?'Average ping N/A':info.ping+' ms average ping'));
+ }
+ tip.append(element('small','','Click to inspect '+g.count+' server'+(g.count===1?'':'s')));
  tip.hidden=false;
  if(event&&Number.isFinite(event.clientX)){
   const rect=canvas.getBoundingClientRect();
@@ -207,7 +215,11 @@ function countryList(){
   if(!all.length)continue;
   const total=all.reduce((sum,g)=>sum+g.count,0);
   const section=element('details','globe-area');
-  section.open=all.some(g=>g.key===state.selectedKey);
+  section.open=state.expandedAreas.has(area)||all.some(g=>g.key===state.selectedKey);
+  section.addEventListener('toggle',()=>{
+   if(section.open)state.expandedAreas.add(area);
+   else state.expandedAreas.delete(area);
+  });
   const header=element('summary','globe-area-title');
   header.append(element('span','',AREA_LABEL[area]),element('span','globe-region-count',total+' servers'));
   section.append(header);
