@@ -89,7 +89,9 @@ function canonicalCity(server){
  return raw||fallback||'';
 }
 function coordForName(raw){
- const clean=norm(raw);
+ // Use raw normalized city: country aliases (e.g. Hong Kong→China) must not
+ // rewrite city names when locating the actual city-center marker.
+ const clean=normalized(raw);
  return CITY_COORDS[clean]||CITY_COORDS[clean.replace(/\b(city|metro|county)\b/g,'').trim()]||null;
 }
 
