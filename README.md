@@ -22,3 +22,16 @@ Visit [blr.n29.kz/servers/](https://blr.n29.kz/servers/) for the public 8v8 and 
 - Do not add Discord bot tokens or Roblox cookies to the static website or GitHub repository.
 
 Source folders: `leaderboard/`, `servers/`; other tools are standalone HTML in the repository root.
+
+## Community Customs
+
+Custom match board: [blr.n29.kz/servers/customs/](https://blr.n29.kz/servers/customs/).
+
+- Anyone can browse community-submitted Roblox private-server invitation links
+- Hosting a match requires Discord OAuth sign-in and a Cloudflare Turnstile anti-spam check
+- The Glutony Cloudflare Worker and D1 database share listings with Discord `/blr mode:customs`
+- Hosts can remove their own matches; signed-in users can report suspicious listings
+- Invites automatically stop appearing after 4 hours; invites are *community-submitted and unverified*
+
+**Required one-time backend configuration:** [Glutony Customs setup guide](https://github.com/N29dev/Glutony/blob/main/CUSTOMS_SETUP.md). Until D1, OAuth and Turnstile are configured, public submissions remain disabled.
+
