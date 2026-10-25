@@ -173,6 +173,13 @@
     let requestController = null;
     let requestNum = 0;
     let currentServer = null;
+    // Recheck only unresolved regions, at most five times per loaded mode.
+    // A focused lookup avoids refetching all Roblox servers every minute.
+    const REGION_RETRY_MS = 75_000;
+    const MAX_REGION_RETRIES = 5;
+    let regionTimer = null;
+    let regionController = null;
+    let regionAttempts = 0;
     const flagFor = code => {
       if (typeof code !== 'string' || !/^[A-Z]{2}$/.test(code)) return '🌐';
       return String.fromCodePoint(...Array.from(code).map(c => 127397 + c.charCodeAt(0)));
@@ -266,7 +273,70 @@
       }
       ui.list.append(fragment);
     }
+    function stopRegionRecheck() {
+      if (regionTimer !== null) { clearTimeout(regionTimer); regionTimer = null; }
+      if (regionController) { regionController.abort(); regionController = null; }
+    }
+    function scheduleRegionRecheck() {
+      if (regionTimer !== null || regionAttempts >= MAX_REGION_RETRIES) return;
+      if (!serverList.some(s => !s.region)) return;
+      regionTimer = setTimeout(() => {
+        regionTimer = null;
+        // No network requests while the website is in a background tab.
+        if (document.hidden) { scheduleRegionRecheck(); return; }
+        recheckMissingRegions();
+      }, REGION_RETRY_MS);
+    }
+    async function recheckMissingRegions() {
+      if (regionController || !serverList.length || regionAttempts >= MAX_REGION_RETRIES) return;
+      const missing = serverList.filter(s => !s.region).slice(0, 8);
+      if (!missing.length) return;
+      const activeMode = mode, activeRequest = requestNum;
+      const controller = new AbortController();
+      regionController = controller;
+      regionAttempts++;
+      try {
+        const url = new URL(API+'/api/servers/regions');
+        url.searchParams.set('mode', activeMode);
+        url.searchParams.set('ids', missing.map(s=>s.id).join(','));
+        const resp = await fetch(url, {signal:controller.signal, cache:'no-store'});
+        if (!resp.ok) throw Error('Region lookup returned '+resp.status);
+        const data = await resp.json();
+        if (activeRequest !== requestNum || mode !== activeMode || controller.signal.aborted) return;
+        let discovered=0, metadataChanged=false;
+        for(const server of missing) {
+          const next=data.regions?.[server.id];
+          if (!next || typeof next !== 'object') continue;
+          const fields=['region','city','state','country','countryCode','version','firstSeen'];
+          let changed=false;
+          for(const key of fields) {
+            if(next[key] !== undefined && next[key] !== null && next[key] !== '' && next[key] !== server[key]){
+              server[key]=next[key]; changed=true;
+            }
+          }
+          if(changed)metadataChanged=true;
+          if(server.region && next.region)discovered++;
+        }
+        if(metadataChanged){
+          render();
+          if(currentServer && ui.dialog.open) {
+            el('detail-title').textContent=flagFor(currentServer.countryCode)+' '+regionLabel(currentServer);
+            el('detail-region').textContent=regionLabel(currentServer);
+            el('detail-version').textContent=versionLabel(currentServer.version);
+            el('detail-uptime').textContent=ago(currentServer.firstSeen);
+          }
+        }
+        if(discovered) status('Online · '+discovered+' server region'+(discovered===1?'':'s')+' identified');
+      } catch(err) {
+        if (err.name !== 'AbortError') console.warn('Passive region lookup unavailable:', err);
+      } finally {
+        if (regionController === controller) regionController = null;
+        if (activeRequest === requestNum && mode === activeMode) scheduleRegionRecheck();
+      }
+    }
     async function load() {
+      stopRegionRecheck();
+      regionAttempts = 0;
       if(requestController)requestController.abort();
       const myRequest=++requestNum;
       requestController=new AbortController();
@@ -288,6 +358,7 @@
         const age=Date.parse(data.updatedAt);
         ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
         render();
+        scheduleRegionRecheck();
         if(pendingServer) {
           const match=serverList.find(s=>s.id.toLowerCase()===pendingServer.toLowerCase());
           pendingServer='';
