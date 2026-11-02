@@ -11,6 +11,7 @@ The homepage and supporting pages share a responsive visual system in `site-them
 - Creator studio filters show all tools, video editing tools, or TikTok utilities without altering any processing logic.
 - Press **⌘K** on macOS or **Ctrl+K** elsewhere (or use the navigation launcher) to search pages and tools.
 - The standalone video tools have visible links back to the homepage and server browser.
+- The homepage highlights N29's Hunger portrait in a creator identity card and links to [n29.kz](https://n29.kz/). The artwork is served as a compressed AVIF with WebP fallback from the separate `N29dev/portfolio` repository. Deploy the portfolio PR before this site PR so the image URLs resolve.
 - This refresh **does not modify the leaderboard**, Glutony Worker, or server API contracts. Existing pages remain usable if JavaScript enhancements fail.
 
 ## Glutony server browser
