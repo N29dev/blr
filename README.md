@@ -8,11 +8,22 @@ The homepage and supporting pages share a responsive visual system in `site-them
 `site-experience.js` adds optional, dependency-free navigation enhancements.
 
 - A homepage launchpad links directly to Main, 8v8, Pro and community custom matches.
-- Creator studio filters show all tools, video editing tools, or TikTok utilities without altering any processing logic.
+- The dedicated `/tools/` Creator Studio retains the MP4 patcher, TikTok analyzer, video compressor, MP4 clipper and TikTok downloader. The homepage provides only a preview.
 - Press **⌘K** on macOS or **Ctrl+K** elsewhere (or use the navigation launcher) to search pages and tools.
 - The standalone video tools have visible links back to the homepage and server browser.
 - The homepage highlights N29's Hunger portrait in a creator identity card and links to [n29.kz](https://n29.kz/). The artwork is served as a high-quality AVIF with WebP fallback from the separate `N29dev/portfolio` repository. Deploy the portfolio PR before this site PR so the image URLs resolve.
 - The leaderboard's **navigation only** is updated; its event/scoring logic, Glutony Worker, and server API contracts are unchanged. Existing pages remain usable if JavaScript enhancements fail.
+
+## Portfolio-inspired styling & dedicated Creator Studio (November 2026)
+
+The BL:R site now borrows the visual language of [N29 portfolio](https://n29.kz/), using **Space Grotesk / DM Sans / Space Mono**, dark blue-black surfaces, cyan/lavender accents, editorial overlines and consistent navigation. The portfolio repository is referenced for style only; it was **not modified**.
+
+- The active video tools previously embedded in `index.html` have moved to `/tools/` with their original controls and script logic preserved.
+- The MP4 compressor still loads the existing root `/ffmpeg-worker.js`; the TikTok analyzer and CompressBase patcher run from `tools/tiktok-info.js` and `tools/patch.mjs`.
+- `index.html` retains an `#tools` preview for legacy bookmarks, but all major navigation now opens `/tools/`.
+- `site-unify.css` applies a shared portfolio-inspired shell to the public page family. `tools/legacy.css` retains the original working tool styles without forcing all pages to load the processors.
+- Navigation highlights only **BL:R**, **N29 portfolio** and **Glutony** as project/repository destinations. The separate GK trainer repository is no longer featured.
+- GitHub Pages serves the static website; no Glutony Worker deployment or database migration is needed for this refactor.
 
 ## Connected navigation / site map (November 2026)
 
@@ -20,16 +31,16 @@ The BL:R website now groups its public destinations by **Play · Rules · Create
 
 | Area | Destinations |
 | --- | --- |
-| Play | [Main, 8v8 and Pro server finder](https://blr.n29.kz/servers/), [Custom matches](https://blr.n29.kz/servers/customs/), [GK reaction trainer](https://n29dev.github.io/gk-reaction-trainer), Glutony Discord app |
+| Play | [Main, 8v8 and Pro server finder](https://blr.n29.kz/servers/), [Custom matches](https://blr.n29.kz/servers/customs/), Glutony Discord app |
 | Rules | [Allowed/disallowed tech directory](https://blr.n29.kz/tech/), tech inquiries |
-| Create | [Creator studio](https://blr.n29.kz/#tools), [MP4 clipper](https://blr.n29.kz/clipper.html), [TikTok downloader and repair](https://blr.n29.kz/tiktok-downloader.html), [September 2026 CC leaderboard archive](https://blr.n29.kz/leaderboard/) |
+| Create | [Creator studio](https://blr.n29.kz/tools/), [MP4 clipper](https://blr.n29.kz/clipper.html), [TikTok downloader and repair](https://blr.n29.kz/tiktok-downloader.html), [September 2026 CC leaderboard archive](https://blr.n29.kz/leaderboard/) |
 | Support | [Ban-appeal and support guide](https://blr.n29.kz/tech/#support), [BL:R support Discord](https://discord.gg/dgV4p83EHA), [main BL:R community Discord](https://discord.gg/bluelockrivals) |
 
 - `site-experience.js` is the central index for grouped **Quick jump (⌘K / Ctrl+K)** destinations, plus a shared, responsive **Explore BL:R** directory displayed in public-page `data-site-connect` placeholders.
 - Public pages have direct static header links so navigation remains functional if JavaScript fails. The custom matches page, server browser, Tech Rules, MP4 clipper, TikTok downloader and the archived leaderboard now link back to the wider hub.
 - The homepage shows six major routes (Main, 8v8, Pro, customs, rules and support) plus its existing creator studio.
-- The creator-event leaderboard is labeled as an **archive**, not represented as an active event. Its scoring and admin scripts remain unchanged. The private Tech Rules admin editor is **not** linked from the global public Quick jump.
-- Shared visual styles live in `site-theme.css`. The leaderboard deliberately keeps its separate styling.
+- The creator-event leaderboard is labeled as an **archive**, not represented as an active event. Its event scoring and admin scripts remain unchanged; the public archive now uses the same shared header. The private Tech Rules admin editor is **not** linked from the global public Quick jump.
+- Shared visual styles live in `site-theme.css`. The leaderboard retains its event-specific scoreboard CSS and scoring scripts, while sharing the portfolio-inspired navigation and typography.
 - Test links and route integrity with `node --test site-navigation.test.mjs`. This tests static routes, not availability of external websites.
 - All links are informational; BL:R staff, not this site, decide bans and appeal outcomes.
 
@@ -65,7 +76,7 @@ Browse actual sampled public lobbies directly using region and country filters, 
 - If data fails only in the browser, inspect the Network tab for an Origin/CORS error.
 - Do not add Discord bot tokens or Roblox cookies to the static website or GitHub repository.
 
-Source folders: `leaderboard/`, `servers/`; other tools are standalone HTML in the repository root.
+Source folders: `leaderboard/`, `servers/`, `tech/` and `tools/`; the clipper and TikTok downloader remain standalone root HTML tools.
 
 Site files: `404.html` (not-found page), `robots.txt` and `sitemap.xml` (search), `manifest.webmanifest` (installable web app), `og-image.png` (1200×630 social preview shown when links are shared).
 

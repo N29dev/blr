@@ -1,0 +1,26 @@
+/* Standalone creator studio. Home legacy selectors remain compatible with
+   the extracted, functional MP4 patcher, TikTok analyzer and compressor. */
+body[data-template="creator"]{min-width:320px}
+body[data-template="creator"] .n29-nav{position:sticky}
+body[data-template="creator"] header.site-hero{margin-top:22px}
+body[data-template="creator"] .site-hero-panel{padding:24px}
+body[data-template="creator"] .site-hero-actions a{font-family:var(--n29-body)}
+body[data-template="creator"] .site-hero-foot{margin-top:25px}
+body[data-template="creator"] .tool-card:focus-within{border-color:rgba(118,217,252,.4)}
+body[data-template="creator"] #tools{padding-top:0;margin:0}
+body[data-template="creator"] .creator-tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body[data-template="creator"] .tool-card{min-width:0}
+body[data-template="creator"] .tool-card:nth-child(5){grid-column:1/-1}
+body[data-template="creator"] .tool-card input,body[data-template="creator"] .tool-card select{max-width:100%}
+body[data-template="creator"] .site-panel-link{color:#c9dbf0}
+body[data-template="creator"] .site-panel-title{font-family:var(--n29-heading);letter-spacing:-.04em}
+body[data-template="creator"] .n29-tools-hero .site-hero-copy{max-width:760px}
+body[data-template="creator"] .site-connect{margin-top:38px}
+body[data-template="creator"] .tool-card .patcher{width:100%}
+body[data-template="creator"] .tool-card .recommendation-note{font-size:12px}
+body[data-template="creator"] .site-tools-intro .site-tool-filters{align-self:flex-end}
+body[data-template="creator"] .tool-card[hidden]{display:none!important}
+@media(max-width:840px){
+  body[data-template="creator"] .creator-tools-grid{grid-template-columns:1fr}
+  body[data-template="creator"] .tool-card:nth-child(5){grid-column:auto}
+}
