@@ -474,10 +474,8 @@
           : 'Balances activity and room for your party · '+room;
     }
     function buildFilterUrl() {
-      const url=new URL(location.href);
+      const url=new URL('/servers/',location.origin);
       url.searchParams.set('mode',mode);
-      url.searchParams.delete('server');
-      for(const name of ['party','vibe','q','country','sort','pick'])url.searchParams.delete(name);
       if(partySize!==1)url.searchParams.set('party',String(partySize));
       if(matchVibe!=='balanced')url.searchParams.set('vibe',matchVibe);
       if(ui.search.value.trim())url.searchParams.set('q',ui.search.value.trim().slice(0,100));
@@ -791,7 +789,7 @@
     el('match-form').addEventListener('submit',event=>{
       event.preventDefault();
       recommendationsActive=true;ui.sort.value='fit';render();
-      pickSection.scrollIntoView({block:'nearest',behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+      pickSection.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
     });
     el('share-match-search').addEventListener('click',async()=>{
       const btn=el('share-match-search');
