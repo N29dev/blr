@@ -143,6 +143,7 @@
     setFilter('all');
   }
 
+  document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
   if(page==='home') {
     try { initHomeFilters(); } catch(error) { console.warn('Tool filters unavailable',error); }
