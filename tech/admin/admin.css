@@ -1,0 +1,56 @@
+/* Private tech editor — isolated visual system, no leaderboard styling. */
+.admin-main{padding:35px 0 80px;min-height:75vh}
+.admin-hero{max-width:840px;margin-bottom:28px}
+.admin-hero h1{font-size:clamp(39px,6vw,67px);line-height:1.1;letter-spacing:-.065em;margin:10px 0 14px}
+.admin-hero p{font-size:14px;line-height:1.8;color:#a9bdd7;max-width:740px}
+.admin-hero a{color:#91dcff!important;text-decoration:underline!important}
+.admin-card{background:linear-gradient(155deg,rgba(17,31,52,.94),rgba(10,20,37,.93));border:1px solid rgba(160,200,246,.19);padding:24px;border-radius:21px;min-width:0}
+.admin-login{max-width:730px;padding:30px}
+.admin-login h2{font-size:26px;letter-spacing:-.04em;margin:0 0 10px}
+.admin-login p{color:#9db5d0;font-size:13px;line-height:1.75}
+.admin-login code{color:#d6e9ff;background:#20324e;padding:3px 5px;border-radius:5px}
+.login-form label,.field-label{display:block;color:#b6cbe5;font-size:12px;font-weight:800;margin:16px 0 7px}
+.login-row{display:flex;gap:9px}
+body[data-page="tech"] .admin-card input,body[data-page="tech"] .admin-card select,body[data-page="tech"] .admin-card textarea{width:100%;color:#edf6ff;background:#0b192b;border:1px solid rgba(166,209,253,.24);border-radius:11px;padding:12px 13px;outline:none;font-size:13px;min-width:0}
+body[data-page="tech"] .admin-card input:focus,body[data-page="tech"] .admin-card select:focus,body[data-page="tech"] .admin-card textarea:focus{border-color:#8bddff;box-shadow:0 0 0 3px rgba(125,210,255,.1)}
+body[data-page="tech"] .admin-card input::placeholder,body[data-page="tech"] .admin-card textarea::placeholder{color:#70849e}
+body[data-page="tech"] .admin-card select{cursor:pointer}
+body[data-page="tech"] .login-row input{flex:1}
+body[data-page="tech"] .login-row button,.save-button{border:0;border-radius:10px;padding:10px 20px;background:linear-gradient(110deg,#81ddff,#a3afff);color:#071525;font-size:13px;font-weight:850;min-height:43px;white-space:nowrap}
+body[data-page="tech"] button:disabled{opacity:.45;cursor:not-allowed}
+.admin-message{min-height:20px;margin:15px 0 0;font-size:12px;color:#aac3e0}
+.admin-message.error{color:#ffb5b9}.admin-message.success{color:#86e5c6}
+.admin-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:21px}
+.admin-toolbar h2{font-size:31px;letter-spacing:-.05em;margin:4px 0}
+.admin-toolbar p{color:#8ea7c7;font-size:12px;margin:0}
+.toolbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar-actions a,.toolbar-actions button{border:1px solid rgba(148,197,250,.22);border-radius:9px;padding:10px 12px;color:#b8daff!important;font-size:12px;font-weight:800;background:rgba(128,190,242,.07)}
+.toolbar-actions button:hover,.toolbar-actions a:hover{background:rgba(128,190,242,.15)}
+.admin-layout{display:grid;grid-template-columns:minmax(270px,.95fr) minmax(0,1.3fr);gap:17px;align-items:start}
+.pane-title{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.pane-title h3{font-size:20px;letter-spacing:-.045em;margin:0}
+.mini-button{border:1px solid rgba(112,211,254,.32);border-radius:9px;background:rgba(100,188,240,.13);color:#b1e9ff;padding:8px 12px;font-size:12px;font-weight:850}
+.list-count{color:#7f98b5;font-size:11px;font-weight:760;margin:18px 0 10px}
+.admin-entry-list{display:flex;flex-direction:column;gap:7px;max-height:66vh;overflow:auto;padding:0 4px 2px 0}
+body[data-page="tech"] .admin-entry{display:block;width:100%;text-align:left;background:rgba(9,21,38,.82);border:1px solid rgba(170,200,238,.13);border-radius:11px;padding:12px;color:#eef5ff}
+body[data-page="tech"] .admin-entry:hover,body[data-page="tech"] .admin-entry.active{border-color:rgba(133,216,255,.6);background:rgba(33,70,101,.25)}
+.admin-entry strong{display:block;font-size:13px;font-weight:840;line-height:1.5}
+.admin-entry small{display:block;font-size:11px;color:#849bb7;margin-top:4px;overflow-wrap:anywhere}
+.admin-entry .entry-status{display:inline-block;margin-top:9px;font-size:10px}
+.list-empty{color:#8fa7c2;font-size:12px;padding:20px;text-align:center;border:1px dashed rgba(165,199,240,.18);border-radius:12px}
+.editing-id{font-size:10px;color:#6889ab;word-break:break-all;max-width:250px;text-align:right}
+.field-help{margin:6px 0 16px;font-size:11px;color:#819bb9}
+#entry-form .field-label{margin-top:18px}
+#entry-form .field-label:first-of-type{margin-top:0}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+.delete-button,.reset-button{border-radius:10px;padding:10px 12px;background:transparent;font-size:12px;font-weight:820;min-height:43px}
+.delete-button{color:#ffb4c1;border:1px solid rgba(255,149,171,.25)}
+.reset-button{color:#9db6d3;border:1px solid rgba(165,202,248,.2)}
+.delete-button:hover{background:rgba(255,136,153,.08)}
+.reset-button:hover{background:rgba(162,210,249,.07)}
+.admin-note{margin-top:25px;border-top:1px solid rgba(173,204,246,.11);padding-top:19px}
+.admin-note strong{font-size:12px;color:#dcecff}
+.admin-note p{font-size:12px;color:#8ca4c1;margin:6px 0 0;line-height:1.75}
+[hidden]{display:none!important}
+@media(max-width:780px){.admin-layout{grid-template-columns:1fr}.admin-entry-list{max-height:45vh}.admin-main{padding-top:24px}}
+@media(max-width:480px){.admin-card{padding:19px}.login-row{flex-wrap:wrap}.login-row button{width:100%}.admin-hero h1{font-size:39px}}

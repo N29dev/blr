@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#080d19">
+  <title>Tech Rules Admin · N29</title>
+  <link rel="stylesheet" href="/site-theme.css?v=1">
+  <link rel="stylesheet" href="/tech/style.css?v=1">
+  <link rel="stylesheet" href="/tech/admin/admin.css?v=1">
+  <script type="module" src="/tech/admin/app.js?v=1"></script>
+</head>
+<body data-page="tech">
+  <a class="skip-link" href="#admin-main">Skip to admin</a>
+  <div class="page-shell">
+    <nav class="nav">
+      <a href="/tech/" class="brand"><span class="brand-square">N</span>N29 <span class="muted-brand">/ ADMIN</span></a>
+      <div class="nav-links"><a href="/tech/">← Public rules</a><a href="/">BL:R hub</a></div>
+    </nav>
+    <main id="admin-main" class="admin-main">
+      <header class="admin-hero">
+        <span class="section-label">PRIVATE EDITOR / BL:R</span>
+        <h1>Manage tech rules.</h1>
+        <p>Add techniques, change their classification, attach YouTube Shorts, or remove outdated entries. Saved changes appear on the public <a href="/tech/">Tech Rules</a> page.</p>
+      </header>
+      <section id="login-panel" class="admin-card admin-login" aria-labelledby="login-heading">
+        <h2 id="login-heading">Unlock your editor</h2>
+        <p>Use the <code>TECH_ADMIN_KEY</code> secret configured in your Cloudflare Worker. It stays in this tab's memory and is never saved in the website or GitHub.</p>
+        <form id="login-form" class="login-form">
+          <label for="admin-key">Admin key</label>
+          <div class="login-row"><input id="admin-key" type="password" autocomplete="off" required placeholder="Paste your private admin key" spellcheck="false"><button type="submit" id="connect-button">Connect ↗</button></div>
+        </form>
+        <p class="admin-message" id="login-message" role="status" aria-live="polite">The editor stays locked until you authenticate.</p>
+      </section>
+      <section id="editor-panel" hidden aria-label="Tech directory editor">
+        <div class="admin-toolbar">
+          <div><span class="section-label">CONNECTED / N29</span><h2>Catalog editor</h2><p id="admin-summary">Loading entries…</p></div>
+          <div class="toolbar-actions"><a href="/tech/" target="_blank" rel="noopener noreferrer">View public page ↗</a><button type="button" id="logout-button">Lock editor</button></div>
+        </div>
+        <div class="admin-layout">
+          <aside class="admin-card admin-list-pane">
+            <div class="pane-title"><h3>Techniques</h3><button type="button" id="new-entry" class="mini-button">+ Add new</button></div>
+            <label class="field-label" for="filter-style">Style</label>
+            <select id="filter-style"><option value="">All styles</option></select>
+            <label class="field-label" for="filter-name">Search</label>
+            <input id="filter-name" type="search" placeholder="Filter technique name…" autocomplete="off">
+            <p id="entries-count" class="list-count">—</p>
+            <div id="entry-list" class="admin-entry-list" aria-label="Catalog entries"></div>
+            <p id="entry-list-empty" class="list-empty" hidden>No entries match this search.</p>
+          </aside>
+          <section class="admin-card admin-form-pane" aria-labelledby="form-title">
+            <div class="pane-title"><div><span class="section-label">MANUAL ENTRY</span><h3 id="form-title">Add a technique</h3></div><span id="editing-id" class="editing-id"></span></div>
+            <form id="entry-form">
+              <label class="field-label" for="entry-name">Tech / bug name <span aria-hidden="true">*</span></label>
+              <input id="entry-name" maxlength="110" required placeholder="Example: Delay Trap">
+              <label class="field-label" for="entry-styles">Styles <span aria-hidden="true">*</span></label>
+              <input id="entry-styles" list="style-suggestions" maxlength="400" required placeholder="Example: Nagi, NEL Nagi" spellcheck="false">
+              <datalist id="style-suggestions"></datalist>
+              <p class="field-help">Use comma-separated style names for techniques shared by multiple styles. You can type a new style name to add it to the directory.</p>
+              <label class="field-label" for="entry-status">Classification <span aria-hidden="true">*</span></label>
+              <select id="entry-status" required>
+                <option value="allowed">Allowed tech</option>
+                <option value="disallowed">Disallowed tech</option>
+                <option value="punishable">Punishable bug</option>
+              </select>
+              <label class="field-label" for="entry-video">YouTube demonstration (optional)</label>
+              <input id="entry-video" type="url" inputmode="url" placeholder="https://www.youtube.com/shorts/…" spellcheck="false">
+              <p class="field-help">YouTube Shorts, regular video links and youtu.be are accepted. Upload the video to YouTube first.</p>
+              <label class="field-label" for="entry-note">Short explanation (optional)</label>
+              <textarea id="entry-note" rows="3" maxlength="500" placeholder="Describe the technique or policy note."></textarea>
+              <div class="form-actions">
+                <button id="save-entry" type="submit" class="save-button">Save technique</button>
+                <button id="delete-entry" type="button" class="delete-button" hidden>Remove from directory</button>
+                <button id="reset-entry" type="button" class="reset-button">Clear form</button>
+              </div>
+              <p id="editor-message" class="admin-message" role="status" aria-live="polite"></p>
+            </form>
+            <div class="admin-note"><strong>Important</strong><p>This is a community-maintained guide, not a replacement for official BL:R rules. Only classify techniques when staff guidance supports the decision. Every change is stored in D1 and can be edited again.</p></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><span>© 2026 N29 · Private Tech Rules Editor</span><span><a href="/tech/">Public rules</a> · <a href="/">Home</a></span></footer>
+  </div>
+</body>
+</html>
