@@ -9,15 +9,28 @@
   <link rel="stylesheet" href="/site-theme.css?v=1">
   <link rel="stylesheet" href="/tech/style.css?v=1">
   <link rel="stylesheet" href="/tech/admin/admin.css?v=1">
+<link rel="stylesheet" href="/site-unify.css?v=2">
+  <script defer src="/site-experience.js?v=3"></script>
   <script type="module" src="/tech/admin/app.js?v=1"></script>
 </head>
 <body data-page="tech">
   <a class="skip-link" href="#admin-main">Skip to admin</a>
   <div class="page-shell">
-    <nav class="nav">
-      <a href="/tech/" class="brand"><span class="brand-square">N</span>N29 <span class="muted-brand">/ ADMIN</span></a>
-      <div class="nav-links"><a href="/tech/">← Public rules</a><a href="/">BL:R hub</a></div>
-    </nav>
+<nav class="n29-nav" aria-label="Primary navigation">
+  <div class="n29-nav-inner">
+    <a class="n29-nav-brand" href="/"><span class="n29-nav-mark">N</span><span>N29 <small>/ BL:R</small></span></a>
+    <div class="n29-nav-links">
+      <a href="/">Home</a>
+      <a href="/servers/">Servers</a>
+      <a href="/servers/customs/">Customs</a>
+      <a href="/tech/" aria-current="page">Tech rules</a>
+      <a href="/tools/">Creator tools</a>
+      <a href="/tech/#support" class="n29-nav-support">Support</a>
+    </div>
+    <button class="n29-nav-search" data-command-open type="button" aria-label="Search all pages"><span aria-hidden="true">⌕</span> Quick jump <kbd>⌘ K</kbd></button>
+  </div>
+</nav>
+
     <main id="admin-main" class="admin-main">
       <header class="admin-hero">
         <span class="section-label">PRIVATE EDITOR / BL:R</span>
