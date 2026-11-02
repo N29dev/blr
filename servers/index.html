@@ -148,7 +148,8 @@
     <nav class="topnav" aria-label="Site navigation">
       <a class="brand" href="/"><span class="brand-icon">⚽</span> N29 <span style="color:#7586a5;font-weight:600">/ BL:R</span></a>
       <div class="navlinks">
-        <a href="/">← Home</a>
+        <a href="/">← BL:R hub</a>
+        <a href="/#tools">Creator tools</a>
         <a href="https://discord.com/oauth2/authorize?client_id=1563907646757666926&amp;integration_type=1&amp;scope=applications.commands" target="_blank" rel="noopener noreferrer">Glutony App ↗</a>
       </div>
     </nav>
@@ -207,7 +208,7 @@
     <div class="notice">
       <b>About the data:</b> Locations, versions and first-seen times come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a> when available. Ping is Roblox-reported server ping, <em>not</em> your personal latency. Roblox can sometimes ignore the requested instance ID when joining.
     </div>
-    <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span>Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="/">Back to N29</a></span></footer>
+    <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span>Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="https://n29.kz/" target="_blank" rel="noopener noreferrer">N29.kz portfolio</a></span></footer>
   </div>
 
   <dialog id="globe-dialog" class="globe-dialog" aria-labelledby="globe-title">
@@ -544,7 +545,8 @@
         const data=await resp.json();
         if(!resp.ok || !Array.isArray(data.servers))throw Error(data.error||'Server API unavailable');
         if(myRequest!==requestNum)return;
-        serverList=data.servers.filter(s => typeof s.id==='string' && Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing);
+        serverList=data.servers.filter(s => typeof s.id==='string' && Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing)
+          .map(s=>({...s,free:Number.isInteger(s.free)?Math.max(0,s.free):Math.max(0,s.maxPlayers-s.playing)}));
         syncCountries();
         ui.countServers.textContent=String(serverList.length);
         ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
