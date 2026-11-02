@@ -12,7 +12,26 @@ The homepage and supporting pages share a responsive visual system in `site-them
 - Press **⌘K** on macOS or **Ctrl+K** elsewhere (or use the navigation launcher) to search pages and tools.
 - The standalone video tools have visible links back to the homepage and server browser.
 - The homepage highlights N29's Hunger portrait in a creator identity card and links to [n29.kz](https://n29.kz/). The artwork is served as a high-quality AVIF with WebP fallback from the separate `N29dev/portfolio` repository. Deploy the portfolio PR before this site PR so the image URLs resolve.
-- This refresh **does not modify the leaderboard**, Glutony Worker, or server API contracts. Existing pages remain usable if JavaScript enhancements fail.
+- The leaderboard's **navigation only** is updated; its event/scoring logic, Glutony Worker, and server API contracts are unchanged. Existing pages remain usable if JavaScript enhancements fail.
+
+## Connected navigation / site map (November 2026)
+
+The BL:R website now groups its public destinations by **Play · Rules · Create · Support**, while preserving their existing functions.
+
+| Area | Destinations |
+| --- | --- |
+| Play | [Main, 8v8 and Pro server finder](https://blr.n29.kz/servers/), [Custom matches](https://blr.n29.kz/servers/customs/), [GK reaction trainer](https://n29dev.github.io/gk-reaction-trainer), Glutony Discord app |
+| Rules | [Allowed/disallowed tech directory](https://blr.n29.kz/tech/), tech inquiries |
+| Create | [Creator studio](https://blr.n29.kz/#tools), [MP4 clipper](https://blr.n29.kz/clipper.html), [TikTok downloader and repair](https://blr.n29.kz/tiktok-downloader.html), [September 2026 CC leaderboard archive](https://blr.n29.kz/leaderboard/) |
+| Support | [Ban-appeal and support guide](https://blr.n29.kz/tech/#support), [BL:R support Discord](https://discord.gg/dgV4p83EHA), [main BL:R community Discord](https://discord.gg/bluelockrivals) |
+
+- `site-experience.js` is the central index for grouped **Quick jump (⌘K / Ctrl+K)** destinations, plus a shared, responsive **Explore BL:R** directory displayed in public-page `data-site-connect` placeholders.
+- Public pages have direct static header links so navigation remains functional if JavaScript fails. The custom matches page, server browser, Tech Rules, MP4 clipper, TikTok downloader and the archived leaderboard now link back to the wider hub.
+- The homepage shows six major routes (Main, 8v8, Pro, customs, rules and support) plus its existing creator studio.
+- The creator-event leaderboard is labeled as an **archive**, not represented as an active event. Its scoring and admin scripts remain unchanged. The private Tech Rules admin editor is **not** linked from the global public Quick jump.
+- Shared visual styles live in `site-theme.css`. The leaderboard deliberately keeps its separate styling.
+- Test links and route integrity with `node --test site-navigation.test.mjs`. This tests static routes, not availability of external websites.
+- All links are informational; BL:R staff, not this site, decide bans and appeal outcomes.
 
 ## Glutony server browser
 
