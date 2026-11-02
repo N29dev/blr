@@ -39,8 +39,8 @@ The BL:R website now groups its public destinations by **Play · Rules · Create
 - `site-experience.js` is the central index for grouped **Quick jump (⌘K / Ctrl+K)** destinations, plus a shared, responsive **Explore BL:R** directory displayed in public-page `data-site-connect` placeholders.
 - Public pages have direct static header links so navigation remains functional if JavaScript fails. The custom matches page, server browser, Tech Rules, MP4 clipper, TikTok downloader and the archived leaderboard now link back to the wider hub.
 - The homepage shows six major routes (Main, 8v8, Pro, customs, rules and support) plus its existing creator studio.
-- The creator-event leaderboard is labeled as an **archive**, not represented as an active event. Its scoring and admin scripts remain unchanged. The private Tech Rules admin editor is **not** linked from the global public Quick jump.
-- Shared visual styles live in `site-theme.css`. The leaderboard deliberately keeps its separate styling.
+- The creator-event leaderboard is labeled as an **archive**, not represented as an active event. Its event scoring and admin scripts remain unchanged; the public archive now uses the same shared header. The private Tech Rules admin editor is **not** linked from the global public Quick jump.
+- Shared visual styles live in `site-theme.css`. The leaderboard retains its event-specific scoreboard CSS and scoring scripts, while sharing the portfolio-inspired navigation and typography.
 - Test links and route integrity with `node --test site-navigation.test.mjs`. This tests static routes, not availability of external websites.
 - All links are informational; BL:R staff, not this site, decide bans and appeal outcomes.
 
