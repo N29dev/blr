@@ -214,7 +214,9 @@ async function loadCommunityEdits(){
     groupIds=new Map(styles.map(style=>[style.name,style.groupLabel]));
     nameForSlug=new Map(allStyleNames.map(name=>[slug(name),name]));
     if(!allStyleNames.includes(selectedStyle))selectedStyle=DEFAULT_STYLE;
-    updateCounters();renderDirectory();renderDetail();
+    updateCounters();
+    // Re-read the current URL: deep links may point to styles created via admin.
+    syncRoute();
     indicator.textContent=data.entries.length?
       'Live community edits loaded · '+data.entries.length+' update(s)':'Rule snapshot · no community edits';
   }catch(error){
