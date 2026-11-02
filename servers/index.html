@@ -142,6 +142,7 @@
 <link rel="stylesheet" href="/site-theme.css?v=1">
 <link rel="stylesheet" href="/matchday.css?v=1">
 <link rel="stylesheet" href="/smart-finder.css?v=1">
+<link rel="stylesheet" href="/finder-polish.css?v=1">
 <script defer src="/site-experience.js?v=1"></script>
 </head>
 <body data-page="servers">
@@ -156,12 +157,13 @@
     </nav>
 
     <header class="hero">
-      <div class="eyebrow">GLUTONY · SERVER BROWSER</div>
-      <h1>Find your next match<span style="color:var(--purple)">.</span></h1>
+      <div class="eyebrow"><span class="finder-hero-pulse" aria-hidden="true"></span> GLUTONY / LIVE MATCH DISCOVERY</div>
+      <h1>Find your <span class="finder-gradient">next match.</span></h1>
       <p>Browse available <b>Blue Lock: Rivals</b> servers, compare regions and open slots, and find players. No Roblox login required here.</p>
       <div class="statusline"><span id="dot" class="dot"></span><span id="live-status" role="status" aria-live="polite">Connecting to Glutony…</span><span>·</span><span id="last-updated">Waiting for servers</span></div>
     </header>
 
+    <div class="finder-overline"><span>01 / CHOOSE A MODE</span><span>PUBLIC SERVERS + COMMUNITY</span></div>
     <div class="mode-panel" role="tablist" aria-label="Game mode">
       <button id="mode-main" type="button" role="tab" aria-selected="false" class="mode">🏟️ Main <small>Sampled</small></button>
       <button id="mode-8v8" type="button" role="tab" aria-selected="true" class="mode">⚽ 8v8 <small>16 players</small></button>
@@ -216,8 +218,9 @@
       </div>
     </section>
 
+    <div class="finder-overline finder-overline-results"><span>02 / EXPLORE SERVERS</span><span>SEARCH · FILTER · JOIN</span></div>
     <div class="toolbar">
-      <input id="search" class="field search" type="search" autocomplete="off" placeholder="Search city, country, version…" aria-label="Search servers">
+      <label class="finder-search-wrap"><span aria-hidden="true" class="finder-search-icon">⌕</span><span class="sr-only">Search servers</span><input id="search" class="field search" type="search" autocomplete="off" placeholder="Search region, city, version…" aria-label="Search servers"><kbd>/</kbd></label>
       <select id="sort" class="field sort" aria-label="Sort servers">
         <option value="players">Most players</option>
         <option value="fit">Best fit for my squad</option>
@@ -242,9 +245,9 @@
         <button id="layout-list" type="button" aria-pressed="false" aria-label="List layout" title="List layout">☰</button>
       </div>
     </div>
-    <div class="finder-help"><span>Tip: Press <kbd>/</kbd> to search</span><span>Pin a server to find it again during this browser session.</span></div>
+    <div class="finder-help"><span><span class="finder-help-dot" aria-hidden="true"></span> Live sample · not every Roblox lobby</span><span>☆ Pin a server for this browser session.</span></div>
 
-    <div class="section-head"><h2 id="section-title">8v8 public servers</h2><small id="results-label">Loading…</small></div>
+    <div class="section-head"><div><span class="finder-section-kicker">MATCH DIRECTORY</span><h2 id="section-title">8v8 public servers</h2></div><small id="results-label">Loading…</small></div>
     <main id="servers" class="grid" aria-live="polite">
       <div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div>
     </main>
