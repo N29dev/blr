@@ -1,0 +1,15 @@
+/* The homepage previews the standalone creator studio without loading processors. */
+body[data-page="home"] .n29-tools-teaser{padding:52px 0 66px;border-top:1px solid rgba(187,214,250,.12);margin-top:12px}
+body[data-page="home"] .n29-tools-teaser .site-eyebrow{font:700 10px var(--n29-mono);letter-spacing:.12em;color:#88d9fc}
+body[data-page="home"] .n29-tools-teaser h2{font-family:var(--n29-heading)!important;font-size:clamp(33px,5vw,56px);letter-spacing:-.07em;margin:11px 0 13px}
+body[data-page="home"] .n29-tools-teaser>p{max-width:730px;margin:0 0 23px;color:#a3b7ce;font-size:14px;line-height:1.8}
+.n29-teaser-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.n29-teaser-grid a{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;padding:23px;border:1px solid rgba(187,214,250,.14);border-radius:15px;background:linear-gradient(136deg,rgba(17,26,43,.97),rgba(11,20,35,.97));text-decoration:none;color:#ecf6ff}
+.n29-teaser-grid a:hover{border-color:rgba(118,217,252,.43);transform:translateY(-2px)}
+.n29-teaser-number{font:700 10px var(--n29-mono);letter-spacing:.1em;color:#8bd9f7}
+.n29-teaser-grid strong{font:700 23px var(--n29-heading);letter-spacing:-.055em;line-height:1.2}
+.n29-teaser-grid small{color:#93abc7;font-size:12px}
+.n29-teaser-arrow{position:absolute;right:20px;bottom:17px;color:#80d5fa;font-size:19px}
+.n29-tools-teaser .n29-feature-actions{margin-top:19px}
+@media(max-width:760px){.n29-teaser-grid{grid-template-columns:1fr}.n29-teaser-grid a{padding:18px}.n29-tools-teaser{padding-bottom:35px}}
+@media(prefers-reduced-motion:reduce){.n29-teaser-grid a{transition:none}.n29-teaser-grid a:hover{transform:none}}
