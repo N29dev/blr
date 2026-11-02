@@ -206,6 +206,7 @@
       <span><span class="finder-help-dot" aria-hidden="true"></span> Live sample · not every Roblox lobby</span>
       <span class="finder-region-coverage"><span id="region-coverage" role="status" aria-live="polite">Regions: loading…</span>
       <button id="retry-regions" type="button" class="finder-region-retry" hidden>↻ Retry unknown regions</button></span>
+      <span class="finder-region-diagnostics" id="region-diagnostics" aria-live="polite"></span>
     </div>
 
     <div class="section-head"><div><span class="finder-section-kicker">MATCH DIRECTORY</span><h2 id="section-title">8v8 public servers</h2></div><small id="results-label">Loading…</small></div>
@@ -253,6 +254,7 @@
       <div class="bar"><div id="detail-bar" class="bar-inner"></div></div>
       <div class="detail-facts">
         <div><small>Region</small><strong id="detail-region">—</strong></div>
+        <div id="detail-region-diagnostic" class="finder-detail-diagnostic" hidden><small>Why the region is unknown</small><strong id="detail-region-reason">—</strong></div>
         <div><small>Server ping</small><strong id="detail-ping">—</strong></div>
         <div><small>Place version</small><strong id="detail-version">—</strong></div>
         <div><small>Uptime estimate</small><strong id="detail-uptime">—</strong></div>
@@ -409,10 +411,38 @@
       const wrap=node('div','empty'),strong=node('strong','',title);
       wrap.append(strong,node('div','',subtitle));ui.list.append(wrap);
     }
+    const REGION_DIAGNOSIS = Object.freeze({
+      rovalra_error:'RoValra details request failed',
+      no_server_record:'RoValra has no record for this instance',
+      no_datacenter_id:'No datacenter ID in RoValra response',
+      datacenter_unmapped:'Datacenter not found in RoValra map',
+      datacenter_lookup_failed:'RoValra datacenter map unavailable',
+      disabled:'Region lookup disabled',
+      not_checked:'Region not checked',
+      resolved:'Location reported by RoValra',
+      resolved_datacenter:'Matched via RoValra datacenter map'
+    });
+    function regionDiagnosis(server) {
+      if(server.region || server.countryCode)return '';
+      return REGION_DIAGNOSIS[server.regionDiagnostic] || 'Location not yet reported';
+    }
+    function updateRegionDetail(server) {
+      el('detail-region').textContent=regionLabel(server);
+      const reason=regionDiagnosis(server);
+      el('detail-region-diagnostic').hidden=!reason;
+      el('detail-region-reason').textContent=reason || '—';
+    }
     function syncRegionCoverage() {
       const count=serverList.filter(s=>Boolean(s.region||s.countryCode)).length;
       const total=serverList.length;
       el('region-coverage').textContent=total?count+' of '+total+' sampled servers with a known region':'Regions: no servers loaded';
+      const reasons=new Map();
+      for (const server of serverList) {
+        const reason=regionDiagnosis(server);
+        if(!reason)continue;
+        reasons.set(reason,(reasons.get(reason)||0)+1);
+      }
+      el('region-diagnostics').textContent=[...reasons].map(([reason,n])=>n+'× '+reason).join(' · ');
       const retry=el('retry-regions');
       retry.hidden=!total||count===total;
       retry.disabled=regionAttempts>=MAX_REGION_RETRIES||Boolean(regionController);
@@ -447,7 +477,7 @@
         const card=node('article','server');
         const top=node('div','server-top'), locationRow=node('div','server-region');
         const flag=node('span','flag',flagFor(s.countryCode)), loc=node('div',''), title=node('div','location',briefRegion(s));
-        loc.append(title,node('div','subplace',s.country||'Not yet identified by RoValra'));
+        loc.append(title,node('div','subplace',s.country||regionDiagnosis(s)));
         locationRow.append(flag,loc);
         const topActions=node('div','server-top-actions');
         topActions.append(node('span','pill',s.free+' open'));
@@ -467,6 +497,7 @@
         const facts=node('div','facts');
         facts.append(node('span','fact','◉ '+pingLabel(s.ping)+' server ping'));
         facts.append(node('span','fact','◷ '+Math.round(100*s.playing/Math.max(1,s.maxPlayers))+'% occupied'));
+        if(!s.region&&!s.countryCode)facts.append(node('span','fact finder-diagnostic-fact','◌ '+regionDiagnosis(s)));
         if(s.firstSeen)facts.append(node('span','fact','◷ '+ago(s.firstSeen)));
         card.append(facts);
         const foot=node('div','cardfoot');
@@ -517,7 +548,7 @@
         for(const server of missing) {
           const next=data.regions?.[server.id];
           if (!next || typeof next !== 'object') continue;
-          const fields=['region','city','state','country','countryCode','version','firstSeen'];
+          const fields=['region','city','state','country','countryCode','version','firstSeen','regionDiagnostic'];
           let changed=false;
           for(const key of fields) {
             if(next[key] !== undefined && next[key] !== null && next[key] !== '' && next[key] !== server[key]){
@@ -533,7 +564,7 @@
           window.GlutonyGlobe?.refresh(serverList);
           if(currentServer && ui.dialog.open) {
             el('detail-title').textContent=flagFor(currentServer.countryCode)+' '+regionLabel(currentServer);
-            el('detail-region').textContent=regionLabel(currentServer);
+            updateRegionDetail(currentServer);
             el('detail-version').textContent=versionLabel(currentServer.version);
             el('detail-uptime').textContent=ago(currentServer.firstSeen);
           }
@@ -551,6 +582,7 @@
       stopRegionRecheck();
       regionAttempts = 0;
       el('region-coverage').textContent='Regions: loading…';
+      el('region-diagnostics').textContent='';
       el('retry-regions').hidden=true;
       // New scan may replace Job IDs; never leave a region filter using stale IDs.
       regionFilter=null;
@@ -602,7 +634,7 @@
       el('detail-mode').textContent=mode==='main'?'BL:R Main lobby · Public':mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
       el('detail-players').textContent=s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open';
       el('detail-bar').style.width=(100*s.playing/s.maxPlayers)+'%';
-      el('detail-region').textContent=regionLabel(s);
+      updateRegionDetail(s);
       el('detail-ping').textContent=pingLabel(s.ping)+' (reported)';
       el('detail-version').textContent=versionLabel(s.version);
       el('detail-uptime').textContent=ago(s.firstSeen);
