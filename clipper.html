@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MP4 Clip Downloader · N29</title>
 <meta name="description" content="Download a selected part of an MP4 using HTTP range requests, directly in your browser.">
+<meta name="theme-color" content="#070914">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://blr.n29.kz/clipper.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070914'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='800' text-anchor='middle' fill='%237dd3fc'%3EN29%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MP4 Clip Downloader · N29">
+<meta property="og:description" content="Download a selected part of an MP4 using HTTP range requests, directly in your browser.">
+<meta property="og:url" content="https://blr.n29.kz/clipper.html">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,11 +40,15 @@ video{display:block;width:100%;max-height:410px;border-radius:14px;background:#0
 .info{margin-top:17px;padding:15px;border:1px solid rgba(125,211,252,.16);border-radius:13px;background:rgba(0,0,0,.17);font-size:.84rem;color:var(--muted)}
 .info strong{color:var(--text)}[hidden]{display:none!important}
 @media(max-width:600px){.times{grid-template-columns:1fr}.row>.field{flex-basis:100%}.panel{padding:17px}}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+input:focus-visible,select:focus-visible{outline-offset:0}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.25)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <main class="wrap">
-<a class="back" href="./">← Back to Creator Tools</a>
+<a class="back" href="./#tools">← Back to Creator Tools</a>
 <header><div class="eyebrow">N29 · Creator Tools</div><h1>MP4 Clip Downloader</h1><p>Paste a direct MP4 link and export only the time range you choose.</p></header>
 <section class="panel">
 <div class="row">

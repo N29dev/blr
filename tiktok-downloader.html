@@ -2,6 +2,15 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TikTok MP4 Downloader · N29</title>
 <meta name="description" content="Download a TikTok MP4 at best available, 720p, or 480p. Automatically repair broken duration metadata.">
+<meta name="theme-color" content="#070914">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://blr.n29.kz/tiktok-downloader.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070914'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='800' text-anchor='middle' fill='%237dd3fc'%3EN29%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TikTok MP4 Downloader · N29">
+<meta property="og:description" content="Download a TikTok MP4 at best available, 720p, or 480p and repair broken duration metadata.">
+<meta property="og:url" content="https://blr.n29.kz/tiktok-downloader.html">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -26,15 +35,19 @@ progress{display:block;width:100%;height:9px;accent-color:var(--accent);margin-t
 .label{display:block;color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;font-weight:800;margin-bottom:5px}
 input[type=file]{padding:11px;font-size:.87rem}summary{cursor:pointer;color:var(--accent);font-weight:700}.info{font-size:.82rem;color:var(--muted)}
 [hidden]{display:none!important}@media(max-width:580px){.panel{padding:17px}.video{grid-template-columns:104px 1fr;gap:13px}.cover{max-height:185px}}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+input:focus-visible,select:focus-visible{outline-offset:0}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.25)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style></head>
 <body><main class="wrap">
-<a class="back" href="./">← Back to Creator Tools</a><header><div class="eyebrow">N29 · Creator Tools</div>
+<a class="back" href="./#tools">← Back to Creator Tools</a><header><div class="eyebrow">N29 · Creator Tools</div>
 <h1>TikTok MP4 Downloader</h1><p>Download a public TikTok video, choose the resolution, and export a repaired MP4 with readable duration metadata.</p></header>
 <section class="panel">
 <div class="row"><div class="field"><label for="url">TikTok video URL</label>
 <input id="url" type="url" inputmode="url" placeholder="https://www.tiktok.com/@user/video/…" autocomplete="off" spellcheck="false"></div>
 <button id="lookup" type="button">Find video</button></div>
-<p class="note">Public TikTok posts only. Uses the TikWM endpoint already used by your site. Download only content you're allowed to use.</p>
+<p class="note">Public TikTok posts only. Uses the TikWM service. Download only content you're allowed to use.</p>
 <div id="details" hidden>
 <div class="video"><img id="cover" class="cover" alt="TikTok thumbnail"><div class="meta">
 <div id="author" class="author"></div><div id="title" class="title"></div><div id="summary" class="details"></div>
