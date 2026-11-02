@@ -161,16 +161,16 @@
     </header>
 
     <div class="mode-panel" role="tablist" aria-label="Game mode">
-      <button id="mode-main" type="button" role="tab" aria-selected="false" class="mode">🏟️ Main <small>24 sampled</small></button>
+      <button id="mode-main" type="button" role="tab" aria-selected="false" class="mode">🏟️ Main <small>Sampled</small></button>
       <button id="mode-8v8" type="button" role="tab" aria-selected="true" class="mode">⚽ 8v8 <small>16 players</small></button>
       <button id="mode-pro" type="button" role="tab" aria-selected="false" class="mode">🏆 Pro <small>10 players</small></button>
       <a href="/servers/customs/" class="mode" style="text-decoration:none">🤝 Customs <small>Community</small></a>
     </div>
 
     <section class="metrics" aria-label="Server statistics">
-      <div class="metric"><strong id="count-servers">—</strong><small>Available servers</small></div>
-      <div class="metric"><strong id="count-players">—</strong><small>Players online</small></div>
-      <div class="metric"><strong id="count-spots">—</strong><small>Free slots</small></div>
+      <div class="metric"><strong id="count-servers">—</strong><small>Joinable in sample</small></div>
+      <div class="metric"><strong id="count-players">—</strong><small>Players in sample</small></div>
+      <div class="metric"><strong id="count-spots">—</strong><small>Free slots in sample</small></div>
     </section>
 
     <div class="toolbar">
@@ -330,7 +330,7 @@
       el('filter-open').setAttribute('aria-pressed',String(twoOpenOnly));
       el('filter-pinned').setAttribute('aria-pressed',String(pinnedOnly));
       el('pinned-count').textContent=String(serverList.filter(isPinned).length);
-      el('reset-filters').hidden=!(twoOpenOnly||pinnedOnly||countryChoice);
+      el('reset-filters').hidden=!(twoOpenOnly||pinnedOnly||countryChoice||ui.search.value.trim()||regionFilter);
       ui.list.classList.toggle('finder-list',listLayout==='list');
       el('layout-grid').setAttribute('aria-pressed',String(listLayout==='grid'));
       el('layout-list').setAttribute('aria-pressed',String(listLayout==='list'));
@@ -500,6 +500,7 @@
           if(server.region && next.region)discovered++;
         }
         if(metadataChanged){
+          syncCountries();
           render();
           window.GlutonyGlobe?.refresh(serverList);
           if(currentServer && ui.dialog.open) {
@@ -647,6 +648,8 @@
     countrySelect.addEventListener('change',()=>{countryChoice=countrySelect.value;render();});
     el('reset-filters').addEventListener('click',()=>{
       twoOpenOnly=false;pinnedOnly=false;countryChoice='';countrySelect.value='';
+      ui.search.value='';regionFilter=null;el('clear-region').hidden=true;
+      window.GlutonyGlobe?.close();
       render();
     });
     for(const value of ['grid','list']){
