@@ -7,7 +7,8 @@
  *
  * Never reclassify unlisted techniques as "allowed". Empty categories mean
  * "No classification documented in this snapshot", not "safe".
- * Base and NEL styles remain separate unless the source explicitly names both.
+ * Base and NEL variants of the same character are displayed as ONE style.
+ * Limited/event versions remain separate unless explicitly merged later.
  */
 export const POLICY = Object.freeze({
   asOf: '2026-11-02',
@@ -20,7 +21,7 @@ export const POLICY = Object.freeze({
 
 export const STYLE_GROUPS = [
   {id:'master',label:'Master / featured',names:['Loki','Lavinho','Snuffy']},
-  {id:'world',label:'World Class / NEL',names:['NEL Rin','NEL Nagi','Sae','Kaiser','Don Lorenzo','NEL Isagi','NEL Bachira','NEL Chigiri','NEL Reo','NEL Shidou','NEL King']},
+  {id:'world',label:'World Class / featured',names:['Sae','Kaiser','Don Lorenzo']},
   {id:'mythic',label:'Mythic / core',names:['Shidou','Rin','Kunigami','Aiku','Yukimiya','Reo','Charles']},
   {id:'legendary',label:'Legendary / core',names:['King','Nagi','Bachira','Kiyora','Hiori','Ness']},
   {id:'epic',label:'Epic / core',names:['Otoya','Karasu','Raichi','Kurona']},
@@ -40,6 +41,26 @@ export const STYLE_GROUPS = [
 export const GENERAL = 'General / Cross-style';
 export const STYLES = STYLE_GROUPS.flatMap(g => g.names.map(name=>({name,group:g.id,groupLabel:g.label})));
 export const ALL_STYLE_NAMES = [GENERAL,...STYLES.map(s=>s.name)];
+
+// NEL kits are the same selectable style as their base character. This also
+// normalizes *old* admin overrides saved as "NEL Nagi" before the merge.
+// Event/limited prefixes (e.g. "Skeleton Nagi") are deliberately untouched.
+export const NEL_VARIANTS = Object.freeze([
+  'Rin','Nagi','Isagi','Bachira','Chigiri','Reo','Shidou','King'
+]);
+export function canonicalStyle(raw){
+  if(typeof raw!=='string')return '';
+  const name=raw.trim().replace(/\s+/g,' ');
+  if(!name)return '';
+  if(name===GENERAL)return GENERAL;
+  const noNEL=name.replace(/^NEL\s+/i,'');
+  // Prefer exact canonical capitalization for roster names.
+  const existing=ALL_STYLE_NAMES.find(style=>style.toLowerCase()===noNEL.toLowerCase());
+  return existing||noNEL;
+}
+export function isNELVariant(name){
+  return typeof name==='string' && /^NEL\s+/i.test(name.trim());
+}
 
 const tech = (id,name,status,styles,video='',note='')=>({id,name,status,styles,video,note});
 export const TECHS = [
