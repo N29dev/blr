@@ -282,6 +282,59 @@
     let requestController = null;
     let requestNum = 0;
     let currentServer = null;
+    // Personal browser-session pins — never sent to Glutony or Roblox.
+    const pinStoreKey='n29-blr-pins-session-v1';
+    const PIN_TTL=12*60*60*1000;
+    let pinMap={};
+    try {
+      const parsed=JSON.parse(sessionStorage.getItem(pinStoreKey)||'{}');
+      if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)){
+        for(const [key,value] of Object.entries(parsed)) {
+          if(typeof value==='number'&&value>Date.now()-PIN_TTL&&value<=Date.now())pinMap[key]=value;
+        }
+      }
+    }catch{}
+    const pinKey=s=>mode+':'+s.id;
+    const isPinned=s=>Boolean(pinMap[pinKey(s)]);
+    function savePins(){
+      try{sessionStorage.setItem(pinStoreKey,JSON.stringify(pinMap));}catch{}
+    }
+    function togglePin(s){
+      const key=pinKey(s);
+      if(isPinned(s))delete pinMap[key];
+      else if(typeof s.id==='string'&&s.id.length<=160)pinMap[key]=Date.now();
+      savePins();
+      render();
+    }
+    let twoOpenOnly=false, pinnedOnly=false, countryChoice='';
+    let listLayout='grid';
+    try{if(sessionStorage.getItem('n29-blr-layout-v1')==='list')listLayout='list';}catch{}
+    const countrySelect=el('country-filter');
+    function countryKey(s){return String(s.countryCode||s.country||'').trim();}
+    function syncCountries(){
+      const current=countryChoice;
+      const countries=new Map();
+      for(const s of serverList){
+        const key=countryKey(s);
+        if(!key)continue;
+        const name=String(s.country||s.countryCode||'Unknown');
+        if(!countries.has(key))countries.set(key,name);
+      }
+      const sorted=[...countries].sort((a,b)=>a[1].localeCompare(b[1]));
+      countrySelect.replaceChildren(new Option('All countries',''));
+      for(const [key,name] of sorted)countrySelect.add(new Option(name,key));
+      countryChoice=countries.has(current)?current:'';
+      countrySelect.value=countryChoice;
+    }
+    function syncRefinements(){
+      el('filter-open').setAttribute('aria-pressed',String(twoOpenOnly));
+      el('filter-pinned').setAttribute('aria-pressed',String(pinnedOnly));
+      el('pinned-count').textContent=String(serverList.filter(isPinned).length);
+      el('reset-filters').hidden=!(twoOpenOnly||pinnedOnly||countryChoice);
+      ui.list.classList.toggle('finder-list',listLayout==='list');
+      el('layout-grid').setAttribute('aria-pressed',String(listLayout==='grid'));
+      el('layout-list').setAttribute('aria-pressed',String(listLayout==='list'));
+    }
     // Recheck only unresolved regions, at most five times per loaded mode.
     // A focused lookup avoids refetching all Roblox servers every minute.
     const REGION_RETRY_MS = 75_000;
@@ -319,7 +372,8 @@
     }
     function changeMode(next) {
       if(!VALID_MODES.includes(next)||next===mode)return;
-      mode=next; pendingServer=''; ui.search.value='';regionFilter=null;
+      mode=next; pendingServer=''; ui.search.value='';regionFilter=null;countryChoice='';
+      countrySelect.value='';
       el('clear-region').hidden=true;
       if(window.GlutonyGlobe)window.GlutonyGlobe.close();
       if(ui.dialog.open)ui.dialog.close();
@@ -346,18 +400,25 @@
     }
     function render() {
       const term=ui.search.value.trim().toLowerCase();
-      const filtered=serverList.filter(s => (!regionFilter||(Array.isArray(regionFilter.serverIds)?regionFilter.serverIds.includes(s.id):(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase()))) && (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v => String(v||'').toLowerCase().includes(term))));
+      const filtered=serverList.filter(s =>
+        (!regionFilter||(Array.isArray(regionFilter.serverIds)?regionFilter.serverIds.includes(s.id):(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase()))) &&
+        (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v=>String(v||'').toLowerCase().includes(term))) &&
+        (!twoOpenOnly||s.free>=2) && (!pinnedOnly||isPinned(s)) &&
+        (!countryChoice||countryKey(s)===countryChoice)
+      );
       const sort=ui.sort.value;
       filtered.sort((a,b) => {
+        if(isPinned(a)!==isPinned(b))return Number(isPinned(b))-Number(isPinned(a));
         if(sort==='space')return b.free-a.free||b.playing-a.playing;
         if(sort==='ping')return (a.ping??Infinity)-(b.ping??Infinity)||b.playing-a.playing;
         if(sort==='version')return (b.version||0)-(a.version||0)||b.playing-a.playing;
         return b.playing-a.playing||b.free-a.free;
       });
+      syncRefinements();
       ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'');
       ui.list.replaceChildren();
       if(!filtered.length){
-        empty(term?'No matches found':'No joinable servers','Try a different search or press Refresh.');
+        empty(serverList.length?'No servers match these filters':'No joinable servers',serverList.length?'Change the filters, country, or search to see more servers.':'Press Refresh to check again.');
         return;
       }
       const fragment=document.createDocumentFragment();
@@ -367,7 +428,16 @@
         const flag=node('span','flag',flagFor(s.countryCode)), loc=node('div',''), title=node('div','location',briefRegion(s));
         loc.append(title,node('div','subplace',s.country||'Region unavailable'));
         locationRow.append(flag,loc);
-        top.append(locationRow,node('span','pill',s.free+' open'));
+        const topActions=node('div','server-top-actions');
+        topActions.append(node('span','pill',s.free+' open'));
+        const pin=node('button','server-pin',isPinned(s)?'★':'☆');
+        pin.type='button';pin.setAttribute('aria-pressed',String(isPinned(s)));
+        pin.setAttribute('aria-label',(isPinned(s)?'Unpin ':'Pin ')+briefRegion(s)+' server');
+        pin.title=isPinned(s)?'Unpin server':'Pin server for this browser session';
+        pin.addEventListener('click',()=>togglePin(s));
+        topActions.append(pin);
+        top.append(locationRow,topActions);
+        card.classList.toggle('is-pinned',isPinned(s));
         card.append(top);
         const count=node('div','server-count');const countText=node('strong','',s.playing+'/'+s.maxPlayers);
         count.append(countText,node('span','','players'));card.append(count);
@@ -375,6 +445,7 @@
         fill.style.width=Math.max(0,Math.min(100,100*s.playing/Math.max(1,s.maxPlayers)))+'%';bar.append(fill);card.append(bar);
         const facts=node('div','facts');
         facts.append(node('span','fact','◉ '+pingLabel(s.ping)+' server ping'));
+        facts.append(node('span','fact','◷ '+Math.round(100*s.playing/Math.max(1,s.maxPlayers))+'% occupied'));
         if(s.firstSeen)facts.append(node('span','fact','◷ '+ago(s.firstSeen)));
         card.append(facts);
         const foot=node('div','cardfoot');
@@ -466,6 +537,7 @@
         if(!resp.ok || !Array.isArray(data.servers))throw Error(data.error||'Server API unavailable');
         if(myRequest!==requestNum)return;
         serverList=data.servers.filter(s => typeof s.id==='string' && Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing);
+        syncCountries();
         ui.countServers.textContent=String(serverList.length);
         ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
@@ -570,6 +642,27 @@
     el('clear-region').addEventListener('click',()=>clearRegion(true));
     el('globe-filter-clear').addEventListener('click',()=>clearRegion(false));
     for(const value of VALID_MODES)el('mode-'+value).addEventListener('click',()=>changeMode(value));
+    el('filter-open').addEventListener('click',()=>{twoOpenOnly=!twoOpenOnly;render();});
+    el('filter-pinned').addEventListener('click',()=>{pinnedOnly=!pinnedOnly;render();});
+    countrySelect.addEventListener('change',()=>{countryChoice=countrySelect.value;render();});
+    el('reset-filters').addEventListener('click',()=>{
+      twoOpenOnly=false;pinnedOnly=false;countryChoice='';countrySelect.value='';
+      render();
+    });
+    for(const value of ['grid','list']){
+      el('layout-'+value).addEventListener('click',()=>{
+        listLayout=value;
+        try{sessionStorage.setItem('n29-blr-layout-v1',value);}catch{}
+        syncRefinements();
+      });
+    }
+    document.addEventListener('keydown',event=>{
+      if(event.key!=='/'||event.ctrlKey||event.metaKey||event.altKey)return;
+      const target=event.target;
+      if(target?.closest?.('input,textarea,select,[contenteditable="true"],dialog[open]'))return;
+      event.preventDefault();ui.search.focus();
+    });
+    syncRefinements();
     ui.search.addEventListener('input',render);
     ui.sort.addEventListener('change',render);
     ui.refresh.addEventListener('click',load);
