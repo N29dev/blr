@@ -37,6 +37,7 @@
   function initCommandFinder() {
     const dialog=createNode('dialog','site-command-dialog');
     dialog.setAttribute('aria-label','Find a page or tool');
+    dialog.id='n29-quick-jump';
     const top=createNode('div','site-command-top');
     top.append(createNode('strong','', 'Quick navigation'));
     const close=createNode('button','site-command-close','Esc ✕');
@@ -44,11 +45,11 @@
     close.setAttribute('aria-label','Close navigation');
     top.append(close);
     const query=createNode('input','site-command-search');
-    query.type='search';query.placeholder='Search servers, tools, community…';
+    query.type='search';query.placeholder='Search pages, servers, tools…';
     query.setAttribute('aria-label','Search pages and tools');
     query.autocomplete='off';query.spellcheck=false;
     const list=createNode('div','site-command-list');
-    const help=createNode('div','site-command-help','↑ ↓ to select · Enter to open · Esc to close');
+    const help=createNode('div','site-command-help','Type to filter · ↑ ↓ select · Enter open · Esc close');
     dialog.append(top,query,list,help);
     document.body.append(dialog);
 
@@ -126,7 +127,20 @@
         closeDialog();
       }
     });
-    document.querySelectorAll('[data-command-open]').forEach(btn=>btn.addEventListener('click',openDialog));
+    // One identical label, shortcut and accessible trigger on every page.
+    const macShortcut=/Mac|iPhone|iPad/i.test(navigator.platform||'');
+    document.querySelectorAll('[data-command-open]').forEach(btn=>{
+      btn.type='button';
+      btn.setAttribute('aria-label','Open Quick Jump search');
+      btn.setAttribute('aria-haspopup','dialog');
+      btn.setAttribute('aria-controls','n29-quick-jump');
+      btn.replaceChildren(
+        createNode('span','n29-search-icon','⌕'),
+        createNode('span','n29-search-label','Quick jump'),
+        createNode('kbd','',macShortcut?'⌘ K':'Ctrl K')
+      );
+      btn.addEventListener('click',openDialog);
+    });
 
     if(!document.querySelector('[data-command-open]')) {
       const fab=createNode('button','site-command-fab');
