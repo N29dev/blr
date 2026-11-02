@@ -3,7 +3,7 @@
 ## Public search page + private admin
 
 - **Public:** [blr.n29.kz/tech/](https://blr.n29.kz/tech/) — search a style name, select that style, see its allowed, disallowed and punishable techniques; follow real YouTube demonstration links.
-- **Private:** [blr.n29.kz/tech/admin/](https://blr.n29.kz/tech/admin/) — owner-only add/edit/remove and YouTube link management. Type a new style name in the editor's **Styles** field if it's missing from the catalog.
+- **Private:** [blr.n29.kz/tech/admin/](https://blr.n29.kz/tech/admin/) — owner-only add/edit/remove and YouTube link management. Type a new style name in the editor's **Styles** field if it's missing from the catalog. You may type `NEL Nagi` or `Nagi`; both save as `Nagi`.
 - The static source below is the original moderation snapshot, while the public page merges additional edits from the Glutony Worker at `GET /api/tech` (Cloudflare D1). The original snapshot is still shown if the Worker is unavailable.
 - For setup, apply Glutony D1 migration `0004_tech_rules.sql` and configure a **distinct** `TECH_ADMIN_KEY` Cloudflare Secret of at least 32 characters. [Full deployment instructions](https://github.com/N29dev/Glutony#blr-tech-rules-admin-editor). Never put admin keys in GitHub or share them in chats.
 - The key stays only in the admin tab's memory. It is cleared on lock/reload and never persisted in browser local storage. The Worker enforces auth on every admin request; CORS alone is not an authentication mechanism.
@@ -16,7 +16,7 @@ The admin route can edit or hide any listing, including source entries, but cann
 
 This is an **unofficial community-maintained transcription** of the moderation rules supplied on November 2, 2026. It is **not an official, automatically synchronized moderation database**. Staff may revise rules; their current instructions override this page.
 
-The page includes the supplied allowed techs, disallowed techs, and separately listed examples of punishable bugs. It also includes the style roster for browsing, including base kits, NEL kits, recent additions (Niko, Snuffy, Sendou, Zantetsu and NEL King), and 14 limited variants. Some "New / other" style rarities are deliberately unspecified because public lists disagree. A style with no listed tech is **unclassified**, not automatically allowed. Base, NEL and event variants are **not** presumed to inherit one another's classifications.
+The page includes the supplied allowed techs, disallowed techs, and separately listed examples of punishable bugs. It also includes the style roster for browsing, including base kits with their NEL versions merged into a single character entry, recent additions (Niko, Snuffy, Sendou, Zantetsu and King), and 14 limited variants. Some "New / other" style rarities are deliberately unspecified because public lists disagree. A style with no listed tech is **unclassified**, not automatically allowed. Base and NEL versions are intentionally treated as **one style entry**. Event and limited variants remain separate unless a rule explicitly associates them.
 
 ## Add a YouTube video in 30 seconds
 
