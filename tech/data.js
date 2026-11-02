@@ -20,15 +20,15 @@ export const POLICY = Object.freeze({
 });
 
 export const STYLE_GROUPS = [
-  {id:'master',label:'Master / featured',names:['Loki','Lavinho','Snuffy']},
-  {id:'world',label:'World Class / featured',names:['Sae','Kaiser','Don Lorenzo']},
-  {id:'mythic',label:'Mythic / core',names:['Shidou','Rin','Kunigami','Aiku','Yukimiya','Reo','Charles']},
-  {id:'legendary',label:'Legendary / core',names:['King','Nagi','Bachira','Kiyora','Hiori','Ness']},
-  {id:'epic',label:'Epic / core',names:['Otoya','Karasu','Raichi','Kurona']},
-  {id:'rare',label:'Rare / core',names:['Isagi','Chigiri','Gagamaru']},
-  // Rarity/classification changes often. Do not guess tiers for these additions.
-  {id:'recent',label:'New / other',names:['Niko','Sendou','Zantetsu','Igaguri','Bunny']},
-  {id:'limited',label:'Limited / event variants',names:[
+  {id:'rare',label:'Rare',names:['Isagi','Kurona','Gagamaru','Chigiri','Raichi']},
+  {id:'epic',label:'Epic',names:['Otoya','Sendou','Hiori','Bachira','Karasu']},
+  {id:'legendary',label:'Legendary',names:['Zantetsu','Kiyora','Nagi','Aiku','King','Kunigami']},
+  {id:'mythic',label:'Mythic',names:['Shidou','Ness','Reo','Rin','Niko','Charles','Yukimiya']},
+  {id:'world',label:'World Class',names:['Don Lorenzo','Sae','Kaiser']},
+  {id:'master',label:'Master',names:['Loki','Snuffy','Lavinho']},
+  // Bunny and Igaguri are not placed among the limited/event styles.
+  {id:'other',label:'Other',names:['Bunny','Igaguri']},
+  {id:'limited',label:'Limited',names:[
     'Easter Kaiser','McNagi Fryshiro','Reaper Sae','Demon Shidou',
     'Phantom Isagi','Bloodmoon Rin','Skeleton Nagi','Elf Emperor',
     'Krampus Barou','Gingerbread Charles','Subzero Loki','Santa Lavinho',
