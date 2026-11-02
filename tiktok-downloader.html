@@ -44,15 +44,19 @@ input:focus-visible,select:focus-visible{outline-offset:0}
 input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.25)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
-<link rel="stylesheet" href="/site-theme.css?v=1">
-<script defer src="/site-experience.js?v=1"></script></head>
+<link rel="stylesheet" href="/site-theme.css?v=2">
+<script defer src="/site-experience.js?v=2"></script></head>
 <body data-page="tiktok">
 <nav class="site-tool-nav" aria-label="Site navigation">
   <a class="site-tool-brand" href="/">N29 / BL:R</a>
   <div class="site-tool-links">
     <a href="/">Home</a>
     <a href="/servers/">Servers</a>
-    <a href="/#tools">All creator tools</a>
+    <a href="/servers/customs/">Customs</a>
+    <a href="/tech/">Tech rules</a>
+    <a href="/#tools">Creator tools</a>
+    <a href="/clipper.html">MP4 clipper</a>
+    <a href="/tech/#support">Support</a>
   </div>
 </nav>
 <main class="wrap">
@@ -92,7 +96,9 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
 <p class="info">A fast remux reconstructs MP4 timing metadata and moves its index for compatibility. If the source contains unsupported video codecs, broken timestamps, or a requested smaller size, the video is converted to H.264 + AAC instead. Remuxing without re-encoding preserves video quality, but conversion does not.</p>
 <p class="info">This tool processes media on your own device. It needs the video host to allow browser downloads with CORS. If the server blocks CORS, download the file another way, then use "Fix local video" above. The browser cannot repair a completely missing/damaged media stream. Large files may exceed browser memory.</p>
 <p class="info">"Original" means highest-quality variant returned by TikWM, not a guaranteed untouched TikTok upload. 720p/480p are generated from that source when necessary, rather than claiming that TikTok provides separate versions.</p>
-</details></section></main>
+</details></section>
+<div data-site-connect></div>
+</main>
 <script type="module">
 import { FFmpeg } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
 import { toBlobURL } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js';

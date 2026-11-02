@@ -196,3 +196,24 @@ textarea { min-height: 110px; resize: vertical; }
 .term-line.ok .term-msg { color: #bbf7d0; }
 .term-line.warn .term-msg { color: #fde68a; }
 .term-line.err .term-msg { color: #fecaca; }
+
+
+/* Historical leaderboard gets a simple way back to the BL:R hub.
+   Event scoring, sorting, and admin panels remain untouched. */
+.hub-backnav{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  flex-wrap:wrap;margin:-12px auto 29px;padding:10px;
+  border:1px solid rgba(165,198,241,.15);border-radius:14px;
+  background:rgba(19,32,55,.6);
+}
+.hub-backnav a{
+  color:#b3c8e4;font-weight:750;font-size:12px;line-height:1.4;
+  padding:8px 10px;border-radius:9px;border:1px solid rgba(154,197,250,.1);
+}
+.hub-backnav a:hover,.hub-backnav a:focus-visible{
+  background:rgba(94,172,235,.14);color:#e8f7ff;
+}
+@media(max-width:580px){
+  .hub-backnav{margin-top:-24px;gap:5px;padding:9px}
+  .hub-backnav a{font-size:11px;padding:7px 8px}
+}

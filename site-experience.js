@@ -3,20 +3,29 @@
 (() => {
   'use strict';
   const page = document.body.dataset.page || '';
+  // One directory of destinations shared by the quick-jump search and page footer.
+  // Keep the private /tech/admin/ route out of public navigation.
   const links = [
-    { icon:'✦', title:'N29 portfolio', detail:'Explore N29 projects and profile', url:'https://n29.kz/' },
-    { icon:'⌂', title:'Overview', detail:'Return to the BL:R home page', url:'/' },
-    { icon:'🌐', title:'Server finder', detail:'Browse public BL:R servers', url:'/servers/' },
-    { icon:'🏟️', title:'Main lobbies', detail:'Find sampled main-game servers', url:'/servers/?mode=main' },
-    { icon:'⚽', title:'8v8 servers', detail:'Find public 8v8 matches', url:'/servers/?mode=8v8' },
-    { icon:'🏆', title:'Pro servers', detail:'Browse competitive public matches', url:'/servers/?mode=pro' },
-    { icon:'🤝', title:'Custom matches', detail:'Find community-hosted lobbies', url:'/servers/customs/' },
-    { icon:'📜', title:'Tech & bug rules', detail:'Allowed and banned techniques by BL:R style', url:'/tech/' },
-    { icon:'★', title:'Player stats', detail:'N29 in-game profile statistics', url:'/#stats' },
-    { icon:'🎞️', title:'Creator tools', detail:'Video patcher, TikTok analyzer and compressor', url:'/#tools' },
-    { icon:'✂️', title:'MP4 clipper', detail:'Export part of a direct MP4 URL', url:'/clipper.html' },
-    { icon:'📥', title:'TikTok downloader', detail:'Download and repair a public TikTok MP4', url:'/tiktok-downloader.html' },
-    { icon:'💬', title:'Community Discord', detail:'Join N29’s BL:R community', url:'/#discord' }
+    { group:'Play', icon:'⌂', title:'BL:R hub', detail:'Overview, profile and all available tools', url:'/' },
+    { group:'Play', icon:'🌐', title:'Public server finder', detail:'Compare sampled Roblox server regions and open slots', url:'/servers/' },
+    { group:'Play', icon:'🏟️', title:'Main lobbies', detail:'Find sampled main-game servers', url:'/servers/?mode=main' },
+    { group:'Play', icon:'⚽', title:'8v8 matches', detail:'Browse public 8v8 servers', url:'/servers/?mode=8v8' },
+    { group:'Play', icon:'🏆', title:'Pro servers', detail:'Browse competitive public servers', url:'/servers/?mode=pro' },
+    { group:'Play', icon:'🤝', title:'Community customs', detail:'Find player-hosted custom matches', url:'/servers/customs/' },
+    { group:'Play', icon:'🥅', title:'GK reaction trainer', detail:'Practice goalkeeper reactions in the separate training app', url:'https://n29dev.github.io/gk-reaction-trainer' },
+    { group:'Play', icon:'🤖', title:'Glutony Discord app', detail:'Install BL:R server finder commands in Discord', url:'https://discord.com/oauth2/authorize?client_id=1563907646757666926&integration_type=1&scope=applications.commands' },
+    { group:'Rules', icon:'📜', title:'Allowed & banned tech', detail:'Search BL:R styles, techs and punishable bugs', url:'/tech/' },
+    { group:'Rules', icon:'🔎', title:'Check if a tech is allowed', detail:'How to ask BL:R support staff about a technique', url:'/tech/#support' },
+    { group:'Create', icon:'🎬', title:'Creator studio', detail:'Browse video utilities and TikTok tools', url:'/#tools' },
+    { group:'Create', icon:'✂️', title:'MP4 clipper', detail:'Trim part of a public direct MP4', url:'/clipper.html' },
+    { group:'Create', icon:'📥', title:'TikTok downloader & repair', detail:'Download and repair MP4 duration metadata', url:'/tiktok-downloader.html' },
+    { group:'Create', icon:'🏅', title:'CC leaderboard (Sep 2026 archive)', detail:'Historical creator event results, not current rankings', url:'/leaderboard/' },
+    { group:'Support', icon:'🛡️', title:'Ban appeal help', detail:'Support server and appeals channel for bug-abuse bans', url:'/tech/#support' },
+    { group:'Support', icon:'💬', title:'BL:R support server', detail:'Join the official support Discord for tickets and appeals', url:'https://discord.gg/dgV4p83EHA' },
+    { group:'Support', icon:'🌍', title:'Main BL:R Discord', detail:'Blue Lock: Rivals community server', url:'https://discord.gg/bluelockrivals' },
+    { group:'More', icon:'★', title:'N29 player stats', detail:'In-game profile statistics on the homepage', url:'/#stats' },
+    { group:'More', icon:'💠', title:'N29 community Discord', detail:'Join N29’s own community server', url:'/#discord' },
+    { group:'More', icon:'✦', title:'N29 portfolio', detail:'Explore developer projects and profile', url:'https://n29.kz/' }
   ];
 
   function createNode(tag, className, text) {
@@ -50,14 +59,19 @@
 
     const render=()=>{
       const term=query.value.trim().toLocaleLowerCase();
-      visible=links.filter(link=>(link.title+' '+link.detail).toLocaleLowerCase().includes(term));
+      visible=links.filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
       active=0;
       list.replaceChildren();
       if(!visible.length) {
         list.append(createNode('div','site-command-empty','No results. Try “servers”, “TikTok”, or “customs”.'));
         return;
       }
+      let lastGroup='';
       visible.forEach((link,i)=>{
+        if(link.group!==lastGroup){
+          list.append(createNode('div','site-command-group',link.group));
+          lastGroup=link.group;
+        }
         const a=createNode('a','site-command-item');
         a.href=link.url;
         a.setAttribute('data-current',i===active?'true':'false');
@@ -125,6 +139,70 @@
     }
   }
 
+  // Reusable, accessible site map rendered only at explicit public-page placeholders.
+  // Existing page navigation remains functional if this enhancement does not load.
+  function initSiteConnections(){
+    const mount=document.querySelector('[data-site-connect]');
+    if(!mount)return;
+    const cards=[
+      {category:'PLAY',title:'Find your next match',icon:'⚽',links:[
+        {label:'Public servers',href:'/servers/'},
+        {label:'Community customs',href:'/servers/customs/'},
+        {label:'GK reaction trainer',href:'https://n29dev.github.io/gk-reaction-trainer'}
+      ]},
+      {category:'LEARN',title:'Understand the rules',icon:'📜',links:[
+        {label:'Allowed & banned tech',href:'/tech/'},
+        {label:'Tech inquiries',href:'/tech/#support'}
+      ]},
+      {category:'CREATE',title:'Make better clips',icon:'🎬',links:[
+        {label:'Creator tools',href:'/#tools'},
+        {label:'MP4 clipper',href:'/clipper.html'},
+        {label:'TikTok downloader',href:'/tiktok-downloader.html'},
+        {label:'CC leaderboard (archive)',href:'/leaderboard/'}
+      ]},
+      {category:'SUPPORT',title:'Get help',icon:'🛡️',links:[
+        {label:'Ban appeals / Support',href:'/tech/#support'},
+        {label:'Join support server',href:'https://discord.gg/dgV4p83EHA'},
+        {label:'BL:R community Discord',href:'https://discord.gg/bluelockrivals'}
+      ]}
+    ];
+    const section=createNode('nav','site-connect');
+    section.setAttribute('aria-label','Explore the BL:R hub');
+    const header=createNode('div','site-connect-heading');
+    const text=createNode('div','');
+    text.append(createNode('span','site-connect-eyebrow','EXPLORE BL:R'),createNode('h2','', 'Everything is connected.'));
+    header.append(text);
+    const hub=createNode('a','site-connect-hub','Visit the hub ↗');hub.href='/';
+    header.append(hub);
+    section.append(header);
+    const grid=createNode('div','site-connect-grid');
+    for(const card of cards){
+      const group=createNode('div','site-connect-card');
+      const head=createNode('div','site-connect-card-head');
+      head.append(createNode('span','site-connect-card-icon',card.icon));
+      const headings=createNode('div','site-connect-card-headings');
+      headings.append(createNode('span','site-connect-category',card.category),createNode('h3','',card.title));
+      head.append(headings);group.append(head);
+      for(const item of card.links){
+        const anchor=createNode('a','site-connect-link',item.label);
+        anchor.href=item.href;
+        if(/^https:\/\//.test(item.href)){anchor.target='_blank';anchor.rel='noopener noreferrer';}
+        if(item.href===location.pathname+location.search||item.href===location.pathname||
+           (item.href==='/servers/'&&page==='servers')||
+           (item.href==='/tech/'&&page==='tech')||
+           (item.href==='/servers/customs/'&&page==='customs')||
+           (item.href==='/clipper.html'&&page==='clipper')||
+           (item.href==='/tiktok-downloader.html'&&page==='tiktok')){
+          anchor.setAttribute('aria-current','page');
+        }
+        group.append(anchor);
+      }
+      grid.append(group);
+    }
+    section.append(grid);
+    mount.replaceChildren(section);
+  }
+
   function initHomeFilters() {
     const grid=document.querySelector('#tools .creator-tools-grid');
     const filters=document.querySelector('.site-tool-filters');
@@ -147,6 +225,7 @@
 
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
+  try { initSiteConnections(); } catch(error) { console.warn('Site map enhancement unavailable',error); }
   if(page==='home') {
     try { initHomeFilters(); } catch(error) { console.warn('Tool filters unavailable',error); }
   }

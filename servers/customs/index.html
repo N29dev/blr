@@ -51,15 +51,25 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
 [hidden]{display:none!important}
 @media(max-width:680px){.grid{grid-template-columns:1fr}.tabs a{padding:11px 14px}.panel{padding:15px}.top{padding:18px 0 28px}}
 </style>
-<link rel="stylesheet" href="/site-theme.css?v=1">
-<script defer src="/site-experience.js?v=1"></script>
+<link rel="stylesheet" href="/site-theme.css?v=2">
+<script defer src="/site-experience.js?v=2"></script>
 </head>
 <body data-page="customs">
 <div class="wrap">
-<nav class="top"><a class="brand" href="/">⚽ N29 / BL:R</a><a href="/servers/">← Public Servers</a></nav>
+<nav class="top" aria-label="Site navigation">
+  <a class="brand" href="/">⚽ N29 / BL:R</a>
+  <div class="site-customs-links">
+    <a href="/">Home</a>
+    <a href="/servers/">Public servers</a>
+    <a href="/servers/customs/" aria-current="page">Customs</a>
+    <a href="/tech/">Tech rules</a>
+    <a href="/#tools">Creator tools</a>
+    <a href="/tech/#support">Support</a>
+  </div>
+</nav>
 <header class="hero"><div class="eyebrow">GLUTONY · COMMUNITY</div><h1>Custom matches<span style="color:#8686ff">.</span></h1>
 <p>Share your Roblox private server so players can join your match. No more waiting for friends or getting stuck in random public lobbies.</p></header>
-<div class="tabs"><a href="/servers/">⚽ 8v8 / Pro</a><a href="/servers/customs/" class="selected" aria-current="page">🤝 Customs</a></div>
+<div class="tabs"><a href="/servers/">⚽ Main / 8v8 / Pro</a><a href="/servers/customs/" class="selected" aria-current="page">🤝 Customs</a></div>
 <div class="panel controls">
  <div><strong id="welcome">Community servers</strong><small id="information">One listing per Discord account · expires after 4 hours</small></div>
  <div class="buttons"><button id="login">Sign in with Discord</button><button class="primary" id="post" disabled>+ Host a match</button><button id="refresh">↻ Refresh</button></div>
@@ -67,7 +77,8 @@ textarea{resize:vertical;min-height:75px}.status{color:#f9b7ad;font-size:12px;mi
 <div class="searchbar"><input type="search" id="search" placeholder="Search match, host or region…" aria-label="Search custom matches"><span id="counter" style="font-size:12px;color:#9caac0;white-space:nowrap">Loading…</span></div>
 <main class="grid" id="cards" aria-live="polite"><div class="empty">Loading community matches…</div></main>
 <div class="hint">⚠️ <b>Customs information is host-reported.</b> Player counts are not live Roblox data, and "Region" means the region selected by the host — not the verified physical Roblox datacenter. <b>Community-submitted links are not verified.</b> Only open links to Roblox. A new private-server share link does not reveal which game it belongs to, so Glutony cannot guarantee that a host linked BL:R. <a href="https://en.help.roblox.com/hc/en-us/articles/205345050-Private-VIP-Servers-FAQ" target="_blank" rel="noopener noreferrer">Roblox private server help</a>. Never give anyone your Roblox password or session cookie.</div>
-<div class="foot">Unofficial BL:R community project · <a href="https://github.com/N29dev/Glutony">Glutony</a></div>
+<div data-site-connect></div>
+<div class="foot">Unofficial BL:R community project · <a href="/servers/">Public servers</a> · <a href="/tech/">Tech rules</a> · <a href="/tech/#support">Support / appeals</a> · <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a></div>
 </div>
 <dialog id="dialog" aria-labelledby="dialog-title">
 <div class="dhead"><h2 id="dialog-title">Host a match</h2><button id="close" type="button">×</button></div>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BLR · N29 — Blue Lock Rivals stats, servers &amp; creator tools</title>
-  <meta name="description" content="Blue Lock Rivals stats, a public server browser, free in-browser video tools and the community Discord by N29." />
+  <title>BL:R by N29 — Servers, Tech Rules, Creator Tools &amp; Support</title>
+  <meta name="description" content="Blue Lock: Rivals public and custom servers, allowed and banned tech rules, ban appeal help, creator tools and Glutony by N29." />
   <meta name="theme-color" content="#070914" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="https://blr.n29.kz/" />
@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="BLR · N29" />
   <meta property="og:title" content="BLR · N29 — Blue Lock Rivals" />
-  <meta property="og:description" content="Stats, public server browser, creator tools and the community Discord for Blue Lock Rivals." />
+  <meta property="og:description" content="Find BL:R matches, check allowed and banned tech, appeal bug-abuse bans and explore creator tools." />
   <meta property="og:url" content="https://blr.n29.kz/" />
   <meta property="og:image" content="https://blr.n29.kz/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -981,9 +981,9 @@
       .btn-discord:hover { transform: none; }
     }
   </style>
-  <link rel="stylesheet" href="/site-theme.css?v=1">
+  <link rel="stylesheet" href="/site-theme.css?v=2">
   <link rel="stylesheet" href="/matchday.css?v=1">
-  <script defer src="/site-experience.js?v=1"></script>
+  <script defer src="/site-experience.js?v=2"></script>
   <script defer src="/home-matchday.js?v=1"></script>
 </head>
 <body data-page="home">
@@ -992,11 +992,13 @@
     <div class="topbar-inner">
       <a class="topbar-brand" href="#top" aria-label="N29 BL:R home">N29 <span>/ BL:R</span></a>
       <div class="topbar-links">
-        <a href="#stats">Profile</a>
-        <a href="#play">Servers</a>
-        <a href="/tech/">Tech &amp; bugs</a>
-        <a href="#tools">Creator tools</a>
-        <a href="#discord">Community</a>
+        <a href="#stats" data-nav-secondary="true">Profile</a>
+        <a href="/servers/">Servers</a>
+        <a href="/servers/customs/">Customs</a>
+        <a href="/tech/">Tech rules</a>
+        <a href="#tools" data-nav-secondary="true">Creator tools</a>
+        <a href="/tech/#support" class="site-primary-help">Support</a>
+        <a href="#discord" data-nav-secondary="true">Community</a>
       </div>
       <button class="site-command-inline" data-command-open type="button" aria-label="Search pages and tools"><span aria-hidden="true">⌕</span> <span class="site-command-label">Quick jump</span> <kbd>⌘ K</kbd></button>
     </div>
@@ -1006,7 +1008,7 @@
       <div class="site-hero-copy">
         <span class="site-eyebrow">Unofficial Blue Lock: Rivals hub · By N29</span>
         <h1>Find your game.<br><span class="site-gradient-word">Make your play.</span></h1>
-        <p class="subtitle">Everything you need to get into a BL:R match and create better clips. Browse public servers, find custom games, and edit videos right in your browser.</p>
+        <p class="subtitle">Find public and custom BL:R matches, check allowed and banned tech, get support with ban appeals, and create better clips — all from one hub.</p>
         <div class="site-hero-actions">
           <a class="site-primary-link" href="/servers/">Browse public servers <span aria-hidden="true">↗</span></a>
           <a class="site-outline-link" href="#tools">Explore creator tools <span aria-hidden="true">↘</span></a>
@@ -1045,6 +1047,11 @@
         <a class="site-panel-link" href="/tech/">
           <span class="site-panel-icon" aria-hidden="true">📜</span>
           <span><strong>Tech &amp; bug rules</strong><small>Allowed, banned, and punishable techniques</small></span>
+          <span class="site-panel-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="site-panel-link" href="/tech/#support">
+          <span class="site-panel-icon" aria-hidden="true">🛡️</span>
+          <span><strong>Support &amp; ban appeals</strong><small>Ask staff or appeal a bug-abuse ban</small></span>
           <span class="site-panel-arrow" aria-hidden="true">↗</span>
         </a>
         <a class="site-panel-link" href="#tools">
@@ -1137,7 +1144,8 @@
     </section>
 
     <section class="section" id="play" aria-labelledby="play-title">
-      <h2 class="section-title" id="play-title">Find your next match</h2>
+      <h2 class="section-title" id="play-title">Explore Blue Lock: Rivals</h2>
+      <p class="site-route-intro">Choose what you need: find a match, learn the rules, or get help with a ban.</p>
       <div class="site-route-grid">
         <a class="site-route-card" href="/servers/?mode=main">
           <span class="route-icon" aria-hidden="true">🏟️</span>
@@ -1162,6 +1170,18 @@
           <strong>Custom games</strong>
           <p>Discover community-hosted matches and private-server invites.</p>
           <span class="route-end">Find customs ↗</span>
+        </a>
+        <a class="site-route-card" href="/tech/">
+          <span class="route-icon" aria-hidden="true">📜</span>
+          <strong>Tech &amp; bug rules</strong>
+          <p>Search every style's allowed techniques, prohibited techs, and punishable bugs.</p>
+          <span class="route-end">Check the rules ↗</span>
+        </a>
+        <a class="site-route-card" href="/tech/#support">
+          <span class="route-icon" aria-hidden="true">🛡️</span>
+          <strong>Support &amp; ban appeals</strong>
+          <p>Find the support server, tech inquiries, and direct ban appeal channel.</p>
+          <span class="route-end">Get help ↗</span>
         </a>
       </div>
       <div class="site-install-banner">
@@ -1414,6 +1434,8 @@
       <a id="rbx-profile-link" href="https://www.roblox.com/users/2440032582/profile" target="_blank" rel="noopener" class="link">Roblox Profile</a>
       <a href="https://n29dev.github.io/gk-reaction-trainer" class="link">GK Trainer</a>
       <a href="/tech/" class="link">BL:R Tech &amp; Bug Rules</a>
+      <a href="/tech/#support" class="link">Support &amp; Ban Appeals</a>
+      <a href="/servers/customs/" class="link">Custom Matches</a>
       <a href="https://www.tiktok.com/@0nlyhunger" target="_blank" rel="noopener noreferrer" class="link">TikTok · @0nlyhunger</a>
       <a href="https://guns.lol/n29" target="_blank" rel="noopener" class="link">guns.lol</a>
     </nav>

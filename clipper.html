@@ -49,8 +49,8 @@ input:focus-visible,select:focus-visible{outline-offset:0}
 input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.25)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
-<link rel="stylesheet" href="/site-theme.css?v=1">
-<script defer src="/site-experience.js?v=1"></script>
+<link rel="stylesheet" href="/site-theme.css?v=2">
+<script defer src="/site-experience.js?v=2"></script>
 </head>
 <body data-page="clipper">
 <nav class="site-tool-nav" aria-label="Site navigation">
@@ -58,7 +58,11 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
   <div class="site-tool-links">
     <a href="/">Home</a>
     <a href="/servers/">Servers</a>
-    <a href="/#tools">All creator tools</a>
+    <a href="/servers/customs/">Customs</a>
+    <a href="/tech/">Tech rules</a>
+    <a href="/#tools">Creator tools</a>
+    <a href="/tiktok-downloader.html">TikTok downloader</a>
+    <a href="/tech/#support">Support</a>
   </div>
 </nav>
 
@@ -88,6 +92,7 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(12
 <p id="status" class="status" role="status" aria-live="polite">Choose a video link to begin.</p>
 <div class="info"><strong>How it works:</strong> The browser requests the MP4 metadata and the byte ranges needed for your clip, instead of intentionally downloading the whole video. Exact trimming may require re-encoding using your browser's media codecs. Some additional surrounding data may be fetched. If the host blocks CORS, range requests or playback, a backend is required.</div>
 </section>
+<div data-site-connect></div>
 </main>
 <script type="module">
 import { Input, UrlSource, ALL_FORMATS, Output, Mp4OutputFormat, BufferTarget, Conversion } from 'https://cdn.jsdelivr.net/npm/mediabunny@1.61.3/dist/bundles/mediabunny.mjs';
