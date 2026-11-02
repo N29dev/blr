@@ -90,7 +90,7 @@ import { FFmpeg } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist
       ]);
 
       await ffmpeg.load({
-        classWorkerURL: new URL('./ffmpeg-worker.js', window.location.href).href,
+        classWorkerURL: new URL('/ffmpeg-worker.js', window.location.origin).href,
         coreURL,
         wasmURL
       });
