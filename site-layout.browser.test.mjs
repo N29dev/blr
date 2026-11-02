@@ -110,9 +110,10 @@ for(const width of [1440,820,390,360]){
                        ['compress-tool','patch-tool','clipper-tool']);
       assert.deepEqual(await page.locator('#tiktok-tools .tool-card').evaluateAll(els=>els.map(el=>el.id)),
                        ['analyze-tool','tiktok-download-tool']);
-      for(const id of ['compress-video','compress-quality','patch-video','posting-device','patch-button','tiktok-url','tiktok-check']){
+      for(const id of ['compress-drop','compress-quality','patch-video','posting-device','patch-button','tiktok-url','tiktok-check']){
         assert.ok(await page.locator('#'+id).isVisible(),id+' is hidden at '+width);
       }
+      assert.equal(await page.locator('#compress-video').getAttribute('type'),'file');
       const video=await rect(page,'#video-tools');
       const tiktok=await rect(page,'#tiktok-tools');
       assert.ok(tiktok.y>video.y,'TikTok group should appear after video tools');
