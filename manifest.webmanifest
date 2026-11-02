@@ -1,18 +1,44 @@
 {
   "name": "BLR · N29",
   "short_name": "BLR",
-  "description": "Blue Lock Rivals stats, public server browser, creator tools and community Discord.",
+  "description": "Blue Lock: Rivals server finder, custom matches, tech rules, dedicated Creator Studio and support by N29.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#070914",
-  "theme_color": "#070914",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070914'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='800' text-anchor='middle' fill='%237dd3fc'%3EN29%3C/text%3E%3C/svg%3E",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Find BL:R Servers",
+      "short_name": "Servers",
+      "description": "Public Main, 8v8 and Pro server finder",
+      "url": "/servers/"
+    },
+    {
+      "name": "Tech & Bug Rules",
+      "short_name": "Tech Rules",
+      "description": "Allowed and banned BL:R techniques",
+      "url": "/tech/"
+    },
+    {
+      "name": "Creator Studio",
+      "short_name": "Creator Tools",
+      "description": "Patch, analyze and compress videos",
+      "url": "/tools/"
+    },
+    {
+      "name": "Ban Appeals & Support",
+      "short_name": "Support",
+      "description": "Support server and ban appeal information",
+      "url": "/tech/#support"
     }
   ]
 }
