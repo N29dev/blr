@@ -21,7 +21,15 @@ const pageFile=route=>join(root,route.endsWith('/')?route.slice(1)+'index.html':
 const read=path=>readFileSync(join(root,path),'utf8');
 const fromRoute=route=>readFileSync(pageFile(route),'utf8');
 const idSet=source=>new Set([...source.matchAll(/\bid\s*=\s*["']([^"']+)["']/g)].map(m=>m[1]));
-const attrRefs=source=>[...source.matchAll(/\b(?:href|src|action)\s*=\s*(["'])(.*?)\1/gis)].map(m=>m[2].replaceAll('&amp;','&'));
+const attrRefs=source=>{
+  // Only HTML tags have navigational attributes. Ignore JavaScript variable
+  // assignments like src='Uploaded video' inside embedded media processors.
+  const markup=source
+    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi,'')
+    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi,'');
+  return [...markup.matchAll(/\\s(?:href|src|action)\\s*=\\s*(["'])(.*?)\\1/gis)]
+    .map(m=>m[2].replaceAll('&amp;','&'));
+};
 
 test('entire HTML site: internal route, static asset, and fragment references resolve',()=>{
   for(const route of pages){
