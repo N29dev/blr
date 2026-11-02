@@ -527,3 +527,20 @@ body[data-page="servers"] .topnav .navlinks a[aria-current="page"],
 @media(prefers-reduced-motion:reduce){
   .site-connect .site-connect-link{transition:none}
 }
+
+
+/* Six equally weighted home destinations: play, rules and help. */
+body[data-page="home"] .site-route-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+body[data-page="home"] .site-route-intro{margin:-5px 0 20px;font-size:14px;line-height:1.7;color:#9cafc8}
+@media(max-width:940px){
+  body[data-page="home"] .topbar-links a[data-nav-secondary="true"]{display:none}
+}
+@media(max-width:780px){
+  body[data-page="home"] .site-route-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:440px){
+  body[data-page="home"] .topbar-links a[href="/servers/customs/"]{display:none}
+}
+@media(max-width:380px){
+  body[data-page="home"] .site-route-grid{grid-template-columns:1fr}
+}
