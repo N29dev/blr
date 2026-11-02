@@ -59,7 +59,7 @@
 
     const render=()=>{
       const term=query.value.trim().toLocaleLowerCase();
-      visible=links.filter(link=>(link.title+' '+link.detail).toLocaleLowerCase().includes(term));
+      visible=links.filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
       active=0;
       list.replaceChildren();
       if(!visible.length) {
