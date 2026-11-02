@@ -497,7 +497,6 @@
         const facts=node('div','facts');
         facts.append(node('span','fact','◉ '+pingLabel(s.ping)+' server ping'));
         facts.append(node('span','fact','◷ '+Math.round(100*s.playing/Math.max(1,s.maxPlayers))+'% occupied'));
-        if(!s.region&&!s.countryCode)facts.append(node('span','fact finder-diagnostic-fact','◌ '+regionDiagnosis(s)));
         if(s.firstSeen)facts.append(node('span','fact','◷ '+ago(s.firstSeen)));
         card.append(facts);
         const foot=node('div','cardfoot');
