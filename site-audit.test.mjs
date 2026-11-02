@@ -145,6 +145,42 @@ test('live-data and owner-maintained features are unchanged by the polish layer'
   assert.ok(fromRoute('/leaderboard/').includes('public.js?v=23'));
 });
 
+
+test('Servers and Customs share one match switcher and use progressive cross-page view transitions',()=>{
+  const servers=fromRoute('/servers/');
+  const customs=fromRoute('/servers/customs/');
+  const motionCSS=read('site-motion.css');
+  assert.ok(servers.includes('class="mode-panel n29-mode-switch"'),'public server tabs should use shared segmented design');
+  assert.ok(customs.includes('class="tabs n29-mode-switch"'),'custom match tabs should use shared segmented design');
+  assert.ok(servers.includes('href="/servers/customs/"'),'public server page should reach Customs');
+  assert.ok(customs.includes('href="/servers/?mode=main"'),'custom match page should reach Main');
+  assert.ok(customs.includes('href="/servers/?mode=8v8"'),'custom match page should reach 8v8');
+  assert.ok(customs.includes('href="/servers/?mode=pro"'),'custom match page should reach Pro');
+  assert.ok(customs.includes('href="/servers/customs/" class="selected" aria-current="page"'));
+  assert.ok(motionCSS.includes('@view-transition { navigation: auto; }'));
+  assert.ok(motionCSS.includes('view-transition-name:n29-shared-nav'));
+  assert.ok(motionCSS.includes('view-transition-name:n29-match-hero'));
+  assert.ok(motionCSS.includes('@media (prefers-reduced-motion: no-preference)'),'transitions must honor reduced motion');
+  assert.ok(motionCSS.includes('::view-transition-old(root)'));
+  assert.ok(motionCSS.includes('::view-transition-new(root)'));
+});
+
+test('customs, tech rules and creator studio have offscreen and dynamic-content reveal coverage',()=>{
+  const js=read('site-motion.js');
+  for(const selector of [
+    'body[data-page="customs"] header.hero',
+    'body[data-page="customs"] .panel.controls',
+    'body[data-page="customs"] #cards > .card',
+    'body[data-page="servers"] #servers > .server',
+    '.style-group','.style-tile','.tech-entry','.faq details',
+    '.site-hero-panel','.site-hero-copy','.tool-card',
+    "'#cards'","'#servers'","'#style-grid'","'#tech-entries'"
+  ])assert.ok(js.includes(selector),'animation coverage missing '+selector);
+  assert.ok(js.includes("prefers-reduced-motion: reduce"));
+  assert.ok(js.includes('MutationObserver'),'live cards must reveal even when dynamically rendered');
+  assert.ok(!js.includes("preventDefault("),'motion must never block navigation');
+});
+
 test('motion is opt-in, reduced-motion aware, and never blocks navigation',()=>{
   const js=read('site-motion.js'),css=read('site-motion.css');
   assert.ok(js.includes("prefers-reduced-motion: reduce"));
