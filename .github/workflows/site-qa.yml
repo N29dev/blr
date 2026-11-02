@@ -34,3 +34,20 @@ jobs:
           node --check tech/app.js
           node --check tech/admin/app.js
           node --check servers/globe.js
+
+  browser-layout:
+    name: Rendered desktop and mobile layouts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout BL:R
+        uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright test runner
+        run: npm install --no-save playwright@1.56.1
+      - name: Install headless browser
+        run: npx playwright install --with-deps chromium
+      - name: Validate homepage and Creator Studio at 4 viewport widths
+        run: node --test site-layout.browser.test.mjs
