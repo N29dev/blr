@@ -449,3 +449,10 @@ body[data-page="home"] .site-install-banner a:hover {background:#707aff;transfor
 @media(prefers-reduced-motion:reduce) {
   body[data-page="home"] .site-install-banner a:hover {transform:none;}
 }
+
+/* Artwork attribution on the creator profile */
+body[data-page="home"] .site-identity-text .site-portrait-artist {
+  font:650 10px/1.45 Inter,system-ui,sans-serif;
+  color:#b6cae4;letter-spacing:0;text-transform:none;
+  border-top:1px solid rgba(162,204,251,.15);padding-top:5px;margin-top:2px;
+}

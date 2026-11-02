@@ -11,7 +11,7 @@ The homepage and supporting pages share a responsive visual system in `site-them
 - Creator studio filters show all tools, video editing tools, or TikTok utilities without altering any processing logic.
 - Press **⌘K** on macOS or **Ctrl+K** elsewhere (or use the navigation launcher) to search pages and tools.
 - The standalone video tools have visible links back to the homepage and server browser.
-- The homepage highlights N29's Hunger portrait in a creator identity card and links to [n29.kz](https://n29.kz/). The artwork is served as a compressed AVIF with WebP fallback from the separate `N29dev/portfolio` repository. Deploy the portfolio PR before this site PR so the image URLs resolve.
+- The homepage highlights N29's Hunger portrait in a creator identity card and links to [n29.kz](https://n29.kz/). The artwork is served as a high-quality AVIF with WebP fallback from the separate `N29dev/portfolio` repository. Deploy the portfolio PR before this site PR so the image URLs resolve.
 - This refresh **does not modify the leaderboard**, Glutony Worker, or server API contracts. Existing pages remain usable if JavaScript enhancements fail.
 
 ## Glutony server browser
@@ -25,6 +25,16 @@ Visit [blr.n29.kz/servers/](https://blr.n29.kz/servers/) for the public 8v8 and 
 - `GET /api/servers/avatars?mode=pro&id=<server UUID>` returns optional Roblox player preview URLs.
 - Website Join buttons open Glutony's `/join` landing page. Roblox can ignore requested instance IDs and join a different server.
 - Glutony is an unofficial BL:R tool; server counts are a sample from scanned Roblox API pages, not a guarantee of every server.
+
+### Smart match finder
+
+The public server browser supports **party size 1–8** and three transparent recommendations based on sampled server occupancy and spare capacity. Users can prioritize balanced matches, active lobbies, or more open slots, and still use country filters, the region globe, 2+ slots, pins, and server ping sorting.
+
+- Suggestions reflect Roblox-reported **server** ping, not the visitor's measured latency. Joins and team placement are not guaranteed.
+- The **Share search** link preserves mode, party size, preferred match style, country, search query, sort and 2+ open-slots setting.
+- Pinned servers are session-only and intentionally cannot be shared.
+- Hunger portrait art on the homepage is credited to **Omnixeno**.
+- No Cloudflare Worker, API contract, custom match posting, or leaderboard changes.
 
 ### Troubleshooting
 
