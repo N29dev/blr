@@ -174,10 +174,52 @@
       <div class="metric"><strong id="count-spots">—</strong><small>Free slots in sample</small></div>
     </section>
 
+    <section class="smart-finder" aria-labelledby="smart-finder-title">
+      <div class="smart-finder-heading">
+        <div>
+          <span class="smart-finder-kicker">✦ MATCH FINDER / PUBLIC LOBBIES</span>
+          <h2 id="smart-finder-title">Find a lobby for your squad.</h2>
+          <p>Choose how many players are joining and the kind of lobby you prefer. Suggestions use <strong>sampled</strong> public server counts, available slots, and Roblox-reported server ping — not your personal latency.</p>
+        </div>
+      </div>
+      <form id="match-form" class="smart-finder-controls">
+        <label for="party-size">Players joining
+          <select id="party-size" aria-describedby="party-hint">
+            <option value="1">Solo · 1 player</option>
+            <option value="2">Duo · 2 players</option>
+            <option value="3">3 players</option>
+            <option value="4">4 players</option>
+            <option value="5">5 players</option>
+            <option value="6">6 players</option>
+            <option value="7">7 players</option>
+            <option value="8">8 players</option>
+          </select>
+        </label>
+        <label for="match-vibe">Match preference
+          <select id="match-vibe">
+            <option value="balanced">Balanced</option>
+            <option value="active">More active</option>
+            <option value="roomy">More open slots</option>
+          </select>
+        </label>
+        <button type="submit" id="find-matches">✦ Find my match</button>
+      </form>
+      <p id="party-hint" class="smart-finder-hint">Results must have enough open slots for everyone. Teams and server entry are not guaranteed by Roblox.</p>
+      <div class="match-picks" id="match-picks" hidden>
+        <div class="match-picks-head">
+          <div><strong>Suggested from this sample</strong><span id="match-picks-count" role="status" aria-live="polite">Checking servers…</span></div>
+          <button type="button" id="share-match-search">Share filters ↗</button>
+        </div>
+        <div id="match-picks-list" class="match-picks-list"></div>
+        <p class="match-picks-note">Suggestions are estimates based on occupancy and spare capacity. Ping shown is server-reported and may not reflect your connection.</p>
+      </div>
+    </section>
+
     <div class="toolbar">
       <input id="search" class="field search" type="search" autocomplete="off" placeholder="Search city, country, version…" aria-label="Search servers">
       <select id="sort" class="field sort" aria-label="Sort servers">
         <option value="players">Most players</option>
+        <option value="fit">Best fit for my squad</option>
         <option value="space">Most free slots</option>
         <option value="ping">Lowest server ping</option>
         <option value="version">Newest version</option>
