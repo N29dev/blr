@@ -200,3 +200,107 @@ body[data-page="tools"] [hidden]{display:none!important}
   body[data-page="tools"] .site-panel-link{transition:none}
   body[data-page="tools"] .site-panel-link:hover{transform:none}
 }
+
+/* v3: make all workflow cards align cleanly with the Studio container.
+ * The compressor stays full-width; secondary tools share equal columns. */
+body[data-page="tools"] .container{
+  width:min(1180px,calc(100% - 40px));
+  max-width:100%;
+}
+body[data-page="tools"] #tools,
+body[data-page="tools"] .studio-directory,
+body[data-page="tools"] .studio-category,
+body[data-page="tools"] .studio-overview,
+body[data-page="tools"] .studio-category-head{min-width:0;max-width:100%}
+body[data-page="tools"] .creator-tools-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch!important;
+  gap:16px!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+/* .compressor-card is also used for Clipper and TikTok Download.
+   Reset the inherited full-row span on those smaller cards. */
+body[data-page="tools"] .creator-tools-grid > .compressor-card{grid-column:auto!important}
+body[data-page="tools"] .studio-grid-edit #compress-tool{grid-column:1/-1!important}
+body[data-page="tools"] .creator-tools-grid > .tool-card{
+  display:flex!important;flex-direction:column!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  height:100%!important;min-height:0!important;margin:0!important;
+  overflow-wrap:anywhere;box-sizing:border-box;
+}
+body[data-page="tools"] .tool-card > .patcher{
+  width:100%;max-width:100%;min-width:0;
+}
+body[data-page="tools"] .tool-card > .tool-actions{
+  margin-top:auto!important;padding-top:15px;
+}
+body[data-page="tools"] .tool-card > .tool-note{
+  margin-top:12px!important;
+}
+body[data-page="tools"] .tool-actions a,
+body[data-page="tools"] .tool-actions button{
+  max-width:100%;
+}
+body[data-page="tools"] .studio-grid-edit .tool-card,
+body[data-page="tools"] .studio-grid-tiktok .tool-card{
+  border-radius:16px!important;
+}
+body[data-page="tools"] .studio-category-head{
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+body[data-page="tools"] .studio-category-head p{
+  max-width:720px;
+}
+body[data-page="tools"] .site-hero-panel{
+  height:100%;
+}
+body[data-page="tools"] .compress-results,
+body[data-page="tools"] .compress-controls,
+body[data-page="tools"] .patcher,
+body[data-page="tools"] .tiktok-analytics,
+body[data-page="tools"] .tiktok-stat-row{
+  min-width:0;max-width:100%;
+}
+@media(max-width:760px){
+  body[data-page="tools"] .container{width:calc(100% - 28px)}
+  body[data-page="tools"] .creator-tools-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+  }
+  body[data-page="tools"] .studio-grid-edit #compress-tool{grid-column:auto}
+  body[data-page="tools"] .creator-tools-grid > .tool-card{
+    height:auto!important;
+  }
+  body[data-page="tools"] .studio-category-head{
+    gap:10px;
+  }
+}
+@media(max-width:480px){
+  body[data-page="tools"] .tool-card{
+    padding:17px!important;
+  }
+  body[data-page="tools"] .tool-actions{
+    display:flex!important;flex-wrap:wrap!important;
+  }
+  body[data-page="tools"] .tool-actions > *{
+    flex:1 1 100%!important;min-height:44px!important;
+  }
+  body[data-page="tools"] .studio-category-head p{
+    font-size:12px;
+  }
+  body[data-page="tools"] .studio-count{
+    padding:6px 8px;
+  }
+  body[data-page="tools"] .patch-file,
+  body[data-page="tools"] .tool-input{
+    width:100%!important;
+    min-height:44px;
+    font-size:16px!important;/* prevent auto-zoom on iOS Safari */
+  }
+  body[data-page="tools"] .tiktok-stat-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}

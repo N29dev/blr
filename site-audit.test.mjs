@@ -100,7 +100,7 @@ test('Creator Studio is sorted by workflow with isolated CSS and all existing co
   const html=fromRoute('/tools/');
   assert.ok(html.includes('data-page="tools"'),'tool page must not inherit homepage-only styles');
   assert.ok(html.includes('/tools/controls.css?v=1'),'isolated functional controls stylesheet missing');
-  assert.ok(html.includes('/tools/style.css?v=2'),'workflow layout stylesheet missing');
+  assert.ok(html.includes('/tools/style.css?v=3'),'workflow layout stylesheet missing');
   assert.ok(!html.includes('/tools/legacy.css'),'old homepage stylesheet must not load in Creator Studio');
   const video=html.indexOf('id="video-tools"'),tiktok=html.indexOf('id="tiktok-tools"');
   assert.ok(video>0&&tiktok>video,'video workflow must precede TikTok tools');
