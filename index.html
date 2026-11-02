@@ -991,6 +991,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="/site-motion.css?v=1">
+  <link rel="stylesheet" href="/home-layout.css?v=1">
   <script defer src="/site-motion.js?v=1"></script>
 </head>
 <body data-page="home">
@@ -1083,8 +1084,52 @@
       </div>
     </section>
 
-    <section class="section" id="stats" aria-labelledby="stats-title">
-      <h2 class="section-title" id="stats-title">In-game Stats</h2>
+    <section class="section home-play-section" id="play" aria-labelledby="play-title">
+      <div class="home-section-heading">
+        <div><span class="home-section-kicker">02 / EXPLORE BL:R</span><h2 class="section-title" id="play-title">Where to next?</h2></div>
+        <p>The match selector above takes you into a game. Explore the other parts of the BL:R hub here.</p>
+      </div>
+      <div class="site-route-grid">
+        <a class="site-route-card" href="/servers/">
+          <span class="route-icon" aria-hidden="true">🌍</span>
+          <span class="home-route-category">PLAY / PUBLIC</span>
+          <strong>Server Finder</strong>
+          <p>Compare Main, 8v8, and Pro lobbies by region, player count, and open slots.</p>
+          <span class="route-end">Browse servers ↗</span>
+        </a>
+        <a class="site-route-card" href="/servers/customs/">
+          <span class="route-icon" aria-hidden="true">🤝</span>
+          <span class="home-route-category">PLAY / COMMUNITY</span>
+          <strong>Custom Matches</strong>
+          <p>Find player-hosted games or share your own private server with the community.</p>
+          <span class="route-end">Find customs ↗</span>
+        </a>
+        <a class="site-route-card" href="/tech/">
+          <span class="route-icon" aria-hidden="true">📜</span>
+          <span class="home-route-category">LEARN / FAIR PLAY</span>
+          <strong>Tech &amp; Bug Rules</strong>
+          <p>Search styles and check which techniques are allowed, disallowed, or punishable.</p>
+          <span class="route-end">Check the rules ↗</span>
+        </a>
+        <a class="site-route-card" href="/tech/#support">
+          <span class="route-icon" aria-hidden="true">🛡️</span>
+          <span class="home-route-category">HELP / APPEALS</span>
+          <strong>Support &amp; Appeals</strong>
+          <p>Contact BL:R support about techniques or appeal a bug-abuse ban.</p>
+          <span class="route-end">Get support ↗</span>
+        </a>
+      </div>
+      <div class="site-install-banner">
+        <div><strong>Glutony on Discord</strong><span>Get BL:R server and custom-match commands directly in your Discord.</span></div>
+        <a href="https://discord.com/oauth2/authorize?client_id=1563907646757666926&amp;integration_type=1&amp;scope=applications.commands" target="_blank" rel="noopener noreferrer">Install Glutony ↗</a>
+      </div>
+    </section>
+
+    <section class="section home-profile-section" id="stats" aria-labelledby="stats-title">
+      <div class="home-section-heading">
+        <div><span class="home-section-kicker">03 / PLAYER PROFILE</span><h2 class="section-title" id="stats-title">Player snapshot.</h2></div>
+        <p>Recorded BL:R player statistics. These are saved values, not live Roblox counters.</p>
+      </div>
       <div class="profile-card">
         <div class="avatar-wrap">
           <img
@@ -1139,53 +1184,6 @@
             <span>Poss. Avg</span>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="section" id="play" aria-labelledby="play-title">
-      <h2 class="section-title" id="play-title">Explore Blue Lock: Rivals</h2>
-      <p class="site-route-intro">Choose what you need: find a match, learn the rules, or get help with a ban.</p>
-      <div class="site-route-grid">
-        <a class="site-route-card" href="/servers/?mode=main">
-          <span class="route-icon" aria-hidden="true">🏟️</span>
-          <strong>Main lobbies</strong>
-          <p>Browse a sample of joinable servers from the main BL:R experience.</p>
-          <span class="route-end">Explore Main ↗</span>
-        </a>
-        <a class="site-route-card" href="/servers/?mode=8v8">
-          <span class="route-icon" aria-hidden="true">⚽</span>
-          <strong>8v8 matches</strong>
-          <p>See available places, player counts, regions and open slots.</p>
-          <span class="route-end">Explore 8v8 ↗</span>
-        </a>
-        <a class="site-route-card" href="/servers/?mode=pro">
-          <span class="route-icon" aria-hidden="true">🏆</span>
-          <strong>Pro servers</strong>
-          <p>Find a competitive lobby and compare the available regions.</p>
-          <span class="route-end">Explore Pro ↗</span>
-        </a>
-        <a class="site-route-card" href="/servers/customs/">
-          <span class="route-icon" aria-hidden="true">🤝</span>
-          <strong>Custom games</strong>
-          <p>Discover community-hosted matches and private-server invites.</p>
-          <span class="route-end">Find customs ↗</span>
-        </a>
-        <a class="site-route-card" href="/tech/">
-          <span class="route-icon" aria-hidden="true">📜</span>
-          <strong>Tech &amp; bug rules</strong>
-          <p>Search every style's allowed techniques, prohibited techs, and punishable bugs.</p>
-          <span class="route-end">Check the rules ↗</span>
-        </a>
-        <a class="site-route-card" href="/tech/#support">
-          <span class="route-icon" aria-hidden="true">🛡️</span>
-          <strong>Support &amp; ban appeals</strong>
-          <p>Find the support server, tech inquiries, and direct ban appeal channel.</p>
-          <span class="route-end">Get help ↗</span>
-        </a>
-      </div>
-      <div class="site-install-banner">
-        <div><strong>Glutony on Discord</strong><span>Add the app to use BL:R server and custom match commands directly from Discord.</span></div>
-        <a href="https://discord.com/oauth2/authorize?client_id=1563907646757666926&amp;integration_type=1&amp;scope=applications.commands" target="_blank" rel="noopener noreferrer">Add Glutony app ↗</a>
       </div>
     </section>
 
