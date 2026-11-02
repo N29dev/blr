@@ -49,8 +49,19 @@ input:focus-visible,select:focus-visible{outline-offset:0}
 input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.25)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
+<link rel="stylesheet" href="/site-theme.css?v=1">
+<script defer src="/site-experience.js?v=1"></script>
 </head>
-<body>
+<body data-page="clipper">
+<nav class="site-tool-nav" aria-label="Site navigation">
+  <a class="site-tool-brand" href="/">N29 / BL:R</a>
+  <div class="site-tool-links">
+    <a href="/">Home</a>
+    <a href="/servers/">Servers</a>
+    <a href="/#tools">All creator tools</a>
+  </div>
+</nav>
+
 <main class="wrap">
 <a class="back" href="./#tools">← Back to Creator Tools</a>
 <header><div class="eyebrow">N29 · Creator Tools</div><h1>MP4 Clip Downloader</h1><p>Paste a direct MP4 link and export only the time range you choose.</p></header>
