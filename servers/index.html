@@ -209,10 +209,10 @@
       <div class="match-picks" id="match-picks" hidden>
         <div class="match-picks-head">
           <div><strong>Suggested from this sample</strong><span id="match-picks-count" role="status" aria-live="polite">Checking servers…</span></div>
-          <button type="button" id="share-match-search">Share filters ↗</button>
+          <button type="button" id="share-match-search">Share search ↗</button>
         </div>
         <div id="match-picks-list" class="match-picks-list"></div>
-        <p class="match-picks-note">Suggestions are estimates based on occupancy and spare capacity. Ping shown is server-reported and may not reflect your connection.</p>
+        <p class="match-picks-note">Suggestions use occupancy, open spots, and reported server ping; they cannot predict your actual latency or guarantee joining a specific server. Pinned servers are saved only in your browser session and aren't included in shared searches.</p>
       </div>
     </section>
 
@@ -350,7 +350,7 @@
       savePins();
       render();
     }
-    let twoOpenOnly=false, pinnedOnly=false, countryChoice=String(params.get('country')||'').slice(0,64);
+    let twoOpenOnly=params.get('minOpen')==='2', pinnedOnly=false, countryChoice=String(params.get('country')||'').slice(0,64);
     const validVibes=['balanced','active','roomy'];
     const initialParty=Number(params.get('party'));
     let partySize=Number.isInteger(initialParty)&&initialParty>=1&&initialParty<=8?initialParty:1;
@@ -480,6 +480,7 @@
       if(matchVibe!=='balanced')url.searchParams.set('vibe',matchVibe);
       if(ui.search.value.trim())url.searchParams.set('q',ui.search.value.trim().slice(0,100));
       if(countryChoice)url.searchParams.set('country',countryChoice);
+      if(twoOpenOnly)url.searchParams.set('minOpen','2');
       if(ui.sort.value!=='players')url.searchParams.set('sort',ui.sort.value);
       if(recommendationsActive)url.searchParams.set('pick','1');
       return url.href;
@@ -490,8 +491,9 @@
       pickList.replaceChildren();
       const label=el('match-picks-count');
       if(!available.length) {
-        label.textContent='No matching lobbies in the current sample';
-        pickList.append(node('div','match-pick-empty','Try a smaller group, another country, or reset your other filters.'));
+        const loading=ui.refresh.disabled;
+        label.textContent=loading?'Scanning public servers…':'No matching lobbies in the current sample';
+        pickList.append(node('div','match-pick-empty',loading?'The suggestions will appear after the current scan completes.':'Try a smaller group, another country, or reset your other filters.'));
         return;
       }
       const top=[...available].sort(rankFit).slice(0,3);
@@ -797,7 +799,7 @@
         await navigator.clipboard.writeText(buildFilterUrl());
         btn.textContent='Copied link ✓';
       } catch { btn.textContent='Copy unavailable'; }
-      setTimeout(()=>{btn.textContent='Share filters ↗';},1600);
+      setTimeout(()=>{btn.textContent='Share search ↗';},1600);
     });
     el('filter-open').addEventListener('click',()=>{twoOpenOnly=!twoOpenOnly;render();});
     el('filter-pinned').addEventListener('click',()=>{pinnedOnly=!pinnedOnly;render();});
