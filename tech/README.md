@@ -16,7 +16,7 @@ The admin route can edit or hide any listing, including source entries, but cann
 
 This is an **unofficial community-maintained transcription** of the moderation rules supplied on November 2, 2026. It is **not an official, automatically synchronized moderation database**. Staff may revise rules; their current instructions override this page.
 
-The page includes the supplied allowed techs, disallowed techs, and separately listed examples of punishable bugs. It also includes the style roster for browsing, including base kits with their NEL versions merged into a single character entry, recent additions (Niko, Snuffy, Sendou, Zantetsu and King), and 14 limited variants. Some "New / other" style rarities are deliberately unspecified because public lists disagree. A style with no listed tech is **unclassified**, not automatically allowed. Base and NEL versions are intentionally treated as **one style entry**. Event and limited variants remain separate unless a rule explicitly associates them.
+The page includes the supplied allowed techs, disallowed techs, and separately listed examples of punishable bugs. The style catalog now uses the site owner's exact rarity assignments: **Rare (5), Epic (5), Legendary (6), Mythic (7), World Class (3), Master (3), Other (Bunny and Igaguri), and Limited (14)**. Base and NEL versions are intentionally treated as **one style entry**. Special-named event styles stay in Limited, while Bunny and Igaguri remain under Other. A style with no listed tech is **unclassified**, not automatically allowed.
 
 ## Add a YouTube video in 30 seconds
 
