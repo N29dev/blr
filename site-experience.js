@@ -12,11 +12,10 @@
     { group:'Play', icon:'⚽', title:'8v8 matches', detail:'Browse public 8v8 servers', url:'/servers/?mode=8v8' },
     { group:'Play', icon:'🏆', title:'Pro servers', detail:'Browse competitive public servers', url:'/servers/?mode=pro' },
     { group:'Play', icon:'🤝', title:'Community customs', detail:'Find player-hosted custom matches', url:'/servers/customs/' },
-    { group:'Play', icon:'🥅', title:'GK reaction trainer', detail:'Practice goalkeeper reactions in the separate training app', url:'https://n29dev.github.io/gk-reaction-trainer' },
     { group:'Play', icon:'🤖', title:'Glutony Discord app', detail:'Install BL:R server finder commands in Discord', url:'https://discord.com/oauth2/authorize?client_id=1563907646757666926&integration_type=1&scope=applications.commands' },
     { group:'Rules', icon:'📜', title:'Allowed & banned tech', detail:'Search BL:R styles, techs and punishable bugs', url:'/tech/' },
     { group:'Rules', icon:'🔎', title:'Check if a tech is allowed', detail:'How to ask BL:R support staff about a technique', url:'/tech/#support' },
-    { group:'Create', icon:'🎬', title:'Creator studio', detail:'Browse video utilities and TikTok tools', url:'/#tools' },
+    { group:'Create', icon:'🎬', title:'Creator Studio', detail:'Patch, compress, analyze and download videos', url:'/tools/' },
     { group:'Create', icon:'✂️', title:'MP4 clipper', detail:'Trim part of a public direct MP4', url:'/clipper.html' },
     { group:'Create', icon:'📥', title:'TikTok downloader & repair', detail:'Download and repair MP4 duration metadata', url:'/tiktok-downloader.html' },
     { group:'Create', icon:'🏅', title:'CC leaderboard (Sep 2026 archive)', detail:'Historical creator event results, not current rankings', url:'/leaderboard/' },
@@ -25,7 +24,7 @@
     { group:'Support', icon:'🌍', title:'Main BL:R Discord', detail:'Blue Lock: Rivals community server', url:'https://discord.gg/bluelockrivals' },
     { group:'More', icon:'★', title:'N29 player stats', detail:'In-game profile statistics on the homepage', url:'/#stats' },
     { group:'More', icon:'💠', title:'N29 community Discord', detail:'Join N29’s own community server', url:'/#discord' },
-    { group:'More', icon:'✦', title:'N29 portfolio', detail:'Explore developer projects and profile', url:'https://n29.kz/' }
+    { group:'More', icon:'✦', title:'N29 portfolio', detail:'The portfolio behind BL:R and Glutony', url:'https://n29.kz/' }
   ];
 
   function createNode(tag, className, text) {
@@ -148,14 +147,14 @@
       {category:'PLAY',title:'Find your next match',icon:'⚽',links:[
         {label:'Public servers',href:'/servers/'},
         {label:'Community customs',href:'/servers/customs/'},
-        {label:'GK reaction trainer',href:'https://n29dev.github.io/gk-reaction-trainer'}
+        {label:'Glutony server finder',href:'/servers/'}
       ]},
       {category:'LEARN',title:'Understand the rules',icon:'📜',links:[
         {label:'Allowed & banned tech',href:'/tech/'},
         {label:'Tech inquiries',href:'/tech/#support'}
       ]},
       {category:'CREATE',title:'Make better clips',icon:'🎬',links:[
-        {label:'Creator tools',href:'/#tools'},
+        {label:'Creator tools',href:'/tools/'},
         {label:'MP4 clipper',href:'/clipper.html'},
         {label:'TikTok downloader',href:'/tiktok-downloader.html'},
         {label:'CC leaderboard (archive)',href:'/leaderboard/'}
