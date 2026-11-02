@@ -140,6 +140,7 @@
     @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.server{transition:none}}
   </style>
 <link rel="stylesheet" href="/site-theme.css?v=1">
+<link rel="stylesheet" href="/matchday.css?v=1">
 <script defer src="/site-experience.js?v=1"></script>
 </head>
 <body data-page="servers">
@@ -184,6 +185,20 @@
       <button id="clear-region" class="clear-region" type="button" hidden>✕ Clear region</button>
       <button id="refresh" class="refresh" type="button">↻ Refresh</button>
     </div>
+
+    <div class="finder-refinements" aria-label="Refine server results">
+      <div class="finder-refinement-left">
+        <button id="filter-open" class="finder-chip" type="button" aria-pressed="false">👥 2+ open slots</button>
+        <button id="filter-pinned" class="finder-chip" type="button" aria-pressed="false">☆ Pinned servers <span id="pinned-count" aria-hidden="true">0</span></button>
+        <select id="country-filter" class="finder-region" aria-label="Filter by server country"><option value="">All countries</option></select>
+        <button id="reset-filters" class="finder-reset" type="button" hidden>Reset filters ✕</button>
+      </div>
+      <div class="finder-layout-switch" role="group" aria-label="Server card layout">
+        <button id="layout-grid" type="button" aria-pressed="true" aria-label="Grid layout" title="Grid layout">▦</button>
+        <button id="layout-list" type="button" aria-pressed="false" aria-label="List layout" title="List layout">☰</button>
+      </div>
+    </div>
+    <div class="finder-help"><span>Tip: Press <kbd>/</kbd> to search</span><span>Pin a server to find it again during this browser session.</span></div>
 
     <div class="section-head"><h2 id="section-title">8v8 public servers</h2><small id="results-label">Loading…</small></div>
     <main id="servers" class="grid" aria-live="polite">
