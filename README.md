@@ -26,15 +26,15 @@ Visit [blr.n29.kz/servers/](https://blr.n29.kz/servers/) for the public 8v8 and 
 - Website Join buttons open Glutony's `/join` landing page. Roblox can ignore requested instance IDs and join a different server.
 - Glutony is an unofficial BL:R tool; server counts are a sample from scanned Roblox API pages, not a guarantee of every server.
 
-### Smart match finder
+### Public server browsing
 
-The public server browser supports **party size 1–8** and three transparent recommendations based on sampled server occupancy and spare capacity. Users can prioritize balanced matches, active lobbies, or more open slots, and still use country filters, the region globe, 2+ slots, pins, and server ping sorting.
+Browse actual sampled public lobbies directly using region and country filters, player counts, free slots, reported server ping, version, sorting, pinned servers, and the world globe. There are no speculative match recommendations.
 
-- Suggestions reflect Roblox-reported **server** ping, not the visitor's measured latency. Joins and team placement are not guaranteed.
-- The **Share search** link preserves mode, party size, preferred match style, country, search query, sort and 2+ open-slots setting.
-- Pinned servers are session-only and intentionally cannot be shared.
-- Hunger portrait art on the homepage is credited to **Omnixeno**.
-- No Cloudflare Worker, API contract, custom match posting, or leaderboard changes.
+- Server ping is reported by the service, not the visitor's measured latency.
+- Join links use the existing Glutony join flow; Roblox can redirect to a different server.
+- Pinned servers remain saved for the current browser session.
+- The Hunger portrait on the homepage is credited to **Omnixeno**.
+- No Cloudflare Worker, API contract, customs, or leaderboard changes.
 
 ### Troubleshooting
 
