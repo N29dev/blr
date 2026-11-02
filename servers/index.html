@@ -202,7 +202,11 @@
         <button id="layout-list" type="button" aria-pressed="false" aria-label="List layout" title="List layout">☰</button>
       </div>
     </div>
-    <div class="finder-help"><span><span class="finder-help-dot" aria-hidden="true"></span> Live sample · not every Roblox lobby</span><span>☆ Pin a server for this browser session.</span></div>
+    <div class="finder-help">
+      <span><span class="finder-help-dot" aria-hidden="true"></span> Live sample · not every Roblox lobby</span>
+      <span class="finder-region-coverage"><span id="region-coverage" role="status" aria-live="polite">Regions: loading…</span>
+      <button id="retry-regions" type="button" class="finder-region-retry" hidden>↻ Retry unknown regions</button></span>
+    </div>
 
     <div class="section-head"><div><span class="finder-section-kicker">MATCH DIRECTORY</span><h2 id="section-title">8v8 public servers</h2></div><small id="results-label">Loading…</small></div>
     <main id="servers" class="grid" aria-live="polite">
@@ -368,7 +372,7 @@
       try {const url=new URL(href);return url.protocol==='https:' && url.hostname==='glutony.scp343hey.workers.dev' && url.pathname==='/join' ? url.href : null;}catch{return null;}
     };
     const regionLabel = s => s.region || [s.city,s.state,s.country].filter(Boolean).join(', ') || 'Unknown region';
-    const briefRegion = s => s.city ? s.city + (s.state&&s.state!==s.city?', '+s.state:'') : (s.country||'Unknown region');
+    const briefRegion = s => s.city ? s.city + (s.state&&s.state!==s.city?', '+s.state:'') : (s.country||'Location unreported');
     const node = (tag, cls, text) => {const x=document.createElement(tag); if(cls)x.className=cls; if(text!==undefined)x.textContent=text;return x;};
     function status(message, error) {ui.status.textContent=message; ui.dot.classList.toggle('off',!!error);}
     function updateAddress(serverId) {
@@ -405,6 +409,15 @@
       const wrap=node('div','empty'),strong=node('strong','',title);
       wrap.append(strong,node('div','',subtitle));ui.list.append(wrap);
     }
+    function syncRegionCoverage() {
+      const count=serverList.filter(s=>Boolean(s.region||s.countryCode)).length;
+      const total=serverList.length;
+      el('region-coverage').textContent=total?count+' of '+total+' sampled servers with a known region':'Regions: no servers loaded';
+      const retry=el('retry-regions');
+      retry.hidden=!total||count===total;
+      retry.disabled=regionAttempts>=MAX_REGION_RETRIES||Boolean(regionController);
+      retry.title=regionAttempts>=MAX_REGION_RETRIES?'Refresh the server list to retry':'Ask RoValra for newly identified locations';
+    }
     function render() {
       const term=ui.search.value.trim().toLowerCase();
       const filtered=serverList.filter(s =>
@@ -422,6 +435,7 @@
         return b.playing-a.playing||b.free-a.free;
       });
       syncRefinements();
+      syncRegionCoverage();
       ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'');
       ui.list.replaceChildren();
       if(!filtered.length){
@@ -433,7 +447,7 @@
         const card=node('article','server');
         const top=node('div','server-top'), locationRow=node('div','server-region');
         const flag=node('span','flag',flagFor(s.countryCode)), loc=node('div',''), title=node('div','location',briefRegion(s));
-        loc.append(title,node('div','subplace',s.country||'Region unavailable'));
+        loc.append(title,node('div','subplace',s.country||'Not yet identified by RoValra'));
         locationRow.append(flag,loc);
         const topActions=node('div','server-top-actions');
         topActions.append(node('span','pill',s.free+' open'));
@@ -529,12 +543,15 @@
         if (err.name !== 'AbortError') console.warn('Passive region lookup unavailable:', err);
       } finally {
         if (regionController === controller) regionController = null;
+        syncRegionCoverage();
         if (activeRequest === requestNum && mode === activeMode) scheduleRegionRecheck();
       }
     }
     async function load() {
       stopRegionRecheck();
       regionAttempts = 0;
+      el('region-coverage').textContent='Regions: loading…';
+      el('retry-regions').hidden=true;
       // New scan may replace Job IDs; never leave a region filter using stale IDs.
       regionFilter=null;
       el('clear-region').hidden=true;
@@ -659,6 +676,11 @@
     el('clear-region').addEventListener('click',()=>clearRegion(true));
     el('globe-filter-clear').addEventListener('click',()=>clearRegion(false));
     for(const value of VALID_MODES)el('mode-'+value).addEventListener('click',()=>changeMode(value));
+    el('retry-regions').addEventListener('click',()=>{
+      if(regionAttempts>=MAX_REGION_RETRIES||regionController)return;
+      if(regionTimer!==null){clearTimeout(regionTimer);regionTimer=null;}
+      recheckMissingRegions();
+    });
     el('filter-open').addEventListener('click',()=>{twoOpenOnly=!twoOpenOnly;render();});
     el('filter-pinned').addEventListener('click',()=>{pinnedOnly=!pinnedOnly;render();});
     countrySelect.addEventListener('change',()=>{countryChoice=countrySelect.value;render();});
