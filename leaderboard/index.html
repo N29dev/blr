@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=23" />
+  <link rel="stylesheet" href="/site-theme.css?v=3">
+  <link rel="stylesheet" href="/site-unify.css?v=2">
+  <script defer src="/site-experience.js?v=3"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
   <style>
     .mode-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:12px 0 0; }
     .mode-btn {
@@ -29,16 +33,20 @@
     .pill.snuffy { color:#fde68a; background: rgba(250,204,21,.12); }
   </style>
 </head>
-<body>
+<body data-page="leaderboard">
+  <nav class="n29-nav" aria-label="Primary navigation">
+  <div class="n29-nav-inner">
+    <a class="n29-nav-brand" href="/"><span class="n29-nav-mark">N</span><span>N29 <small>/ BL:R</small></span></a>
+    <div class="n29-nav-links">
+      <a href="/">Home</a><a href="/servers/">Servers</a><a href="/servers/customs/">Customs</a>
+      <a href="/tech/">Tech rules</a><a href="/tools/">Creator tools</a>
+      <a href="/tech/#support" class="n29-nav-support">Support</a>
+      <a href="https://n29.kz/" target="_blank" rel="noopener noreferrer" class="n29-nav-portfolio">Portfolio ↗</a>
+    </div>
+    <button class="n29-nav-search" data-command-open type="button">⌕ Quick jump <kbd>⌘ K</kbd></button>
+  </div>
+</nav>
   <div class="container">
-    <nav class="hub-backnav" aria-label="Explore N29 BL:R">
-      <a href="/">← BL:R hub</a>
-      <a href="/servers/">Public servers</a>
-      <a href="/servers/customs/">Custom matches</a>
-      <a href="/tech/">Tech rules</a>
-      <a href="/tools/">Creator tools</a>
-      <a href="/tech/#support">Support</a>
-    </nav>
     <header>
       <div class="badge">Content Creator Event</div>
       <h1>CC Leaderboard</h1>
