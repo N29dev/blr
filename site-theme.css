@@ -109,7 +109,7 @@ body[data-page="home"] header.site-hero h1 {
 }
 .site-gradient-word {
   background:linear-gradient(95deg,#68d5ff 0%,#a8b0ff 62%,#e1b5ff 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
 }
 body[data-page="home"] header.site-hero .subtitle {
   max-width:570px;color:#b3c2da;font-size:16px;line-height:1.85;margin:0;
