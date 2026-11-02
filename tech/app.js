@@ -1,4 +1,5 @@
 import { POLICY, TECHS, STYLES, STYLE_GROUPS, GENERAL, ALL_STYLE_NAMES, STATUS, videoUrl, slug } from './data.js';
+import { VIDEOS } from './videos.js';
 
 const $ = id => document.getElementById(id);
 const cardRoot=$('style-grid');
@@ -106,7 +107,7 @@ function entryCard(item,index){
   else card.append(make('div','entry-meta','Style: '+selectedStyle));
   if(item.note)card.append(make('p','entry-meta',item.note));
   const foot=make('div','entry-footer');
-  const youtube=videoUrl(item.video);
+  const youtube=videoUrl(VIDEOS[item.id] || item.video);
   if(youtube){
     const link=make('a','video-link','▶ Watch example ↗');
     link.href=youtube;link.target='_blank';link.rel='noopener noreferrer';
