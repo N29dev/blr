@@ -426,3 +426,26 @@ body[data-page="home"] .site-panel-title {font-size:19px;margin-top:8px;}
   body[data-page="home"] .site-panel-identity {transition:none;}
   body[data-page="home"] .site-panel-identity:hover {transform:none;}
 }
+
+
+/* Direct Discord install entry point in the BL:R match hub. */
+body[data-page="home"] .site-install-banner {
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  margin-top:17px;padding:20px 22px;border:1px solid rgba(139,158,255,.27);
+  border-radius:18px;background:linear-gradient(112deg,rgba(60,66,140,.23),rgba(15,30,55,.78));
+}
+body[data-page="home"] .site-install-banner div {display:flex;flex-direction:column;gap:4px;flex:1 1 250px;}
+body[data-page="home"] .site-install-banner strong {font-size:16px;color:#f3f4ff;letter-spacing:-.03em;}
+body[data-page="home"] .site-install-banner span {font-size:12px;color:#a9b8d4;line-height:1.6;}
+body[data-page="home"] .site-install-banner a {display:inline-flex;align-items:center;justify-content:center;
+  padding:12px 16px;min-height:43px;border-radius:11px;color:#fff;background:#5865f2;
+  border:1px solid rgba(198,203,255,.2);font-size:12px;font-weight:800;
+  transition:background .18s,transform .18s;}
+body[data-page="home"] .site-install-banner a:hover {background:#707aff;transform:translateY(-2px);}
+@media(max-width:600px) {
+  body[data-page="home"] .site-install-banner {padding:16px;}
+  body[data-page="home"] .site-install-banner a {width:100%;}
+}
+@media(prefers-reduced-motion:reduce) {
+  body[data-page="home"] .site-install-banner a:hover {transform:none;}
+}
