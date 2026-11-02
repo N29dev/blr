@@ -456,3 +456,74 @@ body[data-page="home"] .site-identity-text .site-portrait-artist {
   color:#b6cae4;letter-spacing:0;text-transform:none;
   border-top:1px solid rgba(162,204,251,.15);padding-top:5px;margin-top:2px;
 }
+
+
+/* Shared information architecture — Play · Learn · Create · Support.
+   Scoped classes don't alter game logic or the leaderboard. */
+.site-command-group{
+  padding:12px 13px 7px;margin-top:5px;
+  font:850 10px Inter,system-ui,sans-serif;letter-spacing:.12em;
+  text-transform:uppercase;color:#8bd6f4;
+}
+.site-command-list .site-command-group:first-child{padding-top:4px;margin-top:0}
+.site-connect{
+  width:100%;margin:34px 0 42px;padding:27px;
+  border:1px solid rgba(157,201,252,.18);border-radius:22px;
+  background:linear-gradient(145deg,rgba(21,35,59,.97),rgba(11,22,39,.97));
+  color:#ecf6ff;box-shadow:0 16px 55px rgba(0,0,0,.12);
+  font:14px/1.55 Inter,ui-sans-serif,system-ui,sans-serif;
+}
+.site-connect *{box-sizing:border-box}
+.site-connect-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.site-connect-eyebrow{font-size:10px;font-weight:900;letter-spacing:.14em;color:#83d9fa}
+.site-connect-heading h2{font-size:clamp(21px,2.5vw,29px);line-height:1.2;letter-spacing:-.045em;margin:5px 0 0;color:#f0f7ff}
+.site-connect .site-connect-hub{font-size:12px;font-weight:800;color:#a3ddff;text-decoration:none;padding:9px 10px;border:1px solid rgba(138,208,253,.23);border-radius:10px}
+.site-connect .site-connect-hub:hover{background:rgba(109,198,247,.1)}
+.site-connect-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.site-connect-card{
+  min-width:0;display:flex;flex-direction:column;gap:2px;padding:16px;
+  background:rgba(9,19,34,.76);border:1px solid rgba(166,205,249,.12);border-radius:15px;
+}
+.site-connect-card-head{display:flex;align-items:center;gap:10px;margin-bottom:9px;min-height:49px}
+.site-connect-card-icon{font-size:21px;flex:none;width:31px;text-align:center}
+.site-connect-category{font-size:9px;letter-spacing:.125em;font-weight:900;color:#80d7f4}
+.site-connect-card-headings h3{font-size:13px;font-weight:840;letter-spacing:-.025em;margin:2px 0 0;color:#f1f7ff;line-height:1.35}
+.site-connect .site-connect-link{
+  display:block;position:relative;padding:7px 20px 7px 4px;border-radius:7px;
+  color:#aabfd8;text-decoration:none;font-size:12px;font-weight:720;line-height:1.45;
+}
+.site-connect .site-connect-link::after{content:"↗";position:absolute;right:4px;color:#709fbd}
+.site-connect .site-connect-link:hover,.site-connect .site-connect-link[aria-current="page"]{color:#dbf5ff;background:rgba(102,194,244,.11)}
+.site-connect .site-connect-link[aria-current="page"]::after{content:"•";color:#72dec5}
+body[data-page="home"] .topbar-links a.site-primary-help{color:#ffdbb4}
+body[data-page="customs"] .top .site-customs-links{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+body[data-page="customs"] .top .site-customs-links a{
+  display:inline-flex;padding:8px 10px;border-radius:10px;color:#b4c8e1;
+  border:1px solid rgba(160,199,241,.14);font-size:12px;font-weight:750;
+}
+body[data-page="customs"] .top .site-customs-links a:hover,
+body[data-page="customs"] .top .site-customs-links a[aria-current="page"]{
+  background:rgba(105,202,250,.1);color:#e7f5ff;
+}
+body[data-page="servers"] .topnav .navlinks{flex-wrap:wrap;justify-content:flex-end}
+body[data-page="servers"] .topnav .navlinks a[aria-current="page"],
+.site-tool-nav .site-tool-links a[aria-current="page"]{background:rgba(103,198,248,.14);color:#e8f7ff}
+.site-tool-nav .site-tool-links{justify-content:flex-end}
+@media(max-width:1080px){
+  .site-connect-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .site-connect{padding:19px 15px;border-radius:18px;margin:25px 0 29px}
+  .site-connect-heading{margin-bottom:14px}
+  .site-connect-grid{grid-template-columns:1fr}
+  .site-connect-card{padding:13px 15px}
+  .site-connect-card-head{min-height:0;margin-bottom:5px}
+  body[data-page="customs"] .top{flex-wrap:wrap;gap:12px}
+  body[data-page="customs"] .top .site-customs-links{justify-content:flex-start}
+  body[data-page="customs"] .top .site-customs-links a{padding:6px 8px;font-size:11px}
+  body[data-page="servers"] .topnav .navlinks{justify-content:flex-start}
+  body[data-page="home"] .topbar-links a[data-nav-secondary="true"]{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-connect .site-connect-link{transition:none}
+}
