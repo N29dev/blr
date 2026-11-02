@@ -1,4 +1,4 @@
-import { POLICY, TECHS, STYLES, STYLE_GROUPS, GENERAL, ALL_STYLE_NAMES, STATUS, videoUrl, slug } from './data.js';
+import { POLICY, TECHS, STYLES, STYLE_GROUPS, GENERAL, ALL_STYLE_NAMES, STATUS, videoUrl, slug, canonicalStyle } from './data.js';
 import { VIDEOS } from './videos.js';
 
 const $ = id => document.getElementById(id);
@@ -7,11 +7,20 @@ const entriesRoot=$('tech-entries');
 const search=$('search');
 const urlParams=new URLSearchParams(location.search);
 const API='https://glutony.scp343hey.workers.dev';
-let techs=TECHS.map(item=>({...item}));
+const normalizeTech=item=>({...item,styles:[...new Set(item.styles.map(canonicalStyle).filter(Boolean))]});
+const slugLookup=names=>{
+  const map=new Map(names.map(name=>[slug(name),name]));
+  // Preserve existing public links such as ?style=nel-nagi.
+  for(const name of names){
+    if(name!==GENERAL)map.set('nel-'+slug(name),name);
+  }
+  return map;
+};
+let techs=TECHS.map(normalizeTech);
 let styles=STYLES.map(item=>({...item}));
 let styleGroups=STYLE_GROUPS.map(g=>({...g,names:[...g.names]}));
 let allStyleNames=[...ALL_STYLE_NAMES];
-let nameForSlug=new Map(allStyleNames.map(name=>[slug(name),name]));
+let nameForSlug=slugLookup(allStyleNames);
 let groupIds=new Map(styles.map(style=>[style.name,style.groupLabel]));
 const DEFAULT_STYLE='Nagi';
 
@@ -27,7 +36,7 @@ const make=(tag,className='',text)=>{
   if(text!==undefined&&text!==null)el.textContent=String(text);
   return el;
 };
-const itemsFor=name=>techs.filter(tech=>tech.styles.includes(name));
+const itemsFor=name=>techs.filter(tech=>tech.styles.includes(canonicalStyle(name)));
 const countsFor=name=>{
   const items=itemsFor(name);
   return {all:items.length,allowed:items.filter(i=>i.status==='allowed').length,disallowed:items.filter(i=>i.status==='disallowed').length,punishable:items.filter(i=>i.status==='punishable').length};
@@ -35,7 +44,8 @@ const countsFor=name=>{
 function matchingStyles(term){
   return allStyleNames.filter(name=>{
     if(!term)return true;
-    if(name.toLowerCase().includes(term))return true;
+    const termWithoutNEL=term.replace(/^nel\s+/i,'').trim();
+    if(name.toLowerCase().includes(term) || (term!==termWithoutNEL && name.toLowerCase().includes(termWithoutNEL)))return true;
     return itemsFor(name).some(item=>[item.name,item.status,...item.styles].join(' ').toLowerCase().includes(term));
   });
 }
@@ -132,7 +142,7 @@ function renderDetail(){
   $('active-style-title').textContent=selectedStyle;
   $('active-style-hint').textContent=selectedStyle===GENERAL
     ?'Rules involving shared mechanics, global actions, or unspecified style attribution.'
-    :'Only entries explicitly associated with this style in the supplied rules. Variants are not automatically included.';
+    :'Base and NEL versions are combined here. Limited and event variants remain separate.';
   const all=itemsFor(selectedStyle);
   const count=countsFor(selectedStyle);
   for(const key of ['all',...order])$('count-'+key).textContent=String(count[key]);
@@ -150,8 +160,9 @@ function renderDetail(){
   updateActiveTile();
 }
 function selectStyle(name,scroll=false,push=true){
-  if(!allStyleNames.includes(name))return;
-  selectedStyle=name;
+  const resolved=canonicalStyle(name);
+  if(!allStyleNames.includes(resolved))return;
+  selectedStyle=resolved;
   selectedFilter='all';
   highlightTech='';
   if(push){
@@ -170,7 +181,7 @@ function syncRoute(){
   const requested=nameForSlug.get(params.get('style'));
   const linked=params.get('tech')||'';
   const entry=techs.find(t=>t.id===linked);
-  selectedStyle=requested||entry?.styles[0]||DEFAULT_STYLE;
+  selectedStyle=canonicalStyle(requested||entry?.styles[0]||DEFAULT_STYLE);
   selectedFilter='all';highlightTech=entry?.styles.includes(selectedStyle)?linked:'';
   renderDirectory();renderDetail();
   if(highlightTech&&location.hash==='#tech-list'){
@@ -190,15 +201,17 @@ async function loadCommunityEdits(){
     if(!response.ok)throw Error('API '+response.status);
     const data=await response.json();
     if(!Array.isArray(data.entries))throw Error('Invalid catalog response');
-    const map=new Map(TECHS.map(item=>[item.id,{...item}]));
+    const map=new Map(TECHS.map(item=>[item.id,normalizeTech(item)]));
     for(const changed of data.entries){
       if(typeof changed?.id!=='string'||!(/^[a-z0-9][a-z0-9-]{1,70}$/.test(changed.id)))continue;
       if(changed.hidden){map.delete(changed.id);continue;}
       if(!STATUS[changed.status]||typeof changed.name!=='string'||
          !Array.isArray(changed.styles)||!changed.styles.length||changed.styles.some(x=>typeof x!=='string'))continue;
       map.set(changed.id,{
-        id:changed.id,name:changed.name,status:changed.status,
-        styles:changed.styles,video:changed.video||'',note:changed.note||'',hasOverride:true
+        ...normalizeTech({
+          id:changed.id,name:changed.name,status:changed.status,
+          styles:changed.styles,video:changed.video||'',note:changed.note||'',hasOverride:true
+        })
       });
     }
     techs=[...map.values()];
@@ -212,7 +225,7 @@ async function loadCommunityEdits(){
     }
     allStyleNames=[GENERAL,...styles.map(s=>s.name)];
     groupIds=new Map(styles.map(style=>[style.name,style.groupLabel]));
-    nameForSlug=new Map(allStyleNames.map(name=>[slug(name),name]));
+    nameForSlug=slugLookup(allStyleNames);
     if(!allStyleNames.includes(selectedStyle))selectedStyle=DEFAULT_STYLE;
     updateCounters();
     // Re-read the current URL: deep links may point to styles created via admin.

@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {STYLE_GROUPS, STYLES, ALL_STYLE_NAMES, GENERAL, TECHS, STATUS, videoUrl, slug} from './data.js';
+import {STYLE_GROUPS, STYLES, ALL_STYLE_NAMES, GENERAL, TECHS, STATUS, videoUrl, slug, canonicalStyle, NEL_VARIANTS} from './data.js';
 
 test('all style names and technique IDs are unique',()=>{
   assert.equal(new Set(ALL_STYLE_NAMES).size,ALL_STYLE_NAMES.length);
   assert.equal(new Set(TECHS.map(t=>t.id)).size,TECHS.length);
-  assert.equal(STYLES.length,53,'32 base/regular + additional recent styles and 14 event variants');
+  assert.equal(STYLES.length,45,'NEL versions are merged into base characters');
   assert.equal(ALL_STYLE_NAMES[0],GENERAL);
   assert.equal(STYLE_GROUPS.length,8);
 });
@@ -24,12 +24,24 @@ test('all moderation classifications are valid, source-faithful and attributed',
   }
 });
 
-test('NEL variants are not silently given base-style classifications',()=>{
-  const cases=TECHS.filter(t=>t.id.startsWith('nagi-'));
-  assert.ok(cases.length>0);
-  assert.ok(cases.every(t=>t.styles.includes('Nagi')));
-  assert.ok(cases.every(t=>!t.styles.includes('NEL Nagi')));
-  assert.ok(STYLES.some(s=>s.name==='NEL Nagi'));
+test('NEL and base characters use one style, while limited/event styles remain separate',()=>{
+  assert.equal(NEL_VARIANTS.length,8);
+  for(const name of NEL_VARIANTS){
+    assert.ok(STYLES.some(s=>s.name===name),name+' base style must be listed');
+    assert.ok(!STYLES.some(s=>s.name==='NEL '+name),name+' must not have a second card');
+    assert.equal(canonicalStyle('NEL '+name),name);
+    assert.equal(canonicalStyle('nel   '+name.toLowerCase()),name);
+  }
+  assert.equal(canonicalStyle('NEL Nagi'),'Nagi');
+  assert.equal(canonicalStyle('Nagi'),'Nagi');
+  assert.equal(canonicalStyle('Skeleton Nagi'),'Skeleton Nagi');
+  assert.equal(canonicalStyle('McNagi Fryshiro'),'McNagi Fryshiro');
+  assert.equal(canonicalStyle('NEL Unknown Future Style'),'Unknown Future Style');
+  assert.equal(canonicalStyle('NEL Nagi'),canonicalStyle('Nagi'));
+  assert.equal(new Set(['NEL Nagi','Nagi','NEL Rin','Rin'].map(canonicalStyle)).size,2);
+  const nagi=TECHS.filter(t=>t.styles.map(canonicalStyle).includes('Nagi'));
+  assert.ok(nagi.some(t=>t.id==='nagi-delay-trap'));
+  assert.ok(nagi.some(t=>t.id==='nagi-moonwalk'));
 });
 
 test('high-risk examples preserve their disallowed or punishable status',()=>{
