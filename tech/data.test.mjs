@@ -10,6 +10,35 @@ test('all style names and technique IDs are unique',()=>{
   assert.equal(STYLE_GROUPS.length,8);
 });
 
+test('all styles have the exact owner-provided rarity or limited classification',()=>{
+  const expected={
+    rare:['Isagi','Kurona','Gagamaru','Chigiri','Raichi'],
+    epic:['Otoya','Sendou','Hiori','Bachira','Karasu'],
+    legendary:['Zantetsu','Kiyora','Nagi','Aiku','King','Kunigami'],
+    mythic:['Shidou','Ness','Reo','Rin','Niko','Charles','Yukimiya'],
+    world:['Don Lorenzo','Sae','Kaiser'],
+    master:['Loki','Snuffy','Lavinho'],
+    other:['Bunny','Igaguri'],
+    limited:[
+      'Easter Kaiser','McNagi Fryshiro','Reaper Sae','Demon Shidou',
+      'Phantom Isagi','Bloodmoon Rin','Skeleton Nagi','Elf Emperor',
+      'Krampus Barou','Gingerbread Charles','Subzero Loki','Santa Lavinho',
+      'Firework Bachira','Easter Yukimiya'
+    ]
+  };
+  assert.deepEqual(STYLE_GROUPS.map(g=>g.id),Object.keys(expected));
+  for(const group of STYLE_GROUPS){
+    assert.deepEqual(group.names,expected[group.id],group.id);
+    for(const name of group.names){
+      const item=STYLES.find(style=>style.name===name);
+      assert.equal(item?.group,group.id,name+' rarity');
+    }
+  }
+  assert.equal(new Set(STYLES.map(style=>style.name)).size,45);
+  assert.equal(STYLES.filter(style=>style.group==='limited').length,14);
+  assert.equal(STYLES.filter(style=>style.group==='other').length,2);
+});
+
 test('all moderation classifications are valid, source-faithful and attributed',()=>{
   assert.equal(TECHS.length,56);
   assert.equal(TECHS.filter(t=>t.status==='allowed').length,24);
