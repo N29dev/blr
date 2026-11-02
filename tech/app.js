@@ -112,7 +112,7 @@ function entryCard(item,index){
   else card.append(make('div','entry-meta','Style: '+selectedStyle));
   if(item.note)card.append(make('p','entry-meta',item.note));
   const foot=make('div','entry-footer');
-  const youtube=videoUrl(item.video || VIDEOS[item.id]);
+  const youtube=videoUrl(item.hasOverride ? item.video : (VIDEOS[item.id] || item.video));
   if(youtube){
     const link=make('a','video-link','▶ Watch example ↗');
     link.href=youtube;link.target='_blank';link.rel='noopener noreferrer';
@@ -198,7 +198,7 @@ async function loadCommunityEdits(){
          !Array.isArray(changed.styles)||!changed.styles.length||changed.styles.some(x=>typeof x!=='string'))continue;
       map.set(changed.id,{
         id:changed.id,name:changed.name,status:changed.status,
-        styles:changed.styles,video:changed.video||'',note:changed.note||''
+        styles:changed.styles,video:changed.video||'',note:changed.note||'',hasOverride:true
       });
     }
     techs=[...map.values()];
