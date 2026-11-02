@@ -451,6 +451,13 @@
         const foot=node('div','cardfoot');
         foot.append(node('span','version',versionLabel(s.version)));
         const button=node('button','view','View server ↗');button.type='button';button.addEventListener('click',()=>openDetail(s));
+        const pcLink=safeHostLink(s.joinPc);
+        if(pcLink){
+          const quick=node('a','quick-join','Join PC ↗');
+          quick.href=pcLink;quick.target='_blank';quick.rel='noopener noreferrer';
+          quick.title='Open Glutony’s verified join link (Roblox may choose a different server)';
+          foot.append(quick);
+        }
         foot.append(button);card.append(foot);fragment.append(card);
       }
       ui.list.append(fragment);
