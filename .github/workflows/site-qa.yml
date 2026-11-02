@@ -1,0 +1,36 @@
+name: BL:R Site QA
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-audit:
+    name: Links, pages, rules, and motion
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout BL:R
+        uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Site navigation and full repository audit
+        run: node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs
+      - name: All 36 globe region mappings
+        run: node servers/globe-regions.test.mjs
+      - name: JavaScript source syntax
+        run: |
+          node --check site-experience.js
+          node --check site-motion.js
+          node --check home-matchday.js
+          node --check tools/tiktok-info.js
+          node --check tools/patch.mjs
+          node --check tools/compress.mjs
+          node --check tech/app.js
+          node --check tech/admin/app.js
+          node --check servers/globe.js

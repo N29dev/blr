@@ -1,0 +1,190 @@
+/* N29 BL:R motion system — inspired by N29 portfolio.
+   This stylesheet never hides content unless JS explicitly marks an OFFSCREEN
+   element. Respect reduced-motion and non-hover devices. */
+.n29-scroll-progress{
+  position:fixed;z-index:1002;left:0;right:0;top:0;height:3px;
+  pointer-events:none;transform:scaleX(0);transform-origin:left center;
+  background:linear-gradient(90deg,#76d9fc 0%,#b8a6fb 65%,#bbef8f 100%);
+  box-shadow:0 0 15px rgba(118,217,252,.25);will-change:transform;
+}
+.n29-nav{transition:background-color .22s,border-color .22s,box-shadow .22s}
+.n29-nav.n29-scrolled{
+  background:rgba(7,11,18,.97)!important;
+  border-bottom-color:rgba(140,199,254,.25)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.2);
+}
+.n29-nav-links a{transition:color .18s,background .18s,border-color .18s,transform .18s}
+.n29-nav-links a:hover{transform:translateY(-1px)}
+.n29-nav-links a[aria-current="page"]{
+  border-color:rgba(118,217,252,.32)!important;
+  box-shadow:inset 0 -2px #76d9fc;
+}
+.n29-nav-brand .n29-nav-mark{transition:box-shadow .24s,transform .25s}
+.n29-nav-brand:hover .n29-nav-mark{
+  transform:rotate(-5deg);box-shadow:0 9px 26px rgba(118,217,252,.20);
+}
+.n29-hero-enter{animation:n29-hero-enter .72s cubic-bezier(.2,.8,.2,1) both}
+@keyframes n29-hero-enter{
+  from{opacity:0;transform:translate3d(0,17px,0);filter:blur(4px)}
+  to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}
+}
+.n29-hero-enter[data-n29-enter="2"]{animation-delay:.10s}
+.n29-hero-enter[data-n29-enter="3"]{animation-delay:.17s}
+.n29-will-reveal{
+  opacity:0;transform:translate3d(0,23px,0);filter:blur(4px);
+  transition:
+    opacity .75s cubic-bezier(.22,1,.36,1),
+    transform .75s cubic-bezier(.22,1,.36,1),
+    filter .75s cubic-bezier(.22,1,.36,1);
+  transition-delay:var(--n29-reveal-delay,0ms);
+}
+.n29-will-reveal.n29-revealed{opacity:1;transform:none;filter:none}
+.n29-glow{
+  --n29-glow-x:50%;--n29-glow-y:50%;
+  position:relative;isolation:isolate;
+  transition:transform .24s cubic-bezier(.22,1,.36,1),border-color .2s,box-shadow .25s;
+}
+.n29-glow::after{
+  content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;
+  pointer-events:none;opacity:0;
+  background:radial-gradient(340px circle at var(--n29-glow-x) var(--n29-glow-y),
+    rgba(118,217,252,.115),transparent 66%);
+  transition:opacity .24s ease;
+}
+.n29-glow:hover::after,.n29-glow:focus-within::after{opacity:1}
+.n29-glow:hover{
+  border-color:rgba(145,199,252,.35)!important;
+  box-shadow:0 12px 40px rgba(0,0,0,.16);
+  transform:translate3d(0,-2px,0);
+}
+.n29-story-rail{
+  position:fixed;z-index:70;top:50%;right:13px;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:6px;width:96px;
+  padding:14px 10px;border:1px solid rgba(187,214,250,.16);border-radius:15px;
+  background:rgba(13,22,37,.89);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
+}
+.n29-story-label{font:700 9px/1.5 "Space Mono",ui-monospace,monospace;letter-spacing:.07em;color:#8caaca;margin-bottom:5px}
+.n29-story-rail a{
+  display:flex;align-items:center;gap:7px;padding:6px 4px;border-radius:6px;
+  text-decoration:none!important;color:#9aaec7!important;
+  font:700 10px/1.5 "DM Sans",sans-serif;
+}
+.n29-story-rail a span{color:#6e91b5;font:700 9px "Space Mono",monospace}
+.n29-story-rail a:hover{color:#e8f5ff!important;background:rgba(118,217,252,.08)}
+.n29-story-rail a[aria-current="location"]{color:#94e5ff!important;background:rgba(118,217,252,.12)}
+.n29-story-rail a[aria-current="location"] span{color:#b8a6fb}
+.n29-story-progress{height:3px;overflow:hidden;margin-top:5px;border-radius:10px;background:rgba(163,196,234,.16)}
+.n29-story-progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,#76d9fc,#b8a6fb)}
+/* Portfolio's subtle signaling, without continuously moving game data. */
+@keyframes n29-pip-glow{50%{box-shadow:0 0 0 8px rgba(187,239,143,.045)}}
+body[data-page="home"] .site-eyebrow::before,
+body[data-page="tech"] .eyebrow .dot{animation:n29-pip-glow 3.4s ease-in-out infinite}
+@media(max-width:1510px){.n29-story-rail{display:none}}
+@media(hover:none),(pointer:coarse){
+  .n29-glow:hover{transform:none;box-shadow:none}
+  .n29-glow::after{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  .n29-scroll-progress{will-change:auto}
+  .n29-hero-enter{animation:none!important}
+  .n29-will-reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+  .n29-glow,.n29-glow::after,.n29-nav,
+  .n29-nav-links a,.n29-nav-mark{transition:none!important;animation:none!important}
+  .n29-glow:hover,.n29-nav-links a:hover,.n29-nav-brand:hover .n29-nav-mark{transform:none!important}
+  body[data-page="home"] .site-eyebrow::before,
+  body[data-page="tech"] .eyebrow .dot{animation:none!important}
+}
+
+
+/* Seamless Servers ↔ Customs navigation, no SPA/router rewrites.
+ * Browsers supporting same-origin cross-document View Transitions retain the
+ * header's position while the page cross-fades. Unsupported browsers navigate
+ * normally; only opt in when motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  .n29-nav {view-transition-name:n29-shared-nav;}
+  body[data-page="servers"] header.hero,
+  body[data-page="customs"] header.hero {view-transition-name:n29-match-hero;}
+  @keyframes n29-page-out {
+    to{opacity:0;filter:blur(3px);transform:translate3d(-9px,0,0)}
+  }
+  @keyframes n29-page-in {
+    from{opacity:0;filter:blur(3px);transform:translate3d(9px,0,0)}
+  }
+  ::view-transition-old(root) {animation:.22s ease-in both n29-page-out;}
+  ::view-transition-new(root) {animation:.29s cubic-bezier(.22,1,.36,1) both n29-page-in;}
+  ::view-transition-old(n29-shared-nav),
+  ::view-transition-new(n29-shared-nav){animation-duration:.14s;}
+  ::view-transition-old(n29-match-hero),
+  ::view-transition-new(n29-match-hero){animation-duration:.31s;}
+}
+/* The public server mode picker and custom server mode links now use one
+ * segmented navigation design without modifying server controls or state. */
+body[data-page="servers"] .mode-panel.n29-mode-switch,
+body[data-page="customs"] .tabs.n29-mode-switch {
+  display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;
+  padding:7px;margin:14px 0 20px;
+  border:1px solid rgba(187,214,250,.17);
+  border-radius:16px;background:rgba(13,22,37,.9);
+  box-shadow:0 12px 35px rgba(0,0,0,.09);
+}
+body[data-page="servers"] .mode-panel.n29-mode-switch > *,
+body[data-page="customs"] .tabs.n29-mode-switch > * {
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  min-width:0;flex:1 1 130px;min-height:47px;
+  padding:10px 12px;border:1px solid transparent;border-radius:10px;
+  background:transparent;color:#aebed5;
+  font:700 13px/1.4 "DM Sans",system-ui,sans-serif;
+  text-align:center;text-decoration:none;
+  box-shadow:none;transition:color .18s,background .18s,border-color .18s;
+}
+body[data-page="servers"] .mode-panel.n29-mode-switch > * small,
+body[data-page="customs"] .tabs.n29-mode-switch > * small {
+  color:#7f99b9;font:600 10px/1.3 "DM Sans",sans-serif;
+  white-space:nowrap;
+}
+body[data-page="servers"] .mode-panel.n29-mode-switch > *:hover,
+body[data-page="customs"] .tabs.n29-mode-switch > *:hover {
+  color:#e8f5ff;background:rgba(118,217,252,.09);
+}
+body[data-page="servers"] .mode-panel.n29-mode-switch > [aria-selected="true"],
+body[data-page="customs"] .tabs.n29-mode-switch > [aria-current="page"]{
+  background:linear-gradient(115deg,rgba(118,217,252,.21),rgba(184,166,251,.16));
+  border-color:rgba(118,217,252,.33);color:#e8faff;
+}
+body[data-page="servers"] .mode-panel.n29-mode-switch > [aria-selected="true"] small,
+body[data-page="customs"] .tabs.n29-mode-switch > [aria-current="page"] small{color:#b8cfff}
+/* Make the pages that were previously static feel alive without animating
+ * functional controls, forms, counters, maps or server data continuously. */
+body[data-page="customs"] header.hero,
+body[data-page="servers"] header.hero{transform-origin:center top}
+body[data-page="customs"] .panel.controls,
+body[data-page="customs"] .searchbar,
+body[data-page="customs"] #cards > .card,
+body[data-page="servers"] .mode-panel,
+body[data-page="servers"] .metrics,
+body[data-page="servers"] .toolbar,
+body[data-page="tech"] .style-tile,
+body[data-page="tech"] .faq details,
+body[data-template="creator"] .tool-card{
+  transition:border-color .22s,background-color .22s,box-shadow .25s,transform .25s;
+}
+body[data-page="tech"] .style-tile:hover,
+body[data-page="tech"] .faq details:hover{
+  transform:translateY(-2px);border-color:rgba(118,217,252,.35);
+}
+@media(max-width:660px){
+  body[data-page="servers"] .mode-panel.n29-mode-switch,
+  body[data-page="customs"] .tabs.n29-mode-switch{gap:5px;padding:5px}
+  body[data-page="servers"] .mode-panel.n29-mode-switch > *,
+  body[data-page="customs"] .tabs.n29-mode-switch > *{flex:1 1 calc(50% - 10px);font-size:12px;min-height:43px}
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-page="servers"] .mode-panel.n29-mode-switch > *,
+  body[data-page="customs"] .tabs.n29-mode-switch > *,
+  body[data-page="customs"] .panel.controls,
+  body[data-page="tech"] .style-tile,
+  body[data-page="tech"] .faq details{transition:none!important;transform:none!important}
+}

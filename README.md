@@ -2,6 +2,26 @@
 
 Source for [blr.n29.kz](https://blr.n29.kz/) (static GitHub Pages website).
 
+## Portfolio motion, seamless match browsing & QA (November 2026)
+
+The site uses the visual design of [N29's portfolio](https://n29.kz/) and now shares its *progressive* motion approach across public pages. The portfolio itself is **not changed**.
+
+- **Shared motion:** `site-motion.css` and `site-motion.js` provide entrance animations, offscreen-only reveals, pointer-following glow, scroll progress, responsive section navigation, and sticky-header polish.
+- **Servers ↔ Customs:** both mode selectors use the same segmented design. Browsers supporting same-origin cross-document View Transitions keep the header visually continuous while the page changes. Other browsers use normal links. No SPA router and no changes to Glutony's server APIs.
+- **Tech Rules & Creator Studio:** cards animate as they enter view, including tech entries dynamically loaded from Glutony. Server and customs cards are observed without affecting live counts, filters, maps, uploads, or video processing.
+- **Accessibility:** reduced-motion disables the animations and smooth page transitions. Touch/pointer devices avoid unnecessary hover lighting. Initial content remains visible; only offscreen items are prepared for reveal.
+- **Repository QA:** `site-audit.test.mjs` checks HTML links, fragments, nav, DOM references, media controls, moderation links, the three approved projects, and Servers/Customs transitions.
+- **Automated CI:** `.github/workflows/site-qa.yml` runs site checks, style data tests, all 36 globe regions, and JS syntax checks on pull requests and main updates.
+
+Run locally:
+
+```bash
+node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs
+node servers/globe-regions.test.mjs
+```
+
+Static checks do not replace a live browser visual regression test. View transitions only run in supporting browsers. GitHub Pages must publish the update before visitors see it.
+
 ## Site experience
 
 The homepage and supporting pages share a responsive visual system in `site-theme.css`.
