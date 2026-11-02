@@ -150,3 +150,20 @@ body[data-page="servers"] .notice {border-color:rgba(141,202,245,.15);background
 @media(prefers-reduced-motion:reduce) {
   .finder-region-retry {transition:none!important;}
 }
+
+
+/* Trustworthy RoValra region diagnostics — safe reason codes only. */
+body[data-page="servers"] .finder-region-diagnostics {
+  display:block;flex-basis:100%;color:#92acca;
+  font-size:11px;line-height:1.65;
+}
+body[data-page="servers"] .finder-region-diagnostics:empty {display:none;}
+body[data-page="servers"] .finder-detail-diagnostic {
+  border:1px solid rgba(223,191,123,.22);
+  border-radius:10px;background:rgba(229,180,108,.07);
+  padding:10px 12px;min-width:0;
+}
+body[data-page="servers"] .finder-detail-diagnostic strong {
+  color:#f6daaa;overflow-wrap:anywhere;
+}
+body[data-page="servers"] .finder-detail-diagnostic[hidden] {display:none!important;}
