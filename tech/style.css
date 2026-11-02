@@ -137,3 +137,24 @@ body[data-page="tech"]::before{content:"";pointer-events:none;position:absolute;
 @media(max-width:620px){.page-shell{width:calc(100% - 28px)}.nav{height:auto;padding:15px 0;align-items:flex-start;flex-wrap:wrap}.nav-links a{padding:7px 9px;font-size:12px}.hero{margin-top:16px}.hero-copy{padding:26px 20px;border-radius:19px}.hero h1{font-size:clamp(40px,10vw,58px);margin:18px 0}.hero-copy>p{font-size:13px}.hero-side{grid-template-columns:1fr 1fr;padding:17px;border-radius:19px}.status-example{padding:12px;min-height:80px}.hero-side .status-example:nth-of-type(3){grid-column:1/-1}.hero-meta{gap:8px 12px}.overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:49px}.metric{padding:13px 15px}.rules-brief{margin-bottom:52px;padding:22px 19px}.section-heading{align-items:stretch;flex-direction:column;gap:19px}.search-wrap{min-width:0;max-width:none;width:100%}.style-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.style-tile{min-height:91px}.directory{margin-bottom:47px}.tech-detail{padding:19px 14px;margin-bottom:60px;border-radius:18px}.detail-title h2{font-size:36px}.tech-entries{grid-template-columns:1fr}.tech-entry{min-height:148px}.filters{gap:6px}.filters button{font-size:11px;padding:7px 8px}.faq{margin-bottom:54px}.footer{padding-bottom:24px}}
 @media(max-width:385px){.hero-side{grid-template-columns:1fr}.hero-side .status-example:nth-of-type(3){grid-column:auto}.brand{font-size:15px}.style-grid{gap:7px}.style-tile{padding:12px}.tile-name{font-size:12px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.primary-button,.outline-button,.style-tile{transition:none}.primary-button:hover,.outline-button:hover,.style-tile:hover{transform:none}}
+
+
+/* High-visibility assistance for players searching after a bug-abuse ban. */
+.support-spotlight{margin:23px 0 15px;position:relative;scroll-margin-top:82px;display:grid;grid-template-columns:auto minmax(0,1.4fr) minmax(225px,.68fr);gap:19px;align-items:start;padding:25px 28px;border:1px solid rgba(255,171,119,.31);border-radius:21px;background:linear-gradient(112deg,rgba(65,41,53,.9),rgba(31,34,57,.96) 58%,rgba(22,35,62,.96));box-shadow:inset 0 1px rgba(255,220,188,.07),0 18px 48px rgba(0,0,0,.12)}
+.support-icon{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;color:#ffcbab;background:rgba(255,169,122,.13);border:1px solid rgba(255,175,133,.28);font-size:23px;font-weight:920;line-height:1}
+.support-kicker{color:#ffc7a1;font-size:10px;font-weight:920;letter-spacing:.13em;line-height:1.65}
+.support-copy h2{font-size:clamp(20px,2.4vw,31px);line-height:1.18;letter-spacing:-.05em;margin:4px 0 8px}
+.support-copy p{margin:0;max-width:620px;color:#c2c7d9;line-height:1.65;font-size:13px}
+.support-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.support-cta,.support-outline{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:40px;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:860;line-height:1.4}
+body[data-page="tech"] .support-cta{background:linear-gradient(115deg,#ffc39c,#f6aa9e);color:#2f1723!important}
+body[data-page="tech"] .support-outline{background:rgba(255,191,165,.06);border:1px solid rgba(255,193,173,.3);color:#ffe0d6!important}
+body[data-page="tech"] .support-cta:hover,body[data-page="tech"] .support-outline:hover{filter:brightness(1.1)}
+.support-copy small{display:block;margin-top:11px;color:#9cacc2;font-size:10px;line-height:1.6}
+.support-extra{border-left:1px solid rgba(197,192,231,.16);padding:3px 0 2px 20px;align-self:stretch}
+.support-extra .support-kicker{color:#a6d9fc}
+.support-extra p{color:#a6bad3;font-size:12px;line-height:1.7;margin:7px 0 12px}
+body[data-page="tech"] .support-extra a{display:block;color:#bae6ff!important;font-weight:820;font-size:12px;padding:7px 0}
+body[data-page="tech"] .support-extra .support-community-link{border-top:1px solid rgba(176,201,236,.14);margin-top:7px;padding-top:12px;color:#8da9cd!important;font-size:11px}
+@media(max-width:990px){.support-spotlight{grid-template-columns:43px minmax(0,1fr);padding:23px}.support-extra{grid-column:2;border-left:0;border-top:1px solid rgba(197,192,231,.16);padding:14px 0 0;margin-top:3px}}
+@media(max-width:620px){.support-spotlight{grid-template-columns:1fr;gap:10px;margin:14px 0 12px;padding:18px;border-radius:17px}.support-icon{width:36px;height:36px;border-radius:11px;font-size:20px}.support-copy h2{font-size:24px}.support-copy p{font-size:12px}.support-actions{gap:8px}.support-cta,.support-outline{flex:1 1 100%;width:100%;min-height:42px}.support-extra{grid-column:auto;margin-top:0;padding:13px 0 0}}

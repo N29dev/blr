@@ -13,6 +13,10 @@
 export const POLICY = Object.freeze({
   asOf: '2026-11-02',
   originalFaq: 'https://discord.com/channels/1304535758899777626/1364020867084062752/1559305710930759701',
+  supportServer: 'https://discord.gg/dgV4p83EHA',
+  officialServer: 'https://discord.gg/bluelockrivals',
+  techSupportUrl: 'https://discord.com/channels/1313206300813033532/1348650686597955584',
+  appealUrl: 'https://discord.com/channels/1313206300813033532/1313206301232463980',
   techSupportChannelId: '1348650686597955584',
   appealChannelId: '1313206301232463980',
   bugReports: 'https://blox.report/bluelock',

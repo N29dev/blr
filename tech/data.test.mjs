@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {STYLE_GROUPS, STYLES, ALL_STYLE_NAMES, GENERAL, TECHS, STATUS, videoUrl, slug, canonicalStyle, NEL_VARIANTS} from './data.js';
+import {POLICY, STYLE_GROUPS, STYLES, ALL_STYLE_NAMES, GENERAL, TECHS, STATUS, videoUrl, slug, canonicalStyle, NEL_VARIANTS} from './data.js';
 
 test('all style names and technique IDs are unique',()=>{
   assert.equal(new Set(ALL_STYLE_NAMES).size,ALL_STYLE_NAMES.length);
