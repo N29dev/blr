@@ -404,6 +404,7 @@ body[data-page="home"] .site-identity-image {
   display:block;border:1px solid rgba(185,210,245,.25);background:#080d18;
   box-shadow:0 10px 23px rgba(0,0,0,.2);
 }
+body[data-page="home"] .site-identity-image picture {display:block;width:100%;height:100%;}
 body[data-page="home"] .site-identity-image img {width:100%;height:100%;object-fit:cover;object-position:center 50%;}
 body[data-page="home"] .site-identity-text {min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
 body[data-page="home"] .site-identity-text small {
