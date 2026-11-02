@@ -39,7 +39,7 @@ function combined(){
     if(!STATUS[entry.status]||!Array.isArray(entry.styles))continue;
     map.set(entry.id,{
       id:entry.id,name:entry.name,status:entry.status,styles:entry.styles,
-      video:entry.video||'',note:entry.note||''
+      video:entry.video||'',note:entry.note||'',hasOverride:true
     });
   }
   return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
@@ -110,7 +110,7 @@ function edit(id){
   $('entry-name').value=item.name;
   $('entry-styles').value=item.styles.join(', ');
   $('entry-status').value=item.status;
-  $('entry-video').value=item.video||VIDEOS[item.id]||'';
+  $('entry-video').value=item.hasOverride ? (item.video || '') : (VIDEOS[item.id] || item.video || '');
   $('entry-note').value=item.note||'';
   $('delete-entry').hidden=false;
   feedback('editor-message','');
