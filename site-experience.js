@@ -147,7 +147,7 @@
       {category:'PLAY',title:'Find your next match',icon:'⚽',links:[
         {label:'Public servers',href:'/servers/'},
         {label:'Community customs',href:'/servers/customs/'},
-        {label:'Glutony server finder',href:'/servers/'}
+        {label:'Install Glutony',href:'https://discord.com/oauth2/authorize?client_id=1563907646757666926&integration_type=1&scope=applications.commands'}
       ]},
       {category:'LEARN',title:'Understand the rules',icon:'📜',links:[
         {label:'Allowed & banned tech',href:'/tech/'},
@@ -189,6 +189,7 @@
         if(item.href===location.pathname+location.search||item.href===location.pathname||
            (item.href==='/servers/'&&page==='servers')||
            (item.href==='/tech/'&&page==='tech')||
+           (item.href==='/tools/'&&location.pathname==='/tools/')||
            (item.href==='/servers/customs/'&&page==='customs')||
            (item.href==='/clipper.html'&&page==='clipper')||
            (item.href==='/tiktok-downloader.html'&&page==='tiktok')){
