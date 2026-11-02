@@ -4,6 +4,7 @@
   'use strict';
   const page = document.body.dataset.page || '';
   const links = [
+    { icon:'✦', title:'N29 portfolio', detail:'Explore N29 projects and profile', url:'https://n29.kz/' },
     { icon:'⌂', title:'Overview', detail:'Return to the BL:R home page', url:'/' },
     { icon:'🌐', title:'Server finder', detail:'Browse public BL:R servers', url:'/servers/' },
     { icon:'🏟️', title:'Main lobbies', detail:'Find sampled main-game servers', url:'/servers/?mode=main' },
