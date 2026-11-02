@@ -88,7 +88,9 @@ test('misc routes and pages retain their existing functionality hooks',()=>{
   assert.ok(read('servers/customs/index.html').includes('id="post"'));
   assert.ok(read('clipper.html').includes('id="export"'));
   assert.ok(read('tiktok-downloader.html').includes('id="fix-file"'));
-  assert.ok(read('leaderboard/index.html').includes('class="hub-backnav"'));
+  assert.ok(read('leaderboard/index.html').includes('class="n29-nav"'));
+  assert.ok(read('leaderboard/index.html').includes('/site-unify.css?v=2'));
+  assert.ok(read('404.html').includes('class="n29-nav"'));
   assert.ok(read('404.html').includes('href="/tools/"'));
   assert.ok(read('sitemap.xml').includes('https://blr.n29.kz/tools/'));
   const theme=read('site-unify.css');
