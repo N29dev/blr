@@ -1,4 +1,4 @@
-import {TECHS,STYLES,GENERAL,STATUS,slug,videoUrl} from '../data.js';
+import {TECHS,STYLES,GENERAL,STATUS,slug,videoUrl,canonicalStyle} from '../data.js';
 import {VIDEOS} from '../videos.js';
 
 const API='https://glutony.scp343hey.workers.dev';
@@ -9,6 +9,7 @@ let catalog=[];
 let selectedId=null;
 let busy=false;
 const basicNames=[GENERAL,...STYLES.map(s=>s.name)];
+const canonicalNames=styles=>[...new Set(styles.map(canonicalStyle).filter(Boolean))];
 const idPattern=/^[a-z0-9][a-z0-9-]{1,70}$/;
 
 const node=(tag,className='',text=null)=>{
@@ -32,20 +33,20 @@ async function request(path,options={},authorized=false){
   return data;
 }
 function combined(){
-  const map=new Map(TECHS.map(t=>[t.id,{...t}]));
+  const map=new Map(TECHS.map(t=>[t.id,{...t,styles:canonicalNames(t.styles)}]));
   for(const entry of overrides){
     if(!entry||typeof entry.id!=='string'||!idPattern.test(entry.id))continue;
     if(entry.hidden){map.delete(entry.id);continue;}
     if(!STATUS[entry.status]||!Array.isArray(entry.styles))continue;
     map.set(entry.id,{
-      id:entry.id,name:entry.name,status:entry.status,styles:entry.styles,
+      id:entry.id,name:entry.name,status:entry.status,styles:canonicalNames(entry.styles),
       video:entry.video||'',note:entry.note||'',hasOverride:true
     });
   }
   return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
 }
 function styleNames(){
-  return [...new Set([...basicNames,...catalog.flatMap(t=>t.styles)])];
+  return canonicalNames([...basicNames,...catalog.flatMap(t=>t.styles)]);
 }
 function renderStyles(){
   const select=$('filter-style');
@@ -139,7 +140,7 @@ function setBusy(value){
 async function save(event){
   event.preventDefault();
   if(!adminKey||busy)return;
-  const styles=[...new Set($('entry-styles').value.split(',').map(s=>s.trim()).filter(Boolean))];
+  const styles=canonicalNames($('entry-styles').value.split(',').map(s=>s.trim()).filter(Boolean));
   if(styles.length===0||styles.length>8){
     feedback('editor-message','Enter 1–8 style names separated by commas.','error');return;
   }
