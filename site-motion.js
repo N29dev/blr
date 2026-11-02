@@ -93,7 +93,7 @@
     // Only currently visible hero elements get an entrance; everything else
     // either uses intersection reveal below or remains visibly rendered.
     const entrance=document.querySelectorAll(
-      '.site-hero-copy,.site-hero-panel,.n29-page-hero,header.hero .hero-copy,header.hero .hero-side,.support-spotlight'
+      '.site-hero-copy,.site-hero-panel,.n29-page-hero,header.hero .hero-copy,header.hero .hero-side,.support-spotlight,body[data-page="servers"] header.hero,body[data-page="customs"] header.hero,body[data-page="customs"] .tabs.n29-mode-switch'
     );
     let enterIndex=0;
     for(const el of entrance){
@@ -108,17 +108,25 @@
   const revealSelector=[
     '.site-route-card','.n29-teaser-grid > a','.site-connect',
     '.site-connect-card','.metric','.tool-card','.section-heading',
-    '.faq-grid','.report-card','.style-group','.tech-entry',
+    '.faq-grid','.faq details','.report-card','.style-group','.style-tile','.tech-entry',
     '.site-hero-panel','.site-hero-copy','.n29-page-hero',
+    'header.hero .hero-copy','header.hero .hero-side',
+    'body[data-page="customs"] .panel.controls',
+    'body[data-page="customs"] .searchbar',
+    'body[data-page="customs"] #cards > .card',
+    'body[data-page="servers"] .mode-panel',
+    'body[data-page="servers"] .metrics',
+    'body[data-page="servers"] .toolbar',
+    'body[data-page="servers"] #servers > .server',
     '.matchday-quickstart','.finder-overline',
     '.admin-toolbar'
   ].join(',');
   const glowSelector=[
     '.site-route-card','.n29-teaser-grid > a','.site-connect-card',
-    '.style-tile','.tech-entry','.tool-card','.report-card'
+    '.style-tile','.tech-entry','.tool-card','.report-card',
+    'body[data-page="customs"] #cards > .card'
   ].join(',');
   const decorated=new WeakSet();
-  const revealed=new WeakSet();
   let revealObserver=null;
   if(!reduced&&'IntersectionObserver' in window){
     revealObserver=new IntersectionObserver(entries=>{
@@ -145,7 +153,6 @@
     el.style.setProperty('--n29-reveal-delay',Math.min(140,([...el.parentElement.children].indexOf(el)%4)*48)+'ms');
     el.classList.add('n29-will-reveal');
     revealObserver.observe(el);
-    revealed.add(el);
   }
   function scan(parent){
     if(!(parent instanceof Element))return;
@@ -157,7 +164,7 @@
   // New technique cards are created after the module fetch, and the site map
   // is inserted by site-experience.js. Observe only those small containers.
   // Don't constantly recreate observers when the Roblox server list refreshes.
-  const dynamicParents=['#style-grid','#tech-entries','[data-site-connect]'];
+  const dynamicParents=['#style-grid','#tech-entries','#cards','#servers','[data-site-connect]'];
   if('MutationObserver' in window){
     for(const selector of dynamicParents){
       const container=document.querySelector(selector);
