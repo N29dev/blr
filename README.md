@@ -23,6 +23,8 @@ Visit [blr.n29.kz/servers/](https://blr.n29.kz/servers/) for the public 8v8 and 
 
 Source folders: `leaderboard/`, `servers/`; other tools are standalone HTML in the repository root.
 
+Site files: `404.html` (not-found page), `robots.txt` and `sitemap.xml` (search), `manifest.webmanifest` (installable web app), `og-image.png` (1200×630 social preview shown when links are shared).
+
 ## Community Customs
 
 Custom match board: [blr.n29.kz/servers/customs/](https://blr.n29.kz/servers/customs/).
