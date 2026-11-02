@@ -2,6 +2,21 @@
 
 Source for [blr.n29.kz](https://blr.n29.kz/) (static GitHub Pages website).
 
+## Layout fixes: homepage and sorted Creator Studio (November 2026)
+
+The homepage **Play** directory is a compact 2×2 grid for public servers, custom matches, tech rules and support. Main/8v8/Pro remain in the functional Matchday Console above it rather than being duplicated as six oversized cards. The **Player snapshot** has a dedicated responsive avatar + 9-stat grid and is labeled as saved values, not live counters. Its Roblox profile loading hooks remain intact.
+
+The dedicated [Creator Studio](https://blr.n29.kz/tools/) is now organized in two distinct sections:
+
+- **Video editing & repair:** compress → patch MP4 metadata → trim an MP4 from a link
+- **TikTok tools:** analyze a public TikTok post → download & repair a video
+
+Importantly, the Creator Studio now uses `data-page="tools"` and `tools/controls.css` instead of loading the **entire old homepage CSS** (`tools/legacy.css`). Its new `tools/style.css` owns layout and responsive behavior. All tool element IDs, CompressBase integration, analytics calls, FFmpeg worker URLs, and active video processing scripts are preserved.
+
+- `home-layout.css` overrides clashing homepage Play/Profile rules at desktop/tablet/mobile breakpoints.
+- `site-layout.browser.test.mjs` renders both pages in headless Chromium at **1440, 820, 390 and 360 px** and checks for overflow, overlap, grid order, and visible functional controls. CI runs these alongside the static repository checks.
+- These are code/layout fixes within `N29dev/blr`; portfolio and Glutony repositories are unchanged.
+
 ## Portfolio motion, seamless match browsing & QA (November 2026)
 
 The site uses the visual design of [N29's portfolio](https://n29.kz/) and now shares its *progressive* motion approach across public pages. The portfolio itself is **not changed**.

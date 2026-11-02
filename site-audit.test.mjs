@@ -96,6 +96,41 @@ test('creator widgets, source scripts and worker path survive the /tools/ migrat
   assert.ok(read('tools/compress.mjs').includes("new URL('/ffmpeg-worker.js', window.location.origin)"));
 });
 
+test('Creator Studio is sorted by workflow with isolated CSS and all existing controls',()=>{
+  const html=fromRoute('/tools/');
+  assert.ok(html.includes('data-page="tools"'),'tool page must not inherit homepage-only styles');
+  assert.ok(html.includes('/tools/controls.css?v=1'),'isolated functional controls stylesheet missing');
+  assert.ok(html.includes('/tools/style.css?v=2'),'workflow layout stylesheet missing');
+  assert.ok(!html.includes('/tools/legacy.css'),'old homepage stylesheet must not load in Creator Studio');
+  const video=html.indexOf('id="video-tools"'),tiktok=html.indexOf('id="tiktok-tools"');
+  assert.ok(video>0&&tiktok>video,'video workflow must precede TikTok tools');
+  const order=['compress-tool','patch-tool','clipper-tool','analyze-tool','tiktok-download-tool'];
+  const offsets=order.map(id=>html.indexOf('id="'+id+'"'));
+  assert.ok(offsets.every(offset=>offset>=0),'missing a tool card');
+  assert.deepEqual([...offsets].sort((a,b)=>a-b),offsets,'tool cards should follow intended workflow');
+  const categories=['Video editing &amp; repair','TikTok tools'];
+  for(const label of categories)assert.ok(html.includes(label));
+  const counts=order.map(id=>(html.match(new RegExp('id="'+id+'"','g'))||[]).length);
+  assert.deepEqual(counts,[1,1,1,1,1],'each tool must appear exactly once');
+});
+
+test('homepage has four distinct destinations and stable profile grid design',()=>{
+  const html=fromRoute('/');
+  assert.equal((html.match(/class="site-route-card"/g)||[]).length,4);
+  assert.ok(html.indexOf('id="play"')<html.indexOf('id="stats"'),'Play section should precede profile');
+  assert.ok(html.includes('/home-layout.css?v=1'));
+  assert.ok(html.includes('id="rbx-avatar"'));
+  assert.ok(html.includes('id="rbx-display"'));
+  assert.ok(html.includes('id="rbx-username"'));
+  assert.equal((html.match(/class="stat"/g)||[]).length,9);
+  for(const href of ['/servers/','/servers/customs/','/tech/','/tech/#support'])
+    assert.ok(html.includes('href="'+href+'"'),'homepage missing destination '+href);
+  const css=read('home-layout.css');
+  assert.ok(css.includes('#play .site-route-grid'));
+  assert.ok(css.includes('#stats .profile-card'));
+  assert.ok(css.includes('grid-template-columns:1fr!important'),'mobile layout must stack');
+});
+
 test('JavaScript uses existing static DOM IDs for core tools and data pages',()=>{
   const pairs=[
     ['/','home-matchday.js'],

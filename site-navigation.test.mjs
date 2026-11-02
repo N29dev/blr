@@ -81,7 +81,7 @@ test('quick jump internal destinations point to files in the same repository',()
 });
 
 test('misc routes and pages retain their existing functionality hooks',()=>{
-  assert.equal((read('index.html').match(/class="site-route-card"/g)||[]).length,6);
+  assert.equal((read('index.html').match(/class="site-route-card"/g)||[]).length,4);
   assert.ok(read('tech/index.html').includes('id="support"'));
   assert.ok(read('tech/admin/index.html').includes('id="entry-form"'));
   assert.ok(read('servers/index.html').includes('id="mode-8v8"'));
