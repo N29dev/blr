@@ -31,6 +31,8 @@ Visit [blr.n29.kz/servers/](https://blr.n29.kz/servers/) for the public 8v8 and 
 Browse actual sampled public lobbies directly using region and country filters, player counts, free slots, reported server ping, version, sorting, pinned servers, and the world globe. There are no speculative match recommendations.
 
 - Server ping is reported by the service, not the visitor's measured latency.
+- The server directory displays **resolved / sampled** region coverage and provides a manual retry for RoValra's still-unknown locations. RoValra may not know the datacenter of every new instance, so an unknown region is never guessed from ping.
+- Glutony optionally uses an exact datacenter-ID-to-region mapping from RoValra's public datacenter list when server details contain a datacenter ID without a readable location. This is best effort; it is not a new guaranteed geolocation service.
 - Join links use the existing Glutony join flow; Roblox can redirect to a different server.
 - Pinned servers remain saved for the current browser session.
 - The Hunger portrait on the homepage is credited to **Omnixeno**.
