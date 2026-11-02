@@ -386,3 +386,42 @@ body[data-page="home"] .site-command-fab {display:none;}
   .site-route-card,.site-panel-link,.site-primary-link,.site-outline-link {transition:none!important;transform:none!important;}
   body::after {display:none;}
 }
+
+
+/* Creator identity, shared with the N29 portfolio */
+body[data-page="home"] .site-panel-identity {
+  display:grid;grid-template-columns:80px minmax(0,1fr);align-items:center;gap:14px;
+  padding:11px;border:1px solid rgba(175,211,252,.19);border-radius:16px;
+  background:linear-gradient(120deg,rgba(53,77,126,.33),rgba(22,34,62,.72));
+  transition:border-color .18s,transform .18s,background .18s;
+}
+body[data-page="home"] .site-panel-identity:hover {
+  border-color:rgba(120,213,252,.55);transform:translateY(-2px);
+  background:linear-gradient(120deg,rgba(61,91,149,.39),rgba(30,44,76,.84));
+}
+body[data-page="home"] .site-identity-image {
+  position:relative;width:80px;height:104px;border-radius:11px;overflow:hidden;
+  display:block;border:1px solid rgba(185,210,245,.25);background:#080d18;
+  box-shadow:0 10px 23px rgba(0,0,0,.2);
+}
+body[data-page="home"] .site-identity-image img {width:100%;height:100%;object-fit:cover;object-position:center 50%;}
+body[data-page="home"] .site-identity-text {min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
+body[data-page="home"] .site-identity-text small {
+  font:800 9px/1.5 ui-monospace,SFMono-Regular,monospace;
+  color:#a1c7ed;letter-spacing:.07em;
+}
+body[data-page="home"] .site-identity-text strong {
+  font-size:18px;font-weight:900;color:#fff;letter-spacing:-.05em;line-height:1.2;
+}
+body[data-page="home"] .site-identity-text span {font-size:11px;color:#a7bbd2;line-height:1.5;}
+body[data-page="home"] .site-identity-text b {color:#91dfff;font-size:11px;font-weight:850;margin-top:3px;}
+body[data-page="home"] .site-panel-title {font-size:19px;margin-top:8px;}
+@media(max-width:600px) {
+  body[data-page="home"] .site-panel-identity {grid-template-columns:72px minmax(0,1fr);gap:13px;}
+  body[data-page="home"] .site-identity-image {width:72px;height:92px;}
+  body[data-page="home"] .site-identity-text strong {font-size:16px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  body[data-page="home"] .site-panel-identity {transition:none;}
+  body[data-page="home"] .site-panel-identity:hover {transform:none;}
+}
