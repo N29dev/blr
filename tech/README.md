@@ -1,5 +1,16 @@
 # BL:R Tech & Bug Directory
 
+## Help and appeals (prioritized on the public page)
+
+The first panel on [the tech directory](https://blr.n29.kz/tech/) is for players who were banned for bug abuse or need a ruling:
+
+- [Join the BL:R support server](https://discord.gg/dgV4p83EHA) — required before opening support channels.
+- [Open bug-abuse ban appeals](https://discord.com/channels/1313206300813033532/1313206301232463980) — appeal a ban, whether the player knew about the bug or not; approval is not guaranteed.
+- [Open tech inquiry tickets](https://discord.com/channels/1313206300813033532/1348650686597955584) — include a clip, reproduction steps, and gameplay impact.
+- [Main Blue Lock: Rivals Discord](https://discord.gg/bluelockrivals) — the community server, distinct from the support server.
+
+These are direct URLs supplied by the site owner. Staff announcements and current moderation decisions supersede this unofficial catalog.
+
 ## Public search page + private admin
 
 - **Public:** [blr.n29.kz/tech/](https://blr.n29.kz/tech/) — search a style name, select that style, see its allowed, disallowed and punishable techniques; follow real YouTube demonstration links.
