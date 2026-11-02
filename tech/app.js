@@ -6,8 +6,13 @@ const cardRoot=$('style-grid');
 const entriesRoot=$('tech-entries');
 const search=$('search');
 const urlParams=new URLSearchParams(location.search);
-const nameForSlug=new Map(ALL_STYLE_NAMES.map(name=>[slug(name),name]));
-const GROUP_IDS=new Map(STYLES.map(style=>[style.name,style.groupLabel]));
+const API='https://glutony.scp343hey.workers.dev';
+let techs=TECHS.map(item=>({...item}));
+let styles=STYLES.map(item=>({...item}));
+let styleGroups=STYLE_GROUPS.map(g=>({...g,names:[...g.names]}));
+let allStyleNames=[...ALL_STYLE_NAMES];
+let nameForSlug=new Map(allStyleNames.map(name=>[slug(name),name]));
+let groupIds=new Map(styles.map(style=>[style.name,style.groupLabel]));
 const DEFAULT_STYLE='Nagi';
 
 let selectedStyle=nameForSlug.get(urlParams.get('style'))||DEFAULT_STYLE;
@@ -22,13 +27,13 @@ const make=(tag,className='',text)=>{
   if(text!==undefined&&text!==null)el.textContent=String(text);
   return el;
 };
-const itemsFor=name=>TECHS.filter(tech=>tech.styles.includes(name));
+const itemsFor=name=>techs.filter(tech=>tech.styles.includes(name));
 const countsFor=name=>{
   const items=itemsFor(name);
   return {all:items.length,allowed:items.filter(i=>i.status==='allowed').length,disallowed:items.filter(i=>i.status==='disallowed').length,punishable:items.filter(i=>i.status==='punishable').length};
 };
 function matchingStyles(term){
-  return ALL_STYLE_NAMES.filter(name=>{
+  return allStyleNames.filter(name=>{
     if(!term)return true;
     if(name.toLowerCase().includes(term))return true;
     return itemsFor(name).some(item=>[item.name,item.status,...item.styles].join(' ').toLowerCase().includes(term));
@@ -82,7 +87,7 @@ function renderDirectory(){
   cardRoot.replaceChildren();
   $('style-empty').hidden=matches.size!==0;
   if(matches.has(GENERAL))addStyleGroup('Shared / Cross-style',[GENERAL]);
-  for(const group of STYLE_GROUPS){
+  for(const group of styleGroups){
     const names=group.names.filter(name=>matches.has(name));
     addStyleGroup(group.label,names);
   }
@@ -107,7 +112,7 @@ function entryCard(item,index){
   else card.append(make('div','entry-meta','Style: '+selectedStyle));
   if(item.note)card.append(make('p','entry-meta',item.note));
   const foot=make('div','entry-footer');
-  const youtube=videoUrl(VIDEOS[item.id] || item.video);
+  const youtube=videoUrl(item.video || VIDEOS[item.id]);
   if(youtube){
     const link=make('a','video-link','▶ Watch example ↗');
     link.href=youtube;link.target='_blank';link.rel='noopener noreferrer';
@@ -122,7 +127,7 @@ function entryCard(item,index){
   return card;
 }
 function renderDetail(){
-  const group=selectedStyle===GENERAL?'SHARED / CROSS-STYLE':GROUP_IDS.get(selectedStyle)?.toUpperCase()||'STYLE GUIDE';
+  const group=selectedStyle===GENERAL?'SHARED / CROSS-STYLE':groupIds.get(selectedStyle)?.toUpperCase()||'STYLE GUIDE';
   $('active-style-group').textContent=group;
   $('active-style-title').textContent=selectedStyle;
   $('active-style-hint').textContent=selectedStyle===GENERAL
@@ -145,7 +150,7 @@ function renderDetail(){
   updateActiveTile();
 }
 function selectStyle(name,scroll=false,push=true){
-  if(!ALL_STYLE_NAMES.includes(name))return;
+  if(!allStyleNames.includes(name))return;
   selectedStyle=name;
   selectedFilter='all';
   highlightTech='';
@@ -164,7 +169,7 @@ function syncRoute(){
   const params=new URLSearchParams(location.search);
   const requested=nameForSlug.get(params.get('style'));
   const linked=params.get('tech')||'';
-  const entry=TECHS.find(t=>t.id===linked);
+  const entry=techs.find(t=>t.id===linked);
   selectedStyle=requested||entry?.styles[0]||DEFAULT_STYLE;
   selectedFilter='all';highlightTech=entry?.styles.includes(selectedStyle)?linked:'';
   renderDirectory();renderDetail();
@@ -172,15 +177,57 @@ function syncRoute(){
     requestAnimationFrame(()=>document.getElementById('tech-'+highlightTech)?.scrollIntoView({block:'center'}));
   }
 }
+function updateCounters(){
+  $('style-count').textContent=styles.length.toLocaleString();
+  $('tech-count').textContent=techs.length.toLocaleString();
+  $('allowed-count').textContent=techs.filter(t=>t.status==='allowed').length.toLocaleString();
+  $('restricted-count').textContent=techs.filter(t=>t.status!=='allowed').length.toLocaleString();
+}
+async function loadCommunityEdits(){
+  const indicator=$('catalog-status');
+  try{
+    const response=await fetch(API+'/api/tech',{cache:'no-store'});
+    if(!response.ok)throw Error('API '+response.status);
+    const data=await response.json();
+    if(!Array.isArray(data.entries))throw Error('Invalid catalog response');
+    const map=new Map(TECHS.map(item=>[item.id,{...item}]));
+    for(const changed of data.entries){
+      if(typeof changed?.id!=='string'||!(/^[a-z0-9][a-z0-9-]{1,70}$/.test(changed.id)))continue;
+      if(changed.hidden){map.delete(changed.id);continue;}
+      if(!STATUS[changed.status]||typeof changed.name!=='string'||
+         !Array.isArray(changed.styles)||!changed.styles.length||changed.styles.some(x=>typeof x!=='string'))continue;
+      map.set(changed.id,{
+        id:changed.id,name:changed.name,status:changed.status,
+        styles:changed.styles,video:changed.video||'',note:changed.note||''
+      });
+    }
+    techs=[...map.values()];
+    styles=STYLES.map(x=>({...x}));
+    styleGroups=STYLE_GROUPS.map(g=>({...g,names:[...g.names]}));
+    const seen=new Set(styles.map(item=>item.name));
+    const customNames=[...new Set(techs.flatMap(t=>t.styles))].filter(name=>name!==GENERAL&&!seen.has(name));
+    if(customNames.length){
+      styleGroups.push({id:'community',label:'Community additions',names:customNames});
+      for(const name of customNames)styles.push({name,group:'community',groupLabel:'Community additions'});
+    }
+    allStyleNames=[GENERAL,...styles.map(s=>s.name)];
+    groupIds=new Map(styles.map(style=>[style.name,style.groupLabel]));
+    nameForSlug=new Map(allStyleNames.map(name=>[slug(name),name]));
+    if(!allStyleNames.includes(selectedStyle))selectedStyle=DEFAULT_STYLE;
+    updateCounters();renderDirectory();renderDetail();
+    indicator.textContent=data.entries.length?
+      'Live community edits loaded · '+data.entries.length+' update(s)':'Rule snapshot · no community edits';
+  }catch(error){
+    indicator.textContent='Saved rules snapshot · live edits unavailable';
+    console.warn('Optional tech rules feed unavailable:',error);
+  }
+}
 function init(){
-  $('style-count').textContent=STYLES.length.toLocaleString();
-  $('tech-count').textContent=TECHS.length.toLocaleString();
-  $('allowed-count').textContent=TECHS.filter(t=>t.status==='allowed').length.toLocaleString();
-  $('restricted-count').textContent=TECHS.filter(t=>t.status!=='allowed').length.toLocaleString();
+  updateCounters();
 
   // Unknown technique IDs cannot masquerade as validated policy entries.
   for(const t of TECHS){
-    if(!ALL_STYLE_NAMES.length||!STATUS[t.status]||!t.styles.every(s=>ALL_STYLE_NAMES.includes(s)))
+    if(!ALL_STYLE_NAMES.length||!STATUS[t.status]||!t.styles.every(s=>allStyleNames.includes(s)))
       console.warn('Invalid tech catalog item:',t.id);
   }
 
@@ -204,5 +251,6 @@ function init(){
   });
   window.addEventListener('popstate',syncRoute);
   syncRoute();
+  loadCommunityEdits();
 }
 init();
