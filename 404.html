@@ -26,8 +26,34 @@ a.primary{background:var(--accent);color:#07111c;border-color:transparent}
 a:hover{filter:brightness(1.1)}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 </style>
+<style>
+body[data-page="notfound"]{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;min-height:100vh}
+body[data-page="notfound"] main{margin:auto;padding:70px 15px 100px;max-width:650px}
+body[data-page="notfound"] .code,body[data-page="notfound"] h1{font-family:"Space Grotesk",sans-serif}
+body[data-page="notfound"] .code{color:#b8a6fb}
+body[data-page="notfound"] h1{font-size:clamp(30px,4vw,43px);letter-spacing:-.07em}
+body[data-page="notfound"] p{font-family:"DM Sans",sans-serif;margin-bottom:6px}
+body[data-page="notfound"] .actions a{font-family:"DM Sans",sans-serif;border-radius:11px}
+body[data-page="notfound"] .actions a.primary{background:linear-gradient(110deg,#80dfff,#bbadff)}
+</style>
+<link rel="stylesheet" href="/site-theme.css?v=3">
+<link rel="stylesheet" href="/site-unify.css?v=2">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<script defer src="/site-experience.js?v=3"></script>
 </head>
-<body>
+<body data-page="notfound">
+<nav class="n29-nav" aria-label="Primary navigation">
+  <div class="n29-nav-inner">
+    <a class="n29-nav-brand" href="/"><span class="n29-nav-mark">N</span><span>N29 <small>/ BL:R</small></span></a>
+    <div class="n29-nav-links">
+      <a href="/">Home</a><a href="/servers/">Servers</a><a href="/servers/customs/">Customs</a>
+      <a href="/tech/">Tech rules</a><a href="/tools/">Creator tools</a>
+      <a href="/tech/#support" class="n29-nav-support">Support</a>
+      <a href="https://n29.kz/" target="_blank" rel="noopener noreferrer" class="n29-nav-portfolio">Portfolio ↗</a>
+    </div>
+    <button class="n29-nav-search" data-command-open type="button">⌕ Quick jump <kbd>⌘ K</kbd></button>
+  </div>
+</nav>
 <main>
 <div class="code" aria-hidden="true">404</div>
 <h1>Page not found</h1>
