@@ -44,24 +44,27 @@ input:focus-visible,select:focus-visible{outline-offset:0}
 input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.25)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
-<link rel="stylesheet" href="/site-theme.css?v=2">
-<script defer src="/site-experience.js?v=2"></script></head>
+<link rel="stylesheet" href="/site-theme.css?v=3">
+<link rel="stylesheet" href="/site-unify.css?v=2">
+<script defer src="/site-experience.js?v=3"></script></head>
 <body data-page="tiktok">
-<nav class="site-tool-nav" aria-label="Site navigation">
-  <a class="site-tool-brand" href="/">N29 / BL:R</a>
-  <div class="site-tool-links">
-    <a href="/">Home</a>
-    <a href="/servers/">Servers</a>
-    <a href="/servers/customs/">Customs</a>
-    <a href="/tech/">Tech rules</a>
-    <a href="/#tools">Creator tools</a>
-    <a href="/clipper.html">MP4 clipper</a>
-    <a href="/tech/#support">Support</a>
+<nav class="n29-nav" aria-label="Primary navigation">
+  <div class="n29-nav-inner">
+    <a class="n29-nav-brand" href="/"><span class="n29-nav-mark">N</span><span>N29 <small>/ BL:R</small></span></a>
+    <div class="n29-nav-links">
+      <a href="/">Home</a>
+      <a href="/servers/">Servers</a>
+      <a href="/servers/customs/">Customs</a>
+      <a href="/tech/">Tech rules</a>
+      <a href="/tools/" aria-current="page">Creator tools</a>
+      <a href="/tech/#support" class="n29-nav-support">Support</a>
+    </div>
+    <button class="n29-nav-search" data-command-open type="button" aria-label="Search all pages"><span aria-hidden="true">⌕</span> Quick jump <kbd>⌘ K</kbd></button>
   </div>
 </nav>
+
 <main class="wrap">
-<a class="back" href="./#tools">← Back to Creator Tools</a><header><div class="eyebrow">N29 · Creator Tools</div>
-<h1>TikTok MP4 Downloader</h1><p>Download a public TikTok video, choose the resolution, and export a repaired MP4 with readable duration metadata.</p></header>
+<a class="back" href="/tools/">← Back to Creator Tools</a><header class="n29-page-hero"><span class="eyebrow">N29 / CREATOR STUDIO</span><h1>TikTok MP4 Downloader</h1><p>Download a public TikTok video, choose the resolution, and export a repaired MP4 with readable duration metadata.</p><div class="n29-feature-actions"><a href="/tools/">← Creator Studio</a><a href="/clipper.html">MP4 clipper ↗</a></div></header>
 <section class="panel">
 <div class="row"><div class="field"><label for="url">TikTok video URL</label>
 <input id="url" type="url" inputmode="url" placeholder="https://www.tiktok.com/@user/video/…" autocomplete="off" spellcheck="false"></div>
