@@ -15,9 +15,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/tools/legacy.css?v=1">
+  <link rel="stylesheet" href="/tools/controls.css?v=1">
   <link rel="stylesheet" href="/site-theme.css?v=3">
-  <link rel="stylesheet" href="/tools/style.css?v=1">
+  
   <link rel="stylesheet" href="/site-unify.css?v=2">
   <script defer src="/site-experience.js?v=3"></script>
   <script defer src="/tools/tiktok-info.js?v=1"></script>
@@ -27,9 +27,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="/site-motion.css?v=1">
+  <link rel="stylesheet" href="/tools/style.css?v=2">
   <script defer src="/site-motion.js?v=1"></script>
 </head>
-<body data-page="home" data-template="creator">
+<body data-page="tools" data-template="creator">
   <a class="skip-link" href="#main">Skip to tools</a>
   <nav class="n29-nav" aria-label="Primary navigation">
   <div class="n29-nav-inner">
@@ -50,33 +51,100 @@
           <h1>Edit your clips.<br><span class="site-gradient-word">Create better videos.</span></h1>
           <p class="subtitle">A dedicated space for patching videos, inspecting TikTok posts, compressing MP4s and cutting clips. Your editing tools are now together in one place.</p>
           <div class="site-hero-actions">
-            <a class="site-primary-link" href="#tools">Explore all tools <span aria-hidden="true">↘</span></a>
+            <a class="site-primary-link" href="#video-tools">Explore video tools <span aria-hidden="true">↘</span></a>
             <a class="site-outline-link" href="/clipper.html">Trim an MP4 <span aria-hidden="true">↗</span></a>
           </div>
           <div class="site-hero-foot"><span>Browser-based video utilities</span><span>No Roblox login required</span></div>
         </div>
         <div class="site-hero-panel" aria-label="Quick creator tool links">
           <div class="site-panel-top">Creator shortcuts <span class="site-panel-mark" aria-hidden="true">↗</span></div>
-          <div class="site-panel-title">Choose a workflow</div>
-          <p class="site-panel-description">Open a tool without scrolling through the entire website.</p>
-          <a class="site-panel-link" href="#patch-tool"><span class="site-panel-icon" aria-hidden="true">🧩</span><span><strong>Patch a video</strong><small>Modify MP4 metadata</small></span><span class="site-panel-arrow" aria-hidden="true">↗</span></a>
+          <div class="site-panel-title">Start with a task</div>
+          <p class="site-panel-description">Compress → patch → clip, or inspect a TikTok video.</p>
+
           <a class="site-panel-link" href="#compress-tool"><span class="site-panel-icon" aria-hidden="true">📦</span><span><strong>Compress video</strong><small>Reduce MP4 size in browser</small></span><span class="site-panel-arrow" aria-hidden="true">↗</span></a>
+          <a class="site-panel-link" href="#patch-tool"><span class="site-panel-icon" aria-hidden="true">🧩</span><span><strong>Patch a video</strong><small>Modify MP4 metadata</small></span><span class="site-panel-arrow" aria-hidden="true">↗</span></a>
           <a class="site-panel-link" href="#analyze-tool"><span class="site-panel-icon" aria-hidden="true">📈</span><span><strong>TikTok analyzer</strong><small>Inspect public video statistics</small></span><span class="site-panel-arrow" aria-hidden="true">↗</span></a>
           <a class="site-panel-link" href="/tiktok-downloader.html"><span class="site-panel-icon" aria-hidden="true">🎞️</span><span><strong>TikTok download &amp; fix</strong><small>Save or repair an MP4</small></span><span class="site-panel-arrow" aria-hidden="true">↗</span></a>
         </div>
       </header>
-      <section class="section" id="tools" aria-labelledby="tools-title">
-      <h2 class="section-title" id="tools-title">Creator studio</h2>
-      <div class="site-tools-intro">
-        <p>All-in-one video utilities for creators. Browse by category, then process clips in your browser.</p>
-        <div class="site-tool-filters" role="group" aria-label="Filter creator tools">
-          <button type="button" data-tool-filter="all" aria-pressed="true">All tools</button>
-          <button type="button" data-tool-filter="video" aria-pressed="false">Video editing</button>
-          <button type="button" data-tool-filter="tiktok" aria-pressed="false">TikTok</button>
+      <section class="section studio-directory" id="tools" aria-labelledby="tools-title">
+        <div class="studio-overview">
+          <div><span class="studio-kicker">N29 / WORKFLOW DIRECTORY</span><h2 class="section-title" id="tools-title">All creator tools, organized.</h2><p>Choose what you want to do: prepare an MP4, trim it, patch metadata, or work with a TikTok post. Everything stays in two clear categories.</p></div>
+          <nav class="studio-jump" aria-label="Creator tool categories">
+            <a href="#video-tools"><span>01</span> Video editing &amp; repair <b aria-hidden="true">↘</b></a>
+            <a href="#tiktok-tools"><span>02</span> TikTok tools <b aria-hidden="true">↘</b></a>
+          </nav>
         </div>
+        <section class="studio-category" id="video-tools" aria-labelledby="video-tools-title">
+          <div class="studio-category-head"><div><span class="studio-kicker">01 / PREPARE AND EDIT</span><h3 id="video-tools-title">Video editing &amp; repair</h3><p>Compress large footage first, patch MP4 metadata when needed, or cut a short section from a direct video URL.</p></div><span class="studio-count">3 TOOLS</span></div>
+          <div class="creator-tools-grid studio-grid-edit">
+            <div class="tool-card compressor-card" id="compress-tool">
+        <div class="tool-kicker">Local Video Compressor</div>
+        <h3>Compress a video</h3>
+        <p>
+          Reduce video file size directly in your browser. Nothing is uploaded. The compressor
+          keeps the original resolution and exports a broadly compatible H.264 MP4.
+        </p>
+        <p class="recommendation-note">
+          If your video file is large, <strong>compress it here first</strong> before using the CompressBase patcher.
+          <strong>High quality is recommended</strong> for the best balance of smaller file size and preserved video quality.
+        </p>
+
+        <label id="compress-drop" class="compress-drop" for="compress-video">
+          <input id="compress-video" type="file" accept="video/*,.mkv,.avi">
+          <span class="compress-drop-inner">
+            <span class="btn-tool">Select video</span>
+            <span class="compress-drop-title">or drop a file here</span>
+            <span class="compress-drop-subtitle">MP4, MOV, WebM, MKV, AVI and other FFmpeg-supported formats</span>
+          </span>
+        </label>
+
+        <div class="compress-controls">
+          <div class="compress-field">
+            <label for="compress-quality">Compression</label>
+            <select id="compress-quality" class="tool-input">
+              <option value="high" selected>High quality · Recommended</option>
+              <option value="balanced">Balanced</option>
+              <option value="small">Smaller file</option>
+            </select>
+          </div>
+          <div id="compress-file-info" class="compress-file-info">Choose a video to start.</div>
+        </div>
+
+        <div class="tool-actions">
+          <button id="compress-button" class="btn-tool" type="button" disabled>Compress video</button>
+          <button id="compress-cancel" class="btn-tool secondary" type="button" disabled>Cancel</button>
+          <a id="compress-download" class="btn-tool secondary" hidden>Download compressed video</a>
+        </div>
+
+        <progress id="compress-progress" class="patch-progress" max="100" value="0" hidden></progress>
+        <p id="compress-status" class="patch-status" role="status" aria-live="polite"></p>
+
+        <div id="compress-results" class="compress-results" hidden>
+          <div class="compress-preview">
+            <div class="compress-preview-head">
+              <strong>Original</strong>
+              <span id="compress-original-size">-</span>
+            </div>
+            <video id="compress-original-preview" controls playsinline preload="metadata"></video>
+          </div>
+          <div class="compress-preview">
+            <div class="compress-preview-head">
+              <strong>Compressed</strong>
+              <span id="compress-output-size">-</span>
+            </div>
+            <video id="compress-output-preview" controls playsinline preload="metadata"></video>
+          </div>
+        </div>
+
+        <div id="compress-summary" class="compress-summary" hidden></div>
+
+        <p class="tool-note">
+          Powered by FFmpeg.wasm. The ~31 MB compression engine loads on first use. Browser encoding
+          is CPU-heavy and can be slower than native apps, especially for long or high-resolution videos.
+        </p>
       </div>
-      <div class="creator-tools-grid">
-      <div class="tool-card" id="patch-tool">
+            <div class="tool-card" id="patch-tool">
         <div class="tool-kicker">CompressBase Method API</div>
         <h3>Patch an MP4</h3>
         <p>
@@ -122,8 +190,21 @@
           </p>
         </div>
       </div>
-
-      <div class="tool-card" id="analyze-tool">
+            <div class="tool-card compressor-card" id="clipper-tool">
+        <div class="tool-kicker">Online MP4 Clipper</div>
+        <h3>Download part of an MP4</h3>
+        <p>Paste a direct MP4 URL, set the start and end times, and save just that fragment. Uses HTTP range requests where the video host allows them.</p>
+        <div class="tool-actions">
+          <a href="/clipper.html" class="btn-tool">Open MP4 Clip Downloader ↗</a>
+        </div>
+        <p class="tool-note">Runs in your browser. The video server must allow cross-origin reads and partial byte-range requests.</p>
+      </div>
+          </div>
+        </section>
+        <section class="studio-category" id="tiktok-tools" aria-labelledby="tiktok-tools-title">
+          <div class="studio-category-head"><div><span class="studio-kicker">02 / DISCOVER AND DOWNLOAD</span><h3 id="tiktok-tools-title">TikTok tools</h3><p>Inspect a public video's statistics and resolution, then open the downloader to save or repair its MP4.</p></div><span class="studio-count">2 TOOLS</span></div>
+          <div class="creator-tools-grid studio-grid-tiktok">
+            <div class="tool-card" id="analyze-tool">
         <div class="tool-kicker">TikTok Video Info</div>
         <h3>Check a TikTok video</h3>
         <p>
@@ -192,8 +273,7 @@
           </p>
         </div>
       </div>
-
-      <div class="tool-card compressor-card" id="tiktok-download-tool">
+            <div class="tool-card compressor-card" id="tiktok-download-tool">
         <div class="tool-kicker">TikTok Video Downloader</div>
         <h3>Download &amp; repair TikTok MP4</h3>
         <p>Save a public TikTok video at best available quality, 720p, or 480p. Automatically rebuild MP4 duration metadata for Discord and social media compatibility, or repair an already-downloaded file.</p>
@@ -202,85 +282,9 @@
         </div>
         <p class="tool-note">The video is repaired locally in your browser using FFmpeg.wasm. Cross-origin downloads depend on the media host.</p>
       </div>
-
-      <div class="tool-card compressor-card" id="clipper-tool">
-        <div class="tool-kicker">Online MP4 Clipper</div>
-        <h3>Download part of an MP4</h3>
-        <p>Paste a direct MP4 URL, set the start and end times, and save just that fragment. Uses HTTP range requests where the video host allows them.</p>
-        <div class="tool-actions">
-          <a href="/clipper.html" class="btn-tool">Open MP4 Clip Downloader ↗</a>
-        </div>
-        <p class="tool-note">Runs in your browser. The video server must allow cross-origin reads and partial byte-range requests.</p>
-      </div>
-
-      <div class="tool-card compressor-card" id="compress-tool">
-        <div class="tool-kicker">Local Video Compressor</div>
-        <h3>Compress a video</h3>
-        <p>
-          Reduce video file size directly in your browser. Nothing is uploaded. The compressor
-          keeps the original resolution and exports a broadly compatible H.264 MP4.
-        </p>
-        <p class="recommendation-note">
-          If your video file is large, <strong>compress it here first</strong> before using the CompressBase patcher.
-          <strong>High quality is recommended</strong> for the best balance of smaller file size and preserved video quality.
-        </p>
-
-        <label id="compress-drop" class="compress-drop" for="compress-video">
-          <input id="compress-video" type="file" accept="video/*,.mkv,.avi">
-          <span class="compress-drop-inner">
-            <span class="btn-tool">Select video</span>
-            <span class="compress-drop-title">or drop a file here</span>
-            <span class="compress-drop-subtitle">MP4, MOV, WebM, MKV, AVI and other FFmpeg-supported formats</span>
-          </span>
-        </label>
-
-        <div class="compress-controls">
-          <div class="compress-field">
-            <label for="compress-quality">Compression</label>
-            <select id="compress-quality" class="tool-input">
-              <option value="high" selected>High quality · Recommended</option>
-              <option value="balanced">Balanced</option>
-              <option value="small">Smaller file</option>
-            </select>
           </div>
-          <div id="compress-file-info" class="compress-file-info">Choose a video to start.</div>
-        </div>
-
-        <div class="tool-actions">
-          <button id="compress-button" class="btn-tool" type="button" disabled>Compress video</button>
-          <button id="compress-cancel" class="btn-tool secondary" type="button" disabled>Cancel</button>
-          <a id="compress-download" class="btn-tool secondary" hidden>Download compressed video</a>
-        </div>
-
-        <progress id="compress-progress" class="patch-progress" max="100" value="0" hidden></progress>
-        <p id="compress-status" class="patch-status" role="status" aria-live="polite"></p>
-
-        <div id="compress-results" class="compress-results" hidden>
-          <div class="compress-preview">
-            <div class="compress-preview-head">
-              <strong>Original</strong>
-              <span id="compress-original-size">-</span>
-            </div>
-            <video id="compress-original-preview" controls playsinline preload="metadata"></video>
-          </div>
-          <div class="compress-preview">
-            <div class="compress-preview-head">
-              <strong>Compressed</strong>
-              <span id="compress-output-size">-</span>
-            </div>
-            <video id="compress-output-preview" controls playsinline preload="metadata"></video>
-          </div>
-        </div>
-
-        <div id="compress-summary" class="compress-summary" hidden></div>
-
-        <p class="tool-note">
-          Powered by FFmpeg.wasm. The ~31 MB compression engine loads on first use. Browser encoding
-          is CPU-heavy and can be slower than native apps, especially for long or high-resolution videos.
-        </p>
-      </div>
-      </div>
-    </section>
+        </section>
+      </section>
       <div data-site-connect></div>
     </main>
     <footer class="n29-bottom">
