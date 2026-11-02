@@ -2,6 +2,17 @@
 
 Source for [blr.n29.kz](https://blr.n29.kz/) (static GitHub Pages website).
 
+## Consistent Quick Jump and mobile controls (November 2026)
+
+Global **Quick Jump / Search** now uses one layout and trigger label on the homepage, servers, customs, tech rules, video tools, leaderboard archive and 404 page. `site-experience.js` builds the same searchable command dialog everywhere and renders the same shortcut in the shared header. `site-responsive.css`, loaded **after feature styles**, supplies scoped modal styles so local form and button CSS cannot accidentally change it.
+
+- **Keyboard accessibility:** Cmd/Ctrl+K opens Quick Jump, arrow keys choose a result, Enter follows a link, Escape closes it, and focus returns to the trigger.
+- **Skip to tools:** the accessibility skip link is hidden offscreen until keyboard focus; it is no longer an always-visible button in the upper left.
+- **Creator Studio:** equal-width desktop columns, full-width video compressor, aligned patch/clip cards, aligned TikTok cards, and stacked mobile layouts. Mobile upload and action controls use touch-friendly sizing; file upload and processing scripts are unchanged.
+- **Mobile header:** horizontal, touch-scrollable links below the identity and search trigger, instead of overflowing narrow screens.
+- **Browser QA:** `site-layout.browser.test.mjs` checks page-specific Quick Jump behavior, 360px viewport overflow, keyboard-only skip visibility and card alignment across desktop/tablet/mobile widths.
+- GitHub Pages only; neither the portfolio nor Glutony Worker repo is modified.
+
 ## Layout fixes: homepage and sorted Creator Studio (November 2026)
 
 The homepage **Play** directory is a compact 2×2 grid for public servers, custom matches, tech rules and support. Main/8v8/Pro remain in the functional Matchday Console above it rather than being duplicated as six oversized cards. The **Player snapshot** has a dedicated responsive avatar + 9-stat grid and is labeled as saved values, not live counters. Its Roblox profile loading hooks remain intact.
