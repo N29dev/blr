@@ -11,6 +11,7 @@
     { icon:'⚽', title:'8v8 servers', detail:'Find public 8v8 matches', url:'/servers/?mode=8v8' },
     { icon:'🏆', title:'Pro servers', detail:'Browse competitive public matches', url:'/servers/?mode=pro' },
     { icon:'🤝', title:'Custom matches', detail:'Find community-hosted lobbies', url:'/servers/customs/' },
+    { icon:'📜', title:'Tech & bug rules', detail:'Allowed and banned techniques by BL:R style', url:'/tech/' },
     { icon:'★', title:'Player stats', detail:'N29 in-game profile statistics', url:'/#stats' },
     { icon:'🎞️', title:'Creator tools', detail:'Video patcher, TikTok analyzer and compressor', url:'/#tools' },
     { icon:'✂️', title:'MP4 clipper', detail:'Export part of a direct MP4 URL', url:'/clipper.html' },
