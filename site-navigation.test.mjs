@@ -18,7 +18,8 @@ test('all major BLR pages use the portfolio-inspired shared navbar and styleshee
     const source=read(page);
     assert.ok(source.includes('class="n29-nav"'),page+' lacks shared nav');
     assert.ok(source.includes('/site-unify.css?v=2'),page+' lacks theme');
-    assert.ok(source.includes('/site-experience.js?v=3'),page+' lacks searchable quick nav');
+    assert.ok(source.includes('/site-responsive.css?v=1'),page+' missing shared mobile/search stylesheet');
+    assert.ok(source.includes('/site-experience.js?v=4'),page+' lacks searchable quick nav');
     assert.ok(source.includes('family=Space+Grotesk'),page+' lacks portfolio headline font');
     assert.ok(source.includes('family=DM+Sans'),page+' lacks portfolio body font');
     assert.ok(source.includes('href="/tools/"'),page+' creator route');
@@ -56,6 +57,23 @@ test('creator widgets moved intact to their own page',()=>{
   assert.ok(existsSync(join(root,'ffmpeg-worker.js')));
   assert.ok(studio.includes('href="/tiktok-downloader.html"'));
   assert.ok(studio.includes('href="/clipper.html"'));
+});
+
+test('skip link is shared and search UI is the same on each page',()=>{
+  const source=read('site-experience.js');
+  assert.ok(source.includes('Open Quick Jump search'));
+  assert.ok(source.includes("dialog.id='n29-quick-jump'"));
+  assert.ok(source.includes('n29-search-label'));
+  for(const page of ['index.html','tools/index.html','servers/index.html','servers/customs/index.html',
+                     'tech/index.html','clipper.html','tiktok-downloader.html','leaderboard/index.html']){
+    const html=read(page);
+    assert.ok(html.includes('/site-responsive.css?v=1'),page);
+    assert.ok(html.includes('/site-experience.js?v=4'),page);
+  }
+  const css=read('site-responsive.css');
+  assert.ok(css.includes('a.skip-link:focus'));
+  assert.ok(css.includes('dialog.site-command-dialog[open]'));
+  assert.ok(css.includes('.n29-nav-links'));
 });
 
 test('site quick jump is focused on BLR, portfolio and Glutony projects',()=>{
