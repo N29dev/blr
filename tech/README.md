@@ -1,5 +1,17 @@
 # BL:R Tech & Bug Directory
 
+## Public search page + private admin
+
+- **Public:** [blr.n29.kz/tech/](https://blr.n29.kz/tech/) — search a style name, select that style, see its allowed, disallowed and punishable techniques; follow real YouTube demonstration links.
+- **Private:** [blr.n29.kz/tech/admin/](https://blr.n29.kz/tech/admin/) — owner-only add/edit/remove and YouTube link management. Type a new style name in the editor's **Styles** field if it's missing from the catalog.
+- The static source below is the original moderation snapshot, while the public page merges additional edits from the Glutony Worker at `GET /api/tech` (Cloudflare D1). The original snapshot is still shown if the Worker is unavailable.
+- For setup, apply Glutony D1 migration `0004_tech_rules.sql` and configure a **distinct** `TECH_ADMIN_KEY` Cloudflare Secret of at least 32 characters. [Full deployment instructions](https://github.com/N29dev/Glutony#blr-tech-rules-admin-editor). Never put admin keys in GitHub or share them in chats.
+- The key stays only in the admin tab's memory. It is cleared on lock/reload and never persisted in browser local storage. The Worker enforces auth on every admin request; CORS alone is not an authentication mechanism.
+
+The admin route can edit or hide any listing, including source entries, but cannot alter the static source snapshot. If your rule source changes, update both this index and its policy links carefully.
+
+
+
 **Live path after GitHub Pages deploy:** https://blr.n29.kz/tech/
 
 This is an **unofficial community-maintained transcription** of the moderation rules supplied on November 2, 2026. It is **not an official, automatically synchronized moderation database**. Staff may revise rules; their current instructions override this page.
@@ -49,7 +61,7 @@ Style groups and variants are in the \`STYLE_GROUPS\` list. The initial names ar
 
 The "all forms of bug abuse are not allowed" principle is shown prominently. Examples involving an unintended speed boost, teleportation, flight, shot-range/power increase, automatic goals, and gameplay-affecting emote bugs can be punishable even if not separately listed.
 
-No external data or API is fetched at runtime, aside from a visitor choosing to open YouTube, Discord, or report links. Clips are not embedded or autoplayed; links open YouTube.
+The public site fetches only the Glutony tech-edit overlay when available. No Roblox account or private token is needed to browse. Clips are never embedded or autoplayed; visitors may open them on YouTube.
 
 ## Local verification
 
