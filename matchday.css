@@ -1,0 +1,256 @@
+/* N29 BL:R / Matchday — homepage + server finder only.
+   Never imported by leaderboard, custom match board or video tools. */
+:root {--match-sky:#78d9ff;--match-purple:#a498ff;--match-mint:#80e8c5;}
+/* HOME */
+body[data-page="home"] .topbar {border-bottom-color:rgba(155,204,255,.18);}
+body[data-page="home"] header.site-hero {
+  isolation:isolate;
+  background:linear-gradient(115deg,rgba(26,57,88,.94),rgba(15,27,49,.96) 52%,rgba(37,36,76,.94));
+  border-color:rgba(171,220,255,.27);
+  box-shadow:0 40px 110px rgba(0,0,0,.25),inset 0 1px rgba(217,239,255,.065);
+}
+body[data-page="home"] header.site-hero::before {
+  width:650px;height:650px;right:-110px;top:-250px;opacity:.72;
+  background:radial-gradient(circle,rgba(92,157,246,.24),rgba(122,81,244,.07) 45%,transparent 75%);
+}
+body[data-page="home"] header.site-hero::after {
+  opacity:.23;background:repeating-linear-gradient(125deg,transparent 0 43px,rgba(190,220,255,.085) 44px,transparent 45px);
+}
+body[data-page="home"] .site-hero-copy {align-self:center;}
+body[data-page="home"] .site-hero-copy h1 {
+  font-size:clamp(45px,5.3vw,76px);line-height:1.055;
+  letter-spacing:-.073em;
+}
+body[data-page="home"] .site-panel-link {transition:background .23s,border-color .23s,transform .23s;}
+body[data-page="home"] .site-panel-link:hover {transform:translateX(5px);}
+body[data-page="home"] .site-hero-panel {border-color:rgba(182,210,255,.25);box-shadow:0 20px 50px rgba(0,0,0,.12);}
+body[data-page="home"] .site-gradient-word {background-image:linear-gradient(102deg,#76dfff,#a3a6ff 70%,#cbbaff);}
+body[data-page="home"] .site-identity-image picture {display:block;width:100%;height:100%;}
+body[data-page="home"] .site-identity-image img {filter:none;image-rendering:auto;}
+body[data-page="home"] .site-route-card {position:relative;overflow:hidden;isolation:isolate;}
+body[data-page="home"] .site-route-card::before {
+  content:"";position:absolute;pointer-events:none;inset:0;z-index:-1;opacity:0;
+  background:radial-gradient(300px circle at 50% 0,rgba(110,215,251,.12),transparent 80%);
+  transition:opacity .28s;
+}
+body[data-page="home"] .site-route-card:hover::before {opacity:1;}
+body[data-page="home"] .section-title {color:#f3f8ff;}
+body[data-page="home"] .stat strong {letter-spacing:-.055em;}
+body[data-page="home"] .tool-card:focus-within {border-color:rgba(111,216,255,.48);}
+
+/* Honest featured match selector — no hardcoded live counts */
+body[data-page="home"] .matchday-quickstart {
+  position:relative;isolation:isolate;overflow:hidden;
+  margin:0 0 60px;padding:29px;border-radius:24px;
+  border:1px solid rgba(158,212,255,.26);
+  background:linear-gradient(125deg,rgba(20,39,65,.96),rgba(13,23,43,.94) 60%,rgba(27,29,66,.93));
+  box-shadow:0 20px 55px rgba(0,0,0,.12);
+}
+body[data-page="home"] .matchday-quickstart::after {
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:.14;
+  background-image:linear-gradient(rgba(126,200,255,.22) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(126,200,255,.22) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:linear-gradient(90deg,transparent,#000);
+}
+.matchday-quickstart-head {display:flex;justify-content:space-between;align-items:flex-start;gap:22px;}
+.matchday-quickstart-intro {max-width:710px;}
+.matchday-eyebrow {display:inline-flex;align-items:center;gap:11px;color:#9be6ff;letter-spacing:.11em;font:800 10px/1.5 ui-monospace,SFMono-Regular,monospace;}
+.matchday-pulse {width:7px;height:7px;border-radius:50%;display:inline-block;background:#78e8bd;box-shadow:0 0 0 5px rgba(120,232,189,.12);}
+.matchday-quickstart h2 {margin:14px 0 10px;font:850 clamp(26px,3.1vw,39px)/1.12 Inter,system-ui,sans-serif;letter-spacing:-.065em;}
+.matchday-quickstart h2 em {font-style:normal;color:#a9c4ff;}
+.matchday-quickstart p {margin:0;color:#a8bcd4;line-height:1.8;font-size:13px;}
+.matchday-console-mark {width:82px;height:82px;flex:0 0 82px;display:grid;place-items:center;
+  color:#abcdec;opacity:.42;transform:rotate(-14deg);
+  border:2px solid rgba(135,210,249,.23);border-radius:28px;
+  font:900 24px Inter,system-ui,sans-serif;letter-spacing:-.08em;}
+.matchday-console-mark b {position:absolute;transform:translate(23px,14px);color:#8d9cff;font-size:25px;}
+.matchday-mode-switch {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;margin-top:24px;
+}
+.matchday-mode-switch button {
+  min-width:0;display:flex;align-items:flex-start;flex-direction:column;justify-content:center;
+  gap:4px;min-height:67px;padding:12px 15px;
+  border:1px solid rgba(177,210,255,.17);border-radius:13px;
+  background:rgba(11,23,43,.70);color:#bdcde2;
+  text-align:left;font:850 14px Inter,system-ui,sans-serif;
+  transition:border-color .22s,background .22s,transform .22s;
+}
+.matchday-mode-switch button small {font:650 10px Inter,system-ui,sans-serif;color:#90a7c4;}
+.matchday-mode-switch button:hover {transform:translateY(-2px);border-color:rgba(118,212,255,.46);background:rgba(32,56,87,.78);}
+.matchday-mode-switch button[aria-pressed="true"] {
+  border-color:rgba(118,212,255,.7);
+  background:linear-gradient(120deg,rgba(53,106,153,.62),rgba(56,59,125,.55));
+  color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.06),0 9px 25px rgba(0,0,0,.13);
+}
+.matchday-mode-switch button[aria-pressed="true"] small {color:#c4d8f4;}
+.matchday-console-bottom {
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  margin-top:17px;padding:19px 21px;border-radius:14px;
+  background:rgba(4,12,28,.40);border:1px solid rgba(172,206,251,.12);
+}
+.matchday-console-bottom>div {flex:1 1 270px;display:flex;flex-direction:column;gap:4px;}
+.matchday-console-bottom strong {color:#eff8ff;font-size:16px;font-weight:850;letter-spacing:-.025em;}
+.matchday-console-bottom span {color:#9fb2cc;font-size:12px;line-height:1.55;}
+.matchday-console-cta {
+  display:inline-flex;align-items:center;justify-content:space-between;gap:17px;
+  min-width:200px;min-height:45px;padding:12px 17px;border-radius:11px;
+  background:linear-gradient(105deg,#77dafa,#a2a3ff);
+  color:#071423;font-size:12px;font-weight:900;transition:transform .2s,filter .2s;
+}
+.matchday-console-cta span {color:#071423;font-size:16px;}
+.matchday-console-cta:hover {transform:translateY(-2px);filter:brightness(1.08);}
+
+/* SERVER FINDER */
+body[data-page="servers"] {
+  background:radial-gradient(ellipse 75% 50% at 75% -10%,rgba(93,101,244,.16),transparent 74%),
+    radial-gradient(ellipse 70% 55% at 7% 13%,rgba(55,160,196,.1),transparent 78%),#080e1b!important;
+}
+body[data-page="servers"] .wrap {max-width:1240px;}
+body[data-page="servers"] .topnav {padding:19px 0 25px;}
+body[data-page="servers"] .hero {
+  position:relative;isolation:isolate;overflow:hidden;
+  padding:35px 36px 33px;border:1px solid rgba(169,208,251,.19);border-radius:24px;
+  background:linear-gradient(125deg,rgba(24,44,73,.92),rgba(16,25,48,.9));
+}
+body[data-page="servers"] .hero::before {
+  content:"";position:absolute;z-index:-1;right:-70px;top:-195px;width:410px;height:410px;
+  border:1px solid rgba(169,220,255,.15);border-radius:50%;
+  box-shadow:0 0 0 38px rgba(154,195,255,.02),0 0 0 92px rgba(154,195,255,.017);
+}
+body[data-page="servers"] .hero h1 {font-size:clamp(36px,5.2vw,65px);line-height:1.12;max-width:800px;}
+body[data-page="servers"] .hero p {font-size:14px;line-height:1.8;max-width:740px;}
+body[data-page="servers"] .statusline {color:#afc5df;margin-top:23px;}
+body[data-page="servers"] .mode-panel {margin-top:22px;max-width:none;border-radius:16px;background:rgba(18,30,52,.88);}
+body[data-page="servers"] .mode {min-height:62px;font-size:14px;flex:1;}
+body[data-page="servers"] .mode[aria-selected="true"] {background:linear-gradient(107deg,rgba(67,101,187,.43),rgba(69,158,208,.18));}
+body[data-page="servers"] .metrics {margin:18px 0 22px;}
+body[data-page="servers"] .metric {position:relative;overflow:hidden;min-height:112px;padding:21px 24px;}
+body[data-page="servers"] .metric::after {
+  content:"";position:absolute;inset:auto -20px -35px auto;width:130px;height:130px;border-radius:50%;
+  background:radial-gradient(circle,rgba(102,194,243,.09),transparent 75%);pointer-events:none;
+}
+body[data-page="servers"] .metric strong {font-size:clamp(27px,3vw,37px);}
+body[data-page="servers"] .toolbar {
+  position:sticky;z-index:10;top:8px;
+  border-color:rgba(147,198,248,.24);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  background:rgba(14,24,42,.95);
+  box-shadow:0 10px 25px rgba(0,0,0,.10);
+}
+body[data-page="servers"] .search {min-width:180px;}
+body[data-page="servers"] .field:focus {border-color:var(--match-sky);box-shadow:0 0 0 3px rgba(120,217,255,.1);}
+body[data-page="servers"] .section-head {margin:20px 0 13px;}
+body[data-page="servers"] .section-head h2 {font-size:20px;letter-spacing:-.04em;}
+body[data-page="servers"] .server {position:relative;overflow:hidden;transition:transform .19s,border-color .19s,box-shadow .19s;}
+body[data-page="servers"] .server::after {content:"";pointer-events:none;position:absolute;inset:0;border-radius:inherit;opacity:0;
+  background:radial-gradient(320px circle at 90% 0%,rgba(113,209,255,.065),transparent 80%);
+  transition:opacity .2s;}
+body[data-page="servers"] .server:hover::after {opacity:1;}
+body[data-page="servers"] .server:hover {box-shadow:0 15px 35px rgba(0,0,0,.16);}
+body[data-page="servers"] .server.is-pinned {border-color:rgba(235,206,119,.38);}
+body[data-page="servers"] .server.is-pinned::before {content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(#ffe1a3,#aa99ff);}
+body[data-page="servers"] .server-top-actions {display:flex;gap:8px;align-items:flex-start;flex-shrink:0;}
+body[data-page="servers"] .server-pin {
+  width:35px;height:35px;display:grid;place-items:center;border-radius:11px;
+  color:#aabdd4;border:1px solid rgba(177,213,255,.18);background:rgba(131,174,231,.07);
+  font:800 22px/1 Inter,system-ui,sans-serif;
+  transition:background .2s,color .2s,border-color .2s;
+}
+body[data-page="servers"] .server-pin:hover {background:rgba(245,212,131,.14);border-color:rgba(243,218,154,.42);color:#ffe19b;}
+body[data-page="servers"] .server-pin[aria-pressed="true"] {color:#ffdc91;background:rgba(238,199,115,.12);border-color:rgba(238,199,115,.31);}
+body[data-page="servers"] .server .bar {background:#21344d;}
+body[data-page="servers"] .server .bar-inner {background:linear-gradient(90deg,#76dfee,#9991ff);}
+body[data-page="servers"] .server .facts {margin-top:13px;}
+body[data-page="servers"] .server .fact {font-size:11px;}
+body[data-page="servers"] .server .view {padding:11px 15px;}
+/* Compact, intentional filter controls */
+.finder-refinements {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:11px 0 0;}
+.finder-refinement-left {display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;}
+.finder-chip,.finder-region,.finder-reset {
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:40px;padding:9px 13px;border:1px solid rgba(170,204,248,.18);border-radius:10px;
+  background:rgba(22,37,61,.88);color:#b9cce4;font:750 12px Inter,system-ui,sans-serif;
+}
+.finder-chip:hover,.finder-reset:hover,.finder-region:hover {border-color:rgba(131,212,252,.46);color:#fff;}
+.finder-chip[aria-pressed="true"] {background:rgba(97,170,225,.17);color:#e1f8ff;border-color:rgba(131,212,252,.49);}
+.finder-chip #pinned-count {color:#ffe09f;font-size:11px;}
+.finder-region {text-align:left;max-width:235px;}
+.finder-region option {background:#11203a;}
+.finder-reset {color:#96dafa;border-style:dashed;}
+.finder-layout-switch {display:inline-flex;align-items:center;padding:4px;gap:4px;border:1px solid rgba(165,199,251,.15);border-radius:11px;background:#111f34;}
+.finder-layout-switch button {width:34px;height:31px;display:grid;place-items:center;border:0;border-radius:7px;color:#8fa9c5;background:transparent;font-size:20px;}
+.finder-layout-switch button[aria-pressed="true"] {color:#eff8ff;background:#2d476a;}
+.finder-layout-switch button:hover {color:#fff;}
+.finder-help {display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:9px;color:#8299b8;font-size:11px;}
+.finder-help kbd {padding:2px 6px;border:1px solid rgba(168,207,255,.2);background:#13243c;border-radius:4px;color:#bdd8ef;font:700 10px ui-monospace,SFMono-Regular,monospace;}
+/* List view: same cards and same data, reflowed rather than duplicated. */
+body[data-page="servers"] .grid.finder-list {grid-template-columns:1fr;}
+body[data-page="servers"] .finder-list .server {
+  display:grid;grid-template-columns:minmax(200px,1.3fr) minmax(128px,.58fr) minmax(185px,.85fr);
+  grid-template-rows:auto auto;align-items:center;column-gap:25px;row-gap:10px;min-height:139px;padding:20px 24px;
+}
+body[data-page="servers"] .finder-list .server-top {grid-column:1;grid-row:1/3;}
+body[data-page="servers"] .finder-list .server-count {grid-column:2;grid-row:1;margin:0;}
+body[data-page="servers"] .finder-list .server .bar {grid-column:2;grid-row:2;margin:0;}
+body[data-page="servers"] .finder-list .server .facts {grid-column:3;grid-row:1;margin:0;}
+body[data-page="servers"] .finder-list .server .cardfoot {grid-column:3;grid-row:2;}
+body[data-page="servers"] .finder-list .server-count strong {font-size:25px;}
+@media(max-width:940px) {
+  body[data-page="home"] .matchday-quickstart {padding:24px;}
+  body[data-page="servers"] .finder-list .server {grid-template-columns:minmax(160px,1fr) minmax(145px,.7fr);}
+  body[data-page="servers"] .finder-list .server-top {grid-column:1;grid-row:1/3;}
+  body[data-page="servers"] .finder-list .server-count {grid-column:2;grid-row:1;}
+  body[data-page="servers"] .finder-list .server .bar {grid-column:2;grid-row:2;}
+  body[data-page="servers"] .finder-list .server .facts {grid-column:1;grid-row:3;}
+  body[data-page="servers"] .finder-list .server .cardfoot {grid-column:2;grid-row:3;}
+}
+@media(max-width:760px) {
+  .matchday-mode-switch {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .matchday-console-mark {display:none;}
+  body[data-page="home"] .matchday-quickstart {margin-bottom:43px;}
+  body[data-page="servers"] .hero {padding:25px 22px;border-radius:20px;}
+  body[data-page="servers"] .toolbar {position:static;}
+  body[data-page="servers"] .finder-list .server {display:block;min-height:0;}
+  body[data-page="servers"] .finder-list .server-count {margin:19px 0 10px;}
+  body[data-page="servers"] .finder-list .server .facts {margin:16px 0;}
+  .finder-help span:last-child {display:none;}
+}
+@media(max-width:520px) {
+  body[data-page="home"] .matchday-quickstart {padding:20px;border-radius:19px;}
+  body[data-page="home"] .matchday-quickstart h2 {font-size:28px;}
+  .matchday-mode-switch button {padding:12px 11px;min-height:64px;font-size:12px;}
+  .matchday-console-bottom {padding:15px;}
+  .matchday-console-cta {width:100%;}
+  body[data-page="servers"] .hero {padding:20px 17px;}
+  body[data-page="servers"] .hero h1 {font-size:37px;}
+  .finder-refinement-left {gap:6px;}
+  .finder-chip,.finder-region,.finder-reset {padding:9px 10px;font-size:11px;}
+  .finder-region {flex:1 1 140px;max-width:none;}
+  .finder-layout-switch {margin-left:auto;}
+  .finder-help {display:none;}
+  body[data-page="servers"] .server-top-actions {gap:5px;}
+  body[data-page="servers"] .server-pin {width:33px;height:33px;}
+}
+@media(prefers-reduced-motion:no-preference) {
+  body[data-page="home"] header.site-hero {animation:matchday-rise .72s both;}
+  body[data-page="home"] .site-hero-copy h1 {animation:matchday-rise .75s .10s both;}
+  body[data-page="home"] .site-hero-panel {animation:matchday-rise .8s .2s both;}
+  body[data-page="home"] .matchday-pulse {animation:matchday-pulse 2.7s ease-in-out infinite;}
+  body[data-page="home"] .matchday-console-mark {animation:matchday-mark 13s ease-in-out infinite alternate;}
+  body[data-page="home"] .matchday-quickstart {animation:matchday-rise .7s both;}
+  body[data-page="servers"] .hero {animation:matchday-rise .55s both;}
+  body[data-page="servers"] .metrics .metric {animation:matchday-rise .55s both;}
+  body[data-page="servers"] .metrics .metric:nth-child(2) {animation-delay:.08s;}
+  body[data-page="servers"] .metrics .metric:nth-child(3) {animation-delay:.16s;}
+  body[data-page="servers"] .server {animation:matchday-card .33s cubic-bezier(.22,1,.36,1) both;}
+  @keyframes matchday-rise {from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none;}}
+  @keyframes matchday-card {from{opacity:.75;transform:translateY(8px)}to{opacity:1;transform:translateY(0);}}
+  @keyframes matchday-pulse {50%{box-shadow:0 0 0 9px rgba(120,232,189,.035);}}
+  @keyframes matchday-mark {to{transform:rotate(6deg);}}
+}
+@media(prefers-reduced-motion:reduce) {
+  .matchday-mode-switch button,.matchday-console-cta,body[data-page="servers"] .server,
+  body[data-page="servers"] .server-pin,body[data-page="home"] .site-panel-link {transition:none!important;animation:none!important;}
+  .matchday-mode-switch button:hover,.matchday-console-cta:hover,body[data-page="servers"] .server:hover {transform:none!important;}
+}
