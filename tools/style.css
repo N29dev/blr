@@ -220,7 +220,10 @@ body[data-page="tools"] .creator-tools-grid{
   width:100%!important;
   max-width:100%!important;
 }
-body[data-page="tools"] .studio-grid-edit #compress-tool{grid-column:1/-1}
+/* .compressor-card is also used for Clipper and TikTok Download.
+   Reset the inherited full-row span on those smaller cards. */
+body[data-page="tools"] .creator-tools-grid > .compressor-card{grid-column:auto!important}
+body[data-page="tools"] .studio-grid-edit #compress-tool{grid-column:1/-1!important}
 body[data-page="tools"] .creator-tools-grid > .tool-card{
   display:flex!important;flex-direction:column!important;
   width:100%!important;max-width:100%!important;min-width:0!important;
