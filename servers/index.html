@@ -141,7 +141,6 @@
   </style>
 <link rel="stylesheet" href="/site-theme.css?v=1">
 <link rel="stylesheet" href="/matchday.css?v=1">
-<link rel="stylesheet" href="/smart-finder.css?v=1">
 <script defer src="/site-experience.js?v=1"></script>
 </head>
 <body data-page="servers">
@@ -158,7 +157,7 @@
     <header class="hero">
       <div class="eyebrow">GLUTONY · SERVER BROWSER</div>
       <h1>Find your next match<span style="color:var(--purple)">.</span></h1>
-      <p>Browse available <b>Blue Lock: Rivals</b> servers, compare regions and open slots, and find players. No Roblox login required here.</p>
+      <p>Browse sampled <b>Blue Lock: Rivals</b> servers. Compare regions, player counts, open slots, and reported ping, then join directly. No Roblox login required here.</p>
       <div class="statusline"><span id="dot" class="dot"></span><span id="live-status" role="status" aria-live="polite">Connecting to Glutony…</span><span>·</span><span id="last-updated">Waiting for servers</span></div>
     </header>
 
@@ -175,52 +174,10 @@
       <div class="metric"><strong id="count-spots">—</strong><small>Free slots in sample</small></div>
     </section>
 
-    <section class="smart-finder" aria-labelledby="smart-finder-title">
-      <div class="smart-finder-heading">
-        <div>
-          <span class="smart-finder-kicker">✦ MATCH FINDER / PUBLIC LOBBIES</span>
-          <h2 id="smart-finder-title">Find a lobby for your squad.</h2>
-          <p>Choose how many players are joining and the kind of lobby you prefer. Suggestions use <strong>sampled</strong> public server counts, available slots, and Roblox-reported server ping — not your personal latency.</p>
-        </div>
-      </div>
-      <form id="match-form" class="smart-finder-controls">
-        <label for="party-size">Players joining
-          <select id="party-size" aria-describedby="party-hint">
-            <option value="1">Solo · 1 player</option>
-            <option value="2">Duo · 2 players</option>
-            <option value="3">3 players</option>
-            <option value="4">4 players</option>
-            <option value="5">5 players</option>
-            <option value="6">6 players</option>
-            <option value="7">7 players</option>
-            <option value="8">8 players</option>
-          </select>
-        </label>
-        <label for="match-vibe">Match preference
-          <select id="match-vibe">
-            <option value="balanced">Balanced</option>
-            <option value="active">More active</option>
-            <option value="roomy">More open slots</option>
-          </select>
-        </label>
-        <button type="submit" id="find-matches">✦ Find my match</button>
-      </form>
-      <p id="party-hint" class="smart-finder-hint">Results must have enough open slots for everyone. Teams and server entry are not guaranteed by Roblox.</p>
-      <div class="match-picks" id="match-picks" hidden>
-        <div class="match-picks-head">
-          <div><strong>Suggested from this sample</strong><span id="match-picks-count" role="status" aria-live="polite">Checking servers…</span></div>
-          <button type="button" id="share-match-search">Share search ↗</button>
-        </div>
-        <div id="match-picks-list" class="match-picks-list"></div>
-        <p class="match-picks-note">Suggestions use occupancy, open spots, and reported server ping; they cannot predict your actual latency or guarantee joining a specific server. Pinned servers are saved only in your browser session and aren't included in shared searches.</p>
-      </div>
-    </section>
-
     <div class="toolbar">
       <input id="search" class="field search" type="search" autocomplete="off" placeholder="Search city, country, version…" aria-label="Search servers">
       <select id="sort" class="field sort" aria-label="Sort servers">
         <option value="players">Most players</option>
-        <option value="fit">Best fit for my squad</option>
         <option value="space">Most free slots</option>
         <option value="ping">Lowest server ping</option>
         <option value="version">Newest version</option>
@@ -351,18 +308,9 @@
       render();
     }
     let twoOpenOnly=params.get('minOpen')==='2', pinnedOnly=false, countryChoice=String(params.get('country')||'').slice(0,64);
-    const validVibes=['balanced','active','roomy'];
-    const initialParty=Number(params.get('party'));
-    let partySize=Number.isInteger(initialParty)&&initialParty>=1&&initialParty<=8?initialParty:1;
-    let matchVibe=validVibes.includes(params.get('vibe'))?params.get('vibe'):'balanced';
-    let recommendationsActive=params.get('pick')==='1';
-    const pickSection=el('match-picks'),pickList=el('match-picks-list');
-    el('party-size').value=String(partySize);
-    el('match-vibe').value=matchVibe;
     ui.search.value=String(params.get('q')||'').slice(0,100);
     const initialSort=String(params.get('sort')||'');
-    if(['fit','players','space','ping','version'].includes(initialSort))ui.sort.value=initialSort;
-
+    if(['players','space','ping','version'].includes(initialSort))ui.sort.value=initialSort;
     let listLayout='grid';
     try{if(sessionStorage.getItem('n29-blr-layout-v1')==='list')listLayout='list';}catch{}
     const countrySelect=el('country-filter');
@@ -386,7 +334,7 @@
       el('filter-open').setAttribute('aria-pressed',String(twoOpenOnly));
       el('filter-pinned').setAttribute('aria-pressed',String(pinnedOnly));
       el('pinned-count').textContent=String(serverList.filter(isPinned).length);
-      el('reset-filters').hidden=!(twoOpenOnly||pinnedOnly||countryChoice||ui.search.value.trim()||regionFilter||partySize!==1||matchVibe!=='balanced'||recommendationsActive||ui.sort.value!=='players');
+      el('reset-filters').hidden=!(twoOpenOnly||pinnedOnly||countryChoice||ui.search.value.trim()||regionFilter||ui.sort.value!=='players');
       ui.list.classList.toggle('finder-list',listLayout==='list');
       el('layout-grid').setAttribute('aria-pressed',String(listLayout==='grid'));
       el('layout-list').setAttribute('aria-pressed',String(listLayout==='list'));
@@ -454,85 +402,16 @@
       const wrap=node('div','empty'),strong=node('strong','',title);
       wrap.append(strong,node('div','',subtitle));ui.list.append(wrap);
     }
-    /* "Best fit" is a deterministic suggestion, never a claimed personal ping prediction. */
-    function fitScore(s) {
-      const fullness=Math.max(0,Math.min(1,s.playing/Math.max(1,s.maxPlayers)));
-      const spare=Math.max(0,s.free-partySize);
-      const pingBonus=Number.isFinite(s.ping)&&s.ping>=0 ? Math.max(0,Math.min(8,(240-s.ping)/30)) : 0;
-      if(matchVibe==='active')return fullness*105 + Math.min(spare,3)*2 + pingBonus;
-      if(matchVibe==='roomy')return Math.min(spare,10)*8 + fullness*22 + pingBonus;
-      return (1-Math.abs(fullness-.72))*80 + Math.min(spare,6)*3 + pingBonus;
-    }
-    function rankFit(a,b) {return fitScore(b)-fitScore(a)||b.playing-a.playing||String(a.id).localeCompare(String(b.id));}
-    function matchReason(s) {
-      const available=Math.max(0,s.free-partySize);
-      const room=available>0 ? available+' extra open after your group' : 'exactly enough slots for your group';
-      return matchVibe==='active'
-        ? 'Prioritizes populated lobbies · '+room
-        : matchVibe==='roomy'
-          ? 'Prioritizes spare capacity · '+room
-          : 'Balances activity and room for your party · '+room;
-    }
-    function buildFilterUrl() {
-      const url=new URL('/servers/',location.origin);
-      url.searchParams.set('mode',mode);
-      if(partySize!==1)url.searchParams.set('party',String(partySize));
-      if(matchVibe!=='balanced')url.searchParams.set('vibe',matchVibe);
-      if(ui.search.value.trim())url.searchParams.set('q',ui.search.value.trim().slice(0,100));
-      if(countryChoice)url.searchParams.set('country',countryChoice);
-      if(twoOpenOnly)url.searchParams.set('minOpen','2');
-      if(ui.sort.value!=='players')url.searchParams.set('sort',ui.sort.value);
-      if(recommendationsActive)url.searchParams.set('pick','1');
-      return url.href;
-    }
-    function renderRecommendations(available) {
-      pickSection.hidden=!recommendationsActive;
-      if(!recommendationsActive)return;
-      pickList.replaceChildren();
-      const label=el('match-picks-count');
-      if(!available.length) {
-        const loading=ui.refresh.disabled;
-        label.textContent=loading?'Scanning public servers…':'No matching lobbies in the current sample';
-        pickList.append(node('div','match-pick-empty',loading?'The suggestions will appear after the current scan completes.':'Try a smaller group, another country, or reset your other filters.'));
-        return;
-      }
-      const top=[...available].sort(rankFit).slice(0,3);
-      label.textContent=top.length+' suggestion'+(top.length===1?'':'s')+' · room for '+partySize;
-      const fragment=document.createDocumentFragment();
-      top.forEach((s,index)=>{
-        const card=node('article','match-pick-card');
-        const head=node('div','match-pick-top');
-        head.append(node('span','match-pick-rank','#'+(index+1)+' · '+flagFor(s.countryCode)+' '+briefRegion(s)));
-        head.append(node('span','match-pick-space',s.free+' open'));
-        card.append(head);
-        card.append(node('p','match-pick-reason',matchReason(s)));
-        card.append(node('div','match-pick-details',s.playing+'/'+s.maxPlayers+' players · '+pingLabel(s.ping)+' reported server ping'));
-        const actions=node('div','match-pick-actions');
-        const details=node('button','match-pick-detail','View details ↗');
-        details.type='button';details.addEventListener('click',()=>openDetail(s));
-        actions.append(details);
-        const verified=safeHostLink(s.joinPc);
-        if(verified){
-          const a=node('a','match-pick-join','Join PC ↗');
-          a.href=verified;a.target='_blank';a.rel='noopener noreferrer';
-          actions.append(a);
-        }
-        card.append(actions);
-        fragment.append(card);
-      });
-      pickList.append(fragment);
-    }
     function render() {
       const term=ui.search.value.trim().toLowerCase();
       const filtered=serverList.filter(s =>
         (!regionFilter||(Array.isArray(regionFilter.serverIds)?regionFilter.serverIds.includes(s.id):(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase()))) &&
         (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v=>String(v||'').toLowerCase().includes(term))) &&
         (!twoOpenOnly||s.free>=2) && (!pinnedOnly||isPinned(s)) &&
-        (!countryChoice||countryKey(s)===countryChoice) && s.free>=partySize
+        (!countryChoice||countryKey(s)===countryChoice)
       );
       const sort=ui.sort.value;
       filtered.sort((a,b) => {
-        if(sort==='fit')return rankFit(a,b);
         if(isPinned(a)!==isPinned(b))return Number(isPinned(b))-Number(isPinned(a));
         if(sort==='space')return b.free-a.free||b.playing-a.playing;
         if(sort==='ping')return (a.ping??Infinity)-(b.ping??Infinity)||b.playing-a.playing;
@@ -540,11 +419,10 @@
         return b.playing-a.playing||b.free-a.free;
       });
       syncRefinements();
-      ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'')+(partySize>1?' · room for '+partySize:'');
-      renderRecommendations(filtered);
+      ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'');
       ui.list.replaceChildren();
       if(!filtered.length){
-        empty(serverList.length?'No suitable lobbies in this sample':'No joinable servers',serverList.length?'Try fewer players, another country, or reset your filters.':'Press Refresh to check again.');
+        empty(serverList.length?'No servers match these filters':'No joinable servers',serverList.length?'Change your search or filters to see more servers.':'Press Refresh to check again.');
         return;
       }
       const fragment=document.createDocumentFragment();
@@ -664,7 +542,6 @@
       ui.refresh.disabled=true;ui.refresh.textContent='Loading…';
       ui.countServers.textContent='—';ui.countPlayers.textContent='—';ui.countSpots.textContent='—';
       serverList=[];
-      pickSection.hidden=true;
       skeleton();
       try {
         const url=API+'/api/servers?mode='+encodeURIComponent(mode);
@@ -693,7 +570,6 @@
         if(err.name==='AbortError'||myRequest!==requestNum)return;
         status('Could not load servers',true);ui.updated.textContent='Connection unavailable';
         empty('Server list unavailable','Glutony might still be deploying. Press Refresh to try again.');
-        pickSection.hidden=true;
         ui.results.textContent='Not available';
         console.warn('Glutony server browser:',err);
       } finally {
@@ -780,35 +656,13 @@
     el('clear-region').addEventListener('click',()=>clearRegion(true));
     el('globe-filter-clear').addEventListener('click',()=>clearRegion(false));
     for(const value of VALID_MODES)el('mode-'+value).addEventListener('click',()=>changeMode(value));
-    el('party-size').addEventListener('change',()=>{
-      partySize=Number(el('party-size').value)||1;
-      render();
-    });
-    el('match-vibe').addEventListener('change',()=>{
-      matchVibe=validVibes.includes(el('match-vibe').value)?el('match-vibe').value:'balanced';
-      render();
-    });
-    el('match-form').addEventListener('submit',event=>{
-      event.preventDefault();
-      recommendationsActive=true;ui.sort.value='fit';render();
-      pickSection.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
-    });
-    el('share-match-search').addEventListener('click',async()=>{
-      const btn=el('share-match-search');
-      try {
-        await navigator.clipboard.writeText(buildFilterUrl());
-        btn.textContent='Copied link ✓';
-      } catch { btn.textContent='Copy unavailable'; }
-      setTimeout(()=>{btn.textContent='Share search ↗';},1600);
-    });
     el('filter-open').addEventListener('click',()=>{twoOpenOnly=!twoOpenOnly;render();});
     el('filter-pinned').addEventListener('click',()=>{pinnedOnly=!pinnedOnly;render();});
     countrySelect.addEventListener('change',()=>{countryChoice=countrySelect.value;render();});
     el('reset-filters').addEventListener('click',()=>{
       twoOpenOnly=false;pinnedOnly=false;countryChoice='';countrySelect.value='';
       ui.search.value='';regionFilter=null;el('clear-region').hidden=true;
-      partySize=1;matchVibe='balanced';recommendationsActive=false;
-      el('party-size').value='1';el('match-vibe').value='balanced';ui.sort.value='players';
+      ui.sort.value='players';
       window.GlutonyGlobe?.close();
       render();
     });
