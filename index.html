@@ -981,25 +981,69 @@
       .btn-discord:hover { transform: none; }
     }
   </style>
+  <link rel="stylesheet" href="/site-theme.css?v=1">
+  <script defer src="/site-experience.js?v=1"></script>
 </head>
-<body>
+<body data-page="home">
   <a class="skip-link" href="#main">Skip to content</a>
-  <nav class="topbar" aria-label="Page sections">
+  <nav class="topbar" aria-label="Primary navigation">
     <div class="topbar-inner">
-      <a class="topbar-brand" href="#top">N29 <span>·</span> BLR</a>
+      <a class="topbar-brand" href="#top" aria-label="N29 BL:R home">N29 <span>/ BL:R</span></a>
       <div class="topbar-links">
-        <a href="#stats">Stats</a>
-        <a href="#play">Play</a>
-        <a href="#tools">Creator Tools</a>
-        <a href="#discord">Discord</a>
+        <a href="#stats">Profile</a>
+        <a href="#play">Servers</a>
+        <a href="#tools">Creator tools</a>
+        <a href="#discord">Community</a>
       </div>
+      <button class="site-command-inline" data-command-open type="button" aria-label="Search pages and tools"><span aria-hidden="true">⌕</span> <span class="site-command-label">Quick jump</span> <kbd>⌘ K</kbd></button>
     </div>
   </nav>
   <div class="container" id="top">
-    <header>
-      <div class="badge">Blue Lock Rivals</div>
-      <h1>N29 · BLR</h1>
-      <p class="subtitle">My stats, league &amp; community</p>
+    <header class="site-hero">
+      <div class="site-hero-copy">
+        <span class="site-eyebrow">Unofficial Blue Lock: Rivals hub · By N29</span>
+        <h1>Find your game.<br><span class="site-gradient-word">Make your play.</span></h1>
+        <p class="subtitle">Everything you need to get into a BL:R match and create better clips. Browse public servers, find custom games, and edit videos right in your browser.</p>
+        <div class="site-hero-actions">
+          <a class="site-primary-link" href="/servers/">Find a server <span aria-hidden="true">↗</span></a>
+          <a class="site-outline-link" href="#tools">Explore creator tools <span aria-hidden="true">↘</span></a>
+        </div>
+        <div class="site-hero-foot">
+          <span>No account needed for public server browsing</span>
+          <span>Browser-based video utilities</span>
+        </div>
+      </div>
+      <div class="site-hero-panel" aria-label="Quick destinations">
+        <div class="site-panel-top">Your BL:R dashboard <span class="site-panel-mark" aria-hidden="true">↗</span></div>
+        <a class="site-panel-identity" href="https://n29.kz/" aria-label="Explore N29's portfolio">
+          <span class="site-identity-image">
+            <picture><source srcset="https://n29.kz/assets/hunger.avif" type="image/avif"><img src="https://n29.kz/assets/hunger.webp" width="320" height="480" loading="eager" decoding="async" alt="N29's Hunger anime avatar artwork"></picture>
+          </span>
+          <span class="site-identity-text">
+            <small>THE PERSON BEHIND THE TOOLS</small>
+            <strong>N29 / HUNGER</strong>
+            <span>Competitive programmer. BL:R goalkeeper. Developer.</span>
+            <b>Visit my portfolio ↗</b>
+          </span>
+        </a>
+        <div class="site-panel-title">Where to next?</div>
+        <p class="site-panel-description">Jump straight to what you came for — no endless scrolling.</p>
+        <a class="site-panel-link" href="/servers/?mode=8v8">
+          <span class="site-panel-icon" aria-hidden="true">⚽</span>
+          <span><strong>Public matchmaking</strong><small>Browse 8v8, Main and Pro</small></span>
+          <span class="site-panel-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="site-panel-link" href="/servers/customs/">
+          <span class="site-panel-icon" aria-hidden="true">🤝</span>
+          <span><strong>Community customs</strong><small>Join player-hosted matches</small></span>
+          <span class="site-panel-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="site-panel-link" href="#tools">
+          <span class="site-panel-icon" aria-hidden="true">🎬</span>
+          <span><strong>Creator studio</strong><small>Patch, inspect and compress clips</small></span>
+          <span class="site-panel-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
     </header>
 
     <main id="main">
@@ -1064,23 +1108,45 @@
     </section>
 
     <section class="section" id="play" aria-labelledby="play-title">
-      <h2 class="section-title" id="play-title">Play Blue Lock: Rivals</h2>
-      <div class="tool-card tool-card-servers">
-        <div class="tool-kicker">Glutony · Public Servers</div>
-        <h3>Find an 8v8 or Pro lobby</h3>
-        <p>See server regions, online players, free slots and place versions. Pick a server and try joining directly on PC or mobile.</p>
-        <div class="tool-actions">
-          <a href="/servers/" class="btn-tool">Browse Servers ↗</a>
-          <a href="/servers/?mode=main" class="btn-tool secondary">Main Servers ↗</a>
-          <a href="/servers/?mode=pro" class="btn-tool secondary">Pro Servers ↗</a>
-          <a href="/servers/customs/" class="btn-tool secondary">Find Custom Matches ↗</a>
-        </div>
-        <p class="tool-note">Powered by Glutony. Locations via RoValra where available; Roblox may not always honor a specific server link.</p>
+      <h2 class="section-title" id="play-title">Find your next match</h2>
+      <div class="site-route-grid">
+        <a class="site-route-card" href="/servers/?mode=main">
+          <span class="route-icon" aria-hidden="true">🏟️</span>
+          <strong>Main lobbies</strong>
+          <p>Browse a sample of joinable servers from the main BL:R experience.</p>
+          <span class="route-end">Explore Main ↗</span>
+        </a>
+        <a class="site-route-card" href="/servers/?mode=8v8">
+          <span class="route-icon" aria-hidden="true">⚽</span>
+          <strong>8v8 matches</strong>
+          <p>See available places, player counts, regions and open slots.</p>
+          <span class="route-end">Explore 8v8 ↗</span>
+        </a>
+        <a class="site-route-card" href="/servers/?mode=pro">
+          <span class="route-icon" aria-hidden="true">🏆</span>
+          <strong>Pro servers</strong>
+          <p>Find a competitive lobby and compare the available regions.</p>
+          <span class="route-end">Explore Pro ↗</span>
+        </a>
+        <a class="site-route-card" href="/servers/customs/">
+          <span class="route-icon" aria-hidden="true">🤝</span>
+          <strong>Custom games</strong>
+          <p>Discover community-hosted matches and private-server invites.</p>
+          <span class="route-end">Find customs ↗</span>
+        </a>
       </div>
     </section>
 
     <section class="section" id="tools" aria-labelledby="tools-title">
-      <h2 class="section-title" id="tools-title">Creator Tools</h2>
+      <h2 class="section-title" id="tools-title">Creator studio</h2>
+      <div class="site-tools-intro">
+        <p>All-in-one video utilities for creators. Browse by category, then process clips in your browser.</p>
+        <div class="site-tool-filters" role="group" aria-label="Filter creator tools">
+          <button type="button" data-tool-filter="all" aria-pressed="true">All tools</button>
+          <button type="button" data-tool-filter="video" aria-pressed="false">Video editing</button>
+          <button type="button" data-tool-filter="tiktok" aria-pressed="false">TikTok</button>
+        </div>
+      </div>
       <div class="creator-tools-grid">
       <div class="tool-card">
         <div class="tool-kicker">CompressBase Method API</div>
