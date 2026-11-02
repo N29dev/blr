@@ -125,3 +125,104 @@ for(const width of [1440,820,390,360]){
     }finally{await context.close();}
   });
 }
+
+
+const sitePages=['/','/tools/','/servers/','/servers/customs/','/tech/','/clipper.html','/tiktok-downloader.html','/leaderboard/','/404.html'];
+for(const route of sitePages){
+  for(const width of [390,820]){
+    test('Shared Quick Jump is consistent on '+route+' at '+width+'px',async()=>{
+      const {context,page}=await open(route,width,850);
+      try{
+        const button=page.locator('[data-command-open]').first();
+        assert.ok(await button.isVisible(),route+' missing Search trigger');
+        assert.equal(await button.getAttribute('aria-label'),'Open Quick Jump search');
+        assert.equal((await button.innerText()).includes('Quick jump'),true,route+' inconsistent search button');
+        const buttonBox=await button.boundingBox();
+        assert.ok(buttonBox&&buttonBox.x>=-1&&buttonBox.x+buttonBox.width<=width+1,route+' search button escapes viewport');
+        await button.click();
+        const dialog=page.locator('#n29-quick-jump');
+        assert.ok(await dialog.isVisible(),route+' search modal failed');
+        const box=await dialog.boundingBox();
+        assert.ok(box&&box.x>=0&&box.x+box.width<=width+1,route+' search modal wider than screen');
+        const computed=await dialog.evaluate(el=>({
+          font:getComputedStyle(el).fontFamily,
+          bg:getComputedStyle(el).backgroundColor,
+          radius:getComputedStyle(el).borderRadius
+        }));
+        assert.ok(computed.font.toLowerCase().includes('dm sans'),'Different modal typography on '+route);
+        assert.ok(computed.radius!=='0px','Different modal border radius on '+route);
+        const query=dialog.locator('.site-command-search');
+        assert.ok(await query.isVisible(),route+' search input hidden');
+        await query.fill('tiktok');
+        assert.ok(await dialog.locator('.site-command-item').count()>0,'TikTok search yields no results');
+        assert.ok((await dialog.locator('.site-command-item').first().innerText()).toLowerCase().includes('tiktok'));
+        await query.press('Escape');
+        assert.ok(!await dialog.isVisible(),'Escape must close modal on '+route);
+      }finally{await context.close();}
+    });
+  }
+}
+
+for(const route of sitePages){
+  test('Mobile shell fits screen on '+route,async()=>{
+    const {context,page}=await open(route,360,780);
+    try{
+      await assertNoOverflow(page,'Mobile '+route);
+      const nav=page.locator('.n29-nav').first();
+      assert.ok(await nav.isVisible(),route+' missing shared navigation');
+      const navRect=await nav.boundingBox();
+      assert.ok(navRect&&navRect.width<=362,route+' navigation spills horizontally');
+      const links=page.locator('.n29-nav-links').first();
+      const styles=await links.evaluate(el=>({
+        overflow:getComputedStyle(el).overflowX,
+        scrollWidth:el.scrollWidth,clientWidth:el.clientWidth
+      }));
+      assert.ok(['auto','scroll'].includes(styles.overflow),route+' navigation links need touch scrolling');
+    }finally{await context.close();}
+  });
+}
+
+test('Creator Studio skip link is hidden until keyboard focus',async()=>{
+  const {context,page}=await open('/tools/',390,800);
+  try{
+    const skip=page.locator('a.skip-link');
+    assert.equal(await skip.count(),1,'missing accessible skip link');
+    const rest=await skip.evaluate(el=>({opacity:getComputedStyle(el).opacity,top:el.getBoundingClientRect().top}));
+    assert.ok(rest.opacity==='0'||rest.top<0,'Skip link shown at rest');
+    await skip.focus();
+    const focused=await skip.evaluate(el=>({opacity:getComputedStyle(el).opacity,top:el.getBoundingClientRect().top}));
+    assert.equal(focused.opacity,'1','Skip link should appear on focus');
+    assert.ok(focused.top>=0,'Skip link should enter visible viewport on focus');
+    await skip.press('Enter');
+    assert.ok(page.url().endsWith('#main'),'Skip link should move to main content');
+  }finally{await context.close();}
+});
+
+for(const width of [1440,820,390,360]){
+  test('Creator Studio card edges and equal columns at '+width+'px',async()=>{
+    const {context,page}=await open('/tools/',width,900);
+    try{
+      const grid=await rect(page,'#video-tools .creator-tools-grid');
+      const compressor=await rect(page,'#compress-tool');
+      const patch=await rect(page,'#patch-tool');
+      const clipper=await rect(page,'#clipper-tool');
+      const tiktok=await rect(page,'#tiktok-tools .creator-tools-grid');
+      const analyze=await rect(page,'#analyze-tool');
+      const download=await rect(page,'#tiktok-download-tool');
+      assert.ok(Math.abs(compressor.x-grid.x)<=3,'Compressor not aligned with video grid');
+      assert.ok(Math.abs(compressor.right-grid.right)<=3,'Compressor exceeds video grid right edge');
+      if(width>=820){
+        assert.ok(Math.abs(patch.y-clipper.y)<=3,'Patch and clip cards not in same row');
+        assert.ok(Math.abs(patch.height-clipper.height)<=3,'Patch and clip cards not same row height');
+        assert.ok(Math.abs(analyze.y-download.y)<=3,'TikTok tool cards not aligned');
+        assert.ok(Math.abs(analyze.height-download.height)<=3,'TikTok tools differ in height');
+      }else{
+        assert.ok(clipper.y>patch.y,'Mobile video tools should stack');
+        assert.ok(download.y>analyze.y,'Mobile TikTok tools should stack');
+      }
+      assert.ok(Math.abs(analyze.x-tiktok.x)<=3,'TikTok grid misaligned');
+      assert.ok(Math.abs(download.right-tiktok.right)<=3,'TikTok right edge misaligned');
+      await assertNoOverflow(page,'Creator tools '+width);
+    }finally{await context.close();}
+  });
+}
