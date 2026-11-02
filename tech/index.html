@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d19">
+  <meta name="description" content="Blue Lock: Rivals allowed tech, disallowed tech and punishable bug directory. Browse every style, search move names, and watch short demonstration clips as they are added.">
+  <link rel="canonical" href="https://blr.n29.kz/tech/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070914'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='800' text-anchor='middle' fill='%237dd3fc'%3EN29%3C/text%3E%3C/svg%3E">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BL:R Tech & Bug Rules · N29">
+  <meta property="og:description" content="Style-by-style guide to allowed techniques, banned techniques and punishable bugs in Blue Lock: Rivals.">
+  <meta property="og:url" content="https://blr.n29.kz/tech/">
+  <meta property="og:image" content="https://blr.n29.kz/og-image.png">
+  <title>Tech &amp; Bug Rules — Blue Lock: Rivals · N29</title>
+  <link rel="stylesheet" href="/site-theme.css?v=1">
+  <link rel="stylesheet" href="/tech/style.css?v=1">
+  <script type="module" src="/tech/app.js?v=1"></script>
+</head>
+<body data-page="tech">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="page-shell">
+    <nav class="nav" aria-label="Primary navigation">
+      <a href="/" class="brand"><span class="brand-square">N</span><span>N29 <span class="muted-brand">/ BL:R</span></span></a>
+      <div class="nav-links">
+        <a href="/">Hub</a>
+        <a href="/servers/">Servers</a>
+        <a href="/tech/" aria-current="page">Tech rules</a>
+      </div>
+    </nav>
+    <main id="main">
+      <header class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="dot"></span> BLUE LOCK: RIVALS / TECH DIRECTORY</span>
+          <h1>Know the tech.<br><span>Know the rules.</span></h1>
+          <p>Every style, one searchable rulebook. See which techniques are listed as allowed, which are disallowed, and which bugs are punishable — with short YouTube examples as they're added.</p>
+          <div class="hero-buttons">
+            <a class="primary-button" href="#directory">Browse styles <span aria-hidden="true">↗</span></a>
+            <a class="outline-button" href="#rules">Read the rules <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-meta"><span>Unofficial reference by N29</span><span>Snapshot created 2 Nov 2026</span></div>
+        </div>
+        <div class="hero-side" aria-label="Quick guide">
+          <div class="side-top"><span>FAIR PLAY PROTOCOL</span><span aria-hidden="true">↗</span></div>
+          <div class="status-example status-allowed"><span class="tiny-marker"></span><span>ALLOWED</span><strong>Recognized techniques</strong></div>
+          <div class="status-example status-disallowed"><span class="tiny-marker"></span><span>DISALLOWED</span><strong>Prohibited techniques</strong></div>
+          <div class="status-example status-punishable"><span class="tiny-marker"></span><span>PUNISHABLE</span><strong>Bug abuse examples</strong></div>
+          <p><strong>Important:</strong> No listing doesn't mean a tech is safe. Staff decisions and updated rules take priority.</p>
+        </div>
+      </header>
+      <section class="overview" aria-label="Directory statistics">
+        <div class="metric"><strong id="style-count">—</strong><span>Styles &amp; variants</span></div>
+        <div class="metric"><strong id="tech-count">—</strong><span>Listed techniques</span></div>
+        <div class="metric"><strong id="allowed-count">—</strong><span>Allowed entries</span></div>
+        <div class="metric"><strong id="restricted-count">—</strong><span>Disallowed &amp; punishable</span></div>
+      </section>
+
+      <section class="rules-brief" id="rules" aria-labelledby="rule-title">
+        <div>
+          <span class="section-label">THE MAIN RULE</span>
+          <h2 id="rule-title">Unfair advantage = punishable.</h2>
+          <p>Tech or bugs that give the triggering player an unfair advantage may be banned. Examples include unintended <strong>speed boosts</strong>, <strong>teleports</strong>, <strong>flying</strong>, increased <strong>shot power or range</strong>, <strong>automatic goals</strong>, and advantage-granting <strong>emote bugs</strong>.</p>
+        </div>
+        <a class="source-link" href="https://discord.com/channels/1304535758899777626/1364020867084062752/1559305710930759701" target="_blank" rel="noopener noreferrer">Read the supplied policy message <span aria-hidden="true">↗</span></a>
+      </section>
+
+      <section class="directory" id="directory" aria-labelledby="directory-title">
+        <div class="section-heading">
+          <div><span class="section-label">STYLE DIRECTORY</span><h2 id="directory-title">Find a style.</h2><p>Choose a style to see its documented techniques. NEL and event variants stay separate unless explicitly included in the rule.</p></div>
+          <div class="search-wrap"><label for="search">SEARCH STYLES &amp; TECHS</label><div class="search-input"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Nagi, teleport, Kaiser Impact…" autocomplete="off"><button type="button" id="clear-search" aria-label="Clear search" hidden>×</button></div></div>
+        </div>
+        <div id="style-grid" class="style-directory" aria-label="Styles and limited variants"></div>
+        <p id="style-empty" class="empty" hidden>No style or technique matches that search. Try another term.</p>
+      </section>
+
+      <section class="tech-detail" id="tech-list" aria-labelledby="active-style-title">
+        <div class="detail-header">
+          <div class="detail-title">
+            <span id="active-style-group" class="section-label">STYLE GUIDE</span>
+            <h2 id="active-style-title">Nagi</h2>
+            <p id="active-style-hint">Documented classifications for this style.</p>
+          </div>
+          <div class="detail-tools"><button type="button" id="share-style" class="share-button">↗ Copy style link</button></div>
+        </div>
+        <div class="filters" role="group" aria-label="Filter technique classifications">
+          <button type="button" data-filter="all" aria-pressed="true">All <span id="count-all">0</span></button>
+          <button type="button" data-filter="allowed" aria-pressed="false">Allowed <span id="count-allowed">0</span></button>
+          <button type="button" data-filter="disallowed" aria-pressed="false">Disallowed <span id="count-disallowed">0</span></button>
+          <button type="button" data-filter="punishable" aria-pressed="false">Punishable <span id="count-punishable">0</span></button>
+        </div>
+        <div id="tech-entries" class="tech-entries" aria-live="polite"></div>
+        <div id="tech-empty" class="tech-empty" hidden>
+          <strong>No documented entries here yet.</strong>
+          <p>This doesn't mean the techniques for this style are automatically allowed. Check with BL:R staff if you're unsure.</p>
+          <a href="#faq">How to ask staff ↗</a>
+        </div>
+      </section>
+
+      <section class="faq" id="faq" aria-labelledby="faq-title">
+        <div class="section-heading"><div><span class="section-label">QUESTIONS &amp; REPORTS</span><h2 id="faq-title">Before you use a tech.</h2><p>Rules can change. The official support team decides individual cases.</p></div></div>
+        <div class="faq-grid">
+          <div class="faqs">
+            <details open><summary>How do I know if a technique is allowed?</summary><div class="answer"><p>Open a ticket in the BL:R support server and provide a clip, how to trigger the technique, and how it impacts the game.</p><button type="button" class="copy-channel" data-copy="1348650686597955584">Copy tech-support channel ID <span aria-hidden="true">↗</span></button></div></details>
+            <details><summary>Can I appeal a bug-abuse ban?</summary><div class="answer"><p>Yes. The provided rules say everyone can appeal, including players banned without knowingly abusing a bug. Explain the circumstances in the support server's appeal channel.</p><button type="button" class="copy-channel" data-copy="1313206301232463980">Copy appeal channel ID <span aria-hidden="true">↗</span></button></div></details>
+            <details><summary>Are the allowed and disallowed lists final?</summary><div class="answer"><p>No. Allowed tech can become disallowed if it becomes an issue. Punishable bugs remain punishable. Check official announcements for changes.</p></div></details>
+            <details><summary>What if my tech or bug isn't listed?</summary><div class="answer"><p>For tech inquiries, consult the <a href="https://discord.com/channels/1304535758899777626/1364020867084062752/1559305710930759701" target="_blank" rel="noopener noreferrer">original moderation FAQ ↗</a>. For bug inquiries, contact its author or support staff with a clip, reproduction steps, and relevant details. An unlisted exploit is not automatically approved.</p></div></details>
+            <details><summary>What bugs are generally bannable?</summary><div class="answer"><p>Any bug granting an unfair gameplay advantage may be punishable, including unintended speed, teleports, flight, extended shots, automatic goals, and gameplay-altering emote glitches. The lists above are examples, not exhaustive exemptions.</p></div></details>
+          </div>
+          <aside class="report-card">
+            <div class="report-icon" aria-hidden="true">!</div>
+            <span class="section-label">ENFORCEMENT</span>
+            <h3>Report an exploiter.</h3>
+            <p>Use the BL:R reporting portal for cheaters and suspected bug abuse. Include a clear clip and relevant context.</p>
+            <a class="primary-button" href="https://blox.report/bluelock" target="_blank" rel="noopener noreferrer">Open reporting portal <span aria-hidden="true">↗</span></a>
+            <small>Independent index, not an official ban checker. Always verify the latest staff guidance.</small>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">
+      <span>© 2026 N29 · Unofficial Blue Lock: Rivals resource</span>
+      <span><a href="/">BL:R hub</a> · <a href="/servers/">Servers</a> · <a href="https://github.com/N29dev/blr/tree/main/tech" target="_blank" rel="noopener noreferrer">Page source ↗</a></span>
+    </footer>
+  </div>
+</body>
+</html>
