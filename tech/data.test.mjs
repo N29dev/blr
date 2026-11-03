@@ -42,8 +42,7 @@ test('all styles have the exact owner-provided rarity or limited classification'
 test('all moderation classifications are valid, source-faithful and attributed',()=>{
   assert.equal(TECHS.length,56);
   assert.equal(TECHS.filter(t=>t.status==='allowed').length,24);
-  assert.equal(TECHS.filter(t=>t.status==='disallowed').length,19);
-  assert.equal(TECHS.filter(t=>t.status==='punishable').length,13);
+  assert.equal(TECHS.filter(t=>t.status==='disallowed').length,32);
   for(const item of TECHS){
     assert.match(item.id,/^[a-z0-9-]+$/);
     assert.ok(STATUS[item.status]);
@@ -73,12 +72,12 @@ test('NEL and base characters use one style, while limited/event styles remain s
   assert.ok(nagi.some(t=>t.id==='nagi-moonwalk'));
 });
 
-test('high-risk examples preserve their disallowed or punishable status',()=>{
+test('high-risk examples are disallowed',()=>{
   const byId=Object.fromEntries(TECHS.map(t=>[t.id,t]));
   for(const id of ['nagi-moonwalk','awk-auto-goal','reo-inf-copy','niko-inf-range-shot'])
     assert.equal(byId[id].status,'disallowed');
   for(const id of ['side-dive-fling','kaiser-impact-minibox','bunny-gamebreaking','zantetsu-double-explosive'])
-    assert.equal(byId[id].status,'punishable');
+    assert.equal(byId[id].status,'disallowed');
 });
 
 test('YouTube-only link validation for creator-provided short clips',()=>{
