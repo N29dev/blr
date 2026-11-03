@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070914'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='800' text-anchor='middle' fill='%237dd3fc'%3EN29%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="BL:R Server Browser · N29">
-<meta property="og:description" content="Browse public Blue Lock: Rivals Main, 8v8 and Pro servers, compare regions and slots, and find a match.">
+<meta property="og:description" content="Browse public Blue Lock: Rivals 8v8 and Pro servers, compare regions and slots, and find a match.">
 <meta property="og:url" content="https://blr.n29.kz/servers/">
 <meta property="og:image" content="https://blr.n29.kz/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://blr.n29.kz/og-image.png">
 
-  <meta name="description" content="Browse public Blue Lock: Rivals Main, 8v8 and Pro servers, compare regions and available slots, and find a match. Powered by Glutony.">
+  <meta name="description" content="Browse public Blue Lock: Rivals 8v8 and Pro servers, compare regions and available slots, and find a match. Powered by Glutony.">
   <title>BL:R Server Browser · N29</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,7 +179,6 @@
 
     <div class="finder-overline"><span>01 / CHOOSE A MODE</span><span>PUBLIC SERVERS + COMMUNITY</span></div>
     <div class="mode-panel n29-mode-switch" role="tablist" aria-label="Game mode">
-      <button id="mode-main" type="button" role="tab" aria-selected="false" class="mode">🏟️ Main <small>Sampled</small></button>
       <button id="mode-8v8" type="button" role="tab" aria-selected="true" class="mode">⚽ 8v8 <small>16 players</small></button>
       <button id="mode-pro" type="button" role="tab" aria-selected="false" class="mode">🏆 Pro <small>10 players</small></button>
       <a href="/servers/customs/" class="mode" style="text-decoration:none">🤝 Customs <small>Community</small></a>
@@ -292,7 +291,7 @@
   (() => {
     'use strict';
     const API = 'https://glutony.scp343hey.workers.dev';
-    const VALID_MODES = ['main','8v8','pro'];
+    const VALID_MODES = ['8v8','pro'];
     const el = id => document.getElementById(id);
     const ui = {
       list:el('servers'), search:el('search'), sort:el('sort'), refresh:el('refresh'),
@@ -302,6 +301,14 @@
     };
     const params = new URLSearchParams(location.search);
     let mode = VALID_MODES.includes(params.get('mode')) ? params.get('mode') : '8v8';
+    // Old Main links fall back to 8v8 without requesting Main servers.
+    if(params.get('mode')==='main') {
+      const fallback=new URL(location.href);
+      fallback.searchParams.set('mode','8v8');
+      fallback.searchParams.delete('server');
+      history.replaceState({},'',fallback.pathname+fallback.search+fallback.hash);
+      params.delete('server');
+    }
     let pendingServer = params.get('server') || '';
     let serverList = [];
     let regionFilter = null;
@@ -416,7 +423,7 @@
         tab.setAttribute('aria-selected',String(mode===value));
         tab.tabIndex=mode===value?0:-1;
       }
-      ui.title.textContent=mode==='main'?'Main lobby · sampled servers':mode==='pro'?'Pro public servers':'8v8 public servers';
+      ui.title.textContent=mode==='pro'?'Pro public servers':'8v8 public servers';
     }
     function skeleton() {
       ui.list.replaceChildren(node('div','skeleton'),node('div','skeleton'),node('div','skeleton'),node('div','skeleton'));
@@ -605,7 +612,7 @@
       if(requestController)requestController.abort();
       const myRequest=++requestNum;
       requestController=new AbortController();
-      status('Loading live '+(mode==='main'?'Main':mode==='pro'?'Pro':'8v8')+' servers…');
+      status('Loading live '+(mode==='pro'?'Pro':'8v8')+' servers…');
       ui.refresh.disabled=true;ui.refresh.textContent='Loading…';
       ui.countServers.textContent='—';ui.countPlayers.textContent='—';ui.countSpots.textContent='—';
       serverList=[];
@@ -622,7 +629,7 @@
         ui.countServers.textContent=String(serverList.length);
         ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
-        status('Online · '+(mode==='main'?'Main':mode==='pro'?'Pro':'8v8')+' servers ready');
+        status('Online · '+(mode==='pro'?'Pro':'8v8')+' servers ready');
         const age=Date.parse(data.updatedAt);
         ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
         render();
@@ -646,7 +653,7 @@
     function openDetail(s) {
       currentServer=s;
       el('detail-title').textContent=flagFor(s.countryCode)+' '+regionLabel(s);
-      el('detail-mode').textContent=mode==='main'?'BL:R Main lobby · Public':mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
+      el('detail-mode').textContent=mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
       el('detail-players').textContent=s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open';
       el('detail-bar').style.width=(100*s.playing/s.maxPlayers)+'%';
       updateRegionDetail(s);
