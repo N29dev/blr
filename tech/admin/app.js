@@ -37,9 +37,9 @@ function combined(){
   for(const entry of overrides){
     if(!entry||typeof entry.id!=='string'||!idPattern.test(entry.id))continue;
     if(entry.hidden){map.delete(entry.id);continue;}
-    if(!STATUS[entry.status]||!Array.isArray(entry.styles))continue;
+    if(!STATUS[entry.status]&&entry.status!=='punishable'||!Array.isArray(entry.styles))continue;
     map.set(entry.id,{
-      id:entry.id,name:entry.name,status:entry.status,styles:canonicalNames(entry.styles),
+      id:entry.id,name:entry.name,status:entry.status==='punishable'?'disallowed':entry.status,styles:canonicalNames(entry.styles),
       video:entry.video||'',note:entry.note||'',hasOverride:true
     });
   }
