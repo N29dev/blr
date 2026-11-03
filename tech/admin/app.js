@@ -1,4 +1,4 @@
-import {TECHS,STYLES,GENERAL,STATUS,slug,videoUrl,canonicalStyle} from '../data.js';
+import {TECHS,STYLES,STYLE_GROUPS,GENERAL,STATUS,slug,videoUrl,canonicalStyle} from '../data.js';
 import {VIDEOS} from '../videos.js';
 
 const API='https://glutony.scp343hey.workers.dev';
@@ -8,6 +8,7 @@ let overrides=[];
 let catalog=[];
 let selectedId=null;
 let busy=false;
+let selectedStyles=new Set();
 const basicNames=[GENERAL,...STYLES.map(s=>s.name)];
 const canonicalNames=styles=>[...new Set(styles.map(canonicalStyle).filter(Boolean))];
 const idPattern=/^[a-z0-9][a-z0-9-]{1,70}$/;
@@ -57,10 +58,79 @@ function renderStyles(){
     const option=node('option','',name);option.value=name;select.append(option);
   }
   select.value=styleNames().includes(previous)?previous:'';
-  const datalist=$('style-suggestions');
-  datalist.replaceChildren(...styleNames().map(name=>{
-    const option=node('option');option.value=name;return option;
-  }));
+  renderStylePicker();
+}
+function setSelectedStyles(names){
+  selectedStyles=new Set(canonicalNames(names).slice(0,8));
+  $('entry-style-search').value='';
+  renderStylePicker();
+}
+function updateSelectedChips(){
+  const chips=$('selected-style-chips');
+  chips.replaceChildren();
+  for(const name of selectedStyles){
+    const button=node('button','style-chip',name+' ×');
+    button.type='button';
+    button.title='Remove '+name;
+    button.setAttribute('aria-label','Remove '+name);
+    button.addEventListener('click',()=>{selectedStyles.delete(name);renderStylePicker();});
+    chips.append(button);
+  }
+  if(!selectedStyles.size)chips.append(node('span','style-no-selection','No related styles selected yet'));
+  $('selected-style-count').textContent=selectedStyles.size+' / 8 selected';
+}
+function renderStylePicker(){
+  const root=$('entry-style-picker');
+  const term=$('entry-style-search').value.trim().toLowerCase();
+  const all=styleNames();
+  const groups=[{label:'Shared mechanics',names:[GENERAL]},...STYLE_GROUPS.map(g=>({label:g.label,names:g.names}))];
+  const assigned=new Set(groups.flatMap(g=>g.names));
+  const custom=all.filter(n=>!assigned.has(n));
+  if(custom.length)groups.push({label:'Custom / New styles',names:custom});
+  root.replaceChildren();
+  let visible=0;
+  for(const group of groups){
+    const matches=group.names.filter(name=>name.toLowerCase().includes(term));
+    if(!matches.length)continue;
+    visible+=matches.length;
+    const section=node('fieldset','style-choice-group');
+    section.append(node('legend','',group.label));
+    const choices=node('div','style-choice-grid');
+    for(const name of matches){
+      const label=node('label','style-choice');
+      const input=node('input');
+      input.type='checkbox';input.value=name;
+      input.checked=selectedStyles.has(name);
+      input.disabled=!input.checked&&selectedStyles.size>=8;
+      input.addEventListener('change',()=>{
+        if(input.checked)selectedStyles.add(name);
+        else selectedStyles.delete(name);
+        renderStylePicker();
+      });
+      label.append(input,node('span','',name));
+      if(input.checked)label.classList.add('is-selected');
+      choices.append(label);
+    }
+    section.append(choices);root.append(section);
+  }
+  $('style-picker-empty').hidden=visible!==0;
+  updateSelectedChips();
+}
+function addCustomStyle(){
+  const field=$('entry-custom-style');
+  const name=canonicalStyle(field.value);
+  if(!name){feedback('editor-message','Enter a style name before adding it.','error');return;}
+  if(name.length>48||/[<>{}\\x00-\\x1f]/.test(name)){
+    feedback('editor-message','Use a valid style name under 48 characters.','error');return;
+  }
+  if(!selectedStyles.has(name)&&selectedStyles.size>=8){
+    feedback('editor-message','Maximum 8 related styles per technique.','error');return;
+  }
+  selectedStyles.add(name);
+  field.value='';
+  $('entry-style-search').value='';
+  feedback('editor-message','');
+  renderStylePicker();
 }
 function renderList(){
   const term=$('filter-name').value.trim().toLowerCase();
@@ -94,7 +164,7 @@ async function refresh(){
 function newEntry(){
   selectedId=null;
   $('entry-form').reset();
-  $('entry-styles').value=$('filter-style').value||'';
+  setSelectedStyles($('filter-style').value?[$('filter-style').value]:[]);
   $('editing-id').textContent='';
   $('form-title').textContent='Add a technique';
   $('delete-entry').hidden=true;
@@ -109,7 +179,7 @@ function edit(id){
   $('form-title').textContent='Edit technique';
   $('editing-id').textContent=id;
   $('entry-name').value=item.name;
-  $('entry-styles').value=item.styles.join(', ');
+  setSelectedStyles(item.styles);
   $('entry-status').value=item.status;
   $('entry-video').value=item.hasOverride ? (item.video || '') : (VIDEOS[item.id] || item.video || '');
   $('entry-note').value=item.note||'';
@@ -140,9 +210,9 @@ function setBusy(value){
 async function save(event){
   event.preventDefault();
   if(!adminKey||busy)return;
-  const styles=canonicalNames($('entry-styles').value.split(',').map(s=>s.trim()).filter(Boolean));
+  const styles=[...selectedStyles];
   if(styles.length===0||styles.length>8){
-    feedback('editor-message','Enter 1–8 style names separated by commas.','error');return;
+    feedback('editor-message','Select 1–8 related styles.','error');return;
   }
   const body={
     name:$('entry-name').value.trim(),status:$('entry-status').value,
@@ -212,6 +282,10 @@ function init(){
   $('reset-entry').addEventListener('click',newEntry);
   $('filter-style').addEventListener('change',renderList);
   $('filter-name').addEventListener('input',renderList);
+  $('entry-style-search').addEventListener('input',renderStylePicker);
+  $('clear-styles').addEventListener('click',()=>setSelectedStyles([]));
+  $('add-custom-style').addEventListener('click',addCustomStyle);
+  $('entry-custom-style').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();addCustomStyle();}});
   $('logout-button').addEventListener('click',logout);
   $('admin-key').value='';
   catalog=combined();renderStyles();
