@@ -4,7 +4,6 @@
   if(document.body.dataset.page!=='home')return;
   const options={
     '8v8':{title:'8v8 public matches',description:'Find a team, check open slots, and explore the world map of regions.',label:'Find 8v8 servers',href:'/servers/?mode=8v8'},
-    main:{title:'Main public lobbies',description:'Browse sampled Main servers and compare which ones have room.',label:'Find Main servers',href:'/servers/?mode=main'},
     pro:{title:'Pro servers',description:'Explore competitive public lobbies with open spots.',label:'Find Pro servers',href:'/servers/?mode=pro'},
     customs:{title:'Community custom matches',description:'Discover matches hosted by the BL:R community.',label:'Explore customs',href:'/servers/customs/'}
   };
