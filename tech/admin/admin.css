@@ -54,3 +54,31 @@ body[data-page="tech"] .admin-entry:hover,body[data-page="tech"] .admin-entry.ac
 [hidden]{display:none!important}
 @media(max-width:780px){.admin-layout{grid-template-columns:1fr}.admin-entry-list{max-height:45vh}.admin-main{padding-top:24px}}
 @media(max-width:480px){.admin-card{padding:19px}.login-row{flex-wrap:wrap}.login-row button{width:100%}.admin-hero h1{font-size:39px}}
+
+/* Related-style multi-select, grouped by the existing rarity roster. */
+.style-picker-heading{display:flex;justify-content:space-between;align-items:end;gap:12px}
+.style-picker-heading .field-label{margin-bottom:7px}
+.style-picker-count{font:700 11px var(--mono,monospace);color:#8bdcff;white-space:nowrap}
+.selected-style-chips{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 12px;min-height:32px;align-items:center}
+body[data-page="tech"] .selected-style-chips .style-chip{border:1px solid rgba(130,212,253,.32);border-radius:8px;padding:7px 10px;background:rgba(95,166,226,.16);color:#d7edff;font:700 11px/1.2 var(--body,system-ui);cursor:pointer}
+body[data-page="tech"] .selected-style-chips .style-chip:hover{background:rgba(111,194,241,.26)}
+.style-no-selection{font-size:12px;color:#8199b6}
+.style-picker-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:9px 0 10px;color:#7e99b9;font-size:11px}
+body[data-page="tech"] #clear-styles{padding:5px 10px;background:transparent;border:1px solid rgba(163,208,251,.23);border-radius:7px;color:#a3d6f9;font-size:11px;cursor:pointer}
+.style-picker-groups{max-height:330px;overflow:auto;padding:10px;background:rgba(4,13,27,.38);border:1px solid rgba(161,198,246,.17);border-radius:12px;scrollbar-color:#38536f transparent}
+.style-choice-group{border:0;padding:0;margin:0 0 15px;min-width:0}
+.style-choice-group:last-child{margin-bottom:0}
+.style-choice-group legend{padding:0 0 8px;color:#8aaacb;font:700 10px var(--mono,monospace);text-transform:uppercase;letter-spacing:.1em}
+.style-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.style-choice{display:flex;align-items:center;gap:8px;min-width:0;padding:9px;border:1px solid rgba(169,203,244,.13);border-radius:9px;background:rgba(20,36,58,.65);color:#c3d7ed;font-size:12px;line-height:1.35;cursor:pointer;transition:background .15s,border-color .15s}
+.style-choice:hover{background:rgba(44,73,106,.65);border-color:rgba(135,207,248,.4)}
+.style-choice.is-selected{border-color:rgba(126,214,255,.65);background:rgba(67,139,190,.2);color:#f2faff}
+body[data-page="tech"] .style-choice input{width:15px;height:15px;min-width:15px;accent-color:#81d8ff;cursor:pointer;margin:0;padding:0;box-shadow:none}
+.style-choice:has(input:disabled){opacity:.47;cursor:not-allowed}
+.custom-style-row{display:flex;gap:7px;margin-top:10px}
+body[data-page="tech"] .custom-style-row input{flex:1}
+body[data-page="tech"] #add-custom-style{border:1px solid rgba(144,202,255,.3);border-radius:10px;color:#c7e7ff;background:#1c3451;padding:9px 14px;font-size:12px;font-weight:750;white-space:nowrap;cursor:pointer}
+body[data-page="tech"] #add-custom-style:hover{background:#2a4b70}
+@media(max-width:540px){.style-choice-grid{grid-template-columns:1fr 1fr}.style-choice{font-size:11px;padding:8px 6px}.style-picker-groups{max-height:295px}.custom-style-row{flex-wrap:wrap}body[data-page="tech"] #add-custom-style{flex:1}}
+@media(max-width:380px){.style-choice-grid{grid-template-columns:1fr}.style-picker-heading{align-items:start;flex-direction:column;gap:0}}
+@media(prefers-reduced-motion:reduce){.style-choice{transition:none}}
