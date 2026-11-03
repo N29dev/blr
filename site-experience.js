@@ -8,7 +8,6 @@
   const links = [
     { group:'Play', icon:'⌂', title:'BL:R hub', detail:'Overview, profile and all available tools', url:'/' },
     { group:'Play', icon:'🌐', title:'Public server finder', detail:'Compare sampled Roblox server regions and open slots', url:'/servers/' },
-    { group:'Play', icon:'🏟️', title:'Main lobbies', detail:'Find sampled main-game servers', url:'/servers/?mode=main' },
     { group:'Play', icon:'⚽', title:'8v8 matches', detail:'Browse public 8v8 servers', url:'/servers/?mode=8v8' },
     { group:'Play', icon:'🏆', title:'Pro servers', detail:'Browse competitive public servers', url:'/servers/?mode=pro' },
     { group:'Play', icon:'🤝', title:'Community customs', detail:'Find player-hosted custom matches', url:'/servers/customs/' },
