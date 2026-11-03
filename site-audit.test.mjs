@@ -170,7 +170,9 @@ test('project links on the site only feature BL:R, portfolio and Glutony',()=>{
 test('live-data and owner-maintained features are unchanged by the polish layer',()=>{
   const server=fromRoute('/servers/');
   assert.ok(server.includes("const API = 'https://glutony.scp343hey.workers.dev'"));
-  assert.ok(server.includes("VALID_MODES = ['main','8v8','pro']"));
+  assert.ok(server.includes("VALID_MODES = ['8v8','pro']"));
+  assert.ok(!server.includes('id="mode-main"'));
+  assert.ok(server.includes("if(params.get('mode')==='main')"));
   assert.ok(server.includes("new URLSearchParams(location.search)"));
   assert.ok(fromRoute('/servers/customs/').includes('id="post"'));
   assert.ok(fromRoute('/tech/').includes('id="style-grid"'));
@@ -188,7 +190,7 @@ test('Servers and Customs share one match switcher and use progressive cross-pag
   assert.ok(servers.includes('class="mode-panel n29-mode-switch"'),'public server tabs should use shared segmented design');
   assert.ok(customs.includes('class="tabs n29-mode-switch"'),'custom match tabs should use shared segmented design');
   assert.ok(servers.includes('href="/servers/customs/"'),'public server page should reach Customs');
-  assert.ok(customs.includes('href="/servers/?mode=main"'),'custom match page should reach Main');
+  assert.ok(!customs.includes('href="/servers/?mode=main"'),'retired Main should not appear in custom match tabs');
   assert.ok(customs.includes('href="/servers/?mode=8v8"'),'custom match page should reach 8v8');
   assert.ok(customs.includes('href="/servers/?mode=pro"'),'custom match page should reach Pro');
   assert.ok(customs.includes('href="/servers/customs/" class="selected" aria-current="page"'));
