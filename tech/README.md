@@ -13,7 +13,7 @@ These are direct URLs supplied by the site owner. Staff announcements and curren
 
 ## Public search page + private admin
 
-- **Public:** [blr.n29.kz/tech/](https://blr.n29.kz/tech/) — search a style name, select that style, see its allowed, disallowed and punishable techniques; follow real YouTube demonstration links.
+- **Public:** [blr.n29.kz/tech/](https://blr.n29.kz/tech/) — search a style name, select that style, see its allowed and disallowed techniques (all disallowed entries are punishable); follow real YouTube demonstration links.
 - **Private:** [blr.n29.kz/tech/admin/](https://blr.n29.kz/tech/admin/) — owner-only add/edit/remove and YouTube link management. Type a new style name in the editor's **Styles** field if it's missing from the catalog. You may type `NEL Nagi` or `Nagi`; both save as `Nagi`.
 - The static source below is the original moderation snapshot, while the public page merges additional edits from the Glutony Worker at `GET /api/tech` (Cloudflare D1). The original snapshot is still shown if the Worker is unavailable.
 - For setup, apply Glutony D1 migration `0004_tech_rules.sql` and configure a **distinct** `TECH_ADMIN_KEY` Cloudflare Secret of at least 32 characters. [Full deployment instructions](https://github.com/N29dev/Glutony#blr-tech-rules-admin-editor). Never put admin keys in GitHub or share them in chats.
