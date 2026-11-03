@@ -8,10 +8,10 @@
   <title>Tech Rules Admin · N29</title>
   <link rel="stylesheet" href="/site-theme.css?v=1">
   <link rel="stylesheet" href="/tech/style.css?v=1">
-  <link rel="stylesheet" href="/tech/admin/admin.css?v=1">
+  <link rel="stylesheet" href="/tech/admin/admin.css?v=2">
 <link rel="stylesheet" href="/site-unify.css?v=2">
   <script defer src="/site-experience.js?v=4"></script>
-  <script type="module" src="/tech/admin/app.js?v=2"></script>
+  <script type="module" src="/tech/admin/app.js?v=3"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
@@ -74,10 +74,14 @@
             <form id="entry-form">
               <label class="field-label" for="entry-name">Tech / bug name <span aria-hidden="true">*</span></label>
               <input id="entry-name" maxlength="110" required placeholder="Example: Delay Trap">
-              <label class="field-label" for="entry-styles">Styles <span aria-hidden="true">*</span></label>
-              <input id="entry-styles" list="style-suggestions" maxlength="400" required placeholder="Example: Nagi, NEL Nagi" spellcheck="false">
-              <datalist id="style-suggestions"></datalist>
-              <p class="field-help">Use comma-separated style names. Base and NEL versions count as one style (e.g. NEL Nagi is saved under Nagi). New names can also be added.</p>
+              <div class="style-picker-heading"><label class="field-label" for="entry-style-search">Related styles <span aria-hidden="true">*</span></label><span id="selected-style-count" class="style-picker-count">0 / 8 selected</span></div>
+              <p class="field-help">Select every style affected by this technique. Base and NEL versions share one style; event versions stay separate.</p>
+              <div id="selected-style-chips" class="selected-style-chips" aria-live="polite"></div>
+              <input id="entry-style-search" type="search" placeholder="Search styles (e.g. Nagi, Reo, Kaiser)…" autocomplete="off" spellcheck="false">
+              <div class="style-picker-actions"><button type="button" id="clear-styles">Clear selected</button><span>Choose up to 8 styles</span></div>
+              <div id="entry-style-picker" class="style-picker-groups" role="group" aria-label="Select related styles"></div>
+              <p id="style-picker-empty" class="field-help" hidden>No matching style. Add a custom style below.</p>
+              <div class="custom-style-row"><input id="entry-custom-style" maxlength="48" placeholder="Custom or newly released style (optional)" aria-label="Custom style name"><button type="button" id="add-custom-style">Add style</button></div>
               <label class="field-label" for="entry-status">Classification <span aria-hidden="true">*</span></label>
               <select id="entry-status" required>
                 <option value="allowed">Allowed tech</option>
