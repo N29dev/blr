@@ -115,26 +115,25 @@ export const TECHS = [
   tech('king-full-court-travel','Full-Court Travel','disallowed',['King']),
   tech('nagi-direct-heel-volley-animation','Direct Heel Volley Mid-Animation','disallowed',['Nagi']),
 
-  // Separately listed as examples of PUNISHABLE BUGS.
-  tech('side-dive-fling','Side Dive Fling','punishable',[GENERAL]),
-  tech('bachira-kaiser-impact','Bachira Aura × Kaiser Impact','punishable',['Bachira','Kaiser']),
-  tech('off-ball-awk-save','Off-Ball Awakening Save (player being scored on)','punishable',[GENERAL]),
-  tech('kaiser-inf-route','Kaiser Infinite Route','punishable',['Kaiser']),
-  tech('awk-tp-cutscene','Awakening TP Abuse (during cutscene)','punishable',[GENERAL]),
-  tech('off-ball-awk-after-scoring','Off-Ball Awakening after scoring (before kickoff)','punishable',[GENERAL]),
-  tech('kaiser-impact-minibox','Kaiser Impact in Minibox (full-court shot)','punishable',['Kaiser']),
-  tech('bunny-gamebreaking','Any Gamebreaking Bunny Bug','punishable',['Bunny']),
-  tech('niko-intercept-trap','Intercepting Trap Bug','punishable',['Niko']),
-  tech('niko-tactical-one-two','Tactical One-Two infinite range','punishable',['Niko']),
-  tech('flow-metavision-unintended','Flow + Metavision move (unintended only)','punishable',[GENERAL]),
-  tech('full-field-tp-dash','Any Full Field TP Dash','punishable',[GENERAL]),
-  tech('zantetsu-double-explosive','2x Explosive Accel','punishable',['Zantetsu'])
+  // Additional disallowed bug-abuse examples (formerly in a separate punishable category).
+  tech('side-dive-fling','Side Dive Fling','disallowed',[GENERAL]),
+  tech('bachira-kaiser-impact','Bachira Aura × Kaiser Impact','disallowed',['Bachira','Kaiser']),
+  tech('off-ball-awk-save','Off-Ball Awakening Save (player being scored on)','disallowed',[GENERAL]),
+  tech('kaiser-inf-route','Kaiser Infinite Route','disallowed',['Kaiser']),
+  tech('awk-tp-cutscene','Awakening TP Abuse (during cutscene)','disallowed',[GENERAL]),
+  tech('off-ball-awk-after-scoring','Off-Ball Awakening after scoring (before kickoff)','disallowed',[GENERAL]),
+  tech('kaiser-impact-minibox','Kaiser Impact in Minibox (full-court shot)','disallowed',['Kaiser']),
+  tech('bunny-gamebreaking','Any Gamebreaking Bunny Bug','disallowed',['Bunny']),
+  tech('niko-intercept-trap','Intercepting Trap Bug','disallowed',['Niko']),
+  tech('niko-tactical-one-two','Tactical One-Two infinite range','disallowed',['Niko']),
+  tech('flow-metavision-unintended','Flow + Metavision move (unintended only)','disallowed',[GENERAL]),
+  tech('full-field-tp-dash','Any Full Field TP Dash','disallowed',[GENERAL]),
+  tech('zantetsu-double-explosive','2x Explosive Accel','disallowed',['Zantetsu'])
 ];
 
 export const STATUS = {
   allowed:{name:'Allowed tech',short:'Allowed'},
-  disallowed:{name:'Disallowed tech',short:'Disallowed'},
-  punishable:{name:'Punishable bug',short:'Punishable'}
+  disallowed:{name:'Disallowed tech',short:'Disallowed'}
 };
 
 // Only www.youtube.com, youtube.com, m.youtube.com and youtu.be links accepted.
