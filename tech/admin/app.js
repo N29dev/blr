@@ -61,7 +61,7 @@ function renderStyles(){
   renderStylePicker();
 }
 function setSelectedStyles(names){
-  selectedStyles=new Set(canonicalNames(names).slice(0,8));
+  selectedStyles=new Set(canonicalNames(names));
   $('entry-style-search').value='';
   renderStylePicker();
 }
@@ -77,7 +77,7 @@ function updateSelectedChips(){
     chips.append(button);
   }
   if(!selectedStyles.size)chips.append(node('span','style-no-selection','No related styles selected yet'));
-  $('selected-style-count').textContent=selectedStyles.size+' / 8 selected';
+  $('selected-style-count').textContent=selectedStyles.size+' selected';
 }
 function renderStylePicker(){
   const root=$('entry-style-picker');
@@ -101,7 +101,6 @@ function renderStylePicker(){
       const input=node('input');
       input.type='checkbox';input.value=name;
       input.checked=selectedStyles.has(name);
-      input.disabled=!input.checked&&selectedStyles.size>=8;
       input.addEventListener('change',()=>{
         if(input.checked)selectedStyles.add(name);
         else selectedStyles.delete(name);
@@ -122,9 +121,6 @@ function addCustomStyle(){
   if(!name){feedback('editor-message','Enter a style name before adding it.','error');return;}
   if(name.length>48||/[<>{}\u0000-\u001f]/.test(name)){
     feedback('editor-message','Use a valid style name under 48 characters.','error');return;
-  }
-  if(!selectedStyles.has(name)&&selectedStyles.size>=8){
-    feedback('editor-message','Maximum 8 related styles per technique.','error');return;
   }
   selectedStyles.add(name);
   field.value='';
@@ -211,8 +207,8 @@ async function save(event){
   event.preventDefault();
   if(!adminKey||busy)return;
   const styles=[...selectedStyles];
-  if(styles.length===0||styles.length>8){
-    feedback('editor-message','Select 1–8 related styles.','error');return;
+  if(styles.length===0){
+    feedback('editor-message','Select at least one related style.','error');return;
   }
   const body={
     name:$('entry-name').value.trim(),status:$('entry-status').value,
