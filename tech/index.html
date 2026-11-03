@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d19">
-  <meta name="description" content="Blue Lock: Rivals allowed tech, disallowed tech and punishable bug directory. Browse every style, search move names, and watch short demonstration clips as they are added.">
+  <meta name="description" content="Blue Lock: Rivals allowed and disallowed tech directory. Browse every style, search move names, and watch short demonstration clips as they are added.">
   <link rel="canonical" href="https://blr.n29.kz/tech/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070914'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='800' text-anchor='middle' fill='%237dd3fc'%3EN29%3C/text%3E%3C/svg%3E">
   <meta property="og:type" content="website">
   <meta property="og:title" content="BL:R Tech & Bug Rules · N29">
-  <meta property="og:description" content="Style-by-style guide to allowed techniques, banned techniques and punishable bugs in Blue Lock: Rivals.">
+  <meta property="og:description" content="Style-by-style guide to allowed and disallowed techniques in Blue Lock: Rivals.">
   <meta property="og:url" content="https://blr.n29.kz/tech/">
   <meta property="og:image" content="https://blr.n29.kz/og-image.png">
   <title>Tech &amp; Bug Rules — Blue Lock: Rivals · N29</title>
   <link rel="stylesheet" href="/site-theme.css?v=3">
-  <link rel="stylesheet" href="/tech/style.css?v=1">
+  <link rel="stylesheet" href="/tech/style.css?v=2">
 <link rel="stylesheet" href="/site-unify.css?v=2">
   <script defer src="/site-experience.js?v=4"></script>
-  <script type="module" src="/tech/app.js?v=1"></script>
+  <script type="module" src="/tech/app.js?v=2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
@@ -68,7 +68,7 @@
         <div class="hero-copy">
           <span class="eyebrow"><span class="dot"></span> BLUE LOCK: RIVALS / TECH DIRECTORY</span>
           <h1>Know the tech.<br><span>Know the rules.</span></h1>
-          <p>Every style, one searchable rulebook. See which techniques are listed as allowed, which are disallowed, and which bugs are punishable — with short YouTube examples as they're added.</p>
+          <p>Every style, one searchable rulebook. See which techniques are allowed and which are disallowed (and therefore punishable) — with short YouTube examples as they're added.</p>
           <div class="hero-buttons">
             <a class="primary-button" href="#directory">Browse styles <span aria-hidden="true">↗</span></a>
             <a class="outline-button" href="#rules">Read the rules <span aria-hidden="true">↓</span></a>
@@ -79,8 +79,7 @@
         <div class="hero-side" aria-label="Quick guide">
           <div class="side-top"><span>FAIR PLAY PROTOCOL</span><span aria-hidden="true">↗</span></div>
           <div class="status-example status-allowed"><span class="tiny-marker"></span><span>ALLOWED</span><strong>Recognized techniques</strong></div>
-          <div class="status-example status-disallowed"><span class="tiny-marker"></span><span>DISALLOWED</span><strong>Prohibited techniques</strong></div>
-          <div class="status-example status-punishable"><span class="tiny-marker"></span><span>PUNISHABLE</span><strong>Bug abuse examples</strong></div>
+          <div class="status-example status-disallowed"><span class="tiny-marker"></span><span>DISALLOWED</span><strong>Prohibited and punishable techniques</strong></div>
           <p><strong>Important:</strong> No listing doesn't mean a tech is safe. Staff decisions and updated rules take priority.</p>
         </div>
       </header>
@@ -88,7 +87,7 @@
         <div class="metric"><strong id="style-count">—</strong><span>Styles &amp; variants</span></div>
         <div class="metric"><strong id="tech-count">—</strong><span>Listed techniques</span></div>
         <div class="metric"><strong id="allowed-count">—</strong><span>Allowed entries</span></div>
-        <div class="metric"><strong id="restricted-count">—</strong><span>Disallowed &amp; punishable</span></div>
+        <div class="metric"><strong id="restricted-count">—</strong><span>Disallowed entries</span></div>
       </section>
 
       <section class="rules-brief" id="rules" aria-labelledby="rule-title">
@@ -122,7 +121,6 @@
           <button type="button" data-filter="all" aria-pressed="true">All <span id="count-all">0</span></button>
           <button type="button" data-filter="allowed" aria-pressed="false">Allowed <span id="count-allowed">0</span></button>
           <button type="button" data-filter="disallowed" aria-pressed="false">Disallowed <span id="count-disallowed">0</span></button>
-          <button type="button" data-filter="punishable" aria-pressed="false">Punishable <span id="count-punishable">0</span></button>
         </div>
         <div id="tech-entries" class="tech-entries" aria-live="polite"></div>
         <div id="tech-empty" class="tech-empty" hidden>
@@ -138,7 +136,7 @@
           <div class="faqs">
             <details open><summary>Can I appeal a bug-abuse ban?</summary><div class="answer"><p>Yes. Players may appeal a bug-abuse ban whether they knowingly triggered the bug or not. First <a href="https://discord.gg/dgV4p83EHA" target="_blank" rel="noopener noreferrer">join the BL:R support server ↗</a>, then <a href="https://discord.com/channels/1313206300813033532/1313206301232463980" target="_blank" rel="noopener noreferrer">open the appeals channel ↗</a> to explain your situation. Appeals are reviewed by staff and are not guaranteed to succeed.</p></div></details>
             <details><summary>How do I know if a technique is allowed?</summary><div class="answer"><p>Join the <a href="https://discord.gg/dgV4p83EHA" target="_blank" rel="noopener noreferrer">BL:R support server ↗</a> and <a href="https://discord.com/channels/1313206300813033532/1348650686597955584" target="_blank" rel="noopener noreferrer">open a tech inquiry ticket ↗</a>. Provide a clip, how to trigger the technique, and its gameplay impact so support staff can review it.</p></div></details>
-            <details><summary>Are the allowed and disallowed lists final?</summary><div class="answer"><p>No. Allowed tech can become disallowed if it becomes an issue. Punishable bugs remain punishable. Check official announcements for changes.</p></div></details>
+            <details><summary>Are the allowed and disallowed lists final?</summary><div class="answer"><p>No. Allowed tech can become disallowed if it becomes an issue. Disallowed techniques are punishable. Check official announcements for changes.</p></div></details>
             <details><summary>What if my tech or bug isn't listed?</summary><div class="answer"><p>For tech inquiries, consult the <a href="https://discord.com/channels/1304535758899777626/1364020867084062752/1559305710930759701" target="_blank" rel="noopener noreferrer">original moderation FAQ ↗</a>. For bug inquiries, contact its author or support staff with a clip, reproduction steps, and relevant details. An unlisted exploit is not automatically approved.</p></div></details>
             <details><summary>What bugs are generally bannable?</summary><div class="answer"><p>Any bug granting an unfair gameplay advantage may be punishable, including unintended speed, teleports, flight, extended shots, automatic goals, and gameplay-altering emote glitches. The lists above are examples, not exhaustive exemptions.</p></div></details>
           </div>
