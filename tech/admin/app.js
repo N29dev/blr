@@ -120,7 +120,7 @@ function addCustomStyle(){
   const field=$('entry-custom-style');
   const name=canonicalStyle(field.value);
   if(!name){feedback('editor-message','Enter a style name before adding it.','error');return;}
-  if(name.length>48||/[<>{}\\x00-\\x1f]/.test(name)){
+  if(name.length>48||/[<>{}\u0000-\u001f]/.test(name)){
     feedback('editor-message','Use a valid style name under 48 characters.','error');return;
   }
   if(!selectedStyles.has(name)&&selectedStyles.size>=8){
