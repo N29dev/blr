@@ -16,7 +16,7 @@ const slugLookup=names=>{
   }
   return map;
 };
-let techs=TECHS.map(normalizeTech);
+let techs=TECHS.map(item=>normalizeTech({...item,status:item.status==='punishable'?'disallowed':item.status}));
 let styles=STYLES.map(item=>({...item}));
 let styleGroups=STYLE_GROUPS.map(g=>({...g,names:[...g.names]}));
 let allStyleNames=[...ALL_STYLE_NAMES];
@@ -28,7 +28,7 @@ let selectedStyle=nameForSlug.get(urlParams.get('style'))||DEFAULT_STYLE;
 let selectedFilter='all';
 let query='';
 let highlightTech=urlParams.get('tech')||'';
-const order=['allowed','disallowed','punishable'];
+const order=['allowed','disallowed'];
 
 const make=(tag,className='',text)=>{
   const el=document.createElement(tag);
@@ -39,7 +39,7 @@ const make=(tag,className='',text)=>{
 const itemsFor=name=>techs.filter(tech=>tech.styles.includes(canonicalStyle(name)));
 const countsFor=name=>{
   const items=itemsFor(name);
-  return {all:items.length,allowed:items.filter(i=>i.status==='allowed').length,disallowed:items.filter(i=>i.status==='disallowed').length,punishable:items.filter(i=>i.status==='punishable').length};
+  return {all:items.length,allowed:items.filter(i=>i.status==='allowed').length,disallowed:items.filter(i=>i.status==='disallowed').length};
 };
 function matchingStyles(term){
   return allStyleNames.filter(name=>{
@@ -77,7 +77,7 @@ function tileFor(name){
   button.append(make('span','tile-name',name));
   const foot=make('span','tile-foot');
   if(!count.all)foot.append(make('span','count-pill neutral','No entries'));
-  else for(const key of order)if(count[key])foot.append(make('span','count-pill '+key,count[key]+' '+(key==='allowed'?'allowed':key==='disallowed'?'banned':'bug')));
+  else for(const key of order)if(count[key])foot.append(make('span','count-pill '+key,count[key]+' '+(key==='allowed'?'allowed':'disallowed')));
   button.append(foot);
   button.addEventListener('click',()=>selectStyle(name,true));
   return button;
@@ -205,11 +205,11 @@ async function loadCommunityEdits(){
     for(const changed of data.entries){
       if(typeof changed?.id!=='string'||!(/^[a-z0-9][a-z0-9-]{1,70}$/.test(changed.id)))continue;
       if(changed.hidden){map.delete(changed.id);continue;}
-      if(!STATUS[changed.status]||typeof changed.name!=='string'||
+      if(!STATUS[changed.status]&&changed.status!=='punishable'||typeof changed.name!=='string'||
          !Array.isArray(changed.styles)||!changed.styles.length||changed.styles.some(x=>typeof x!=='string'))continue;
       map.set(changed.id,{
         ...normalizeTech({
-          id:changed.id,name:changed.name,status:changed.status,
+          id:changed.id,name:changed.name,status:changed.status==='punishable'?'disallowed':changed.status,
           styles:changed.styles,video:changed.video||'',note:changed.note||'',hasOverride:true
         })
       });
