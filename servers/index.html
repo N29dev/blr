@@ -401,8 +401,8 @@
     const safeHostLink = href => {
       try {const url=new URL(href);return url.protocol==='https:' && url.hostname==='glutony.scp343hey.workers.dev' && url.pathname==='/join' ? url.href : null;}catch{return null;}
     };
-    const regionLabel = s => s.region || [s.city,s.state,s.country].filter(Boolean).join(', ') || 'Unknown region';
-    const briefRegion = s => s.city ? s.city + (s.state&&s.state!==s.city?', '+s.state:'') : (s.country||'Location unreported');
+    const regionLabel = s => s.region || [s.city,s.state,s.country].filter(Boolean).join(', ') || (s.communityReport?.region && !s.communityReport.conflicted ? 'Player-reported '+s.communityReport.region+' ('+s.communityReport.votes+' report'+(s.communityReport.votes===1?'':'s')+')' : 'Unknown region');
+    const briefRegion = s => s.city ? s.city + (s.state&&s.state!==s.city?', '+s.state:'') : (s.country||(s.communityReport?.region && !s.communityReport.conflicted ? 'Reported '+s.communityReport.region : 'Location unreported'));
     const node = (tag, cls, text) => {const x=document.createElement(tag); if(cls)x.className=cls; if(text!==undefined)x.textContent=text;return x;};
     function status(message, error) {ui.status.textContent=message; ui.dot.classList.toggle('off',!!error);}
     function updateAddress(serverId) {
@@ -511,7 +511,7 @@
       const term=ui.search.value.trim().toLowerCase();
       const filtered=serverList.filter(s =>
         (!regionFilter||(Array.isArray(regionFilter.serverIds)?regionFilter.serverIds.includes(s.id):(regionFilter.countryCode&&s.countryCode===regionFilter.countryCode)||(!regionFilter.countryCode&&String(s.country||'').toLowerCase()===String(regionFilter.country||'').toLowerCase()))) &&
-        (!term || [s.region,s.city,s.state,s.country,s.id,String(s.version||'')].some(v=>String(v||'').toLowerCase().includes(term))) &&
+        (!term || [s.region,s.city,s.state,s.country,s.communityReport?.region,s.id,String(s.version||'')].some(v=>String(v||'').toLowerCase().includes(term))) &&
         (!twoOpenOnly||s.free>=2) && (!pinnedOnly||isPinned(s)) &&
         (!countryChoice||countryKey(s)===countryChoice)
       );
