@@ -159,3 +159,20 @@ body[data-template="creator"] .site-hero-panel .site-panel-link{font-family:var(
 @media(max-width:730px){
  body[data-template="creator"] .container{width:calc(100% - 28px);padding-top:18px}
 }
+
+
+/* Optional Roblox account controls in the shared navigation */
+.n29-account-nav{position:relative;flex:none;font-family:Inter,system-ui,sans-serif}
+.n29-account-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 11px;color:#d9e9ff;border:1px solid rgba(152,206,255,.24);background:rgba(112,174,238,.08);border-radius:11px;font-size:12px;font-weight:800;max-width:175px;list-style:none}
+.n29-account-trigger::-webkit-details-marker{display:none}
+.n29-account-trigger:hover,.n29-account-nav[open] .n29-account-trigger{background:rgba(115,197,252,.16)}
+.n29-account-headshot{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none}
+.n29-account-fallback{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(130deg,#78d6ff,#9a96ff);color:#10203b}
+.n29-account-headshot[hidden],.n29-account-fallback[hidden],.n29-account-menu-link[hidden]{display:none!important}
+.n29-account-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.n29-account-menu{position:absolute;right:0;top:calc(100% + 9px);width:260px;padding:9px;z-index:90;background:#142038;border:1px solid rgba(175,209,255,.27);box-shadow:0 22px 55px rgba(0,0,0,.35);border-radius:14px}
+.n29-account-status{color:#a9bed9;font-size:12px;line-height:1.5;padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:6px;overflow-wrap:anywhere}
+.n29-account-menu-link{display:block;color:#e4efff!important;text-decoration:none!important;font-size:13px;font-weight:750;padding:10px;border-radius:8px}
+.n29-account-menu-link:hover{background:rgba(123,187,246,.16)}
+@media(max-width:850px){.n29-nav-inner{flex-wrap:wrap}.n29-account-nav{margin-left:auto}.n29-account-trigger{max-width:150px}.n29-account-menu{width:min(260px,calc(100vw - 24px))}}
+@media(max-width:400px){.n29-account-label{max-width:90px}.n29-account-trigger{padding:7px}}
