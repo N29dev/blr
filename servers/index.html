@@ -629,7 +629,8 @@
             roblox_http_error:'Roblox returned an HTTP error while listing servers.',
             roblox_invalid_response:'Roblox returned an unexpected server response.',
             invalid_configuration:'The Worker has an invalid Roblox place ID configuration.',
-            server_api_error:'The server API encountered an unexpected error.'
+            server_api_error:'The server API encountered an unexpected error.',
+            server_sample_expired:'Cached servers are too old; awaiting a fresh Roblox sample.'
           };
           throw Error(reasons[data.code]||data.error||'Server API unavailable');
         }
@@ -640,7 +641,7 @@
         ui.countServers.textContent=String(serverList.length);
         ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
-        status('Online · '+(mode==='pro'?'Pro':'8v8')+' servers ready');
+        status(data.stale?'Showing recently cached '+(mode==='pro'?'Pro':'8v8')+' servers · counts may have changed':'Online · '+(mode==='pro'?'Pro':'8v8')+' servers ready');
         const age=Date.parse(data.updatedAt);
         ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
         render();
