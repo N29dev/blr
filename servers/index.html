@@ -471,6 +471,44 @@
       retry.disabled=regionAttempts>=MAX_REGION_RETRIES||Boolean(regionController);
       retry.title=regionAttempts>=MAX_REGION_RETRIES?'Refresh the server list to retry':'Ask RoValra for newly identified locations';
     }
+    let signedInForRegionCheck=false;
+    const manualRegionBusy=new Set();
+    fetch('/api/account/me',{credentials:'same-origin',cache:'no-store'})
+      .then(r=>r.ok?r.json():null)
+      .then(data=>{signedInForRegionCheck=Boolean(data?.authenticated);if(signedInForRegionCheck)render();})
+      .catch(()=>{});
+    async function checkServerRegion(server,button) {
+      if(!signedInForRegionCheck || manualRegionBusy.has(server.id))return;
+      const checkedMode=mode,checkedId=server.id;
+      manualRegionBusy.add(checkedId);
+      button.disabled=true;button.textContent='Checking…';
+      try{
+        const resp=await fetch('/api/account/region-check',{
+          method:'POST',credentials:'same-origin',
+          headers:{'content-type':'application/json'},
+          body:JSON.stringify({mode:checkedMode,serverId:checkedId})
+        });
+        const data=await resp.json();
+        if(!resp.ok)throw Error(data.code==='cooldown'
+          ? 'Recently checked · try in '+(data.retryAfterSeconds||90)+'s'
+          : data.error||'Region lookup failed');
+        if(mode!==checkedMode || !serverList.some(s=>s.id===checkedId))return;
+        for(const key of ['region','city','state','country','countryCode','version','firstSeen','regionDiagnostic']){
+          if(data[key]!==undefined && data[key]!==null)server[key]=data[key];
+        }
+        if(data.found){
+          syncCountries();render();window.GlutonyGlobe?.refresh(serverList);
+          status('Region found for '+briefRegion(server));
+        }else {
+          status('Region still unknown · the source has no location for this server');
+        }
+      }catch(error){
+        status(String(error?.message||'Region check unavailable'),true);
+      }finally{
+        manualRegionBusy.delete(checkedId);
+        if(button.isConnected){button.disabled=false;button.textContent='Check region';}
+      }
+    }
     function render() {
       const term=ui.search.value.trim().toLowerCase();
       const filtered=serverList.filter(s =>
@@ -531,6 +569,13 @@
           quick.href=pcLink;quick.target='_blank';quick.rel='noopener noreferrer';
           quick.title='Open Glutony’s verified join link (Roblox may choose a different server)';
           foot.append(quick);
+        }
+        if(signedInForRegionCheck && !(s.region||s.countryCode)){
+          const check=node('button','view n29-check-region','Check region');
+          check.type='button';
+          check.title='Ask Glutony to retry this unknown region once. A shared cooldown prevents repeated requests.';
+          check.addEventListener('click',()=>checkServerRegion(s,check));
+          foot.append(check);
         }
         foot.append(button);card.append(foot);fragment.append(card);
       }
