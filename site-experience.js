@@ -236,7 +236,52 @@
     setFilter('all');
   }
 
+  // Optional Roblox sign-in is shared across pages; public features work without it.
+  function initRobloxAccountNav(){
+    const nav=document.querySelector('.n29-nav-inner');
+    if(!nav)return;
+    const details=createNode('details','n29-account-nav');
+    const summary=createNode('summary','n29-account-trigger');
+    summary.setAttribute('aria-label','Roblox account options');
+    const avatar=createNode('img','n29-account-headshot');
+    avatar.alt='';avatar.hidden=true;
+    const fallback=createNode('span','n29-account-fallback','◉');
+    const label=createNode('span','n29-account-label','Roblox login');
+    summary.append(avatar,fallback,label);
+    const menu=createNode('div','n29-account-menu');
+    menu.setAttribute('aria-label','Roblox account');
+    const status=createNode('div','n29-account-status','Optional account · Public browsing remains available');
+    const signIn=createNode('a','n29-account-menu-link','Sign in with Roblox');
+    signIn.href='/auth/roblox/start';
+    const profile=createNode('a','n29-account-menu-link','View Roblox profile ↗');
+    profile.hidden=true;profile.target='_blank';profile.rel='noopener noreferrer';
+    const signOut=createNode('a','n29-account-menu-link','Sign out');
+    signOut.href='/auth/logout';signOut.hidden=true;
+    menu.append(status,signIn,profile,signOut);
+    details.append(summary,menu);
+    nav.append(details);
+    document.addEventListener('click',event=>{if(!details.contains(event.target))details.open=false;});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')details.open=false;});
+    fetch('/api/account/me',{credentials:'same-origin',cache:'no-store'})
+      .then(async response=>{if(!response.ok)throw Error('Account API unavailable');return response.json();})
+      .then(data=>{
+        if(!data.authenticated||!data.profile)return;
+        const p=data.profile;
+        label.textContent=p.displayName||p.username||'Roblox account';
+        status.textContent=p.username?'Signed in as @'+p.username:'Signed in with Roblox';
+        signIn.hidden=true;signOut.hidden=false;
+        if(typeof p.profileUrl==='string'&&/^https:\/\/www\.roblox\.com\/users\/\d+\/profile$/.test(p.profileUrl)){
+          profile.href=p.profileUrl;profile.hidden=false;
+        }
+        if(typeof p.avatar==='string'&&p.avatar.startsWith('https://')){
+          avatar.src=p.avatar;avatar.hidden=false;fallback.hidden=true;
+          avatar.referrerPolicy='no-referrer';
+        }
+      }).catch(()=>{status.textContent='Account currently unavailable · Public browsing still works';});
+  }
+
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
+  try { initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
   try { initSiteConnections(); } catch(error) { console.warn('Site map enhancement unavailable',error); }
   if(page==='home') {
