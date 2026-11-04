@@ -42,6 +42,9 @@ test('entire HTML site: internal route, static asset, and fragment references re
       try{url=new URL(href,origin+route);}catch{continue;}
       if(url.origin!==origin)continue;
       const path=url.pathname;
+      // Explicit Cloudflare Worker endpoints are not static GitHub Pages files.
+      // Keep the allowlist narrow so broken links are still detected.
+      if(new Set(['/auth/roblox/start','/auth/logout','/auth/roblox/callback','/api/account/me']).has(path))continue;
       const local=pageFile(path);
       assert.ok(existsSync(local),route+' refers to missing '+href);
       // 'Top of page' fragments and dynamic/hash-based state are excluded.
