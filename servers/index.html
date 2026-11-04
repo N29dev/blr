@@ -684,7 +684,8 @@
             roblox_invalid_response:'Roblox returned an unexpected server response.',
             invalid_configuration:'The Worker has an invalid Roblox place ID configuration.',
             server_api_error:'The server API encountered an unexpected error.',
-            server_sample_expired:'Cached servers are too old; awaiting a fresh Roblox sample.'
+            server_sample_expired:'Cached servers are too old; awaiting a fresh Roblox sample.',
+            server_snapshot_unavailable:'The scheduled server scanner has not produced a saved sample yet.'
           };
           const summary=reasons[data.code]||data.error||'Server API unavailable';
           // The API exposes a safe reason when a five-minute-old sample expires.
@@ -699,7 +700,9 @@
         ui.countServers.textContent=String(serverList.length);
         ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
-        status(data.stale?'Showing recently cached '+(mode==='pro'?'Pro':'8v8')+' servers · counts may have changed':'Online · '+(mode==='pro'?'Pro':'8v8')+' servers ready');
+        const modeLabel=mode==='pro'?'Pro':'8v8';
+        if(data.lastKnown) status('Last-known '+modeLabel+' servers · over 5 minutes old; availability is unverified',true);
+        else status(data.stale?'Showing recently cached '+modeLabel+' servers · counts may have changed':'Online · '+modeLabel+' servers ready');
         const age=Date.parse(data.updatedAt);
         ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
         render();
