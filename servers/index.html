@@ -621,7 +621,18 @@
         const url=API+'/api/servers?mode='+encodeURIComponent(mode);
         const resp=await fetch(url,{signal:requestController.signal,cache:'no-store',headers:{'accept':'application/json'}});
         const data=await resp.json();
-        if(!resp.ok || !Array.isArray(data.servers))throw Error(data.error||'Server API unavailable');
+        if(!resp.ok || !Array.isArray(data.servers)){
+          const reasons={
+            roblox_rate_limited:'Roblox is rate-limiting server requests. Try again later.',
+            roblox_access_denied:'Roblox blocked server requests from Cloudflare (HTTP 401/403).',
+            roblox_timeout:'Roblox did not respond before the server request timed out.',
+            roblox_http_error:'Roblox returned an HTTP error while listing servers.',
+            roblox_invalid_response:'Roblox returned an unexpected server response.',
+            invalid_configuration:'The Worker has an invalid Roblox place ID configuration.',
+            server_api_error:'The server API encountered an unexpected error.'
+          };
+          throw Error(reasons[data.code]||data.error||'Server API unavailable');
+        }
         if(myRequest!==requestNum)return;
         serverList=data.servers.filter(s => typeof s.id==='string' && Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing)
           .map(s=>({...s,free:Number.isInteger(s.free)?Math.max(0,s.free):Math.max(0,s.maxPlayers-s.playing)}));
@@ -643,7 +654,7 @@
       } catch(err) {
         if(err.name==='AbortError'||myRequest!==requestNum)return;
         status('Could not load servers',true);ui.updated.textContent='Connection unavailable';
-        empty('Server list unavailable','Glutony might still be deploying. Press Refresh to try again.');
+        empty('Server list unavailable',err.message||'The server API is unavailable. Press Refresh to try again.');
         ui.results.textContent='Not available';
         console.warn('Glutony server browser:',err);
       } finally {
