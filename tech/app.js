@@ -1,6 +1,6 @@
 import { POLICY, TECHS, STYLES, STYLE_GROUPS, GENERAL, ALL_STYLE_NAMES, STATUS, videoUrl, slug, canonicalStyle } from './data.js';
 import { VIDEOS } from './videos.js';
-import { RATING_FIELDS, validRating, overallRating } from './ratings.js';
+import { RATING_FIELDS, validRating, overallRating } from './ratings.js?v=2';
 
 const $ = id => document.getElementById(id);
 const cardRoot=$('style-grid');
