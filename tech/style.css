@@ -122,6 +122,24 @@ body[data-page="tech"]::before{content:"";pointer-events:none;position:absolute;
 .entry-number{font-size:10px;color:#677c9a;font-weight:800;letter-spacing:.05em}
 .tech-entry h3{font-size:17px;letter-spacing:-.035em;font-weight:810;line-height:1.35;margin:0;overflow-wrap:anywhere}
 .entry-meta{color:#8199b7;font-size:11px;font-weight:650;line-height:1.5}
+/* Optional gameplay assessments are independent of moderation classifications. */
+.entry-head-right{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.overall-rating{display:inline-flex;align-items:center;border:1px solid rgba(147,201,255,.28);border-radius:8px;padding:5px 8px;background:rgba(110,174,235,.1);color:#bde3ff;font-size:11px;font-weight:900;white-space:nowrap}
+.tech-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tech-tag{font-size:10px;font-weight:750;line-height:1.35;color:#b9ccec;background:rgba(128,172,228,.1);border:1px solid rgba(147,188,242,.16);border-radius:7px;padding:4px 7px}
+.tech-stats{border-top:1px solid rgba(169,200,236,.13);padding-top:10px}
+.tech-stats summary{list-style:none;cursor:pointer;color:#a8cfff;font-size:12px;font-weight:810;display:flex;align-items:center;gap:6px}
+.tech-stats summary::-webkit-details-marker{display:none}
+.tech-stats summary::after{content:"+";font-weight:800;margin-left:auto}
+.tech-stats[open] summary::after{content:"−"}
+.tech-rating-grid{display:grid;gap:10px;margin:13px 0 2px}
+.tech-rating-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;color:#afbed4;font-size:11px}
+.tech-rating-header strong{color:#e1eeff;font-size:11px;white-space:nowrap}
+.tech-rating-track{height:5px;border-radius:10px;overflow:hidden;background:rgba(167,199,241,.12);margin-top:5px}
+.tech-rating-fill{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#69b7e9,#a6bcff)}
+.tech-counterplay{border:1px solid rgba(111,197,171,.19);border-radius:11px;background:rgba(64,150,121,.085);padding:11px 12px}
+.tech-counterplay strong{color:#99e3c6;font-size:11px;font-weight:850;letter-spacing:.01em}
+.tech-counterplay p{white-space:pre-line;overflow-wrap:anywhere;color:#c0d6cb;font-size:12px;line-height:1.65;margin:5px 0 0}
 .entry-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-top:auto}
 .video-link{font-size:12px;border-radius:9px;background:rgba(112,193,245,.14);border:1px solid rgba(132,204,255,.26);padding:7px 10px;color:#c5e7ff!important;font-weight:810}
 .video-link:hover{background:rgba(112,193,245,.26)}
