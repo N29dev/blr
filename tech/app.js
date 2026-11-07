@@ -82,9 +82,10 @@ function tileFor(name){
   button.addEventListener('click',()=>selectStyle(name,true));
   return button;
 }
-function addStyleGroup(label,names){
+function addStyleGroup(id,label,names){
   if(!names.length)return;
   const section=make('section','style-group');
+  section.dataset.rarity=id;
   const heading=make('div','group-heading');
   heading.append(make('h3','',label),make('small','',names.length+' style'+(names.length===1?'':'s')));
   section.append(heading);
@@ -96,10 +97,10 @@ function renderDirectory(){
   const matches=new Set(matchingStyles(query));
   cardRoot.replaceChildren();
   $('style-empty').hidden=matches.size!==0;
-  if(matches.has(GENERAL))addStyleGroup('Shared / Cross-style',[GENERAL]);
+  if(matches.has(GENERAL))addStyleGroup('general','Shared / Cross-style',[GENERAL]);
   for(const group of styleGroups){
     const names=group.names.filter(name=>matches.has(name));
-    addStyleGroup(group.label,names);
+    addStyleGroup(group.id,group.label,names);
   }
   $('clear-search').hidden=!search.value;
 }
