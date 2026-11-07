@@ -7,11 +7,11 @@
   <meta name="theme-color" content="#080d19">
   <title>Tech Rules Admin · N29</title>
   <link rel="stylesheet" href="/site-theme.css?v=1">
-  <link rel="stylesheet" href="/tech/style.css?v=1">
-  <link rel="stylesheet" href="/tech/admin/admin.css?v=2">
+  <link rel="stylesheet" href="/tech/style.css?v=4">
+  <link rel="stylesheet" href="/tech/admin/admin.css?v=3">
 <link rel="stylesheet" href="/site-unify.css?v=2">
   <script defer src="/site-experience.js?v=4"></script>
-  <script type="module" src="/tech/admin/app.js?v=4"></script>
+  <script type="module" src="/tech/admin/app.js?v=5"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
@@ -42,7 +42,7 @@
       <header class="admin-hero">
         <span class="section-label">PRIVATE EDITOR / BL:R</span>
         <h1>Manage tech rules.</h1>
-        <p>Add techniques, change their classification, attach YouTube Shorts, or remove outdated entries. Saved changes appear on the public <a href="/tech/">Tech Rules</a> page.</p>
+        <p>Add techniques, set their classification, attach clips, and document gameplay ratings, tags or counterplay. Saved changes appear on the public <a href="/tech/">Tech Rules</a> page.</p>
       </header>
       <section id="login-panel" class="admin-card admin-login" aria-labelledby="login-heading">
         <h2 id="login-heading">Unlock your editor</h2>
@@ -92,6 +92,21 @@
               <p class="field-help">YouTube Shorts, regular video links and youtu.be are accepted. Upload the video to YouTube first.</p>
               <label class="field-label" for="entry-note">Short explanation (optional)</label>
               <textarea id="entry-note" rows="3" maxlength="500" placeholder="Describe the technique or policy note."></textarea>
+              <section class="assessment-editor" aria-labelledby="assessment-title">
+                <div class="assessment-title-row">
+                  <div><span class="section-label">OPTIONAL / ADMIN-RATED</span><h4 id="assessment-title">Gameplay assessment</h4></div>
+                  <output id="overall-preview" aria-live="polite">Overall: Not rated</output>
+                </div>
+                <p class="field-help">Rate each metric from 1–5. Overall uses ease of execution, counter difficulty, advantage and consistency equally. GK save difficulty is optional and does not change overall. These scores describe gameplay usefulness, not whether a tech is allowed.</p>
+                <div id="rating-fields" class="rating-fields"></div>
+                <fieldset class="tag-editor">
+                  <legend>Mechanic &amp; counterplay tags (optional)</legend>
+                  <div id="entry-tag-picker" class="tag-picker"></div>
+                </fieldset>
+                <label class="field-label" for="entry-counterplay">Counterplay / how to save (optional)</label>
+                <textarea id="entry-counterplay" rows="5" maxlength="1200" placeholder="Explain how opponents or a GK can counter the technique. Include positioning, timing, or known limitations."></textarea>
+                <p class="field-help">Shown publicly as “How to counter / save” once filled in. Add line breaks for clear step-by-step tips.</p>
+              </section>
               <div class="form-actions">
                 <button id="save-entry" type="submit" class="save-button">Save technique</button>
                 <button id="delete-entry" type="button" class="delete-button" hidden>Remove from directory</button>
