@@ -7,7 +7,6 @@ export const RATING_FIELDS = Object.freeze([
   {id:'execution',label:'Execution difficulty',hint:'5 = very hard to perform'},
   {id:'counter',label:'Counter difficulty',hint:'5 = very hard to stop'},
   {id:'advantage',label:'Advantage',hint:'5 = large gameplay benefit'},
-  {id:'consistency',label:'Consistency',hint:'5 = works reliably'},
   {id:'save',label:'GK save difficulty',hint:'5 = very hard for the goalkeeper to save',optional:true}
 ]);
 export const CORE_RATING_IDS = Object.freeze(RATING_FIELDS.filter(field=>!field.optional).map(field=>field.id));
@@ -23,8 +22,8 @@ export function validRating(value){
   return Number.isInteger(value)&&value>=1&&value<=5;
 }
 
-/** Equal weight: ease of execution + difficulty to counter + advantage + consistency. */
+/** Weighted gameplay value: execution ease 20%, counter difficulty 35%, advantage 45%. */
 export function overallRating(ratings){
   if(!ratings||typeof ratings!=='object'||CORE_RATING_IDS.some(id=>!validRating(ratings[id])))return null;
-  return Math.round(((6-ratings.execution+ratings.counter+ratings.advantage+ratings.consistency)/4)*10)/10;
+  return Math.round((0.2*(6-ratings.execution)+0.35*ratings.counter+0.45*ratings.advantage)*10)/10;
 }
