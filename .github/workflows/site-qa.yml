@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22'
       - name: Site navigation and full repository audit
-        run: node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs
+        run: node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs tech/ratings.test.mjs
       - name: All 36 globe region mappings
         run: node servers/globe-regions.test.mjs
       - name: JavaScript source syntax
@@ -31,6 +31,7 @@ jobs:
           node --check tools/tiktok-info.js
           node --check tools/patch.mjs
           node --check tools/compress.mjs
+          node --check tech/ratings.js
           node --check tech/app.js
           node --check tech/admin/app.js
           node --check servers/globe.js
