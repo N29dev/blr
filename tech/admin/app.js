@@ -1,6 +1,6 @@
 import {TECHS,STYLES,STYLE_GROUPS,GENERAL,STATUS,slug,videoUrl,canonicalStyle} from '../data.js';
 import {VIDEOS} from '../videos.js';
-import {RATING_FIELDS,TAG_GROUPS,validRating,overallRating} from '../ratings.js';
+import {RATING_FIELDS,TAG_GROUPS,validRating,overallRating} from '../ratings.js?v=2';
 
 const API='https://glutony.scp343hey.workers.dev';
 const $=id=>document.getElementById(id);
