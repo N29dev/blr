@@ -285,7 +285,16 @@ async function save(event){
     },true);
     await refresh();
     edit(id);
-    feedback('editor-message','Saved. The public rules page now uses this entry.','success');
+    const stored=overrides.find(entry=>entry.id===id&&!entry.hidden);
+    const expectedRatings=body.ratings;
+    const actualRatings=stored?.ratings||{};
+    const savedMetadata=Object.keys(expectedRatings).every(key=>actualRatings[key]===expectedRatings[key])
+      &&Object.keys(actualRatings).length===Object.keys(expectedRatings).length
+      &&JSON.stringify(stored?.tags||[])===JSON.stringify(body.tags)
+      &&(stored?.counterplay||'')===body.counterplay.replace(/\r\n?/g,'\n');
+    feedback('editor-message',savedMetadata
+      ?'Saved. Ratings, tags and counterplay are now available on the public directory.'
+      :'Classification saved, but the Worker did not retain gameplay metadata. Deploy the latest N29dev/Glutony Worker before editing ratings.',savedMetadata?'success':'error');
   }catch(error){
     feedback('editor-message',error.message,'error');
   }finally{setBusy(false);}
