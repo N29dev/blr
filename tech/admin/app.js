@@ -1,5 +1,6 @@
 import {TECHS,STYLES,STYLE_GROUPS,GENERAL,STATUS,slug,videoUrl,canonicalStyle} from '../data.js';
 import {VIDEOS} from '../videos.js';
+import {RATING_FIELDS,TAG_GROUPS,validRating,overallRating} from '../ratings.js';
 
 const API='https://glutony.scp343hey.workers.dev';
 const $=id=>document.getElementById(id);
@@ -19,6 +20,61 @@ const node=(tag,className='',text=null)=>{
   if(text!==null)result.textContent=text;
   return result;
 };
+function buildAssessmentEditor(){
+  const ratings=$('rating-fields');
+  for(const field of RATING_FIELDS){
+    const label=node('label','rating-control');
+    const name=node('span','rating-label',field.label+(field.optional?' · optional':''));
+    const select=node('select');
+    select.id='rating-'+field.id;
+    const empty=node('option','','Not rated');empty.value='';select.append(empty);
+    for(let i=1;i<=5;i++){
+      const option=node('option','',String(i)+'/5');option.value=String(i);select.append(option);
+    }
+    select.addEventListener('change',updateOverallPreview);
+    label.append(name,select,node('small','',field.hint));
+    ratings.append(label);
+  }
+  const tags=$('entry-tag-picker');
+  for(const group of TAG_GROUPS){
+    const section=node('fieldset','tag-group');
+    section.append(node('legend','',group.label));
+    const choices=node('div','tag-options');
+    for(const tag of group.tags){
+      const label=node('label','tag-choice');
+      const input=node('input');
+      input.type='checkbox';input.value=tag;
+      label.append(input,node('span','',tag));
+      choices.append(label);
+    }
+    section.append(choices);tags.append(section);
+  }
+}
+function readRatings(){
+  const ratings={};
+  for(const field of RATING_FIELDS){
+    const value=$('rating-'+field.id).value;
+    if(value!==''&&validRating(Number(value)))ratings[field.id]=Number(value);
+  }
+  return ratings;
+}
+function selectedTags(){
+  return [...$('entry-tag-picker').querySelectorAll('input:checked')].map(input=>input.value);
+}
+function updateOverallPreview(){
+  const overall=overallRating(readRatings());
+  $('overall-preview').textContent=overall===null?'Overall: Not rated':'Overall: '+overall.toFixed(1)+'/5';
+}
+function fillAssessment(item){
+  for(const field of RATING_FIELDS){
+    const value=item.ratings?.[field.id];
+    $('rating-'+field.id).value=validRating(value)?String(value):'';
+  }
+  const tags=new Set(item.tags||[]);
+  $('entry-tag-picker').querySelectorAll('input').forEach(input=>{input.checked=tags.has(input.value);});
+  $('entry-counterplay').value=item.counterplay||'';
+  updateOverallPreview();
+}
 function feedback(id,message,kind=''){
   const el=$(id);
   el.textContent=message;
@@ -41,7 +97,8 @@ function combined(){
     if(!STATUS[entry.status]&&entry.status!=='punishable'||!Array.isArray(entry.styles))continue;
     map.set(entry.id,{
       id:entry.id,name:entry.name,status:entry.status==='punishable'?'disallowed':entry.status,styles:canonicalNames(entry.styles),
-      video:entry.video||'',note:entry.note||'',hasOverride:true
+      video:entry.video||'',note:entry.note||'',ratings:entry.ratings||{},tags:entry.tags||[],
+      counterplay:entry.counterplay||'',hasOverride:true
     });
   }
   return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
@@ -160,6 +217,7 @@ async function refresh(){
 function newEntry(){
   selectedId=null;
   $('entry-form').reset();
+  updateOverallPreview();
   setSelectedStyles($('filter-style').value?[$('filter-style').value]:[]);
   $('editing-id').textContent='';
   $('form-title').textContent='Add a technique';
@@ -179,6 +237,7 @@ function edit(id){
   $('entry-status').value=item.status;
   $('entry-video').value=item.hasOverride ? (item.video || '') : (VIDEOS[item.id] || item.video || '');
   $('entry-note').value=item.note||'';
+  fillAssessment(item);
   $('delete-entry').hidden=false;
   feedback('editor-message','');
   renderList();
@@ -212,7 +271,8 @@ async function save(event){
   }
   const body={
     name:$('entry-name').value.trim(),status:$('entry-status').value,
-    styles,video:$('entry-video').value.trim(),note:$('entry-note').value.trim()
+    styles,video:$('entry-video').value.trim(),note:$('entry-note').value.trim(),
+    ratings:readRatings(),tags:selectedTags(),counterplay:$('entry-counterplay').value.trim()
   };
   if(body.video&&!videoUrl(body.video)){
     feedback('editor-message','Use a valid YouTube Shorts, watch, or youtu.be link.','error');return;
@@ -271,6 +331,7 @@ function logout(){
   feedback('login-message','Editor locked. Your key was cleared from this page.');
 }
 function init(){
+  buildAssessmentEditor();
   $('login-form').addEventListener('submit',connect);
   $('entry-form').addEventListener('submit',save);
   $('delete-entry').addEventListener('click',remove);
