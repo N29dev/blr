@@ -80,6 +80,26 @@ body[data-page="tech"]::before{content:"";pointer-events:none;position:absolute;
 .count-pill.disallowed{color:#ffcf91;background:rgba(230,161,71,.13)}
 .count-pill.punishable{color:#ff9cad;background:rgba(229,81,111,.12)}
 .count-pill.neutral{font-size:10px}
+/* Rarity accents are visual only: allowed / disallowed statuses keep their own colors.
+   General, Limited and community additions use the neutral palette. */
+.style-group{--style-accent:#a5b8d1;--style-rgb:165,184,209}
+.style-group[data-rarity="rare"]{--style-accent:#54b0f9;--style-rgb:84,176,249}
+.style-group[data-rarity="epic"]{--style-accent:#ac7bff;--style-rgb:172,123,255}
+.style-group[data-rarity="legendary"]{--style-accent:#f1b444;--style-rgb:241,180,68}
+.style-group[data-rarity="mythic"]{--style-accent:#ff796e;--style-rgb:255,121,110}
+.style-group[data-rarity="world"]{--style-accent:#c8d2e4;--style-rgb:200,210,228}
+.style-group[data-rarity="master"]{--style-accent:#c6a1ff;--style-rgb:198,161,255}
+.style-group .group-heading h3{display:inline-flex;align-items:center;gap:9px;color:var(--style-accent)}
+.style-group .group-heading h3::before{content:"";display:inline-block;width:3px;height:14px;flex:none;border-radius:3px;background:var(--style-accent)}
+.style-group .tile-name{color:var(--style-accent)}
+.style-group .style-tile{border-color:rgba(var(--style-rgb),.28);background:linear-gradient(135deg,rgba(var(--style-rgb),.085),rgba(16,29,49,.86) 65%)}
+.style-group .style-tile:hover{border-color:rgba(var(--style-rgb),.68);background:linear-gradient(135deg,rgba(var(--style-rgb),.18),rgba(18,32,52,.93) 70%)}
+.style-group .style-tile[aria-pressed="true"]{border-color:var(--style-accent);background:linear-gradient(130deg,rgba(var(--style-rgb),.23),rgba(16,29,49,.93) 72%);box-shadow:inset 0 0 0 1px rgba(var(--style-rgb),.09),0 0 21px rgba(var(--style-rgb),.1)}
+/* Master uses the multi-colored frame from its in-game tier rather than solid purple. */
+.style-group[data-rarity="master"] .group-heading h3,.style-group[data-rarity="master"] .tile-name{background:linear-gradient(100deg,#f4ab64,#ce94ff 54%,#71e3ef);-webkit-background-clip:text;background-clip:text;color:transparent}
+.style-group[data-rarity="master"] .style-tile{border:1px solid transparent;background:linear-gradient(135deg,#182238,#131e32) padding-box,linear-gradient(115deg,rgba(242,154,74,.57),rgba(150,54,232,.65),rgba(41,197,216,.57)) border-box}
+.style-group[data-rarity="master"] .style-tile:hover{border-color:transparent;background:linear-gradient(135deg,#252743,#172b3b) padding-box,linear-gradient(115deg,#f2a45e,#a35aec,#55d5e5) border-box}
+.style-group[data-rarity="master"] .style-tile[aria-pressed="true"]{border-color:transparent;background:linear-gradient(135deg,#292744,#172b3d) padding-box,linear-gradient(115deg,#f29a4a,#9636e8,#29c5d8) border-box;box-shadow:0 0 22px rgba(174,98,239,.18)}
 .empty{padding:27px;border:1px dashed rgba(169,192,226,.25);color:#a9bcd5;border-radius:14px;text-align:center}
 .tech-detail{scroll-margin-top:85px;border:1px solid rgba(165,201,246,.19);background:linear-gradient(150deg,rgba(16,30,51,.82),rgba(9,20,36,.94));border-radius:24px;padding:clamp(19px,3.2vw,35px);margin-bottom:85px;box-shadow:0 15px 60px rgba(0,0,0,.12)}
 .detail-header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
