@@ -1,5 +1,6 @@
 import { POLICY, TECHS, STYLES, STYLE_GROUPS, GENERAL, ALL_STYLE_NAMES, STATUS, videoUrl, slug, canonicalStyle } from './data.js';
 import { VIDEOS } from './videos.js';
+import { RATING_FIELDS, validRating, overallRating } from './ratings.js';
 
 const $ = id => document.getElementById(id);
 const cardRoot=$('style-grid');
@@ -114,14 +115,53 @@ function entryCard(item,index){
   card.id='tech-'+item.id;
   if(item.id===highlightTech)card.classList.add('is-linked');
   const top=make('div','tech-entry-top');
-  top.append(make('span','entry-status '+item.status,STATUS[item.status].name),
-             make('span','entry-number',String(index+1).padStart(2,'0')));
+  const overall=overallRating(item.ratings);
+  top.append(make('span','entry-status '+item.status,STATUS[item.status].name));
+  const topRight=make('div','entry-head-right');
+  if(overall!==null){
+    const score=make('span','overall-rating','★ '+overall.toFixed(1)+'/5');
+    score.title='Admin-rated gameplay value (not an allowed/disallowed classification)';
+    topRight.append(score);
+  }
+  topRight.append(make('span','entry-number',String(index+1).padStart(2,'0')));
+  top.append(topRight);
   card.append(top,make('h3','',item.name));
   const related=item.styles.filter(name=>name!==selectedStyle);
   if(related.length)card.append(make('div','entry-meta','Also listed under: '+related.join(', ')));
   else if(selectedStyle===GENERAL)card.append(make('div','entry-meta','General gameplay / multiple styles'));
   else card.append(make('div','entry-meta','Style: '+selectedStyle));
   if(item.note)card.append(make('p','entry-meta',item.note));
+  if(Array.isArray(item.tags)&&item.tags.length){
+    const tags=make('div','tech-tags');
+    for(const tag of item.tags)tags.append(make('span','tech-tag',tag));
+    card.append(tags);
+  }
+  if(item.ratings&&RATING_FIELDS.some(field=>validRating(item.ratings[field.id]))){
+    const detail=make('details','tech-stats');
+    detail.append(make('summary','','Gameplay ratings'));
+    const ratingGrid=make('div','tech-rating-grid');
+    for(const field of RATING_FIELDS){
+      const value=item.ratings[field.id];
+      if(!validRating(value))continue;
+      const metric=make('div','tech-rating');
+      const header=make('div','tech-rating-header');
+      header.append(make('span','',field.label),make('strong','',value+'/5'));
+      metric.append(header);
+      const track=make('div','tech-rating-track');
+      const fill=make('span','tech-rating-fill');
+      fill.style.width=(value*20)+'%';
+      track.append(fill);metric.append(track);
+      ratingGrid.append(metric);
+    }
+    detail.append(ratingGrid);
+    card.append(detail);
+  }
+  if(item.counterplay){
+    const counterplay=make('div','tech-counterplay');
+    counterplay.append(make('strong','','How to counter / save'));
+    counterplay.append(make('p','',item.counterplay));
+    card.append(counterplay);
+  }
   const foot=make('div','entry-footer');
   const youtube=videoUrl(item.hasOverride ? item.video : (VIDEOS[item.id] || item.video));
   if(youtube){
@@ -211,7 +251,8 @@ async function loadCommunityEdits(){
       map.set(changed.id,{
         ...normalizeTech({
           id:changed.id,name:changed.name,status:changed.status==='punishable'?'disallowed':changed.status,
-          styles:changed.styles,video:changed.video||'',note:changed.note||'',hasOverride:true
+          styles:changed.styles,video:changed.video||'',note:changed.note||'',
+           ratings:changed.ratings||{},tags:changed.tags||[],counterplay:changed.counterplay||'',hasOverride:true
         })
       });
     }
