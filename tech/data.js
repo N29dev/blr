@@ -25,9 +25,9 @@ export const POLICY = Object.freeze({
 
 export const STYLE_GROUPS = [
   {id:'rare',label:'Rare',names:['Isagi','Kurona','Gagamaru','Chigiri','Raichi']},
-  {id:'epic',label:'Epic',names:['Otoya','Sendou','Hiori','Bachira','Karasu']},
+  {id:'epic',label:'Epic',names:['Otoya','Sendou','Hiori','Bachira']},
   {id:'legendary',label:'Legendary',names:['Zantetsu','Kiyora','Nagi','Aiku','King','Kunigami']},
-  {id:'mythic',label:'Mythic',names:['Shidou','Ness','Reo','Rin','Niko','Charles','Yukimiya']},
+  {id:'mythic',label:'Mythic',names:['Shidou','Ness','Reo','Rin','Niko','Charles','Yukimiya','Karasu']},
   {id:'world',label:'World Class',names:['Don Lorenzo','Sae','Kaiser']},
   {id:'master',label:'Master',names:['Loki','Snuffy','Lavinho']},
   // Bunny and Igaguri are not placed among the limited/event styles.
