@@ -13,9 +13,9 @@ test('all style names and technique IDs are unique',()=>{
 test('all styles have the exact owner-provided rarity or limited classification',()=>{
   const expected={
     rare:['Isagi','Kurona','Gagamaru','Chigiri','Raichi'],
-    epic:['Otoya','Sendou','Hiori','Bachira','Karasu'],
+    epic:['Otoya','Sendou','Hiori','Bachira'],
     legendary:['Zantetsu','Kiyora','Nagi','Aiku','King','Kunigami'],
-    mythic:['Shidou','Ness','Reo','Rin','Niko','Charles','Yukimiya'],
+    mythic:['Shidou','Ness','Reo','Rin','Niko','Charles','Yukimiya','Karasu'],
     world:['Don Lorenzo','Sae','Kaiser'],
     master:['Loki','Snuffy','Lavinho'],
     other:['Bunny','Igaguri'],
