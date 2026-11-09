@@ -390,6 +390,19 @@
     const pingLabel = ping => Number.isFinite(ping) ? Math.round(ping)+' ms' : 'Unknown';
     const verifiedCounts = s => Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>0;
     let rovalraDiscovery=false;
+    let discoveryTimer=null, discoveryIncomplete=false;
+    function stopDiscoveryTimer() {
+      if(discoveryTimer!==null){clearTimeout(discoveryTimer);discoveryTimer=null;}
+    }
+    function scheduleDiscoveryTimer() {
+      stopDiscoveryTimer();
+      if(!rovalraDiscovery||!discoveryIncomplete)return;
+      discoveryTimer=setTimeout(()=>{
+        discoveryTimer=null;
+        // No background-tab provider checks. One D1 gate coalesces all viewers.
+        if(!document.hidden)load();
+      },135_000);
+    }
     const versionLabel = v => Number.isInteger(v) && v>0 ? 'v'+v : 'Unknown';
     const ago = date => {
       if (!date) return 'Unknown';
@@ -530,7 +543,8 @@
       ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'');
       ui.list.replaceChildren();
       if(!filtered.length){
-        empty(serverList.length?'No servers match these filters':'No joinable servers',serverList.length?'Change your search or filters to see more servers.':'Press Refresh to check again.');
+        empty(serverList.length?'No servers match these filters':(rovalraDiscovery?'No servers in sampled countries yet':'No joinable servers'),serverList.length?'Change your search or filters to see more servers.':(rovalraDiscovery?'Other countries are checked automatically while this page is open.':'Press Refresh to check again.'));
+
         return;
       }
       const fragment=document.createDocumentFragment();
@@ -659,6 +673,7 @@
     }
     async function load() {
       stopRegionRecheck();
+      stopDiscoveryTimer();
       regionAttempts = 0;
       el('region-coverage').textContent='Regions: loading…';
       el('region-diagnostics').textContent='';
@@ -698,6 +713,23 @@
         }
         if(myRequest!==requestNum)return;
         rovalraDiscovery=data.source==='rovalra';
+        discoveryIncomplete=rovalraDiscovery && Number(data.regionCoverage||0)<Number(data.regionTotal||0);
+        if(rovalraDiscovery) {
+          // Sorting by unknown occupancy would silently imply numbers exist.
+          ui.sort.querySelector('option[value="players"]').textContent='Region (A–Z)';
+          ui.sort.querySelector('option[value="space"]').disabled=true;
+          ui.sort.querySelector('option[value="ping"]').disabled=true;
+          if(['space','ping'].includes(ui.sort.value))ui.sort.value='players';
+          twoOpenOnly=false;
+          el('filter-open').disabled=true;
+          el('filter-open').title='Free-slot information is unavailable from regional discovery';
+        } else {
+          ui.sort.querySelector('option[value="players"]').textContent='Most players';
+          ui.sort.querySelector('option[value="space"]').disabled=false;
+          ui.sort.querySelector('option[value="ping"]').disabled=false;
+          el('filter-open').disabled=false;
+          el('filter-open').title='';
+        }
         serverList=data.servers.filter(s=> typeof s.id==='string' &&
           (rovalraDiscovery ? s.playing===null && s.maxPlayers===null :
             Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing))
@@ -715,6 +747,7 @@
         render();
         window.GlutonyGlobe?.refresh(serverList);
         scheduleRegionRecheck();
+        scheduleDiscoveryTimer();
         if(pendingServer) {
           const match=serverList.find(s=>s.id.toLowerCase()===pendingServer.toLowerCase());
           pendingServer='';
