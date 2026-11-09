@@ -387,7 +387,9 @@
       if (typeof code !== 'string' || !/^[A-Z]{2}$/.test(code)) return '🌐';
       return String.fromCodePoint(...Array.from(code).map(c => 127397 + c.charCodeAt(0)));
     };
-    const pingLabel = ping => Number.isFinite(ping) ? Math.round(ping)+' ms' : 'N/A';
+    const pingLabel = ping => Number.isFinite(ping) ? Math.round(ping)+' ms' : 'Unknown';
+    const verifiedCounts = s => Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>0;
+    let rovalraDiscovery=false;
     const versionLabel = v => Number.isInteger(v) && v>0 ? 'v'+v : 'Unknown';
     const ago = date => {
       if (!date) return 'Unknown';
@@ -472,7 +474,7 @@
       }
       el('region-diagnostics').textContent=[...reasons].map(([reason,n])=>n+'× '+reason).join(' · ');
       const retry=el('retry-regions');
-      retry.hidden=!total||count===total;
+      retry.hidden=!total||count===total||rovalraDiscovery;
       retry.disabled=regionAttempts>=MAX_REGION_RETRIES||Boolean(regionController);
       retry.title=regionAttempts>=MAX_REGION_RETRIES?'Refresh the server list to retry':'Ask RoValra for newly identified locations';
     }
@@ -539,7 +541,7 @@
         loc.append(title,node('div','subplace',s.country||communityRegionLabel(s)||regionDiagnosis(s)));
         locationRow.append(flag,loc);
         const topActions=node('div','server-top-actions');
-        topActions.append(node('span','pill',s.free+' open'));
+        topActions.append(node('span','pill',verifiedCounts(s)?s.free+' open':'Slots unknown'));
         const pin=node('button','server-pin',isPinned(s)?'★':'☆');
         pin.type='button';pin.setAttribute('aria-pressed',String(isPinned(s)));
         pin.setAttribute('aria-label',(isPinned(s)?'Unpin ':'Pin ')+briefRegion(s)+' server');
@@ -549,13 +551,14 @@
         top.append(locationRow,topActions);
         card.classList.toggle('is-pinned',isPinned(s));
         card.append(top);
-        const count=node('div','server-count');const countText=node('strong','',s.playing+'/'+s.maxPlayers);
+        const count=node('div','server-count');const countText=node('strong','',verifiedCounts(s)?s.playing+'/'+s.maxPlayers:'? / ?');
         count.append(countText,node('span','','players'));card.append(count);
         const bar=node('div','bar'), fill=node('div','bar-inner');
-        fill.style.width=Math.max(0,Math.min(100,100*s.playing/Math.max(1,s.maxPlayers)))+'%';bar.append(fill);card.append(bar);
+        fill.style.width=verifiedCounts(s)?Math.max(0,Math.min(100,100*s.playing/s.maxPlayers))+'%':'0%';bar.append(fill);card.append(bar);
         const facts=node('div','facts');
-        facts.append(node('span','fact','◉ '+pingLabel(s.ping)+' server ping'));
-        facts.append(node('span','fact','◷ '+Math.round(100*s.playing/Math.max(1,s.maxPlayers))+'% occupied'));
+        facts.append(node('span','fact','◉ '+(verifiedCounts(s)?pingLabel(s.ping)+' server ping':'Player count unavailable')));
+        facts.append(node('span','fact',verifiedCounts(s)?'◷ '+Math.round(100*s.playing/s.maxPlayers)+'% occupied':'◷ RoValra-observed · joinability unverified'));
+        if(s.observedAt) facts.append(node('span','fact','◷ Observed '+ago(s.observedAt)));
         if(s.firstSeen)facts.append(node('span','fact','◷ '+ago(s.firstSeen)));
         card.append(facts);
         const foot=node('div','cardfoot');
@@ -694,17 +697,21 @@
           throw Error(cause ? summary+' '+cause : summary);
         }
         if(myRequest!==requestNum)return;
-        serverList=data.servers.filter(s => typeof s.id==='string' && Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing)
-          .map(s=>({...s,free:Number.isInteger(s.free)?Math.max(0,s.free):Math.max(0,s.maxPlayers-s.playing)}));
+        rovalraDiscovery=data.source==='rovalra';
+        serverList=data.servers.filter(s=> typeof s.id==='string' &&
+          (rovalraDiscovery ? s.playing===null && s.maxPlayers===null :
+            Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing))
+          .map(s=>({...s,free:verifiedCounts(s)?(Number.isInteger(s.free)?Math.max(0,s.free):Math.max(0,s.maxPlayers-s.playing)):null}));
         syncCountries();
         ui.countServers.textContent=String(serverList.length);
-        ui.countPlayers.textContent=String(serverList.reduce((sum,s)=>sum+s.playing,0));
-        ui.countSpots.textContent=String(serverList.reduce((sum,s)=>sum+s.free,0));
+        ui.countPlayers.textContent=rovalraDiscovery?'—':String(serverList.reduce((sum,s)=>sum+s.playing,0));
+        ui.countSpots.textContent=rovalraDiscovery?'—':String(serverList.reduce((sum,s)=>sum+s.free,0));
         const modeLabel=mode==='pro'?'Pro':'8v8';
-        if(data.lastKnown) status('Last-known '+modeLabel+' servers · over 5 minutes old; availability is unverified',true);
+        if(rovalraDiscovery) status('RoValra-observed '+modeLabel+' servers · '+(data.regionCoverage||0)+'/'+(data.regionTotal||'?')+' countries sampled · Players and slots unverified');
+        else if(data.lastKnown) status('Last-known '+modeLabel+' servers · over 5 minutes old; availability is unverified',true);
         else status(data.stale?'Showing recently cached '+modeLabel+' servers · counts may have changed':'Online · '+modeLabel+' servers ready');
         const age=Date.parse(data.updatedAt);
-        ui.updated.textContent=Number.isFinite(age)?'Updated '+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Live data';
+        ui.updated.textContent=Number.isFinite(age)?(rovalraDiscovery?'Last region check ':'Updated ')+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Sample time unknown';
         render();
         window.GlutonyGlobe?.refresh(serverList);
         scheduleRegionRecheck();
@@ -727,10 +734,10 @@
       currentServer=s;
       el('detail-title').textContent=flagFor(s.countryCode)+' '+regionLabel(s);
       el('detail-mode').textContent=mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
-      el('detail-players').textContent=s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open';
-      el('detail-bar').style.width=(100*s.playing/s.maxPlayers)+'%';
+      el('detail-players').textContent=verifiedCounts(s)?s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open':'Players and open slots unknown · RoValra-observed';
+      el('detail-bar').style.width=verifiedCounts(s)?(100*s.playing/s.maxPlayers)+'%':'0%';
       updateRegionDetail(s);
-      el('detail-ping').textContent=pingLabel(s.ping)+' (reported)';
+      el('detail-ping').textContent=Number.isFinite(s.ping)?pingLabel(s.ping)+' (reported)':'Unknown';
       el('detail-version').textContent=versionLabel(s.version);
       el('detail-uptime').textContent=ago(s.firstSeen);
       el('detail-id').textContent='Server ID: '+s.id;
@@ -759,7 +766,7 @@
           }catch{}
         }
         if(!group.childElementCount)group.append(node('span','subplace','No public player previews available'));
-        else if(s.playing>group.childElementCount)group.append(node('span','placeholder','+'+(s.playing-group.childElementCount)));
+        else if(Number.isInteger(s.playing)&&s.playing>group.childElementCount)group.append(node('span','placeholder','+'+(s.playing-group.childElementCount)));
       }catch{
         if(currentServer?.id===s.id)group.replaceChildren(node('span','subplace','Previews unavailable'));
       }
