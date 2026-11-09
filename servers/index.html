@@ -228,7 +228,7 @@
       <div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div>
     </main>
     <div class="notice">
-      <b>About the data:</b> Server IDs, locations, versions and first-seen times may come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. When region discovery is the source, current player counts, free slots, ping and joinability are <b>unknown</b>. When Roblox reports a ping, it is server ping, not your own latency. Roblox may ignore a requested instance ID when joining.
+      <b>About the data:</b> Server IDs, locations, versions and first-seen times may come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. When region discovery is the source, current player counts, free slots, ping and joinability are <b>unknown unless a recent Roblox snapshot matches the exact server ID</b>. Counts are only shown for the last five minutes after a successful check. When Roblox reports a ping, it is server ping, not your own latency. Roblox may ignore a requested instance ID when joining.
     </div>
     <div data-site-connect></div>
     <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span><a href="/servers/customs/">Customs</a> · <a href="/tech/">Tech rules</a> · <a href="/tech/#support">Support</a> · Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="https://n29.kz/" target="_blank" rel="noopener noreferrer">N29.kz</a></span></footer>
@@ -535,7 +535,8 @@
         if(isPinned(a)!==isPinned(b))return Number(isPinned(b))-Number(isPinned(a));
         if(sort==='space')return b.free-a.free||b.playing-a.playing;
         if(sort==='ping')return (a.ping??Infinity)-(b.ping??Infinity)||b.playing-a.playing;
-        if(sort==='version')return (b.version||0)-(a.version||0)||b.playing-a.playing;
+        if(sort==='version')return (b.version||0)-(a.version||0)||(b.playing??-1)-(a.playing??-1);
+        if(rovalraDiscovery)return (a.country||'').localeCompare(b.country||'')||(a.city||'').localeCompare(b.city||'')||a.id.localeCompare(b.id);
         return b.playing-a.playing||b.free-a.free;
       });
       syncRefinements();
@@ -572,7 +573,9 @@
         const facts=node('div','facts');
         facts.append(node('span','fact','◉ '+(verifiedCounts(s)?pingLabel(s.ping)+' server ping':'Player count unavailable')));
         facts.append(node('span','fact',verifiedCounts(s)?'◷ '+Math.round(100*s.playing/s.maxPlayers)+'% occupied':'◷ RoValra-observed · joinability unverified'));
-        if(s.observedAt) facts.append(node('span','fact','◷ Observed '+ago(s.observedAt)));
+        if(s.observedAt) facts.append(node('span','fact','◷ Region observed '+ago(s.observedAt)));
+        if(verifiedCounts(s)&&s.occupancyVerified&&s.occupancyUpdatedAt)
+          facts.append(node('span','fact','✓ Roblox count checked '+ago(s.occupancyUpdatedAt)));
         if(s.firstSeen)facts.append(node('span','fact','◷ '+ago(s.firstSeen)));
         card.append(facts);
         const foot=node('div','cardfoot');
@@ -731,7 +734,8 @@
           el('filter-open').title='';
         }
         serverList=data.servers.filter(s=> typeof s.id==='string' &&
-          (rovalraDiscovery ? s.playing===null && s.maxPlayers===null :
+          (rovalraDiscovery ? (s.playing===null && s.maxPlayers===null) ||
+            (Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing) :
             Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>s.playing))
           .map(s=>({...s,free:verifiedCounts(s)?(Number.isInteger(s.free)?Math.max(0,s.free):Math.max(0,s.maxPlayers-s.playing)):null}));
         syncCountries();
@@ -739,7 +743,7 @@
         ui.countPlayers.textContent=rovalraDiscovery?'—':String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=rovalraDiscovery?'—':String(serverList.reduce((sum,s)=>sum+s.free,0));
         const modeLabel=mode==='pro'?'Pro':'8v8';
-        if(rovalraDiscovery) status('RoValra-observed '+modeLabel+' servers · '+(data.regionCoverage||0)+'/'+(data.regionTotal||'?')+' countries sampled · Players and slots unverified');
+        if(rovalraDiscovery) status('RoValra-observed '+modeLabel+' servers · '+(data.regionCoverage||0)+'/'+(data.regionTotal||'?')+' countries sampled · '+(data.enrichedCount||0)+'/'+serverList.length+' counts recently checked via Roblox; other slots unknown');
         else if(data.lastKnown) status('Last-known '+modeLabel+' servers · over 5 minutes old; availability is unverified',true);
         else status(data.stale?'Showing recently cached '+modeLabel+' servers · counts may have changed':'Online · '+modeLabel+' servers ready');
         const age=Date.parse(data.updatedAt);
@@ -767,7 +771,7 @@
       currentServer=s;
       el('detail-title').textContent=flagFor(s.countryCode)+' '+regionLabel(s);
       el('detail-mode').textContent=mode==='pro'?'BL:R Pro Servers · Public':'BL:R 8v8 · Public';
-      el('detail-players').textContent=verifiedCounts(s)?s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open':'Players and open slots unknown · RoValra-observed';
+      el('detail-players').textContent=verifiedCounts(s)?s.playing+' / '+s.maxPlayers+' players · '+s.free+' slots open'+(s.occupancyVerified?' · Checked '+ago(s.occupancyUpdatedAt):''):'Players and open slots unknown · RoValra-observed';
       el('detail-bar').style.width=verifiedCounts(s)?(100*s.playing/s.maxPlayers)+'%':'0%';
       updateRegionDetail(s);
       el('detail-ping').textContent=Number.isFinite(s.ping)?pingLabel(s.ping)+' (reported)':'Unknown';
