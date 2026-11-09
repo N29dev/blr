@@ -247,7 +247,7 @@
       </div>
     </div>
     <div class="finder-help">
-      <span><span class="finder-help-dot" aria-hidden="true"></span> Live sample · not every Roblox lobby</span>
+      <span><span class="finder-help-dot" aria-hidden="true"></span> Recently observed servers · not every Roblox lobby</span>
       <span class="finder-region-coverage"><span id="region-coverage" role="status" aria-live="polite">Regions: loading…</span>
       <button id="retry-regions" type="button" class="finder-region-retry" hidden>↻ Retry unknown regions</button></span>
       <span class="finder-region-diagnostics" id="region-diagnostics" aria-live="polite"></span>
@@ -421,6 +421,7 @@
     const verifiedCounts = s => Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>0;
     let rovalraDiscovery=false;
     let discoveryTimer=null, discoveryIncomplete=false;
+    let regionScanCoverage=0, regionScanTotal=0;
     function stopDiscoveryTimer() {
       if(discoveryTimer!==null){clearTimeout(discoveryTimer);discoveryTimer=null;}
     }
@@ -508,7 +509,9 @@
     function syncRegionCoverage() {
       const count=serverList.filter(s=>Boolean(s.region||s.countryCode)).length;
       const total=serverList.length;
-      el('region-coverage').textContent=total?count+' of '+total+' sampled servers with a known region':'Regions: no servers loaded';
+      el('region-coverage').textContent=rovalraDiscovery
+        ? 'Countries checked: '+regionScanCoverage+'/'+regionScanTotal
+        : total?count+' of '+total+' sampled servers with a known region':'Regions: no servers loaded';
       const reasons=new Map();
       for (const server of serverList) {
         const reason=regionDiagnosis(server);
@@ -574,7 +577,7 @@
       ui.results.textContent=filtered.length+' of '+serverList.length+' sampled servers'+(regionFilter?' · '+(regionFilter.label||regionFilter.country||'Selected region'):'');
       ui.list.replaceChildren();
       if(!filtered.length){
-        empty(serverList.length?'No servers match these filters':(rovalraDiscovery?'No servers in sampled countries yet':'No joinable servers'),serverList.length?'Change your search or filters to see more servers.':(rovalraDiscovery?'Other countries are checked automatically while this page is open.':'Press Refresh to check again.'));
+        empty(serverList.length?'No servers match these filters':(rovalraDiscovery&&discoveryIncomplete?'Checking more regions…':rovalraDiscovery?'No recently observed matches':'No joinable servers'),serverList.length?'Change your search or filters to see more servers.':(rovalraDiscovery&&discoveryIncomplete?'There are no recently observed matches in the countries checked so far. Active regions are checked first; discovery continues while this page is open.':rovalraDiscovery?'The last regional scan returned no matches. Try refreshing later.':'Press Refresh to check again.'));
 
         return;
       }
@@ -746,7 +749,9 @@
         }
         if(myRequest!==requestNum)return;
         rovalraDiscovery=data.source==='rovalra';
-        discoveryIncomplete=rovalraDiscovery && Number(data.regionCoverage||0)<Number(data.regionTotal||0);
+        regionScanCoverage=Number(data.regionCoverage)||0;
+        regionScanTotal=Number(data.regionTotal)||0;
+        discoveryIncomplete=rovalraDiscovery && regionScanCoverage<regionScanTotal;
         if(rovalraDiscovery) {
           // Sorting by unknown occupancy would silently imply numbers exist.
           ui.sort.querySelector('option[value="players"]').textContent='Region (A–Z)';
@@ -773,7 +778,9 @@
         ui.countPlayers.textContent=rovalraDiscovery?'—':String(serverList.reduce((sum,s)=>sum+s.playing,0));
         ui.countSpots.textContent=rovalraDiscovery?'—':String(serverList.reduce((sum,s)=>sum+s.free,0));
         const modeLabel=mode==='pro'?'Pro':'8v8';
-        if(rovalraDiscovery) status('RoValra-observed '+modeLabel+' servers · '+(data.regionCoverage||0)+'/'+(data.regionTotal||'?')+' countries sampled · '+(data.enrichedCount||0)+'/'+serverList.length+' counts recently checked via Roblox; other slots unknown');
+        if(rovalraDiscovery) status(serverList.length
+          ? 'RoValra-observed '+modeLabel+' servers · '+regionScanCoverage+'/'+(regionScanTotal||'?')+' countries sampled · '+(data.enrichedCount||0)+'/'+serverList.length+' counts recently checked via Roblox; other slots unknown'
+          : 'Checking active '+modeLabel+' regions · '+regionScanCoverage+'/'+(regionScanTotal||'?')+' countries recently scanned · No matches found yet');
         else if(data.lastKnown) status('Last-known '+modeLabel+' servers · over 5 minutes old; availability is unverified',true);
         else status(data.stale?'Showing recently cached '+modeLabel+' servers · counts may have changed':'Online · '+modeLabel+' servers ready');
         const age=Date.parse(data.updatedAt);
