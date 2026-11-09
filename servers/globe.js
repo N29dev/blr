@@ -125,8 +125,9 @@ function serversIn(group) {
 }
 function summary(group) {
  const servers=serversIn(group);
- const players=servers.reduce((a,s)=>a+(Number.isFinite(s.playing)?s.playing:0),0);
- const free=servers.reduce((a,s)=>a+(Number.isFinite(s.free)?s.free:0),0);
+ const verified=servers.some(s=>Number.isInteger(s.playing)&&Number.isInteger(s.free));
+ const players=verified?servers.reduce((a,s)=>a+(Number.isFinite(s.playing)?s.playing:0),0):null;
+ const free=verified?servers.reduce((a,s)=>a+(Number.isFinite(s.free)?s.free:0),0):null;
  const pings=servers.map(s=>s.ping).filter(Number.isFinite);
  const ping=pings.length?Math.round(pings.reduce((a,n)=>a+n,0)/pings.length):null;
  return {servers,players,free,ping};
@@ -148,8 +149,8 @@ function renderInspector(){
  const info=summary(g);
  panel.append(element('div','globe-inspector-title',g.label+(g.country&&g.city?' · '+g.country:'')));
  panel.append(element('div','globe-inspector-meta',
-  g.count+' server'+(g.count===1?'':'s')+' · '+info.players+' players · '+info.free+
-  ' free slots · '+(info.ping===null?'Ping N/A':info.ping+' ms average ping')));
+  g.count+' server'+(g.count===1?'':'s')+' · '+(info.players===null?'Players unknown':info.players+' players · '+info.free+' free slots')+
+  ' · '+(info.ping===null?'Ping N/A':info.ping+' ms average ping')));
  const list=element('div','globe-inspector-servers');
  for(const [i,server] of info.servers.entries()){
   const row=element('div','globe-inspector-server');
@@ -168,7 +169,7 @@ function renderInspector(){
  const filter=element('button','globe-inspector-action globe-inspector-filter','Filter to '+g.label+' ('+info.servers.length+')');
  filter.type='button';filter.addEventListener('click',()=>choose(g));
  panel.append(filter);
- panel.append(element('div','globe-help','Approximate city marker · RoValra region · Roblox-reported player count and ping.'));
+ panel.append(element('div','globe-help','Approximate city marker · RoValra-reported location. Player counts and ping are shown only when known.'));
 }
 function inspect(group){
  state.selectedKey=group.key;renderInspector();
@@ -190,7 +191,7 @@ function showTooltip(g,event){
   tip.append(element('small','',players+' · '+ping));
   if(Number.isInteger(server.version))tip.append(element('small','','Version '+server.version));
  }else{
-  tip.append(element('small','',g.count+' servers · '+info.players+' total players · '+info.free+' free slots'));
+  tip.append(element('small','',g.count+' servers · '+(info.players===null?'Players and slots unknown':info.players+' total players · '+info.free+' free slots')));
   tip.append(element('small','',info.ping===null?'Average ping N/A':info.ping+' ms average ping'));
  }
  tip.append(element('small','','Click to inspect '+g.count+' server'+(g.count===1?'':'s')));
