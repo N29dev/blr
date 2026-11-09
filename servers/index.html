@@ -138,6 +138,24 @@
     @media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{width:calc(100% - 26px)}.topnav{padding:20px 0 23px}.navlinks a{padding:9px}.hero h1{font-size:38px}.metrics{gap:8px}.metric{padding:13px 11px}.metric strong{font-size:23px}.metric small{font-size:11px}.mode-panel{max-width:none}.server{padding:18px}.sort{flex:1;min-width:165px}.refresh{flex:0 0 auto}}
     @media(max-width:370px){.navlinks a:last-child{display:none}.cardfoot{flex-wrap:wrap}.version{width:100%}.detail-facts{grid-template-columns:1fr}}
     @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.server{transition:none}}
+
+    /* Prominent desktop-only, non-sponsored partner recommendation. */
+    .rovalra-promo{display:none;position:relative;isolation:isolate;overflow:hidden;margin:8px 0 26px;border:1px solid rgba(125,211,252,.28);border-radius:19px;background:linear-gradient(115deg,rgba(41,70,113,.86),rgba(20,30,55,.97) 62%,rgba(35,44,81,.9));padding:19px 54px 19px 21px;align-items:center;gap:17px;box-shadow:0 17px 40px rgba(0,0,0,.19)}
+    .rovalra-promo::before{content:"";position:absolute;right:-85px;top:-130px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(102,212,248,.17),transparent 70%);z-index:-1;pointer-events:none}
+    .rovalra-promo-mark{width:56px;height:56px;flex:none;display:grid;place-items:center;border:1px solid rgba(171,226,255,.26);border-radius:15px;background:linear-gradient(155deg,#255779,#182947);box-shadow:inset 0 1px rgba(255,255,255,.12)}
+    .rovalra-promo-mark svg{width:30px;height:30px;fill:none;stroke:#b3ecff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .rovalra-promo-copy{min-width:0;flex:1}.rovalra-promo-kicker{font:800 10px/1.4 Inter,system-ui,sans-serif;color:#91dfff;letter-spacing:.12em;text-transform:uppercase}
+    .rovalra-promo h2{font-size:19px;line-height:1.3;font-weight:850;letter-spacing:-.03em;margin:4px 0 4px}
+    .rovalra-promo p{color:#bfd1e7;margin:0;font-size:12.5px;line-height:1.55;max-width:600px}
+    .rovalra-promo-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
+    .rovalra-promo-cta,.rovalra-promo-continue{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border-radius:11px;font-size:12.5px;font-weight:800;white-space:nowrap;padding:9px 13px}
+    .rovalra-promo-cta{background:#b3ecff;color:#0a2035}.rovalra-promo-cta:hover{background:#d6f7ff}
+    .rovalra-promo-continue{background:rgba(255,255,255,.055);border:1px solid rgba(209,232,255,.18);color:#d5e5f5}
+    .rovalra-promo-continue:hover{background:rgba(255,255,255,.11)}
+    .rovalra-promo-dismiss{position:absolute;top:10px;right:10px;width:29px;height:29px;border:1px solid rgba(255,255,255,.11);border-radius:8px;color:#bdccde;background:rgba(255,255,255,.045);font-size:18px;line-height:1}
+    .rovalra-promo-dismiss:hover{background:rgba(255,255,255,.12);color:white}
+    @media(min-width:800px){.rovalra-promo:not([hidden]){display:flex}}
+    @media(min-width:800px) and (max-width:1050px){.rovalra-promo{align-items:flex-start;flex-wrap:wrap}.rovalra-promo-actions{margin-left:73px}}
   </style>
 <link rel="stylesheet" href="/site-theme.css?v=3">
 <link rel="stylesheet" href="/matchday.css?v=1">
@@ -168,7 +186,19 @@
 </nav>
   <div class="wrap">
 
-
+    <aside id="rovalra-promo" class="rovalra-promo" aria-label="Desktop server browsing recommendation">
+      <span class="rovalra-promo-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M12.25 5.5H6.5v7.1a3.7 3.7 0 1 1 0 6.8v7.1h7.1a3.7 3.7 0 1 0 6.8 0h5.1v-7.1a3.7 3.7 0 1 0 0-6.8V5.5h-6.9a3.7 3.7 0 1 1-6.35 0Z"/></svg></span>
+      <div class="rovalra-promo-copy">
+        <div class="rovalra-promo-kicker">Desktop recommendation · Not sponsored</div>
+        <h2>Using PC? Try RoValra instead.</h2>
+        <p>Get advanced Roblox server browsing with region and player-count filters. Free to use — or keep browsing BL:R servers with Glutony below.</p>
+      </div>
+      <div class="rovalra-promo-actions">
+        <a class="rovalra-promo-cta" href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">Open RoValra ↗</a>
+        <button class="rovalra-promo-continue" id="rovalra-promo-continue" type="button">Continue with Glutony</button>
+      </div>
+      <button class="rovalra-promo-dismiss" id="rovalra-promo-dismiss" type="button" aria-label="Dismiss RoValra recommendation" title="Dismiss">×</button>
+    </aside>
 
     <header class="hero">
       <div class="eyebrow"><span class="finder-hero-pulse" aria-hidden="true"></span> GLUTONY / LIVE MATCH DISCOVERY</div>
@@ -881,6 +911,23 @@
     syncTabs();
     load();
   })();
+  </script>
+  <script>
+    (() => {
+      const banner = document.getElementById('rovalra-promo');
+      const hide = () => {
+        banner.hidden = true;
+        try { sessionStorage.setItem('n29-rovalra-promo-dismissed-v1', '1'); } catch {}
+      };
+      try {
+        if (sessionStorage.getItem('n29-rovalra-promo-dismissed-v1') === '1') banner.hidden = true;
+      } catch {}
+      document.getElementById('rovalra-promo-dismiss').addEventListener('click', hide);
+      document.getElementById('rovalra-promo-continue').addEventListener('click', () => {
+        hide();
+        document.getElementById('mode-8v8').scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    })();
   </script>
 </body>
 </html>
