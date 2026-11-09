@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#090d19">
+<title>RoValra Match Discovery Test · BL:R by N29</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#080c17;color:#eef5ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 85% 0%,#132a3f 0,transparent 48%),radial-gradient(ellipse at 0% 55%,#122134 0,transparent 55%),#080c17}
+main{max-width:1050px;margin:auto;padding:clamp(18px,4vw,50px) 20px 90px}
+a{color:#a6e6f9}header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:42px}
+.back{text-decoration:none;color:#a9bdd2;font-size:14px}.back:hover{color:white}.brand{color:#72dff8;font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+h1{font-size:clamp(26px,4.6vw,46px);line-height:1.13;letter-spacing:-.04em;margin:14px 0 14px}
+.intro{color:#b0c2d4;line-height:1.65;max-width:720px;margin:0 0 28px}
+.panel{background:#0f1828bb;border:1px solid #284259;border-radius:22px;padding:clamp(16px,3vw,27px);box-shadow:0 18px 45px #0004}
+fieldset{border:0;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:12px}
+label{display:block;color:#9fb9cb;font-size:12px;font-weight:700;letter-spacing:.02em;margin:0 0 8px}
+select,button{font:inherit;min-height:46px;border-radius:12px}
+select{appearance:none;width:100%;background:#0a1220;color:#fff;border:1px solid #355066;padding:10px 36px 10px 13px}
+button{border:1px solid #486777;background:#13263a;color:#f6faff;padding:9px 17px;cursor:pointer;font-weight:700}
+button.primary{background:linear-gradient(135deg,#54cdeb,#55acdd);color:#071322;border-color:#8bdcf2}
+button:hover:not(:disabled){filter:brightness(1.15)}button:disabled{opacity:.55;cursor:wait}
+#status{margin:18px 0 0;line-height:1.55;color:#b0c6d6;min-height:24px}
+#status.error{color:#f7a6a3}#status.good{color:#a2e6cf}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 20px}
+.stat{border:1px solid #273d51;background:#102035;border-radius:12px;padding:12px 16px;min-width:130px}
+.stat b{display:block;font-size:23px;font-variant-numeric:tabular-nums}.stat small{display:block;color:#8fa5b9;margin-top:4px}
+.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:20px 0}
+input{background:#101a2a;color:#f4f9ff;border:1px solid #30495c;padding:12px 14px;border-radius:11px;flex:1;min-width:190px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{border-radius:16px;border:1px solid #27445a;background:#101b2df0;padding:18px;min-width:0}
+.card h2{font-size:18px;margin:0 0 8px}.tag{display:inline-block;font-size:11px;letter-spacing:.05em;color:#94dff2;border:1px solid #2f6980;border-radius:30px;padding:5px 9px;margin-bottom:12px}
+.meta{color:#a2b6cb;font-size:13px;line-height:1.65}.id{display:block;font-size:12px;color:#7e95ae;overflow-wrap:anywhere;margin:12px 0 18px}
+.card a.join{display:inline-flex;align-items:center;justify-content:center;min-height:40px;border-radius:10px;background:#284760;color:#eefaff;padding:8px 14px;text-decoration:none;font-size:13px;font-weight:750}
+.note{color:#a4b8c9;font-size:13px;line-height:1.7;margin-top:27px}
+footer{margin-top:26px;color:#8ba2b6;font-size:12px;line-height:1.65}
+#raw{display:none;white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto;background:#090f1a;border-radius:12px;padding:15px;color:#9fbbd0;font-size:12px}
+#raw.visible{display:block}
+@media(max-width:640px){fieldset{grid-template-columns:1fr}header{margin-bottom:26px}.panel{padding:16px}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header><a class="back" href="/servers/">← Back to BL:R Server Finder</a><span class="brand">N29 · Experimental</span></header>
+<div class="brand">Proof of concept / independent API test</div>
+<h1>RoValra match discovery</h1>
+<p class="intro">This page fetches public BL:R server IDs straight from the RoValra API in your browser, without going through the Roblox server-list endpoint. No Roblox login, extension, or manual contribution is needed.</p>
+<section class="panel" aria-label="Match search">
+<fieldset>
+<div><label for="mode">Game mode</label><select id="mode"><option value="8v8">8v8</option><option value="pro">Pro</option></select></div>
+<div><label for="region">Country to search</label><select id="region"><option value="US">🇺🇸 United States</option><option value="DE">🇩🇪 Germany</option><option value="FR">🇫🇷 France</option><option value="GB">🇬🇧 United Kingdom</option><option value="NL">🇳🇱 Netherlands</option><option value="SG">🇸🇬 Singapore</option><option value="JP">🇯🇵 Japan</option></select></div>
+<button class="primary" type="button" id="scan">Search servers</button>
+</fieldset>
+<p id="status" role="status" aria-live="polite">Choose a game mode and country to test the provider.</p>
+</section>
+<div class="stats"><div class="stat"><b id="found">—</b><small>IDs returned</small></div><div class="stat"><b id="age">—</b><small>Provider response</small></div><div class="stat"><b id="cors">—</b><small>Browser access</small></div></div>
+<div class="toolbar"><input id="filter" type="search" placeholder="Filter by city, region or server ID" aria-label="Filter found servers"><button type="button" id="show-json">View response details</button></div>
+<div id="raw"></div>
+<section id="cards" class="cards" aria-live="polite"></section>
+<p class="note"><b>Important:</b> RoValra returned server IDs and locations in our initial test, but not player counts, available slots or ping. Those values are intentionally not invented here. Results may not cover all BL:R servers, and a server could close before you join. This is only a limited provider test; it does not change the main server finder.</p>
+<footer>Location and server discovery data: <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. Independent BL:R community experiment; not affiliated with RoValra or Roblox. Use is subject to <a href="https://www.rovalra.com/tou/" target="_blank" rel="noopener noreferrer">RoValra's terms</a>. The page makes one bounded read request per deliberate search and caches the result for 60 seconds in this tab. No player credentials are sent.</footer>
+</main>
+<script>
+(function(){
+'use strict';
+const PLACES={ '8v8':'124087144919678', pro:'99999183305180' };
+const el=id=>document.getElementById(id);
+const cache=new Map();
+let records=[], raw=null;
+let pending=false;
+const validId=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+const status=(message,type)=>{el('status').textContent=message;el('status').className=type||'';};
+const node=(tag,cls,content)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(content!==undefined)n.textContent=String(content);return n;};
+const stamp=iso=>{if(!iso)return 'Not reported';const d=new Date(iso);return Number.isNaN(d.getTime())?'Not reported':d.toLocaleString();};
+function render(){
+const search=el('filter').value.trim().toLowerCase();
+const results=records.filter(s=>[s.city,s.country,s.region,s.server_id].some(v=>String(v||'').toLowerCase().includes(search)));
+const target=el('cards');target.replaceChildren();
+if(!results.length){target.append(node('p','note',records.length?'No servers match this filter.':'No servers returned for this country yet.'));return;}
+const place=PLACES[el('mode').value];
+for(const s of results){
+  const card=node('article','card');
+  card.append(node('span','tag',s.region_code||'REGION'));
+  card.append(node('h2','',s.city||s.region||s.country||'Unknown location'));
+  card.append(node('div','meta',[s.region,s.country].filter(Boolean).join(' · ')||'Location unreported'));
+  card.append(node('div','meta','Version: '+(Number.isInteger(s.place_version)?'v'+s.place_version:'unknown')+' · First seen: '+stamp(s.first_seen)));
+  card.append(node('code','id',s.server_id));
+  const a=node('a','join','Join this instance ↗');
+  const join=new URL('https://glutony.scp343hey.workers.dev/join');
+  join.searchParams.set('placeId',place);
+  join.searchParams.set('gameInstanceId',s.server_id);
+  a.href=join.toString();a.target='_blank';a.rel='noopener noreferrer';
+  card.append(a);target.append(card);
+}
+}
+async function scan(){
+if(pending)return;
+const mode=el('mode').value,region=el('region').value,place=PLACES[mode];
+if(!place||!/^[A-Z]{2}$/.test(region))return;
+const key=mode+':'+region, old=cache.get(key);
+if(old && Date.now()-old.time<60_000){
+ records=old.servers;raw=old.response;
+ el('found').textContent=String(records.length);el('age').textContent='Cached';el('cors').textContent='OK';
+ status('Loaded from this tab’s 60-second cache. No new API request.','good');render();return;
+}
+pending=true;el('scan').disabled=true;
+status('Checking RoValra directly from this browser…');
+const url=new URL('https://apis.rovalra.com/v1/servers/region');
+url.searchParams.set('place_id',place);url.searchParams.set('region',region);
+const controller=new AbortController();
+const timer=setTimeout(()=>controller.abort(),12000);
+try {
+ const response=await fetch(url.toString(),{mode:'cors',credentials:'omit',cache:'default',signal:controller.signal,headers:{Accept:'application/json'}});
+ if(!response.ok)throw new Error('RoValra returned HTTP '+response.status+'.');
+ const data=await response.json();
+ if(!data || data.status!=='success' || !Array.isArray(data.servers) || data.disabled)throw new Error('Provider returned an unsupported or disabled response.');
+ records=data.servers.filter(s=>s && typeof s.server_id==='string' && validId.test(s.server_id)).slice(0,100).map(s=>({server_id:s.server_id,city:typeof s.city==='string'?s.city.slice(0,80):'',country:typeof s.country==='string'?s.country.slice(0,80):'',region:typeof s.region==='string'?s.region.slice(0,80):'',region_code:typeof s.region_code==='string'?s.region_code.slice(0,6):'',first_seen:s.first_seen,place_version:s.place_version}));
+ raw={provider_status:data.status,place_id:data.place_id,filters:data.filters,count:data.servers.length,next_cursor_present:Boolean(data.next_cursor),note:'Server IPs and internal datacenter IDs deliberately omitted'};
+ cache.set(key,{time:Date.now(),servers:records,response:raw});
+ el('found').textContent=String(records.length);el('age').textContent='Live';el('cors').textContent='OK';
+ status('Success: browser JavaScript read '+records.length+' server ID(s) from RoValra. No Roblox API request by Glutony.','good');render();
+} catch(error) {
+ records=[];raw=null;
+ el('found').textContent='—';el('age').textContent='Failed';el('cors').textContent='Check';
+ status(error.name==='AbortError'?'RoValra request timed out.':String(error.message||error)+' Browser CORS or network restrictions may apply.','error');
+ render();
+} finally {clearTimeout(timer);pending=false;el('scan').disabled=false;}
+}
+el('scan').addEventListener('click',scan);
+el('filter').addEventListener('input',render);
+el('show-json').addEventListener('click',()=>{
+ el('raw').classList.toggle('visible');
+ el('raw').textContent=raw?JSON.stringify(raw,null,2):'No provider response available.';
+});
+})();
+</script>
+</body>
+</html>
