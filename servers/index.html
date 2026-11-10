@@ -430,10 +430,10 @@
       if(!rovalraDiscovery||!discoveryIncomplete)return;
       discoveryTimer=setTimeout(()=>{
         discoveryTimer=null;
-        // Recheck while this tab is visible; the shared 60-second D1 gate
+        // Recheck while this tab is visible; the shared 30-second D1 gate
         // prevents concurrent visitors from sending duplicate RoValra scans.
         if(!document.hidden)load();
-      },75_000);
+      },30_000);
     }
     const versionLabel = v => Number.isInteger(v) && v>0 ? 'v'+v : 'Unknown';
     const ago = date => {
