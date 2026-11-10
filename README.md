@@ -8,7 +8,7 @@ Global **Quick Jump / Search** now uses one layout and trigger label on the home
 
 - **Keyboard accessibility:** Cmd/Ctrl+K opens Quick Jump, arrow keys choose a result, Enter follows a link, Escape closes it, and focus returns to the trigger.
 - **Skip to tools:** the accessibility skip link is hidden offscreen until keyboard focus; it is no longer an always-visible button in the upper left.
-- **Creator Studio:** equal-width desktop columns, full-width video compressor, aligned patch/clip cards, aligned TikTok cards, and stacked mobile layouts. Mobile upload and action controls use touch-friendly sizing; file upload and processing scripts are unchanged.
+- **Creator Studio:** equal-width desktop columns, full-width video compressor, aligned method-status/clip cards, aligned TikTok cards, and stacked mobile layouts. Mobile upload and action controls use touch-friendly sizing; file upload and processing scripts are unchanged.
 - **Mobile header:** horizontal, touch-scrollable links below the identity and search trigger, instead of overflowing narrow screens.
 - **Browser QA:** `site-layout.browser.test.mjs` checks page-specific Quick Jump behavior, 360px viewport overflow, keyboard-only skip visibility and card alignment across desktop/tablet/mobile widths.
 - GitHub Pages only; neither the portfolio nor Glutony Worker repo is modified.
@@ -19,10 +19,10 @@ The homepage **Play** directory is a compact 2×2 grid for public servers, custo
 
 The dedicated [Creator Studio](https://blr.n29.kz/tools/) is now organized in two distinct sections:
 
-- **Video editing & repair:** compress → patch MP4 metadata → trim an MP4 from a link
+- **Video editing & repair:** compress → check method status → trim an MP4 from a link
 - **TikTok tools:** analyze a public TikTok post → download & repair a video
 
-Importantly, the Creator Studio now uses `data-page="tools"` and `tools/controls.css` instead of loading the **entire old homepage CSS** (`tools/legacy.css`). Its new `tools/style.css` owns layout and responsive behavior. All tool element IDs, CompressBase integration, analytics calls, FFmpeg worker URLs, and active video processing scripts are preserved.
+Importantly, the Creator Studio now uses `data-page="tools"` and `tools/controls.css` instead of loading the **entire old homepage CSS** (`tools/legacy.css`). Its new `tools/style.css` owns layout and responsive behavior. The patched CompressBase Quality + FPS integration is now disabled; the local FFmpeg compressor, analytics calls and working video tools remain.
 
 - `home-layout.css` overrides clashing homepage Play/Profile rules at desktop/tablet/mobile breakpoints.
 - `site-layout.browser.test.mjs` renders both pages in headless Chromium at **1440, 820, 390 and 360 px** and checks for overflow, overlap, grid order, and visible functional controls. CI runs these alongside the static repository checks.
@@ -54,7 +54,7 @@ The homepage and supporting pages share a responsive visual system in `site-them
 `site-experience.js` adds optional, dependency-free navigation enhancements.
 
 - A homepage launchpad links directly to Main, 8v8, Pro and community custom matches.
-- The dedicated `/tools/` Creator Studio retains the MP4 patcher, TikTok analyzer, video compressor, MP4 clipper and TikTok downloader. The homepage provides only a preview.
+- The dedicated `/tools/` Creator Studio retains the TikTok analyzer, video compressor, MP4 clipper and TikTok downloader, while displaying the temporarily unavailable CompressBase patch method. The homepage provides only a preview.
 - Press **⌘K** on macOS or **Ctrl+K** elsewhere (or use the navigation launcher) to search pages and tools.
 - The standalone video tools have visible links back to the homepage and server browser.
 - The homepage highlights N29's Hunger portrait in a creator identity card and links to [n29.kz](https://n29.kz/). The artwork is served as a high-quality AVIF with WebP fallback from the separate `N29dev/portfolio` repository. Deploy the portfolio PR before this site PR so the image URLs resolve.
@@ -65,7 +65,7 @@ The homepage and supporting pages share a responsive visual system in `site-them
 The BL:R site now borrows the visual language of [N29 portfolio](https://n29.kz/), using **Space Grotesk / DM Sans / Space Mono**, dark blue-black surfaces, cyan/lavender accents, editorial overlines and consistent navigation. The portfolio repository is referenced for style only; it was **not modified**.
 
 - The active video tools previously embedded in `index.html` have moved to `/tools/` with their original controls and script logic preserved.
-- The MP4 compressor still loads the existing root `/ffmpeg-worker.js`; the TikTok analyzer and CompressBase patcher run from `tools/tiktok-info.js` and `tools/patch.mjs`.
+- The MP4 compressor still loads the existing root `/ffmpeg-worker.js`; the TikTok analyzer runs from `tools/tiktok-info.js`; the CompressBase patcher is disabled while Quality + FPS is unavailable.
 - `index.html` retains an `#tools` preview for legacy bookmarks, but all major navigation now opens `/tools/`.
 - `site-unify.css` applies a shared portfolio-inspired shell to the public page family. `tools/legacy.css` retains the original working tool styles without forcing all pages to load the processors.
 - Navigation highlights only **BL:R**, **N29 portfolio** and **Glutony** as project/repository destinations. The separate GK trainer repository is no longer featured.
