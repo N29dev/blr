@@ -42,7 +42,7 @@
       ['support','Appeals'],['rules','Rules'],['directory','Styles'],['tech-list','Techs'],['faq','FAQ']
     ];
     if(path==='/tools/')return [
-      ['top','Studio'],['video-tools','Video'],['compress-tool','Compress'],['patch-tool','Patch'],['tiktok-tools','TikTok']
+      ['top','Studio'],['video-tools','Video'],['compress-tool','Compress'],['patch-tool','Methods'],['tiktok-tools','TikTok']
     ];
     return [];
   })().filter(([id])=>document.getElementById(id));
