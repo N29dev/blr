@@ -88,14 +88,16 @@ test('creator widgets, source scripts and worker path survive the /tools/ migrat
   assert.ok(homepage.includes('id="tools"'),'keep old home #tools bookmarks valid');
   assert.ok(!homepage.includes('id="patch-video"'),'homepage should no longer host creator processor');
   assert.ok(!homepage.includes('id="compress-video"'));
-  for(const id of ['patch-video','patch-button','patch-download',
-                   'tiktok-url','tiktok-check','tiktok-results',
+  for(const id of ['tiktok-url','tiktok-check','tiktok-results',
                    'compress-video','compress-button','compress-progress','compress-download',
-                   'compress-cancel','posting-device']){
+                   'compress-cancel']){
     assert.ok(studio.includes('id="'+id+'"'),'creator studio missing '+id);
   }
-  for(const src of ['/tools/tiktok-info.js','/tools/patch.mjs','/tools/compress.mjs'])
+  for(const src of ['/tools/tiktok-info.js','/tools/compress.mjs'])
     assert.ok(studio.includes('src="'+src+'?v=1"'),'creator studio missing '+src);
+  assert.ok(!studio.includes('id="patch-video"'),'outdated patcher must be removed');
+  assert.ok(!studio.includes('src="/tools/patch.mjs'),'patched method must not load');
+  assert.ok(studio.includes('720P 60FPS Method')&&studio.includes('FPS Method'),'show current alternatives');
   assert.ok(read('tools/compress.mjs').includes("new URL('/ffmpeg-worker.js', window.location.origin)"));
 });
 
@@ -138,7 +140,6 @@ test('JavaScript uses existing static DOM IDs for core tools and data pages',()=
   const pairs=[
     ['/','home-matchday.js'],
     ['/tools/','tools/tiktok-info.js'],
-    ['/tools/','tools/patch.mjs'],
     ['/tools/','tools/compress.mjs'],
     ['/servers/','servers/globe.js'],
     ['/tech/','tech/app.js'],
