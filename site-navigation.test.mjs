@@ -46,13 +46,15 @@ test('creator widgets moved intact to their own page',()=>{
   assert.ok(!home.includes('id="patch-video"'));
   assert.ok(!home.includes('id="compress-video"'));
   assert.ok(!home.includes('id="tiktok-url"'));
-  for(const id of ['patch-video','patch-button','patch-download','posting-device',
-                    'tiktok-url','tiktok-check','tiktok-results',
+  for(const id of ['tiktok-url','tiktok-check','tiktok-results',
                     'compress-video','compress-button','compress-progress','compress-download']){
     assert.ok(studio.includes('id="'+id+'"'),id+' missing');
   }
-  for(const path of ['/tools/tiktok-info.js','/tools/patch.mjs','/tools/compress.mjs'])
+  for(const path of ['/tools/tiktok-info.js','/tools/compress.mjs'])
     assert.ok(studio.includes('src="'+path+'?v=1"'),path);
+  assert.ok(!studio.includes('id="patch-video"'));
+  assert.ok(!studio.includes('src="/tools/patch.mjs'));
+  assert.ok(studio.includes('Quality + FPS Method'));
   assert.ok(read('tools/compress.mjs').includes("new URL('/ffmpeg-worker.js', window.location.origin)"));
   assert.ok(existsSync(join(root,'ffmpeg-worker.js')));
   assert.ok(studio.includes('href="/tiktok-downloader.html"'));
