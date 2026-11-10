@@ -14,7 +14,7 @@
     { group:'Play', icon:'🤖', title:'Glutony Discord app', detail:'Install BL:R server finder commands in Discord', url:'https://discord.com/oauth2/authorize?client_id=1563907646757666926&integration_type=1&scope=applications.commands' },
     { group:'Rules', icon:'📜', title:'Allowed & banned tech', detail:'Search BL:R styles, techs and punishable bugs', url:'/tech/' },
     { group:'Rules', icon:'🔎', title:'Check if a tech is allowed', detail:'How to ask BL:R support staff about a technique', url:'/tech/#support' },
-    { group:'Create', icon:'🎬', title:'Creator Studio', detail:'Patch, compress, analyze and download videos', url:'/tools/' },
+    { group:'Create', icon:'🎬', title:'Creator Studio', detail:'Compress, trim, analyze and download videos; see method status', url:'/tools/' },
     { group:'Create', icon:'✂️', title:'MP4 clipper', detail:'Trim part of a public direct MP4', url:'/clipper.html' },
     { group:'Create', icon:'📥', title:'TikTok downloader & repair', detail:'Download and repair MP4 duration metadata', url:'/tiktok-downloader.html' },
     { group:'Create', icon:'🏅', title:'CC leaderboard (Sep 2026 archive)', detail:'Historical creator event results, not current rankings', url:'/leaderboard/' },
