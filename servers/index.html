@@ -258,7 +258,7 @@
       <div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div>
     </main>
     <div class="notice">
-      <b>About the data:</b> Server IDs, locations, versions and first-seen times may come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. When region discovery is the source, current player counts, free slots, ping and joinability are <b>unknown unless a recent Roblox snapshot matches the exact server ID</b>. Counts are only shown for 60 seconds after a successful Roblox check. When Roblox reports a ping, it is server ping, not your own latency. Roblox may ignore a requested instance ID when joining.
+      <b>About the data:</b> Server IDs, locations, versions and first-seen times may come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. When region discovery is the source, current player counts, free slots, ping and joinability are <b>unknown unless a recent Roblox snapshot matches the exact server ID</b>. Complete Roblox public-server scans determine which servers are currently listed; RoValra supplies regional details. Verified player counts expire after 60 seconds. When Roblox reports a ping, it is server ping, not your own latency. Roblox may ignore a requested instance ID when joining.
     </div>
     <div data-site-connect></div>
     <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span><a href="/servers/customs/">Customs</a> · <a href="/tech/">Tech rules</a> · <a href="/tech/#support">Support</a> · Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="https://n29.kz/" target="_blank" rel="noopener noreferrer">N29.kz</a></span></footer>
@@ -419,7 +419,7 @@
     };
     const pingLabel = ping => Number.isFinite(ping) ? Math.round(ping)+' ms' : 'Unknown';
     const verifiedCounts = s => Number.isInteger(s.playing) && Number.isInteger(s.maxPlayers) && s.maxPlayers>0;
-    let rovalraDiscovery=false;
+    let rovalraDiscovery=false, rosterVerified=false;
     let discoveryTimer=null, discoveryIncomplete=false;
     let regionScanCoverage=0, regionScanTotal=0;
     function stopDiscoveryTimer() {
@@ -570,7 +570,7 @@
         if(sort==='space')return b.free-a.free||b.playing-a.playing;
         if(sort==='ping')return (a.ping??Infinity)-(b.ping??Infinity)||b.playing-a.playing;
         if(sort==='version')return (b.version||0)-(a.version||0)||(b.playing??-1)-(a.playing??-1);
-        if(rovalraDiscovery)return (a.country||'').localeCompare(b.country||'')||(a.city||'').localeCompare(b.city||'')||a.id.localeCompare(b.id);
+        if(rovalraDiscovery&&!rosterVerified)return (a.country||'').localeCompare(b.country||'')||(a.city||'').localeCompare(b.city||'')||a.id.localeCompare(b.id);
         return b.playing-a.playing||b.free-a.free;
       });
       syncRefinements();
@@ -750,10 +750,11 @@
         }
         if(myRequest!==requestNum)return;
         rovalraDiscovery=data.source==='rovalra';
+        rosterVerified=Boolean(data.countsVerified);
         regionScanCoverage=Number(data.regionCoverage)||0;
         regionScanTotal=Number(data.regionTotal)||0;
         discoveryIncomplete=rovalraDiscovery && regionScanCoverage<regionScanTotal;
-        if(rovalraDiscovery) {
+        if(rovalraDiscovery&&!rosterVerified) {
           // Sorting by unknown occupancy would silently imply numbers exist.
           ui.sort.querySelector('option[value="players"]').textContent='Region (A–Z)';
           ui.sort.querySelector('option[value="space"]').disabled=true;
@@ -783,13 +784,14 @@
         ui.countPlayers.textContent=countKnown.length?String(countKnown.reduce((sum,s)=>sum+s.playing,0))+partial:'—';
         ui.countSpots.textContent=countKnown.length?String(countKnown.reduce((sum,s)=>sum+s.free,0))+partial:'—';
         const modeLabel=mode==='pro'?'Pro':'8v8';
-        if(rovalraDiscovery) status(serverList.length
+        if(rovalraDiscovery&&rosterVerified) status('Online · '+serverList.length+' '+modeLabel+' servers verified by Roblox within 1 minute · RoValra regions');
+        else if(rovalraDiscovery) status(serverList.length
           ? 'RoValra-observed '+modeLabel+' servers · '+regionScanCoverage+'/'+(regionScanTotal||'?')+' countries sampled · '+(data.enrichedCount||0)+'/'+serverList.length+' counts recently checked via Roblox; other slots unknown'
           : 'Checking active '+modeLabel+' regions · '+regionScanCoverage+'/'+(regionScanTotal||'?')+' countries recently scanned · No matches found yet');
         else if(data.lastKnown) status('Last-known '+modeLabel+' servers · over one minute old; availability is unverified',true);
         else status(data.stale?'Showing recently cached '+modeLabel+' servers · counts may have changed':'Online · '+modeLabel+' servers ready');
-        const age=Date.parse(data.updatedAt);
-        ui.updated.textContent=Number.isFinite(age)?(rovalraDiscovery?'Last region check ':'Updated ')+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Sample time unknown';
+        const age=Date.parse(rosterVerified&&data.enrichmentSampleAt?data.enrichmentSampleAt:data.updatedAt);
+        ui.updated.textContent=Number.isFinite(age)?(rosterVerified?'Roblox count check ':rovalraDiscovery?'Last region check ':'Updated ')+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Sample time unknown';
         render();
         window.GlutonyGlobe?.refresh(serverList);
         scheduleRegionRecheck();
