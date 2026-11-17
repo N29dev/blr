@@ -258,7 +258,7 @@
       <div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div>
     </main>
     <div class="notice">
-      <b>About the data:</b> Server IDs, locations, versions and first-seen times may come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. When region discovery is the source, current player counts, free slots, ping and joinability are <b>unknown unless a recent Roblox snapshot matches the exact server ID</b>. Counts are only shown for the last five minutes after a successful check. When Roblox reports a ping, it is server ping, not your own latency. Roblox may ignore a requested instance ID when joining.
+      <b>About the data:</b> Server IDs, locations, versions and first-seen times may come from <a href="https://www.rovalra.com/" target="_blank" rel="noopener noreferrer">RoValra</a>. When region discovery is the source, current player counts, free slots, ping and joinability are <b>unknown unless a recent Roblox snapshot matches the exact server ID</b>. Counts are only shown for 60 seconds after a successful Roblox check. When Roblox reports a ping, it is server ping, not your own latency. Roblox may ignore a requested instance ID when joining.
     </div>
     <div data-site-connect></div>
     <footer class="footer"><span>© N29 · Unofficial BL:R server browser</span><span><a href="/servers/customs/">Customs</a> · <a href="/tech/">Tech rules</a> · <a href="/tech/#support">Support</a> · Powered by <a href="https://github.com/N29dev/Glutony" target="_blank" rel="noopener noreferrer">Glutony</a> · <a href="https://n29.kz/" target="_blank" rel="noopener noreferrer">N29.kz</a></span></footer>
@@ -786,7 +786,7 @@
         if(rovalraDiscovery) status(serverList.length
           ? 'RoValra-observed '+modeLabel+' servers · '+regionScanCoverage+'/'+(regionScanTotal||'?')+' countries sampled · '+(data.enrichedCount||0)+'/'+serverList.length+' counts recently checked via Roblox; other slots unknown'
           : 'Checking active '+modeLabel+' regions · '+regionScanCoverage+'/'+(regionScanTotal||'?')+' countries recently scanned · No matches found yet');
-        else if(data.lastKnown) status('Last-known '+modeLabel+' servers · over 5 minutes old; availability is unverified',true);
+        else if(data.lastKnown) status('Last-known '+modeLabel+' servers · over one minute old; availability is unverified',true);
         else status(data.stale?'Showing recently cached '+modeLabel+' servers · counts may have changed':'Online · '+modeLabel+' servers ready');
         const age=Date.parse(data.updatedAt);
         ui.updated.textContent=Number.isFinite(age)?(rovalraDiscovery?'Last region check ':'Updated ')+new Date(age).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Sample time unknown';
