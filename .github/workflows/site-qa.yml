@@ -38,7 +38,7 @@ jobs:
 
   browser-layout:
     name: Rendered desktop and mobile layouts
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout BL:R
         uses: actions/checkout@v4
