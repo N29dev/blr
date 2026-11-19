@@ -15,7 +15,7 @@ const origin='https://blr.n29.kz';
 const pages=[
   '/','/404.html','/clipper.html','/tiktok-downloader.html','/tools/',
   '/servers/','/servers/customs/','/tech/','/tech/admin/',
-  '/leaderboard/','/leaderboard/admin.html'
+  '/leaderboard/','/leaderboard/admin.html','/wiki/','/wiki/styles/'
 ];
 const pageFile=route=>join(root,route.endsWith('/')?route.slice(1)+'index.html':route.slice(1));
 const read=path=>readFileSync(join(root,path),'utf8');
@@ -71,7 +71,7 @@ test('shared portfolio navigation is present with correct page identity',()=>{
     assert.ok(html.includes('aria-current="page">'+current+'</a>'),route+' wrong selected nav item');
     assert.ok(html.includes('/site-motion.css?v=1'),route+' missing motion CSS');
     assert.ok(html.includes('/site-motion.js?v=1'),route+' missing motion JS');
-    for(const href of ['/','/servers/','/servers/customs/','/tech/','/tools/','/tech/#support'])
+    for(const href of ['/','/servers/','/servers/customs/','/tech/',['/tools/','/clipper.html','/tiktok-downloader.html'].includes(route)?'/tools/':'/wiki/','/tech/#support'])
       assert.ok(html.includes('href="'+href+'"'),route+' missing nav '+href);
   }
   for(const route of ['/leaderboard/','/404.html']){

@@ -20,11 +20,12 @@ jobs:
         with:
           node-version: '22'
       - name: Site navigation and full repository audit
-        run: node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs tech/ratings.test.mjs
+        run: node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs tech/ratings.test.mjs wiki/content.test.mjs
       - name: All 36 globe region mappings
         run: node servers/globe-regions.test.mjs
       - name: JavaScript source syntax
         run: |
+          node --check wiki/app.mjs
           node --check site-experience.js
           node --check site-motion.js
           node --check home-matchday.js

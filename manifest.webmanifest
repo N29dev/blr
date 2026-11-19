@@ -1,7 +1,7 @@
 {
   "name": "BLR · N29",
   "short_name": "BLR",
-  "description": "Blue Lock: Rivals server finder, custom matches, tech rules, dedicated Creator Studio and support by N29.",
+  "description": "Blue Lock: Rivals wiki, styles, patch history, mastery, server finder and tech rules by N29.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
