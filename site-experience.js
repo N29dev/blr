@@ -6,8 +6,12 @@
   // One directory of destinations shared by the quick-jump search and page footer.
   // Keep the private /tech/admin/ route out of public navigation.
   const links = [
-    { group:'Play', icon:'⌂', title:'BL:R hub', detail:'Overview, profile and all available tools', url:'/' },
+    { group:'Play', icon:'⌂', title:'BL:R hub', detail:'Wiki, game information and match tools', url:'/' },
     { group:'Play', icon:'🌐', title:'Public server finder', detail:'Compare sampled Roblox server regions and open slots', url:'/servers/' },
+    { group:'Wiki', icon:'📚', title:'BL:R Wiki', detail:'Game knowledge, abilities, progression and mechanics', url:'/wiki/' },
+    { group:'Wiki', icon:'👥', title:'Style directory', detail:'Search styles, kits and mastery', url:'/wiki/styles/' },
+    { group:'Wiki', icon:'📅', title:'Patch history', detail:'Documented game changes', url:'/wiki/#patches' },
+    { group:'Wiki', icon:'🎯', title:'Mastery and counterplay', detail:'Practice, advanced usage and defensive guides', url:'/wiki/#mastery' },
     { group:'Play', icon:'⚽', title:'8v8 matches', detail:'Browse public 8v8 servers', url:'/servers/?mode=8v8' },
     { group:'Play', icon:'🏆', title:'Pro servers', detail:'Browse competitive public servers', url:'/servers/?mode=pro' },
     { group:'Play', icon:'🤝', title:'Community customs', detail:'Find player-hosted custom matches', url:'/servers/customs/' },
@@ -58,7 +62,7 @@
 
     const render=()=>{
       const term=query.value.trim().toLocaleLowerCase();
-      visible=links.filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
+      visible=links.filter(link=>(link.group!=='Create'||['tools','clipper','tiktok','leaderboard'].includes(page)||!!term)).filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
       active=0;
       list.replaceChildren();
       if(!visible.length) {
@@ -166,11 +170,11 @@
         {label:'Allowed & banned tech',href:'/tech/'},
         {label:'Tech inquiries',href:'/tech/#support'}
       ]},
-      {category:'CREATE',title:'Make better clips',icon:'🎬',links:[
-        {label:'Creator tools',href:'/tools/'},
-        {label:'MP4 clipper',href:'/clipper.html'},
-        {label:'TikTok downloader',href:'/tiktok-downloader.html'},
-        {label:'CC leaderboard (archive)',href:'/leaderboard/'}
+      {category:'WIKI',title:'Learn the game',icon:'📚',links:[
+        {label:'Style directory',href:'/wiki/styles/'},
+        {label:'Mastery & counterplay',href:'/wiki/#mastery'},
+        {label:'Patch history',href:'/wiki/#patches'},
+        {label:'Core mechanics',href:'/wiki/#mechanics'}
       ]},
       {category:'SUPPORT',title:'Get help',icon:'🛡️',links:[
         {label:'Ban appeals / Support',href:'/tech/#support'},

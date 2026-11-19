@@ -22,7 +22,7 @@ test('all major BLR pages use the portfolio-inspired shared navbar and styleshee
     assert.ok(source.includes('/site-experience.js?v=4'),page+' lacks searchable quick nav');
     assert.ok(source.includes('family=Space+Grotesk'),page+' lacks portfolio headline font');
     assert.ok(source.includes('family=DM+Sans'),page+' lacks portfolio body font');
-    assert.ok(source.includes('href="/tools/"'),page+' creator route');
+    assert.ok(source.includes(['tools/index.html','clipper.html','tiktok-downloader.html'].includes(page)?'href="/tools/"':'href="/wiki/"'),page+' knowledge or creator route');
     assert.ok(source.includes('href="https://n29.kz/"'),page+' portfolio link');
     assert.ok(source.includes('href="/servers/"'),page+' server finder');
     assert.ok(source.includes('href="/tech/"'),page+' tech directory');
@@ -111,7 +111,7 @@ test('misc routes and pages retain their existing functionality hooks',()=>{
   assert.ok(read('leaderboard/index.html').includes('class="n29-nav"'));
   assert.ok(read('leaderboard/index.html').includes('/site-unify.css?v=2'));
   assert.ok(read('404.html').includes('class="n29-nav"'));
-  assert.ok(read('404.html').includes('href="/tools/"'));
+  assert.ok(read('404.html').includes('href="/wiki/"'));
   assert.ok(read('sitemap.xml').includes('https://blr.n29.kz/tools/'));
   const theme=read('site-unify.css');
   assert.ok(theme.includes('Space Grotesk'));
