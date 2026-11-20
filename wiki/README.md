@@ -10,7 +10,7 @@ UI maintenance: first-paint icons are embedded as small semantic markup; browser
 
 ## Official update archive (reviewed import)
 
-The source is the supplied Discord update-channel exports, 900 unique messages from 2024-11-24 through 2026-11-14 UTC. The public archive is a **curated first pass**, not a full mirror. Release claims and dates are from the announcements; they do not establish current values or active codes.
+The source is the supplied Discord update-channel exports, 900 unique messages from 2024-11-24 through 2026-11-14 UTC. The public archive is a **curated historical archive**, not a full mirror. Release claims and dates are from the announcements; they do not establish current values or active codes.
 
 - Review new local JSON exports: `node wiki/import-discord.mjs path/to/export.json > review.local.json`. Never commit raw exports or review queues (they may include personal metadata or conversations).
 - Edit only the reviewed, paraphrased entries in `wiki/announcement-data.mjs`; preserve source message IDs, dates, exact code and ability names, and mark pending or superseded claims appropriately.
@@ -21,3 +21,9 @@ The source is the supplied Discord update-channel exports, 900 unique messages f
 ## Manually tested abilities
 
 Private editor: `/wiki/admin/`. Unlock with the existing `TECH_ADMIN_KEY` (not stored in localStorage). Every edit adds a D1 revision in Glutony; archive hides the tested record without deleting history. Use the actual test date, leave unknown stats blank, and keep announcements separate. Later linked release/balance/patch dates flag a **possible** need to retest, not confirmed changes. The public site reads only the selected style's tested data. Requires the Glutony Wiki API and migration 0011.
+
+### Expanded chronological review
+
+Both exports were screened message by message (900 unique IDs). The keyword triage returned 491 candidate messages, 369 context/media messages and 40 empty/ping-only messages. Category flags overlap and do not establish whether a feature shipped. The expanded curated data references 178 distinct original messages; the remaining candidates are not automatically treated as facts. Some announcements rely on outside documents (12 messages link to Google Docs) or attachments and embeds (65 messages); their unseen content is not inferred. McNagi and Easter Kaiser lack a supported complete ability list in the supplied text. Historical names, conditions and balances are not assertions about the current game. Manually tested D1 values remain untouched.
+
+Run `node wiki/audit-discord.mjs path/to/export1.json path/to/export2.json > audit.local.json` to screen every message, detect unreferenced candidates and verify all curated source IDs and dates against the original exports. This local-only audit excludes raw text and author metadata.

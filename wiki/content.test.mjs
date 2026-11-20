@@ -63,3 +63,16 @@ test('reviewed archive and route records remain source-linked and generated from
 });
 
 import './tested-data.test.mjs';
+
+test('expanded historical coverage and source dates',()=>{
+ const records=projectAnnouncements(reviewed,STYLES_WIKI.map(x=>x.id),FLOWS.map(x=>x.id));
+ assert.equal(Object.keys(reviewed.kits).length,43);
+ assert.ok(records.updates.length>=159);
+ assert.ok(records.codes.length>=233);
+ assert.ok(records['styles/charles'].abilities.some(r=>r.name==='Contrarian Pass'));
+ assert.ok(records['styles/loki'].abilities.some(r=>r.name==='Velocity Shot'));
+ assert.ok(records['styles/gingerbread-charles'].abilities.some(r=>r.name==='Cookie Cross'));
+ assert.ok(records['flows/target-man'].facts.some(r=>r.title==='Volley and header reductions'));
+ const refs=[...reviewed.rows.map(r=>[r[1],r[0]]),...Object.values(reviewed.kits).map(r=>[r[0],r[1]]),...Object.values(reviewed.extra).flat().map(r=>[r[0],r[1]]),...reviewed.codeRows.map(r=>[r[0],r[1]]),...reviewed.facts.map(r=>[r[0],r[1]])];
+ for(const [id,date] of refs)assert.equal(new Date(Number((BigInt(id)>>22n)+1420070400000n)).toISOString().slice(0,10),date);
+});
