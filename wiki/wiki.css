@@ -47,3 +47,13 @@ body[data-page="wiki"]{margin:0}body[data-page="wiki"] .kb-layout,body[data-page
 @media(max-width:1080px){.kb-sidebar nav{top:120px;max-height:calc(100dvh - 135px)}.kb-article .kb-infobox{top:135px}}
 @media(max-width:670px){.kb-mobile-nav{display:block;margin:0 0 18px}.kb-article .kb-infobox{position:static;max-width:100%;width:100%;display:grid;grid-template-columns:112px minmax(0,1fr);gap:8px 16px;align-items:start;text-align:left}.kb-infobox h2{grid-column:1/-1;margin:0}.kb-infobox .kb-icon{width:100%;margin:0}.kb-infobox dl{margin:0;min-width:0}.kb-infobox dd{overflow-wrap:anywhere}.kb-infobox dt:first-child{margin-top:0}.wiki-search input,.wiki-filters input,.wiki-filters select{font-size:16px}}
 @media(prefers-reduced-motion:reduce){.kb-tile{transition:none}}
+
+/* Announcement archive: compact articles, bounded layout and no additional fonts. */
+.announcement-card{background:#171e28;border:1px solid #303945;border-radius:7px;padding:13px 15px;margin:0 0 10px;min-width:0;overflow-wrap:anywhere}
+.announcement-card h3{font-size:1rem;margin:0 0 5px;color:#e0ebfa}.announcement-card p{margin:7px 0;color:#cad2de;line-height:1.6;font-size:.9rem}
+.announcement-meta{font-size:.76rem;color:#a5afbe;display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.announcement-tag{font-size:.72rem;padding:2px 7px;border:1px solid #344253;border-radius:4px;display:inline-block;color:#a7c9ed}
+.announcement-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.announcement-links a{font-size:.76rem;padding:3px 7px;border-radius:4px;background:#263244}
+.announcement-results{margin:12px 0}.announcement-table{font-size:.84rem;min-width:535px}.announcement-table td{overflow-wrap:anywhere;vertical-align:top}.announcement-table td:last-child{white-space:nowrap}
+.code-entry h3{font-family:ui-monospace,monospace;user-select:all;color:#e7f0fd}.code-entry button{margin-top:9px}.announcement-results [hidden]{display:none!important}
+@media(max-width:670px){.announcement-card{padding:10px 11px}.announcement-card h3{font-size:.95rem}.announcement-table{min-width:520px}}

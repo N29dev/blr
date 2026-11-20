@@ -1,7 +1,7 @@
 // Wiki starter content. Publish only sourced, reviewed factual entries.
 import {STYLES, STYLE_GROUPS, NEL_VARIANTS, POLICY, slug} from '../tech/data.js';
 export const ROSTER_AS_OF=POLICY.asOf;
-export const STYLES_WIKI=STYLES.map(s=>Object.freeze({...s,id:slug(s.name),nel:NEL_VARIANTS.includes(s.name)||s.name==='Aiku'}));
+export const STYLES_WIKI=STYLES.map(s=>Object.freeze({...s,...(s.name==='Otoya'?{group:'legendary',groupLabel:'Legendary'}:{}),id:slug(s.name),nel:NEL_VARIANTS.includes(s.name)||s.name==='Aiku'||s.name==='Hiori'}));
 export const RARITIES=STYLE_GROUPS.map(({id,label})=>({id,label}));
 // Key by style slug. A profile may contain overview, abilities, evolutions, progression, mastery, counterplay and history.
 // Each factual record should include a source URL and verified date.
