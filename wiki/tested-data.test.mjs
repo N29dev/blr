@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {needsRetest,FIELDS} from './tested-data.mjs';
+test('review flag is conservative and date-sensitive',()=>{const r={testedOn:'2026-11-14'};assert.equal(needsRetest(r,[{date:'2026-11-15',type:'Balance'}]),true);assert.equal(needsRetest(r,[{date:'2026-11-14',type:'Balance'},{date:'2026-11-15',type:'Event'}]),false);assert.equal(new Set(FIELDS.map(x=>x[0])).size,FIELDS.length);});

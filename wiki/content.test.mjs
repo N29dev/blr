@@ -61,3 +61,5 @@ test('reviewed archive and route records remain source-linked and generated from
  assert.ok(records['styles/otoya'].abilities.some(a=>a.name==='Ninjaristic Presence'));
  for(const [key,data] of Object.entries(records)){assert.deepEqual(JSON.parse(fs.readFileSync(new URL('./records/'+key+'.json',import.meta.url),'utf8')),data);const walk=x=>{if(Array.isArray(x))x.forEach(walk);else if(x&&typeof x==='object'){if(x.source)assert.match(x.source,/^https:\/\/discord\.com\/channels\/1304535758899777626\/1304576435800899694\/\d+$/);Object.values(x).forEach(walk);}};walk(data);}
 });
+
+import './tested-data.test.mjs';
