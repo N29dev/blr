@@ -236,3 +236,33 @@ test('master borders animate only while visible',async()=>{
     assert.equal(await icon.evaluate(e=>getComputedStyle(e,'::before').animationName),'none');
   }finally{await context.close();}
 });
+
+for(const width of [360,820,1440]){
+  test('all wiki icon labels fit without broken words at '+width+'px',async()=>{
+    const {context,page}=await open('/styles/',width,900);
+    try{
+      for(const route of ['/styles/','/flows/']){
+        if(route!=='/styles/')await page.goto(base+route,{waitUntil:'load'});
+        await page.locator('.kb-icon-line').first().waitFor();
+        const metrics=await page.locator('.kb-icon').evaluateAll(icons=>icons.flatMap(icon=>{
+          const bounds=icon.getBoundingClientRect();
+          return [...icon.querySelectorAll('.kb-icon-line')].map(line=>{
+            const range=document.createRange();range.selectNodeContents(line);
+            const r=range.getBoundingClientRect();
+            return {text:line.textContent,width:r.width,tile:bounds.width,inside:r.left>=bounds.left+2&&r.right<=bounds.right-2,lines:range.getClientRects().length};
+          });
+        }));
+        assert.ok(metrics.length>0);
+        for(const m of metrics){assert.ok(m.inside,m.text+' escapes icon '+JSON.stringify(m));assert.equal(m.lines,1,m.text+' wrapped');assert.ok(m.width<=m.tile*.83,m.text+' exceeds safe width');}
+        if(route==='/styles/'){
+          const gagamaru=page.locator('a[href="/styles/gagamaru/"] .kb-icon-line');
+          assert.equal(await gagamaru.count(),1);
+          assert.equal(await gagamaru.innerText(),'Gagamaru');
+          assert.equal(await page.locator('a[href="/styles/nagi/"] .kb-icon-line').innerText(),'NEL Nagi');
+          assert.deepEqual(await page.locator('a[href="/styles/chigiri/"] .kb-icon-line').allTextContents(),['NEL','Chigiri']);
+        }
+        assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/assets\/wiki\/.*\.webp/.test(r.name)).length),0);
+      }
+    }finally{await context.close();}
+  });
+}

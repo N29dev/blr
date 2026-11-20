@@ -3,3 +3,5 @@ The website root is the wiki. All styles and flows have stable static article UR
 
 ## Procedural icons
 The icon renderer uses shared CSS and a small palette map in icons.mjs; screenshots are no longer requested. The legacy coordinate attributes in static HTML are ignored/removed on enhancement. Master-rarity borders rotate using a CSS transform, only while visible and when motion is allowed. No per-frame JS or extra font assets. Reference sprite files are retained for old cached versions. Palette values approximate the supplied screenshots; Easter Kaiser uses a neutral silver approximation.
+
+Icon typography uses the observed line breaks from the reference tiles, a single local-font canvas measurement per distinct line, and relative container sizes; no font downloads, layout polling, resize handlers or per-frame JS are added.

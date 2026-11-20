@@ -22,3 +22,18 @@ test('procedural icons preserve observed appearance rather than guessing flow ra
   assert.equal(iconSpec('Santa Lavinho','style','limited').master,false);
   for(const flow of FLOWS){const s=iconSpec(flow.name,'flow');assert.ok(s.font>0&&s.font<=29);assert.equal(s.master,false);}
 });
+
+import {labelLayout} from './icons.mjs';
+test('reference label wrapping and width-based fitting',()=>{
+  const measure=s=>[...s].reduce((n,c)=>n+('MW'.includes(c)?1:'ilI '.includes(c)?.32:.72),0);
+  for(const name of ['Gagamaru','Kaiser','Sae','Gingerbread','NEL Nagi','NEL Isagi','NEL Rin','Ace Eater','Wild Card']){
+    const result=labelLayout(name,measure);
+    assert.deepEqual(result.lines,[name]);
+    assert.ok(measure(name)*result.font<=74.001);
+  }
+  assert.deepEqual(labelLayout('NEL Bachira',measure).lines,['NEL','Bachira']);
+  assert.deepEqual(labelLayout('Bloodmoon Rin',measure).lines,['Blood','Moon Rin']);
+  assert.deepEqual(labelLayout('Master Of All Trades',measure).lines,['Master Of','All Trades']);
+  for(const {name,nel} of STYLES_WIKI){const result=iconSpec(name,'style','',nel,measure);assert.ok(result.lines.every(line=>measure(line)*result.font<=74.001));}
+  for(const {name} of FLOWS){const result=iconSpec(name,'flow','',false,measure);assert.ok(result.lines.every(line=>measure(line)*result.font<=74.001));}
+});
