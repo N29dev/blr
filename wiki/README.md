@@ -1,7 +1,2 @@
 # BL:R Wiki
-Static GitHub Pages foundation. The roster is imported from tech/data.js so style names, rarity groups and NEL grouping have one source. It is a dated community snapshot, not a current official list.
-## Editing
-Add reviewed records by style slug in content.mjs. Article arrays: overview, evolutions, progression, mastery, counterplay, history (each {title,text,source,verified}); abilities additionally use name, kit, input, cooldown, condition, range, iframes, source, verified. Missing properties display as unverified. PATCHES is an array of {title,text,source,verified}; record the actual patch date in title/text, do not substitute the verification date.
-Keep facts and community observations separate. Never infer that unlisted tech is permitted. Do not copy unlicensed articles. Run node --test wiki/content.test.mjs before publishing.
-Mastery checklist is local browser state; it is not synced to Roblox or D1. Future editorial submissions or API integration should use moderation and versioned records.
-Creator Studio is intentionally secondary and remains at /tools/ for compatibility; a separate hostname needs deployment and cross-origin checks.
+The website root is the wiki. All styles and flows have stable static article URLs. 44 style icons and 33 flow icons are supplied October 2026 in-game screenshots, packed into two 128px-tile WebP sprites. Easter Kaiser has no supplied icon. Rarity labels are from the older Tech Rules roster, not verified current game data. NEL artwork is explicitly marked. Article content lives in content.mjs; mastery practice is browser-local and separate from in-game mastery. Do not invent stats, code validity or patch details. Old /wiki/ routes redirect to the new structure.

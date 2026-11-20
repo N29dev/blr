@@ -70,31 +70,7 @@ async function assertNoOverflow(page,label){
 }
 
 for(const width of [1440,820,390,360]){
-  test('Home Play + Profile layout at '+width+'px',async()=>{
-    const {context,page}=await open('/',width,900);
-    try{
-      await assertNoOverflow(page,'Home '+width);
-      assert.equal(await page.locator('#play .site-route-card').count(),4);
-      assert.equal(await page.locator('#stats .stat').count(),9);
-      assert.ok(await page.locator('#play').isVisible());
-      assert.ok(await page.locator('#stats').isVisible());
-      const p=await rect(page,'#stats .profile-card');
-      const avatar=await rect(page,'#stats .avatar-wrap');
-      const stats=await rect(page,'#stats .stats-grid');
-      assert.ok(avatar.x>=p.x-3&&avatar.right<=p.right+3,'Profile avatar escapes card at '+width);
-      assert.ok(stats.x>=p.x-3&&stats.right<=p.right+3,'Statistics escape card at '+width);
-      const first=await rect(page,'#play .site-route-card:nth-child(1)');
-      const second=await rect(page,'#play .site-route-card:nth-child(2)');
-      const third=await rect(page,'#play .site-route-card:nth-child(3)');
-      if(width>=820){
-        assert.ok(Math.abs(first.x-second.x)>50,'Desktop Play cards should be two columns');
-        assert.ok(Math.abs(first.x-third.x)<4,'Third card should start second row');
-      }else{
-        assert.ok(Math.abs(first.x-second.x)<4,'Mobile Play cards should stack');
-        assert.ok(second.y>first.y,'Mobile Play cards overlap');
-      }
-    }finally{await context.close();}
-  });
+  test('Wiki homepage fits '+width+'px',async()=>{const {context,page}=await open('/',width,900);try{await assertNoOverflow(page,'Wiki '+width);assert.equal(await page.locator('.kb-preview .kb-tile').count(),12);assert.ok(await page.locator('#kb-search').isVisible());assert.equal(await page.locator('#rbx-avatar').count(),0);if(width>670)assert.ok(await page.locator('.kb-sidebar').isVisible());else assert.ok(!await page.locator('.kb-sidebar').isVisible());}finally{await context.close();}});
 }
 
 for(const width of [1440,820,390,360]){
@@ -156,9 +132,9 @@ for(const route of sitePages){
         assert.ok(computed.radius!=='0px','Different modal border radius on '+route);
         const query=dialog.locator('.site-command-search');
         assert.ok(await query.isVisible(),route+' search input hidden');
-        await query.fill('tiktok');
-        assert.ok(await dialog.locator('.site-command-item').count()>0,'TikTok search yields no results');
-        assert.ok((await dialog.locator('.site-command-item').first().innerText()).toLowerCase().includes('tiktok'));
+        await query.fill('style directory');
+        assert.ok(await dialog.locator('.site-command-item').count()>0,'Style search yields no results');
+        assert.ok((await dialog.locator('.site-command-item').first().innerText()).toLowerCase().includes('style'));
         await query.press('Escape');
         assert.ok(!await dialog.isVisible(),'Escape must close modal on '+route);
       }finally{await context.close();}
@@ -229,3 +205,5 @@ for(const width of [1440,820,390,360]){
     }finally{await context.close();}
   });
 }
+
+for(const route of ['/styles/','/flows/','/styles/nagi/','/flows/trap/','/search/?q=nagi']){test('Wiki article/directory fits '+route,async()=>{const {context,page}=await open(route,390,850);try{await assertNoOverflow(page,route);assert.ok(await page.locator('h1').isVisible());if(route==='/styles/'){assert.equal(await page.locator('.kb-tile').count(),45);await page.locator('#kb-filter').fill('nagi');assert.equal(await page.locator('.kb-tile:visible').count(),3);}if(route==='/flows/')assert.equal(await page.locator('.kb-tile').count(),33);if(route==='/styles/nagi/')assert.ok(await page.locator('.wiki-progress').isVisible());if(route.startsWith('/search'))assert.ok(await page.locator('#kb-search-results a').count()>0);}finally{await context.close();}});}
