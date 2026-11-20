@@ -76,3 +76,17 @@ test('expanded historical coverage and source dates',()=>{
  const refs=[...reviewed.rows.map(r=>[r[1],r[0]]),...Object.values(reviewed.kits).map(r=>[r[0],r[1]]),...Object.values(reviewed.extra).flat().map(r=>[r[0],r[1]]),...reviewed.codeRows.map(r=>[r[0],r[1]]),...reviewed.facts.map(r=>[r[0],r[1]])];
  for(const [id,date] of refs)assert.equal(new Date(Number((BigInt(id)>>22n)+1420070400000n)).toISOString().slice(0,10),date);
 });
+
+import {COMMUNITY_NOTES} from './community-notes.mjs';
+test('community research is isolated from announcement records and references real routes',()=>{
+ for(const [route,notes] of Object.entries(COMMUNITY_NOTES)){
+  assert.ok(fs.existsSync(new URL('../'+route+'/index.html',import.meta.url)));
+  for(const [page,title,summary,related] of notes){
+   assert.match(page,/^[a-zA-Z0-9_%]+$/);assert.ok(title&&summary);
+   assert.ok(!/concept|user_blog/i.test(page));
+   for(const path of related)assert.ok(fs.existsSync(new URL('..'+path+'index.html',import.meta.url)));
+  }
+ }
+ assert.ok(COMMUNITY_NOTES['styles/mcnagi-fryshiro']);
+ assert.ok(COMMUNITY_NOTES['styles/easter-kaiser']);
+});
