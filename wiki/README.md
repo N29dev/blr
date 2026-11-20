@@ -17,3 +17,7 @@ The source is the supplied Discord update-channel exports, 900 unique messages f
 - Generate route-specific JSON: `node wiki/build-announcements.mjs` and validate with `node wiki/build-announcements.mjs --check`. Existing tests compare generated records against the curated source.
 - The homepage and directory do not download the patch corpus. Updates load the compact archive; each style/flow loads only its own record file. Codes deliberately carry unverified redemption status.
 - Missing ability conditions, cooldowns, flow effects and active-code state are not inferred. Keep the tech moderation snapshot distinct from updated wiki rarity data.
+
+## Manually tested abilities
+
+Private editor: `/wiki/admin/`. Unlock with the existing `TECH_ADMIN_KEY` (not stored in localStorage). Every edit adds a D1 revision in Glutony; archive hides the tested record without deleting history. Use the actual test date, leave unknown stats blank, and keep announcements separate. Later linked release/balance/patch dates flag a **possible** need to retest, not confirmed changes. The public site reads only the selected style's tested data. Requires the Glutony Wiki API and migration 0011.

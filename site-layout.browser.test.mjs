@@ -310,3 +310,12 @@ test('announcement archive filters, codes stay unverified and style records load
   await page.goto(base+'/codes/');await page.locator('.code-entry').first().waitFor();assert.match(await page.locator('.code-entry').first().innerText(),/unverified/i);await assertNoOverflow(page,'Codes');
  }finally{await context.close();}
 });
+
+test('wiki private editor requires authorization and loads tested entries without exposing a key',async()=>{
+ const {context,page}=await open('/wiki/admin/',390,850);
+ try{
+ await page.route('https://glutony.scp343hey.workers.dev/api/wiki/**',async r=>{const path=new URL(r.request().url()).pathname;const auth=r.request().headers()['authorization'];await r.fulfill({status:auth==='Bearer test-key'?200:403,contentType:'application/json',body:JSON.stringify(auth==='Bearer test-key'?(path.endsWith('/session')?{authorized:true}:{entries:[]}):{error:'Not authorized'})});});
+ assert.ok(await page.locator('#workspace').isHidden());
+ await page.locator('#key').fill('test-key');await page.getByRole('button',{name:'Unlock',exact:true}).click();await page.locator('#workspace').waitFor();await page.locator('#style').selectOption('otoya');await page.getByRole('button',{name:/Ninjaristic Presence/}).waitFor();await page.getByRole('button',{name:/Ninjaristic Presence/}).click();assert.equal(await page.locator('[name="name"]').inputValue(),'Ninjaristic Presence');assert.equal(await page.locator('[name="cooldown"]').inputValue(),'');assert.equal(await page.locator('[name="testedOn"]').inputValue(),'');await assertNoOverflow(page,'Wiki editor');assert.equal(await page.evaluate(()=>JSON.stringify(localStorage).includes('test-key')),false);
+ }finally{await context.close();}
+});
