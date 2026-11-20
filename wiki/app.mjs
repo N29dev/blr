@@ -1,7 +1,7 @@
 import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki} from './content.mjs';
 // One lightweight icon renderer for existing static wiki cards and article infoboxes.
 // The accessible name remains in the surrounding link or heading.
-import {iconSpec} from './icons.mjs';
+import {iconSpec,ICON_FONT_FAMILY} from './icons.mjs';
 const $=id=>document.getElementById(id);
 function el(tag,text,cls){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
 function link(label,url){const a=el('a',label);a.href=url;return a;}
@@ -26,6 +26,15 @@ function renderWikiIcons(){
   const icons=[...document.querySelectorAll('.kb-icon')];
   if(!icons.length)return;
   const masters=[];
+  // Measure the actual local font once per distinct line, not DOM dimensions.
+  // CSS container units scale the result on viewport changes without observers.
+  const ctx=document.createElement('canvas').getContext('2d');
+  const widths=new Map();
+  if(ctx)ctx.font='900 100px '+ICON_FONT_FAMILY;
+  const measure=ctx?text=>{
+    if(!widths.has(text))widths.set(text,ctx.measureText(text).width/100);
+    return widths.get(text);
+  }:undefined;
   for(const icon of icons){
     const owner=icon.closest('.kb-tile,.kb-infobox');
     if(!owner)continue;
@@ -34,12 +43,13 @@ function renderWikiIcons(){
     const isFlow=icon.classList.contains('kb-flows')||owner.getAttribute('href')?.startsWith('/flows/')||location.pathname.startsWith('/flows/');
     const rarity=owner.dataset.rarity||owner.querySelector('dl dd')?.textContent?.trim().toLowerCase()||'';
     const nel=owner.querySelector('small')?.textContent?.includes('NEL shown')||[...owner.querySelectorAll('dd')].some(d=>d.textContent==='NEL variant');
-    const spec=iconSpec(name,isFlow?'flow':'style',rarity,nel);
+    const spec=iconSpec(name,isFlow?'flow':'style',rarity,nel,measure);
     icon.removeAttribute('style');icon.classList.remove('kb-icon-missing');
     icon.dataset.palette=spec.palette;
     if(!isFlow)icon.classList.add('kb-styles');
     if(spec.master){icon.dataset.master='true';masters.push(icon);}
-    const label=el('span',spec.lines.join('\n'),'kb-icon-label');
+    const label=el('span',null,'kb-icon-label');
+    for(const line of spec.lines)label.append(el('span',line,'kb-icon-line'));
     icon.style.setProperty('--icon-font',spec.font+'cqi');
     icon.replaceChildren(label);
   }
