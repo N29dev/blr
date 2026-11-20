@@ -15,7 +15,7 @@ const origin='https://blr.n29.kz';
 const pages=[
   '/','/404.html','/clipper.html','/tiktok-downloader.html','/tools/',
   '/servers/','/servers/customs/','/tech/','/tech/admin/',
-  '/leaderboard/','/leaderboard/admin.html','/wiki/','/wiki/styles/'
+  '/leaderboard/','/leaderboard/admin.html','/wiki/','/wiki/styles/','/styles/','/flows/','/search/','/styles/nagi/','/flows/trap/','/abilities/','/evolutions/','/progression/','/mastery/','/mechanics/','/updates/','/codes/','/cosmetics/','/guides/'
 ];
 const pageFile=route=>join(root,route.endsWith('/')?route.slice(1)+'index.html':route.slice(1));
 const read=path=>readFileSync(join(root,path),'utf8');
@@ -71,7 +71,7 @@ test('shared portfolio navigation is present with correct page identity',()=>{
     assert.ok(html.includes('aria-current="page">'+current+'</a>'),route+' wrong selected nav item');
     assert.ok(html.includes('/site-motion.css?v=1'),route+' missing motion CSS');
     assert.ok(html.includes('/site-motion.js?v=1'),route+' missing motion JS');
-    for(const href of ['/','/servers/','/servers/customs/','/tech/',['/tools/','/clipper.html','/tiktok-downloader.html'].includes(route)?'/tools/':'/wiki/','/tech/#support'])
+    for(const href of ['/','/servers/','/servers/customs/','/tech/',['/tools/','/clipper.html','/tiktok-downloader.html'].includes(route)?'/tools/':'/styles/','/tech/#support'])
       assert.ok(html.includes('href="'+href+'"'),route+' missing nav '+href);
   }
   for(const route of ['/leaderboard/','/404.html']){
@@ -119,26 +119,10 @@ test('Creator Studio is sorted by workflow with isolated CSS and all existing co
   assert.deepEqual(counts,[1,1,1,1,1],'each tool must appear exactly once');
 });
 
-test('homepage has four distinct destinations and stable profile grid design',()=>{
-  const html=fromRoute('/');
-  assert.equal((html.match(/class="site-route-card"/g)||[]).length,4);
-  assert.ok(html.indexOf('id="play"')<html.indexOf('id="stats"'),'Play section should precede profile');
-  assert.ok(html.includes('/home-layout.css?v=1'));
-  assert.ok(html.includes('id="rbx-avatar"'));
-  assert.ok(html.includes('id="rbx-display"'));
-  assert.ok(html.includes('id="rbx-username"'));
-  assert.equal((html.match(/class="stat"/g)||[]).length,9);
-  for(const href of ['/servers/','/servers/customs/','/tech/','/tech/#support'])
-    assert.ok(html.includes('href="'+href+'"'),'homepage missing destination '+href);
-  const css=read('home-layout.css');
-  assert.ok(css.includes('#play .site-route-grid'));
-  assert.ok(css.includes('#stats .profile-card'));
-  assert.ok(css.includes('grid-template-columns:1fr!important'),'mobile layout must stack');
-});
+test('homepage is an encyclopedia without personal branding or creator tools',()=>{const html=fromRoute('/');for(const href of ['/styles/','/flows/','/updates/','/servers/','/servers/customs/','/tech/','/tech/#support'])assert.ok(html.includes('href="'+href+'"'),href);assert.ok(!html.includes('id="rbx-avatar"'));assert.ok(!html.includes('class="profile-card"'));assert.ok(!html.includes('href="/tools/"'));assert.ok(html.includes('Blue Lock: Rivals Wiki'));});
 
 test('JavaScript uses existing static DOM IDs for core tools and data pages',()=>{
   const pairs=[
-    ['/','home-matchday.js'],
     ['/tools/','tools/tiktok-info.js'],
     ['/tools/','tools/compress.mjs'],
     ['/servers/','servers/globe.js'],

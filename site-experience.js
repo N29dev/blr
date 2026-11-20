@@ -8,10 +8,11 @@
   const links = [
     { group:'Play', icon:'⌂', title:'BL:R hub', detail:'Wiki, game information and match tools', url:'/' },
     { group:'Play', icon:'🌐', title:'Public server finder', detail:'Compare sampled Roblox server regions and open slots', url:'/servers/' },
-    { group:'Wiki', icon:'📚', title:'BL:R Wiki', detail:'Game knowledge, abilities, progression and mechanics', url:'/wiki/' },
-    { group:'Wiki', icon:'👥', title:'Style directory', detail:'Search styles, kits and mastery', url:'/wiki/styles/' },
-    { group:'Wiki', icon:'📅', title:'Patch history', detail:'Documented game changes', url:'/wiki/#patches' },
-    { group:'Wiki', icon:'🎯', title:'Mastery and counterplay', detail:'Practice, advanced usage and defensive guides', url:'/wiki/#mastery' },
+    { group:'Wiki', icon:'📚', title:'BL:R Wiki', detail:'Game knowledge, abilities, progression and mechanics', url:'/' },
+    { group:'Wiki', icon:'👥', title:'Style directory', detail:'Search styles, kits and mastery', url:'/styles/' },
+    { group:'Wiki', icon:'✦', title:'Flows', detail:'Browse flow profiles', url:'/flows/' },
+    { group:'Wiki', icon:'📅', title:'Patch history', detail:'Documented game changes', url:'/updates/' },
+    { group:'Wiki', icon:'🎯', title:'Mastery and counterplay', detail:'Practice, advanced usage and defensive guides', url:'/mastery/' },
     { group:'Play', icon:'⚽', title:'8v8 matches', detail:'Browse public 8v8 servers', url:'/servers/?mode=8v8' },
     { group:'Play', icon:'🏆', title:'Pro servers', detail:'Browse competitive public servers', url:'/servers/?mode=pro' },
     { group:'Play', icon:'🤝', title:'Community customs', detail:'Find player-hosted custom matches', url:'/servers/customs/' },
@@ -25,11 +26,9 @@
     { group:'Support', icon:'🛡️', title:'Ban appeal help', detail:'Support server and appeals channel for bug-abuse bans', url:'/tech/#support' },
     { group:'Support', icon:'💬', title:'BL:R support server', detail:'Join the official support Discord for tickets and appeals', url:'https://discord.gg/dgV4p83EHA' },
     { group:'Support', icon:'🌍', title:'Main BL:R Discord', detail:'Blue Lock: Rivals community server', url:'https://discord.gg/bluelockrivals' },
-    { group:'More', icon:'★', title:'N29 player stats', detail:'In-game profile statistics on the homepage', url:'/#stats' },
-    { group:'More', icon:'💠', title:'N29 community Discord', detail:'Join N29’s own community server', url:'/#discord' },
-    { group:'More', icon:'✦', title:'N29 portfolio', detail:'The portfolio behind BL:R and Glutony', url:'https://n29.kz/' }
   ];
 
+  import('/wiki/content.mjs').then(({SEARCH_INDEX})=>{for(const item of SEARCH_INDEX){if(item.kind==='Section')continue;links.push({group:item.kind==='Style'?'Styles':'Flows',icon:item.kind==='Style'?'◆':'✦',title:item.name,detail:item.kind+' '+(item.aliases||''),url:item.url});}}).catch(()=>{});
   function createNode(tag, className, text) {
     const el=document.createElement(tag);
     if(className) el.className=className;
@@ -48,8 +47,8 @@
     close.setAttribute('aria-label','Close navigation');
     top.append(close);
     const query=createNode('input','site-command-search');
-    query.type='search';query.placeholder='Search pages, servers, tools…';
-    query.setAttribute('aria-label','Search pages and tools');
+    query.type='search';query.placeholder='Search styles, flows, game information…';
+    query.setAttribute('aria-label','Search wiki and pages');
     query.autocomplete='off';query.spellcheck=false;
     const list=createNode('div','site-command-list');
     const help=createNode('div','site-command-help','Type to filter · ↑ ↓ select · Enter open · Esc close');
@@ -62,7 +61,7 @@
 
     const render=()=>{
       const term=query.value.trim().toLocaleLowerCase();
-      visible=links.filter(link=>(link.group!=='Create'||['tools','clipper','tiktok','leaderboard'].includes(page)||!!term)).filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
+      visible=links.filter(link=>(link.group!=='Create'||['tools','clipper','tiktok','leaderboard'].includes(page))).filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
       active=0;
       list.replaceChildren();
       if(!visible.length) {
@@ -171,10 +170,10 @@
         {label:'Tech inquiries',href:'/tech/#support'}
       ]},
       {category:'WIKI',title:'Learn the game',icon:'📚',links:[
-        {label:'Style directory',href:'/wiki/styles/'},
-        {label:'Mastery & counterplay',href:'/wiki/#mastery'},
-        {label:'Patch history',href:'/wiki/#patches'},
-        {label:'Core mechanics',href:'/wiki/#mechanics'}
+        {label:'Style directory',href:'/styles/'},
+        {label:'Mastery & counterplay',href:'/mastery/'},
+        {label:'Patch history',href:'/updates/'},
+        {label:'Core mechanics',href:'/mechanics/'}
       ]},
       {category:'SUPPORT',title:'Get help',icon:'🛡️',links:[
         {label:'Ban appeals / Support',href:'/tech/#support'},

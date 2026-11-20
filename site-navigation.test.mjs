@@ -22,8 +22,8 @@ test('all major BLR pages use the portfolio-inspired shared navbar and styleshee
     assert.ok(source.includes('/site-experience.js?v=4'),page+' lacks searchable quick nav');
     assert.ok(source.includes('family=Space+Grotesk'),page+' lacks portfolio headline font');
     assert.ok(source.includes('family=DM+Sans'),page+' lacks portfolio body font');
-    assert.ok(source.includes(['tools/index.html','clipper.html','tiktok-downloader.html'].includes(page)?'href="/tools/"':'href="/wiki/"'),page+' knowledge or creator route');
-    assert.ok(source.includes('href="https://n29.kz/"'),page+' portfolio link');
+    assert.ok(source.includes(['tools/index.html','clipper.html','tiktok-downloader.html'].includes(page)?'href="/tools/"':'href="/styles/"'),page+' knowledge or creator route');
+    if(page==='index.html')assert.ok(source.includes('href="https://n29.kz/"'),page+' maintainer credit');
     assert.ok(source.includes('href="/servers/"'),page+' server finder');
     assert.ok(source.includes('href="/tech/"'),page+' tech directory');
     const ids=[...source.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
@@ -42,7 +42,7 @@ test('public feature pages retain one Explore BLR cross-link directory',()=>{
 test('creator widgets moved intact to their own page',()=>{
   const home=read('index.html'),studio=read('tools/index.html');
   assert.ok(home.includes('id="tools"'),'old /#tools anchors must still work');
-  assert.ok(home.includes('href="/tools/"'));
+  assert.ok(!home.includes('href="/tools/"'));
   assert.ok(!home.includes('id="patch-video"'));
   assert.ok(!home.includes('id="compress-video"'));
   assert.ok(!home.includes('id="tiktok-url"'));
@@ -84,7 +84,7 @@ test('site quick jump is focused on BLR, portfolio and Glutony projects',()=>{
   for(const route of ['/','/servers/','/servers/customs/','/tech/','/tools/',
                       '/clipper.html','/tiktok-downloader.html','/leaderboard/'])
     assert.ok(shared.includes(route),route);
-  assert.ok(shared.includes('https://n29.kz/'));
+  assert.ok(!shared.includes('N29 player stats'));
   assert.ok(shared.includes('Glutony Discord app'));
   assert.ok(!shared.includes('gk-reaction-trainer'));
   assert.ok(!shared.includes("url:'/tech/admin/'"),'private admin not public nav');
@@ -101,7 +101,7 @@ test('quick jump internal destinations point to files in the same repository',()
 });
 
 test('misc routes and pages retain their existing functionality hooks',()=>{
-  assert.equal((read('index.html').match(/class="site-route-card"/g)||[]).length,4);
+  assert.ok(read('index.html').includes('href="/styles/"'));assert.ok(read('index.html').includes('href="/flows/"'));
   assert.ok(read('tech/index.html').includes('id="support"'));
   assert.ok(read('tech/admin/index.html').includes('id="entry-form"'));
   assert.ok(read('servers/index.html').includes('id="mode-8v8"'));
@@ -111,8 +111,8 @@ test('misc routes and pages retain their existing functionality hooks',()=>{
   assert.ok(read('leaderboard/index.html').includes('class="n29-nav"'));
   assert.ok(read('leaderboard/index.html').includes('/site-unify.css?v=2'));
   assert.ok(read('404.html').includes('class="n29-nav"'));
-  assert.ok(read('404.html').includes('href="/wiki/"'));
-  assert.ok(read('sitemap.xml').includes('https://blr.n29.kz/tools/'));
+  assert.ok(read('404.html').includes('href="/styles/"'));
+  assert.ok(read('sitemap.xml').includes('https://blr.n29.kz/styles/'));
   const theme=read('site-unify.css');
   assert.ok(theme.includes('Space Grotesk'));
   assert.ok(theme.includes('DM Sans'));
