@@ -349,7 +349,7 @@ export default {
    "June balance pass",
    "Balance",
    "reo don-lorenzo rin king nagi krampus-barou bloodmoon-rin loki subzero-loki bachira reaper-sae shidou yukimiya kaiser",
-   "bee-freestyle",
+   "bee-freestyle ice king-s-authority emperor",
    "Reo's copied shots received cooldown and power nerfs; many other styles and flows changed."
   ],
   [
@@ -493,7 +493,7 @@ export default {
    "Easter update",
    "Event",
    "easter-yukimiya",
-   "",
+   "easter",
    "Easter event, quests and Easter Yukimiya announced."
   ],
   [
@@ -699,9 +699,9 @@ export default {
    "1429140368472936571",
    "Great rebalancing",
    "Balance",
+   "isagi loki nagi king hiori chigiri rin kaiser sae igaguri aiku kurona bachira bunny",
    "",
-   "",
-   "Broad style and gameplay balance changes announced."
+   "Ball Trajectory Metavision for all goalkeepers, Loki and Nagi. Loki base/passive overhaul; extensive style cooldown and range changes, removals and vaulting."
   ],
   [
    "2025-10-12",
@@ -763,7 +763,7 @@ export default {
    "Lavinho release",
    "Release",
    "lavinho",
-   "",
+   "butterfly-dancer",
    "Lavinho style introduced."
   ],
   [
@@ -772,7 +772,7 @@ export default {
    "Bunny release",
    "Release",
    "bunny",
-   "",
+   "target-man",
    "Bunny Iglesias style introduced."
   ],
   [
@@ -807,7 +807,7 @@ export default {
    "1401250156904452166",
    "Chemical reaction system",
    "Mechanics",
-   "",
+   "isagi kaiser nagi reo hiori sae shidou bachira otoya",
    "",
    "Receiver can request a chemical reaction; a button appears to initiate it."
   ],
@@ -1134,6 +1134,303 @@ export default {
    "isagi nagi",
    "",
    "Direct Shot fixed, tackle speed increased and duration reduced; Nagi aerial tackle issue addressed."
+  ],
+  [
+   "2024-11-30",
+   "1312465568464371794",
+   "Original Shidou tutorial",
+   "Mechanics",
+   "shidou",
+   "",
+   "A tutorial described the original aerial Dragon Drive. Historical kit, superseded by later reworks."
+  ],
+  [
+   "2024-12-03",
+   "1313592717107925073",
+   "Shidou i-frames",
+   "Hotfix",
+   "shidou",
+   "",
+   "I-frames announced for Shidou, shortly after the rework."
+  ],
+  [
+   "2024-12-07",
+   "1314993452303519835",
+   "Gagamaru introduction",
+   "Release",
+   "gagamaru",
+   "",
+   "Gagamaru, lobby rankings room and two teams announced."
+  ],
+  [
+   "2024-12-30",
+   "1323330890864001056",
+   "Ball reset vote",
+   "Mechanics",
+   "",
+   "",
+   "The /vrb command was introduced to reset a missing ball, requiring a large majority to agree."
+  ],
+  [
+   "2025-01-05",
+   "1325526658622558351",
+   "Cutscene timer changes",
+   "Patch",
+   "gagamaru",
+   "",
+   "Cutscene abilities stop the timer at this date, Gagamaru fixes and a limited cosmetic."
+  ],
+  [
+   "2025-01-11",
+   "1327671547657457684",
+   "AI goalkeeper and Pro server",
+   "Release",
+   "",
+   "",
+   "AI GK rework, Pro server, limited items and bug fixes."
+  ],
+  [
+   "2025-02-08",
+   "1337825015621750915",
+   "Kunigami and Private Server Plus",
+   "Release",
+   "kunigami",
+   "",
+   "Kunigami, PS+, and Valentine event introduced."
+  ],
+  [
+   "2025-02-15",
+   "1340368006445797499",
+   "Slide rework and chemistry",
+   "Patch",
+   "sae shidou",
+   "",
+   "Sae–Shidou chemistry and slide rework, private server spectating and anti-cheat changes."
+  ],
+  [
+   "2025-02-18",
+   "1341418283735453800",
+   "Slide rework reverted",
+   "Patch",
+   "",
+   "",
+   "Slide rework reverted; flow locking and focus added. Heel flick became character-based again."
+  ],
+  [
+   "2025-02-22",
+   "1342905513326805185",
+   "Big Bang Drive and Isagi changes",
+   "Rework",
+   "isagi shidou sae",
+   "",
+   "Big Bang Drive required an airborne ball; Isagi second ability reworked and Direct Pass removed at this date. Sae awakening and flows revamped."
+  ],
+  [
+   "2025-03-01",
+   "1345441709865304126",
+   "Don Lorenzo introduction",
+   "Release",
+   "don-lorenzo",
+   "",
+   "World Class Don Lorenzo and lucky-spin odds changes announced."
+  ],
+  [
+   "2025-03-10",
+   "1348588432175140884",
+   "Gagamaru fixes",
+   "Hotfix",
+   "gagamaru",
+   "",
+   "Diving Header restricted to cases where a header is possible; Handstand fixed in new servers."
+  ],
+  [
+   "2025-04-05",
+   "1358144283156418580",
+   "Golden Defense and Lefty Shoot",
+   "Balance",
+   "don-lorenzo isagi",
+   "",
+   "Golden Defense changed to no teammate pass and ignore i-frames; Lefty Shoot delay fixed."
+  ],
+  [
+   "2025-07-14",
+   "1394181239988162581",
+   "Ball physics and style balance",
+   "Balance",
+   "king isagi yukimiya",
+   "godspeed destructive-impulses king-s-authority",
+   "Ball physics made independent of FPS; King, Isagi, Yukimiya and flow balances announced."
+  ],
+  [
+   "2025-07-26",
+   "1398737124563488808",
+   "Hiori changes",
+   "Patch",
+   "hiori",
+   "",
+   "Hiori changed to Rare at the time, Frostbite removed and Ice Dribble restored."
+  ],
+  [
+   "2025-08-13",
+   "1405337083064877096",
+   "Sae kit changes",
+   "Patch",
+   "sae shidou",
+   "",
+   "Metavision became a passive; Creative Dash replaced V, Divine Destruction limited to near penalty area and Off Balance adjusted. Older kit snapshot."
+  ],
+  [
+   "2025-08-16",
+   "1406338276490608711",
+   "Charles release",
+   "Release",
+   "charles loki",
+   "contrarian",
+   "Charles released at World Class with Contrarian flow and Charles–Loki chemistry."
+  ],
+  [
+   "2025-09-20",
+   "1418991043889725460",
+   "Nagi, Loki and Lavinho balance",
+   "Balance",
+   "nagi mcnagi-fryshiro loki lavinho",
+   "bee-freestyle destructive-impulses target-man",
+   "Detailed nerfs and removals for Nagi and McNagi, Loki aerial trap removal, Lavinho balance and flow adjustments."
+  ],
+  [
+   "2025-10-15",
+   "1428087882467377267",
+   "October mini-patch",
+   "Hotfix",
+   "isagi demon-shidou reaper-sae don-lorenzo",
+   "",
+   "Cutscene, inventory, battle pass, performance and awakening follow-up fixes. Rivalry chemistry softlock addressed."
+  ],
+  [
+   "2025-10-15",
+   "1428131188349997116",
+   "Isagi Lefty Shot removed",
+   "Patch",
+   "isagi",
+   "",
+   "Lefty Shot removed and Direct Shot restored as an on-ball move at this date."
+  ],
+  [
+   "2025-10-16",
+   "1428422037227180173",
+   "NEL Nagi passive removed",
+   "Patch",
+   "nagi",
+   "",
+   "NEL Nagi's passive was announced removed."
+  ],
+  [
+   "2025-10-18",
+   "1429145857772748882",
+   "Rebalance bug fixes",
+   "Hotfix",
+   "yukimiya reaper-sae isagi king rin demon-shidou nagi kaiser reo lavinho don-lorenzo",
+   "",
+   "Fixed a wide range of ability bugs including full-field Street Sweep, Bloodlust, NEL Isagi–Kaiser chemistry cooldown and awakening interactions."
+  ],
+  [
+   "2025-11-29",
+   "1444405008354377875",
+   "Reo copy and mastery toggles",
+   "Patch",
+   "reo bachira lavinho",
+   "",
+   "Reo Copy re-enabled and buffed. NEL mastery toggles and Bachira–Lavinho chemistry announced, with kit variant uncertain in source."
+  ],
+  [
+   "2026-01-10",
+   "1459609784188670005",
+   "New Year quality of life",
+   "Balance",
+   "santa-lavinho",
+   "",
+   "Chemical reaction time 160 → 180 (unit unspecified), Santa Lavinho steal nerfed."
+  ],
+  [
+   "2026-03-19",
+   "1484284318703550544",
+   "Karasu awakening changes",
+   "Patch",
+   "karasu",
+   "",
+   "Crow Clearance returned to awakening and Raven Awaken gained metavision buffs; VFX polished."
+  ],
+  [
+   "2026-04-04",
+   "1490110641418273010",
+   "Spin system reverted",
+   "Patch",
+   "",
+   "",
+   "Earlier same-day style spin-system change reverted; bugs fixed."
+  ],
+  [
+   "2026-04-13",
+   "1493361542274486363",
+   "Nagi movement and trap changes",
+   "Balance",
+   "nagi",
+   "",
+   "Dash and Trap Shot endlag removed; simultaneous dash/trap shot and jumping mid-dash restored; I Am Nagi distance nerfed."
+  ],
+  [
+   "2026-05-09",
+   "1502747257030836424",
+   "Kaiser stun restored",
+   "Patch",
+   "kaiser",
+   "",
+   "Emperor's Route stun restored and Subjugation usability fixed."
+  ],
+  [
+   "2026-05-13",
+   "1504102720846434415",
+   "May cutscene and skill fixes",
+   "Hotfix",
+   "chigiri rin isagi kaiser sae",
+   "",
+   "Fixed Panther Shot direction, infinite Center of Gravity, MetaBurst steal animation, ball visibility and awakening cooldown reset bugs."
+  ],
+  [
+   "2026-06-20",
+   "1517943708027195543",
+   "NEL academy guidance",
+   "Progression",
+   "",
+   "",
+   "Academy role suitability listed: Arsenaly and Re Al for midfield, Manshine City all positions, Barcha dribblers, Ubers defenders, PXG offense and Bastard Munchen strikers."
+  ],
+  [
+   "2026-06-22",
+   "1518712321512443935",
+   "Anti-cheat and performance hotfix",
+   "Hotfix",
+   "nagi",
+   "",
+   "Fixed goalkeeper dive and Nagi Trap Shot teleport-back across modes; optimized loading screen and addressed FPS drops/crashes."
+  ],
+  [
+   "2026-08-29",
+   "1543316776228749312",
+   "Additional awakening bars",
+   "Patch",
+   "rin sae don-lorenzo kaiser otoya karasu",
+   "",
+   "New awakening bars announced for six styles."
+  ],
+  [
+   "2026-08-29",
+   "1543309807157514400",
+   "Big Bang Drive effects",
+   "Patch",
+   "shidou",
+   "",
+   "Impact frames added to Big Bang Drive."
   ]
  ],
  "kits": {
@@ -1344,6 +1641,148 @@ export default {
    "Malicia (Ground)||Tackle, ragdolls both while retaining ball;Malicia (Air)||Header redirect;Monk Pass||Tracking sliding pass",
    "Awakening",
    "Dharma Chains||Cutscene steal with slow effect;Monk Pass||Improved base version;Genius Killing Malicia||Cutscene evasion with slow effect"
+  ],
+  "charles": [
+   "1406338276490608711",
+   "2025-08-16",
+   "Base",
+   "Sky Arc Pass|C|High arc, auto-track;Contrarian Dribble|V|Primary, zigzag and stun;Contrarian Pass|V|After successful Contrarian Dribble;Dartboard Lens|B|On-ball;Contrarian Defense|B|Off-ball",
+   "Awakening",
+   "Rabona Pass|C|Cutscene pass;The Final Boss|V|Cutscene steal;Dartboard Lens|B|On-ball, strengthened;Contrarian Defense|B|Off-ball, longer dive and knockback"
+  ],
+  "bunny": [
+   "1414296464112488600",
+   "2025-09-07",
+   "Base",
+   "Scissor Kick||;Bunny Hop||;Crown Hopper||;Lob Pass||;Rabbit Trap||",
+   "Awakening",
+   "Enter Striker||;Hare in The Air||"
+  ],
+  "lavinho": [
+   "1416471621295669390",
+   "2025-09-13",
+   "Base",
+   "Rising Dance|C|Rainbow flick, nearby stun;Butterfly Dribble|C|After Rising Dance;Ginga Style|V|Opponent in front, originally three charges within 10s;Ginga Shot|B|On-ball, after successful Ginga Style;Butterfly Counter|B|Counter if tackled or stolen from during scissors",
+   "Awakening",
+   "Butterfly Intercept|V|Off-ball, in air;Tiki Taka|B|On-ball, three-player passing system"
+  ],
+  "loki": [
+   "1429140368472936571",
+   "2025-10-18",
+   "Base overhaul",
+   "Explosive Acceleration|C|On-ball or off-ball;Velocity Dash|V|On-ball, consumes Velocity;Velocity Shot|V|Follow-up to Velocity Dash;Swift Intercept|B|Off-ball, jumping trap"
+  ],
+  "yukimiya": [
+   "1411404916479492138",
+   "2025-08-30",
+   "Base",
+   "La Boba||;Street Sweep||;Gyro Shot||",
+   "Awakening",
+   "Street Dribbling||;Goal In Time||"
+  ],
+  "kaiser": [
+   "1355577169862197388",
+   "2025-03-29",
+   "Base",
+   "Kaiser Impact||Fast straight shot;Emperor's Dribble||On-ball;Emperor's Route||Off-ball;Royal Volley||Forces teammate pass then volley",
+   "Awakening",
+   "Beinschuss||Bicycle kick;Magnus||"
+  ],
+  "reaper-sae": [
+   "1426621261135741048",
+   "2025-10-11",
+   "Base",
+   "Scythe Pass|C|;Deaths Call|C|;Reaper Turn|V|;Scythe Slam|V|;GRAVEYARD|B|",
+   "Awakening",
+   "Reaper Step||;Execution Shot||"
+  ],
+  "demon-shidou": [
+   "1426978927842295929",
+   "2025-10-12",
+   "Base",
+   "Demonic Dribble|C|;Demonic Shot|C|;Demonic Overhead Kick|V|;Demon Header|B|;Bloodlust|B|",
+   "Awakening",
+   "Inferno Dragon Drive|C|;The Gate.|V|"
+  ],
+  "bloodmoon-rin": [
+   "1431690636196581527",
+   "2025-10-25",
+   "Base",
+   "Crescent Shot|C|;Crow Elusion|V|;Lunar Axis|V|;Blood Dribble|B|",
+   "Awakening",
+   "Crimson Eclipse||;Scarlet Orbit||"
+  ],
+  "phantom-isagi": [
+   "1431690636196581527",
+   "2025-10-25",
+   "Base",
+   "Phantom Direct Shot|C|;Phantom Dribble|V|;Phantom Step|V|;Phantasmal Illusion|B|",
+   "Awakening",
+   "Give me the ball.||;Loser.||"
+  ],
+  "skeleton-nagi": [
+   "1434228992499646537",
+   "2025-11-01",
+   "Base",
+   "Skeleton Trap|C|;Skull Shot|C|;Bones Flick|V|;Skull Roulette|B|",
+   "Awakening",
+   "Skeleton Imprisonment|C|;Hungry Hungry Skull|B|"
+  ],
+  "elf-emperor": [
+   "1444404267174858865",
+   "2025-11-29",
+   "Base",
+   "Elf Impact|C|;Kaisers Helper Dribble|V|;Elf-Emperor Volley|V|;Elf-Emperor Dribble|B|",
+   "Awakening",
+   "Elfchuss Impact|C|;Emperors Catapult|V|"
+  ],
+  "krampus-barou": [
+   "1446925164074897478",
+   "2025-12-06",
+   "Base",
+   "Blizzard Fang Shot|C|;CRASH STEAL|C|;Krampus Chop Dribble|V|;Predator Krampus|B|",
+   "Awakening",
+   "Krampus Strike|C|;Krampus Greed|V|"
+  ],
+  "subzero-loki": [
+   "1449462886421364966",
+   "2025-12-13",
+   "Base",
+   "Frost Acceleration|C|;Frost Shot|C|;Godspeed Freeze|V|;Frost Counter|B|",
+   "Awakening",
+   "The Tunnel.|C|;Sled Defense|B|"
+  ],
+  "gingerbread-charles": [
+   "1449462886421364966",
+   "2025-12-13",
+   "Base",
+   "Gingerbread Dribble|C|;Cookie Step|C|;Cookie Cross|V|;Gingerbread Cannon|B|",
+   "Awakening",
+   "Monster Blast|C|;Cookie Defense|B|"
+  ],
+  "santa-lavinho": [
+   "1452001737043873802",
+   "2025-12-20",
+   "Base",
+   "Wrapped Dribble|C|;Present Strike|C|;Sleigh Ride|V|;Christmas Stampede|B|",
+   "Awakening",
+   "Claus Clash Shot|C|;Yeti Defense|B|"
+  ],
+  "firework-bachira": [
+   "1457072052170395741",
+   "2026-01-03",
+   "Base",
+   "Explosive Dribbling|C|;Flashy Shot|C|;Rocket Pass|V|;Illusive Fireworks|B|",
+   "Awakening",
+   "Explosive Monster|V|;Firework Rain|B|"
+  ],
+  "easter-yukimiya": [
+   "1490048850289758258",
+   "2026-04-04",
+   "Base",
+   "Bunny Hop Trap|C|;Egg Shuffle|V|;Hat Steal|V|",
+   "Awakening",
+   "CARROT GRAB|C|;Easter Tiki Taka|V|"
   ]
  },
  "extra": {
@@ -1385,6 +1824,34 @@ export default {
     "Dragon Drive",
     "C",
     "In air only"
+   ]
+  ],
+  "sae": [
+   [
+    "1539651935668277328",
+    "2026-08-19",
+    "Base",
+    "Magical Turn",
+    "",
+    "Restored August 19"
+   ],
+   [
+    "1539651935668277328",
+    "2026-08-19",
+    "Base",
+    "V lateral variant",
+    "V",
+    "On-ball while moving left or right"
+   ]
+  ],
+  "lavinho": [
+   [
+    "1418991043889725460",
+    "2025-09-20",
+    "Awakening",
+    "Butterfly Dance",
+    "C",
+    "Restricted to opponent goalbox (C named in September 13 announcement)."
    ]
   ]
  },
@@ -1553,6 +2020,276 @@ export default {
    "1424079350470541443",
    "2025-10-04",
    "ZOMBIETIME|10 lucky style spins + lucky flow;YoMichael|8 lucky style spins;THEDON|4 lucky style spins;LASTWEEKSORRY|5 lucky style spins"
+  ],
+  [
+   "1320159463356895342",
+   "2024-12-21",
+   "HOORAY|Reward not stated"
+  ],
+  [
+   "1356350993356554311",
+   "2025-03-31",
+   "KaiserFIX|5 normal style rerolls (clarified April 1)"
+  ],
+  [
+   "1356356125280436363",
+   "2025-03-31",
+   "LUCKYCODE10|10 lucky style rerolls + 5 flow rerolls"
+  ],
+  [
+   "1358144440115663129",
+   "2025-04-05",
+   "KING1.5M|10 lucky spins + 10 flow spins;KINGREWORK|5 lucky spins;GOALRUSH|5 flow spins"
+  ],
+  [
+   "1360663454989422645",
+   "2025-04-12",
+   "2BVISITS!|5 lucky style spins;THEMONK!|3 lucky style spins;IGAGOAT1.8M!|5 lucky style spins"
+  ],
+  [
+   "1363206071271035032",
+   "2025-04-19",
+   "EASTER25!|15 lucky style spins;EGGHunt!!!|10 lucky flow spins + 5 style spins;Sry4Delay|5 lucky style spins"
+  ],
+  [
+   "1365719657608249527",
+   "2025-04-26",
+   "BACHIRA!!|15 lucky style spins"
+  ],
+  [
+   "1368256043603329196",
+   "2025-05-03",
+   "OTOYA!!|15 lucky style spins;CHEMREACTION!|10 lucky flow spins"
+  ],
+  [
+   "1370799861380813000",
+   "2025-05-10",
+   "NeoEgoistRIN!|5 lucky style spins;TheDestroyer!|5 lucky flow spins;Rin999K!|15 lucky style spins + 5 lucky flow spins"
+  ],
+  [
+   "1370804355518693538",
+   "2025-05-10",
+   "1MILLIONCCU!!|20 lucky style spins"
+  ],
+  [
+   "1373378128969465908",
+   "2025-05-17",
+   "NELSUMMER!|5 lucky flow spins;NEWCHEM1.1M!|10 lucky style spins;4HOURS!|5 lucky style + 5 lucky flow"
+  ],
+  [
+   "1375866449419042976",
+   "2025-05-24",
+   "NEWHIORI!|10 lucky flow spins + style spins;3BILLIONVISITS!|5 lucky flow + style spins"
+  ],
+  [
+   "1378405093535125575",
+   "2025-05-31",
+   "AIKUREWORK!|10 lucky flow + style spins;SNAKEDEFENCE!|10 lucky flow + style spins;AIKU1.15M!|15 lucky style + 10 lucky flow"
+  ],
+  [
+   "1380956784164077649",
+   "2025-06-07",
+   "RANKED!|10 lucky flow + style spins;LOKISOON!|5 lucky flow + style spins"
+  ],
+  [
+   "1383484836723032127",
+   "2025-06-14",
+   "JULIANLOKI!|Reward not stated;MASTERS!|Reward not stated"
+  ],
+  [
+   "1386021698528219227",
+   "2025-06-21",
+   "MASSIVEBUGFIXES!|5 lucky style + 5 lucky flow;KINGAWAKENING!|5 lucky style + 5 lucky flow"
+  ],
+  [
+   "1388569099126177873",
+   "2025-06-28",
+   "KINGOVERHAUL!|7 lucky style + 7 lucky flow;KINGAUTHORITY!|7 lucky style + 7 lucky flow"
+  ],
+  [
+   "1391114709691797544",
+   "2025-07-05",
+   "NELREO!|7 lucky spins + 7 lucky flow spins;MASTEROFALLTRADES!|7 lucky spins + 7 lucky flow spins"
+  ],
+  [
+   "1393639120760344710",
+   "2025-07-12",
+   "SUMMERPT1!|7 lucky style + 7 lucky flow spins"
+  ],
+  [
+   "1398729471875616849",
+   "2025-07-26",
+   "MCNAGIHYPE|15 lucky style spins + 10 lucky flow;OOPSDELAY|5 lucky style spins"
+  ],
+  [
+   "1401250156904452166",
+   "2025-08-02",
+   "CHEMREACTW|10 lucky style spins;WTEAMWORK|10 lucky flow spins"
+  ],
+  [
+   "1403787486278189148",
+   "2025-08-09",
+   "SAEXSHIDOU|10 spins;ISAGISHOES|5 spins;GOALMET|3 spins"
+  ],
+  [
+   "1406338276490608711",
+   "2025-08-16",
+   "CHARLESTIME|Reward not stated;TONGUESOUT|Reward not stated;DELAYSORRY!|Reward not stated;1.5MGOALHIT|Reward not stated"
+  ],
+  [
+   "1408861405112832081",
+   "2025-08-23",
+   "8V8HYPE|10 lucky spins + 5 lucky flow spins;WEWANTSPINS|5 lucky spins;2MINTERESTED!|3 lucky spins"
+  ],
+  [
+   "1411404916479492138",
+   "2025-08-30",
+   "YUKIGLASSES|10 lucky style spins + 5 flow;YUKIEVENTGOAL|5 lucky style spins"
+  ],
+  [
+   "1414296464112488600",
+   "2025-09-07",
+   "SORRYFORDELAY|10 lucky style + 10 lucky flow spins;BUNNYPEAK|10 lucky style spins;LAVINHONEXTWEEK|10 lucky flow spins"
+  ],
+  [
+   "1416471621295669390",
+   "2025-09-13",
+   "BRAZILMAN|20 lucky style + 10 lucky flow;DANCERHYPE|20 lucky style + 5 lucky flow;BACHIRADAD|5 lucky style + 1 lucky flow;OPUPDATE|5 lucky style"
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "PRODIGYBALANCE|10 lucky style;UPDATEHYPE3|5 lucky style;MiroMiroMiro|5 lucky style"
+  ],
+  [
+   "1426621261135741048",
+   "2025-10-11",
+   "ReaperCode|10 lucky style + 10 lucky flow;TheScytheDidIt|5 lucky style + 5 lucky flow;SHIDOUTOMORROW|3 lucky style spins"
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "NAGIATEPUMPKINS|10 lucky style spins + 10 flow;BIGBEAUTIFULBALANCE|5 lucky style spins;BACHIRAHALLOWEEN|6 Halloween spins"
+  ],
+  [
+   "1431690636196581527",
+   "2025-10-25",
+   "PhantomCode|10 lucky style spins;BloodmoonRisen|5 lucky style spins;LikeGoalHalloween|10 Halloween spins"
+  ],
+  [
+   "1434228992499646537",
+   "2025-11-01",
+   "HappyHalloween|10 Halloween spins;HalloweenFinale|5 Halloween spins;SkeletonNagiHype|5 lucky spins;THANKS4BVISITS|5 lucky spins"
+  ],
+  [
+   "1436778046320279673",
+   "2025-11-08",
+   "CodeSnake|10 lucky style spins + 10 lucky flow;SerpentSpins|5 lucky style spins;AikuBack|5 lucky style spins"
+  ],
+  [
+   "1439314413260767304",
+   "2025-11-15",
+   "DINNERBATTLEPASS|10 lucky style spins;WINTERISCOMING|5 lucky style spins;SMALLUPDATECODE|10 lucky flow spins;TURKEYTURKEY|5 lucky style spins"
+  ],
+  [
+   "1441906774671102084",
+   "2025-11-22",
+   "SORRYFORDELAY!!!!!|5 lucky style"
+  ],
+  [
+   "1444404267174858865",
+   "2025-11-29",
+   "SNOWLOCK1|5 festive spins;FIRSTGIFT|5 lucky flow spins;SNOWFALLDELAY|5 lucky style spins"
+  ],
+  [
+   "1446925164074897478",
+   "2025-12-06",
+   "BAROUSNOWLOCK|10 lucky style spins;SNOWLOCK2|5 festive spins;FESTIVEGOAL|5 lucky style spins;WEEK2HYPE|5 lucky flow spins"
+  ],
+  [
+   "1449462886421364966",
+   "2025-12-13",
+   "FROZENLOKI|10 festive spins;GINGERBREADPASSER|5 lucky flow"
+  ],
+  [
+   "1452001737043873802",
+   "2025-12-20",
+   "25SNOWLOCK|10 festive;SANTALAVINHOHERE|5 festive;FIREWORKNEXTWEEK|8 lucky style;HAPPYHOLIDAYS|5 lucky style"
+  ],
+  [
+   "1454534315680731197",
+   "2025-12-27",
+   "NEWYEARHYPE|10 lucky style spins;BUILDTHEROCKET|5 festive spins;2026BLR|5 lucky style spins"
+  ],
+  [
+   "1457072052170395741",
+   "2026-01-03",
+   "FIREWORKMONSTER|10 style spins;FINALFESTIVE|10 festive spins;RIPISAGI5|5 festive spins"
+  ],
+  [
+   "1459609784188670005",
+   "2026-01-10",
+   "2026Battlepass|10 lucky spins;2026Crate|500 crate currency;SnowlockIsOver|10 lucky style"
+  ],
+  [
+   "1467217959096422492",
+   "2026-01-31",
+   "NESSFLOW|Reward not stated;AFKUPDATE|Reward not stated;YENUPDATE|Reward not stated"
+  ],
+  [
+   "1469756623965786243",
+   "2026-02-07",
+   "RINRIN|10 lucky style spins;NELQUEST2|5 lucky style spins;NELFLOWSPINS|5 lucky flow spins"
+  ],
+  [
+   "1477367845544267786",
+   "2026-02-28",
+   "3V3TIME|10 lucky spins;HYP3|5 lucky spins;FLOW3V3|5 lucky flow"
+  ],
+  [
+   "1479902665218461957",
+   "2026-03-07",
+   "NAGIEVOLUTION|5 lucky flow"
+  ],
+  [
+   "1482431794954633340",
+   "2026-03-14",
+   "CROWFLOWCODE|5 lucky flow"
+  ],
+  [
+   "1484968562434248704",
+   "2026-03-21",
+   "NELLUCKY|10 lucky flow"
+  ],
+  [
+   "1487498187873718282",
+   "2026-03-28",
+   "RANKEDRETURN|10 lucky spins;ITSBACK|5 lucky spins;TIMETIME|5 lucky flow spins"
+  ],
+  [
+   "1490048850289758258",
+   "2026-04-04",
+   "EasterYuki|10 lucky spins;EggStyle|5 lucky flow;SORRYDELAYEASTER|5 lucky spins"
+  ],
+  [
+   "1497646490443583683",
+   "2026-04-25",
+   "NELQUEST|5 lucky style + 5 lucky flow;NEWJERSEYS|5 lucky flow"
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "MINIUPDATE|5 lucky spins + 5 lucky flow spins;HIORIHYPE|5 lucky spins"
+  ],
+  [
+   "1543308242019557457",
+   "2026-08-29",
+   "UBERSTAKEOVER|5 lucky spins + 5 lucky flows;KINGNEXTWEEK|5 lucky spins;EGODEFENSE|5 lucky flow"
+  ],
+  [
+   "1548390519804137665",
+   "2026-09-12",
+   "SORRYFORNIKODELAY|Reward not stated"
   ]
  ],
  "facts": [
@@ -1979,6 +2716,502 @@ export default {
    "snuffy",
    "Snuffy limited shop",
    "Eagle Ride emote, Blue Lock Bandana, Crown Messenger playercard, Eagle Roar goal effect and Snuffy Bundle."
+  ],
+  [
+   "1406338276490608711",
+   "2025-08-16",
+   "flow",
+   "contrarian",
+   "Release effects",
+   "World Class at release: slight speed boost, high-arc base pass with better auto-track, +10 flow to teammates on activation, pass receivers receive a slight speed boost for 5s."
+  ],
+  [
+   "1406338276490608711",
+   "2025-08-16",
+   "mechanics",
+   "charles loki",
+   "Heart and Brain of France",
+   "Base version: Charles passes to Loki, who dashes to the ball and shoots. Awakening version was announced as a custom cutscene."
+  ],
+  [
+   "1414296464112488600",
+   "2025-09-07",
+   "flow",
+   "target-man",
+   "Release effects",
+   "Master at release: stronger aerial volley, 1.5× jump, 20% speed boost, 25% shot boost, 50% header strength, +2 headers. Later September balance reduced the volley and header bonuses."
+  ],
+  [
+   "1416471621295669390",
+   "2025-09-13",
+   "style",
+   "lavinho",
+   "Butterfly Dance pending at release",
+   "The release announcement marked Butterfly Dance (C) as coming later that day; September 20 balance notes subsequently describe its goalbox restriction."
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "style",
+   "lavinho",
+   "September balance",
+   "Ginga Shot −10%; all three Ginga Style charges gain i-frames; Butterfly Dribble faster; Butterfly Dance restricted to opponent goalbox."
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "style",
+   "nagi mcnagi-fryshiro",
+   "September Nagi changes",
+   "NEL Nagi awakening cutscenes hidden from goalkeepers; infinite Trap and use of other skills during Trap removed; Trap Shot power −15%; Juggling Shot power −10%; Zero Reset Turn loses ragdoll and travels less. Reverse 2 Stage and its shot removed. Other awakening shot powers reduced."
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "style",
+   "loki",
+   "Aerial trap removed",
+   "Godspeed Dash air variant removed; Gear Shift stamina consumption reduced."
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "flow",
+   "bee-freestyle",
+   "Dribble count",
+   "One dribble removed."
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "flow",
+   "destructive-impulses",
+   "Shot and tackle balance",
+   "Base shot power reduced; extra tackles removed."
+  ],
+  [
+   "1418991043889725460",
+   "2025-09-20",
+   "flow",
+   "target-man",
+   "Volley and header reductions",
+   "Volley buff halved; header strength bonus reduced from 50% to 30%."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "loki",
+   "Velocity overhaul",
+   "Velocity cap 110% of Chigiri's Speedster after 11s at normal running pace; dribble reduces Velocity by 50 and sliding resets it. Explosive Acceleration adds 45 Velocity, costs 20 stamina, CD 40s at this date. Velocity Dash/Shot uses all Velocity, CD 20s. Swift Intercept grants free Explosive Acceleration on a successful catch."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "mechanics",
+   "loki nagi",
+   "Ball trajectory metavision",
+   "White line showing the estimated ball path introduced for all goalkeepers, Loki and Nagi."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "isagi",
+   "Direct Pass and Direct Shot",
+   "NEL dash cooldown 25s and new Direct Pass with 200m range, no auto-track. Base Direct Shot aimable with 20s cooldown; Fadeaway cooldown reduced and distance increased."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "nagi",
+   "Trap Dance removed",
+   "NEL Trap Dance removed; Zero Reset Turn cooldown increased to 120s."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "king",
+   "Lion Steal and Chop Feint",
+   "C charges removed; Lion Steal requires nearby enemy, cooldown 40s; Chop Feint 35s."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "hiori",
+   "Passing and Ice Dribble",
+   "Pass ranges reduced to 150m, Ice Dribble travel distance buffed, cooldown and activation range reduced."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "chigiri",
+   "Accelerate",
+   "Stealing behavior removed."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "kaiser",
+   "Emperor's Dribble and Impact",
+   "Stun removed from Emperor's Dribble; Subjugation retained; Kaiser Impact nerfed. Later May 2026 Emperor's Route stun returned."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "sae",
+   "Perfect Pass and Creative Dribble",
+   "Perfect Pass range 250m instead of infinite; Creative Dribble distance reduced."
+  ],
+  [
+   "1429140368472936571",
+   "2025-10-18",
+   "style",
+   "igaguri",
+   "Vaulting and range",
+   "Igaguri and personal flow vaulted at this date; Malicia range nerfed and Monk Pass range reduced to 100m."
+  ],
+  [
+   "1394181239988162581",
+   "2025-07-14",
+   "style",
+   "king",
+   "Lion Steal",
+   "User ankle-broken if target dribbles; C charge interval 1s → 3s."
+  ],
+  [
+   "1394181239988162581",
+   "2025-07-14",
+   "style",
+   "isagi",
+   "Fadeaway",
+   "Cooldown reduced from 70s to 55s."
+  ],
+  [
+   "1394181239988162581",
+   "2025-07-14",
+   "style",
+   "yukimiya",
+   "Old kit balance",
+   "Lethal Touch endlag 0.2s, still unable to jump; Freestyle CD 45s → 35s; Lethal Touch CD 60s → 45s; stamina requirements significantly reduced."
+  ],
+  [
+   "1394181239988162581",
+   "2025-07-14",
+   "mechanics",
+   "",
+   "FPS and ball physics",
+   "Ball physics announced no longer dependent on FPS."
+  ],
+  [
+   "1394181239988162581",
+   "2025-07-14",
+   "flow",
+   "destructive-impulses",
+   "Shot power multiplier",
+   "Shot power increased from 1.2 to 1.35 at that date."
+  ],
+  [
+   "1394181239988162581",
+   "2025-07-14",
+   "flow",
+   "king-s-authority",
+   "Shot power multiplier",
+   "Shot power increased from 1.175 to 1.25 at that date."
+  ],
+  [
+   "1358144283156418580",
+   "2025-04-05",
+   "style",
+   "don-lorenzo",
+   "Golden Defense",
+   "No longer passes to teammates; ignores all i-frames at that date."
+  ],
+  [
+   "1340402750994911244",
+   "2025-02-15",
+   "mechanics",
+   "",
+   "Slide netcode explanation",
+   "Developer stated slide rework exposed actual player position more clearly without fundamentally changing hitbox; the system was reverted on February 18."
+  ],
+  [
+   "1401250156904452166",
+   "2025-08-02",
+   "mechanics",
+   "isagi kaiser nagi reo hiori sae shidou bachira otoya",
+   "Chemical reaction roster",
+   "New NEL Isagi–Kaiser and NEL Nagi–NEL Reo; Hiori–Isagi and Sae–Shidou changed; Bachira–Otoya removed. Follow-up says the intended Sae–Shidou rework was not shipped."
+  ],
+  [
+   "1401267542454046841",
+   "2025-08-02",
+   "mechanics",
+   "sae shidou",
+   "Sae–Shidou planned rework withheld",
+   "Follow-up explicitly says the rework was not included."
+  ],
+  [
+   "1444405008354377875",
+   "2025-11-29",
+   "progression",
+   "reo",
+   "Mastery toggles",
+   "Toggles for NEL mastery abilities added to quest menu."
+  ],
+  [
+   "1444405008354377875",
+   "2025-11-29",
+   "mechanics",
+   "bachira lavinho",
+   "Bachira–Lavinho chemistry",
+   "Announced added; author was unsure whether it was the NEL Bachira version."
+  ],
+  [
+   "1490048850289758258",
+   "2026-04-04",
+   "flow",
+   "easter",
+   "Unlock at release",
+   "Complete all five Easter quests; fifth reward is the limited Easter flow."
+  ],
+  [
+   "1490054172756939093",
+   "2026-04-04",
+   "progression",
+   "",
+   "Temporary spin system",
+   "Lucky spins converted to three free spins; next five outcomes shown. Same-day follow-up reverted this system."
+  ],
+  [
+   "1490110641418273010",
+   "2026-04-04",
+   "progression",
+   "",
+   "Spin system reversal",
+   "The earlier style-system change was explicitly reverted."
+  ],
+  [
+   "1493361542274486363",
+   "2026-04-13",
+   "style",
+   "nagi",
+   "Dash and Trap Shot",
+   "Endlag removed from both; dash and Trap Shot simultaneous use and jump mid-dash restored. I Am Nagi distance nerfed."
+  ],
+  [
+   "1502747257030836424",
+   "2026-05-09",
+   "style",
+   "kaiser",
+   "Emperor's Route",
+   "Stun restored; Subjugation usability fixed."
+  ],
+  [
+   "1508964587720933417",
+   "2026-05-26",
+   "style",
+   "kaiser",
+   "Kaiser volley",
+   "I-frames added; shot speed and distance nerfed slightly."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "reo",
+   "Copied shot balance",
+   "Neo Dragon Drive CD 20s → 40s, power −15%; Neo Tap Lift CD 20s → 40s, power −25%; Chameleon Volley CD 25s → 40s, power −15%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "don-lorenzo",
+   "Zombie abilities",
+   "Zombie Steal speed +10%, range +15%; Zombie Dribble distance +5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "rin",
+   "Rin and NEL Rin balance",
+   "NEL Ego Stoppage range −15%; Predator Strike range −10% for both kits; NEL Destroyer Curve Shots usable in air. Destroyer Mode off-ball, speed and shot power +5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "king",
+   "Feast and Twisted Path",
+   "Activation range reduced by 20m and 30m respectively."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "nagi",
+   "Two Stage Volley",
+   "Distance −10%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "krampus-barou",
+   "Krampus balance",
+   "Blizzard Fang Shot power −10%; Predator Krampus shot boost −50%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "bloodmoon-rin",
+   "Crescent Shot",
+   "Range −10%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "loki",
+   "June balance",
+   "Passive speed −3%; Velocity Shot speed and range −10%; Explosive Acceleration hitbox −15%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "subzero-loki",
+   "June balance",
+   "Passive speed boost −10–15%; Godspeed Freeze hitbox −30%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "bachira",
+   "NEL Roulette",
+   "Distance +5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "reaper-sae",
+   "June balance",
+   "Scythe Slam hitbox −15%; Scythe Pass range 180m and gained i-frames; Death's Call power −15%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "shidou",
+   "June balance",
+   "Dragon Header power −20%; KABLAMO! distance −5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "yukimiya",
+   "Gyro Shot",
+   "Range and speed +5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "style",
+   "kaiser",
+   "June balance",
+   "Emperor's Dribble gained i-frames; Kaiser Volley power −10%; Kaiser Impact speed +5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "flow",
+   "bee-freestyle",
+   "June balance",
+   "Speed +10%, unvaulted, changed to Mythic."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "flow",
+   "ice",
+   "June balance",
+   "Auto-track −5%; Power Shot functionality fixed."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "flow",
+   "king-s-authority",
+   "June balance",
+   "Shot power −5%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "flow",
+   "emperor",
+   "June balance",
+   "Shot distance −10%."
+  ],
+  [
+   "1512481788663042231",
+   "2026-06-05",
+   "mechanics",
+   "kaiser isagi",
+   "GK changes",
+   "GK throws gained i-frames; Kaiser Magnus and NEL Isagi Demon King fixed to be saveable by human goalkeepers."
+  ],
+  [
+   "1517943708027195543",
+   "2026-06-20",
+   "progression",
+   "",
+   "Academy roles",
+   "Arsenaly all-around midfielders; Manshine City all positions; Re Al playmaking midfielders; Barcha dribblers; Ubers defenders; PXG all-around offense; Bastard Munchen egoist strikers."
+  ],
+  [
+   "1543304646700048504",
+   "2026-08-29",
+   "style",
+   "loki",
+   "August balance",
+   "Explosive Acceleration CD 25s → 37.5s; full-bar Velocity Shot distance/speed −10%; passive −15%. Repeated in September 19 notes."
+  ],
+  [
+   "1543304646700048504",
+   "2026-08-29",
+   "style",
+   "lavinho",
+   "August balance",
+   "Ginga Shot distance −15%, CD 40s → 47.5s, one dash removed; Rising Dance/Butterfly CD 35s → 45s; Butterfly Counter 30s → 35s. Repeated September 19."
+  ],
+  [
+   "1543304646700048504",
+   "2026-08-29",
+   "style",
+   "king",
+   "August balance",
+   "Predator Shot distance −12.5%; Feast 520m → 200m; Twisted Path distance +25%, now arcs rather than hugging floor."
+  ],
+  [
+   "1383484807853637693",
+   "2025-06-14",
+   "flow",
+   "godspeed",
+   "Release effects",
+   "Master flow announced with increased shot power, faster stamina regeneration, lower drain and skill cooldown, higher Velocity cap and acceleration, longer steals, larger steal hitbox and lower steal cooldown. Non-Loki users received a buffed Velocity passive."
   ]
  ]
 };
