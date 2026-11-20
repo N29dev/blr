@@ -41,4 +41,5 @@ export async function hydrateAnnouncements(){
  try{const response=await fetch('/wiki/records/'+route+'.json?v=1');if(!response.ok)throw Error('Archive unavailable');const data=await response.json();
  if(style){updateStyle(target,data);import('./tested-ui.mjs?v=1').then(m=>m.renderTestedAbilities(target,route.split('/')[1],data.history)).catch(()=>{});}else if(flow)updateFlow(target,data);else if(route==='updates')renderArchive(target,data);else if(route==='codes')renderCodes(target,data);else if(route==='abilities')renderAbilityIndex(target,data);else {target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',data);}
  }catch{if(!style&&!flow)target.replaceChildren(node('p','The announcement archive could not be loaded. Reload to retry.','wiki-muted'));else target.prepend(node('p','Announcement records could not be loaded. Reload to retry.','wiki-muted'));}
+ if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./community-ui.mjs?v=1').then(m=>m.addCommunityReferences(target,route)).catch(()=>{});
 }
