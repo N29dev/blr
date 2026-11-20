@@ -207,3 +207,32 @@ for(const width of [1440,820,390,360]){
 }
 
 for(const route of ['/styles/','/flows/','/styles/nagi/','/flows/trap/','/search/?q=nagi']){test('Wiki article/directory fits '+route,async()=>{const {context,page}=await open(route,390,850);try{await assertNoOverflow(page,route);assert.ok(await page.locator('h1').isVisible());if(route==='/styles/'){assert.equal(await page.locator('.kb-tile').count(),45);await page.locator('#kb-filter').fill('nagi');assert.equal(await page.locator('.kb-tile:visible').count(),3);}if(route==='/flows/')assert.equal(await page.locator('.kb-tile').count(),33);if(route==='/styles/nagi/')assert.ok(await page.locator('.wiki-progress').isVisible());if(route.startsWith('/search'))assert.ok(await page.locator('#kb-search-results a').count()>0);}finally{await context.close();}});}
+
+test('procedural wiki tiles require no screenshot downloads and support reduced motion',async()=>{
+  const {context,page}=await open('/styles/',390,850);
+  try{
+    await page.locator('.kb-icon-label').first().waitFor();
+    assert.equal(await page.locator('.kb-icon-label').count(),45);
+    assert.equal(await page.locator('.kb-icon[data-master="true"]').count(),3);
+    assert.equal(await page.locator('.kb-icon[data-master="true"]').first().evaluate(e=>getComputedStyle(e,'::before').animationName),'none');
+    assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/assets\/wiki\/.*\.webp/.test(r.name)).length),0);
+    assert.ok(await page.locator('a[href="/styles/easter-kaiser/"] .kb-icon-label').innerText());
+    await page.goto(base+'/flows/',{waitUntil:'load'});
+    assert.equal(await page.locator('.kb-icon-label').count(),33);
+    assert.equal(await page.locator('a[href="/flows/trap/"] .kb-icon').getAttribute('data-palette'),'gold');
+    assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(r=>/assets\/wiki\/.*\.webp/.test(r.name)).length),0);
+  }finally{await context.close();}
+});
+test('master borders animate only while visible',async()=>{
+  const {context,page}=await open('/styles/lavinho/',390,850);
+  try{
+    await page.emulateMedia({reducedMotion:'no-preference'});
+    const icon=page.locator('.kb-icon[data-master="true"]');
+    await icon.scrollIntoViewIfNeeded();
+    await page.waitForFunction(()=>document.querySelector('.kb-icon[data-master="true"]')?.classList.contains('kb-icon-visible'));
+    assert.equal(await icon.evaluate(e=>getComputedStyle(e,'::before').animationName),'kb-border-orbit');
+    await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+    await page.waitForFunction(()=>!document.querySelector('.kb-icon[data-master="true"]')?.classList.contains('kb-icon-visible'));
+    assert.equal(await icon.evaluate(e=>getComputedStyle(e,'::before').animationName),'none');
+  }finally{await context.close();}
+});

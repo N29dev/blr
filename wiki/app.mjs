@@ -1,4 +1,7 @@
 import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki} from './content.mjs';
+// One lightweight icon renderer for existing static wiki cards and article infoboxes.
+// The accessible name remains in the surrounding link or heading.
+import {iconSpec} from './icons.mjs';
 const $=id=>document.getElementById(id);
 function el(tag,text,cls){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
 function link(label,url){const a=el('a',label);a.href=url;return a;}
@@ -18,3 +21,34 @@ if($('wiki-style-detail')?.dataset.style){const s=byId($('wiki-style-detail').da
 if($('kb-directory')){const query=$('kb-filter'),rarity=$('kb-rarity'),groups=[...document.querySelectorAll('[data-roster-group]')],cards=[...document.querySelectorAll('#kb-directory .kb-tile')];const render=()=>{const term=query.value.trim().toLowerCase();let count=0;for(const c of cards){c.hidden=!(c.dataset.name.includes(term)&&(!rarity?.value||rarity.value===c.dataset.rarity));if(!c.hidden)count++;}for(const g of groups)g.hidden=!g.querySelector('.kb-tile:not([hidden])');$('kb-count').textContent=count+' entries';};query.value=params.get('q')||'';query.addEventListener('input',render);rarity?.addEventListener('change',render);render();}
 if($('kb-search-results')){const q=params.get('q')||'';$('kb-search').value=q;const results=q.trim()?searchWiki(q):[];$('kb-search-count').textContent=q.trim()?results.length+' results for “'+q+'”':'Enter a search term.';for(const item of results){const a=link('',item.url);a.className='kb-category';a.append(el('strong',item.name),el('span',item.kind));$('kb-search-results').append(a);}}
 if(location.pathname==='/'&&['#stats','#tools','#discord'].includes(location.hash)){const dest={'#stats':'https://n29.kz/blr-profile/','#tools':'https://n29.kz/creator/','#discord':'https://n29.kz/'}[location.hash];location.replace(dest);}
+
+function renderWikiIcons(){
+  const icons=[...document.querySelectorAll('.kb-icon')];
+  if(!icons.length)return;
+  const masters=[];
+  for(const icon of icons){
+    const owner=icon.closest('.kb-tile,.kb-infobox');
+    if(!owner)continue;
+    const name=owner.querySelector('.kb-tile strong,h2')?.textContent?.trim()||owner.querySelector('strong')?.textContent?.trim();
+    if(!name)continue;
+    const isFlow=icon.classList.contains('kb-flows')||owner.getAttribute('href')?.startsWith('/flows/')||location.pathname.startsWith('/flows/');
+    const rarity=owner.dataset.rarity||owner.querySelector('dl dd')?.textContent?.trim().toLowerCase()||'';
+    const nel=owner.querySelector('small')?.textContent?.includes('NEL shown')||[...owner.querySelectorAll('dd')].some(d=>d.textContent==='NEL variant');
+    const spec=iconSpec(name,isFlow?'flow':'style',rarity,nel);
+    icon.removeAttribute('style');icon.classList.remove('kb-icon-missing');
+    icon.dataset.palette=spec.palette;
+    if(!isFlow)icon.classList.add('kb-styles');
+    if(spec.master){icon.dataset.master='true';masters.push(icon);}
+    const label=el('span',spec.lines.join('\n'),'kb-icon-label');
+    icon.style.setProperty('--icon-font',spec.font+'cqi');
+    icon.replaceChildren(label);
+  }
+  // No fallback animation on older browsers and no timers or per-frame JavaScript.
+  if(!masters.length||!('IntersectionObserver' in window))return;
+  const visible=new Set();
+  const sync=()=>{for(const icon of masters)icon.classList.toggle('kb-icon-visible',!document.hidden&&visible.has(icon));};
+  const observer=new IntersectionObserver(entries=>{for(const e of entries){if(e.isIntersecting)visible.add(e.target);else visible.delete(e.target);}sync();},{threshold:0.01});
+  masters.forEach(icon=>observer.observe(icon));
+  document.addEventListener('visibilitychange',sync);
+}
+renderWikiIcons();
