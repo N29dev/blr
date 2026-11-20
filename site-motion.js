@@ -36,7 +36,7 @@
   const chapters=(() => {
     const path=window.location.pathname;
     if(path==='/')return [
-      ['top','Intro'],['play','Play'],['stats','Profile'],['tools','Create'],['discord','Community']
+      ['main','Overview'],['kb-directory','Directory']
     ];
     if(path==='/tech/')return [
       ['support','Appeals'],['rules','Rules'],['directory','Styles'],['tech-list','Techs'],['faq','FAQ']
@@ -146,11 +146,11 @@
       el.classList.add('n29-glow');
     }
     if(!revealObserver||!el.matches(revealSelector))return;
-    if(el.closest('dialog,[hidden]'))return;
+    if(el.closest('dialog,[hidden],#servers,#cards,#style-grid,#tech-entries')||body.dataset.page==='wiki')return;
     const rect=el.getBoundingClientRect();
     if(rect.height<3||rect.width<3||rect.top<=window.innerHeight-45)return;
     // The content remains visible until this offscreen check succeeds.
-    el.style.setProperty('--n29-reveal-delay',Math.min(140,([...el.parentElement.children].indexOf(el)%4)*48)+'ms');
+    el.style.setProperty('--n29-reveal-delay','0ms');
     el.classList.add('n29-will-reveal');
     revealObserver.observe(el);
   }
@@ -198,5 +198,6 @@
     },{passive:true});
   }
 
+  window.addEventListener('pageshow',requestScroll);
   requestScroll();
 })();

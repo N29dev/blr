@@ -6,7 +6,6 @@
   // One directory of destinations shared by the quick-jump search and page footer.
   // Keep the private /tech/admin/ route out of public navigation.
   const links = [
-    { group:'Play', icon:'⌂', title:'BL:R hub', detail:'Wiki, game information and match tools', url:'/' },
     { group:'Play', icon:'🌐', title:'Public server finder', detail:'Compare sampled Roblox server regions and open slots', url:'/servers/' },
     { group:'Wiki', icon:'📚', title:'BL:R Wiki', detail:'Game knowledge, abilities, progression and mechanics', url:'/' },
     { group:'Wiki', icon:'👥', title:'Style directory', detail:'Search styles, kits and mastery', url:'/styles/' },
@@ -28,7 +27,23 @@
     { group:'Support', icon:'🌍', title:'Main BL:R Discord', detail:'Blue Lock: Rivals community server', url:'https://discord.gg/bluelockrivals' },
   ];
 
-  import('/wiki/content.mjs').then(({SEARCH_INDEX})=>{for(const item of SEARCH_INDEX){if(item.kind==='Section')continue;links.push({group:item.kind==='Style'?'Styles':'Flows',icon:item.kind==='Style'?'◆':'✦',title:item.name,detail:item.kind+' '+(item.aliases||''),url:item.url});}}).catch(()=>{});
+  const indexReady=import('/wiki/content.mjs?v=3').then(({SEARCH_INDEX})=>{
+    const known=new Set(links.map(item=>item.url));
+    for(const item of SEARCH_INDEX){
+      if(known.has(item.url))continue;
+      links.push({group:item.kind==='Section'?'Wiki':item.kind==='Style'?'Styles':'Flows',icon:item.kind==='Style'?'◆':item.kind==='Flow'?'✦':'📚',title:item.name,detail:item.kind+' '+(item.aliases||''),url:item.url});
+      known.add(item.url);
+    }
+  }).catch(()=>{});
+  const normalize=value=>String(value).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/['’]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  function findLinks(term){
+    const q=normalize(term),tokens=q.split(' ').filter(Boolean);
+    const entries=links.filter(item=>item.group!=='Create'||['tools','clipper','tiktok','leaderboard'].includes(page));
+    if(!q)return entries.filter(item=>!['Styles','Flows'].includes(item.group));
+    return entries.filter(item=>tokens.every(t=>normalize(item.group+' '+item.title+' '+item.detail).includes(t)))
+      .map((item,index)=>({item,index,score:normalize(item.title)===q?0:normalize(item.title).startsWith(q)?1:normalize(item.title).includes(q)?2:3}))
+      .sort((a,b)=>a.score-b.score||a.index-b.index).map(x=>x.item);
+  }
   function createNode(tag, className, text) {
     const el=document.createElement(tag);
     if(className) el.className=className;
@@ -61,11 +76,11 @@
 
     const render=()=>{
       const term=query.value.trim().toLocaleLowerCase();
-      visible=links.filter(link=>(link.group!=='Create'||['tools','clipper','tiktok','leaderboard'].includes(page))).filter(link=>(link.group+' '+link.title+' '+link.detail).toLocaleLowerCase().includes(term));
+      visible=findLinks(term);
       active=0;
       list.replaceChildren();
       if(!visible.length) {
-        list.append(createNode('div','site-command-empty','No results. Try “servers”, “TikTok”, or “customs”.'));
+        list.append(createNode('div','site-command-empty','No results. Try a style, flow or wiki section.'));
         return;
       }
       let lastGroup='';
@@ -87,6 +102,8 @@
         list.append(a);
       });
     };
+    indexReady.then(()=>{if(dialog.open)render();});
+    window.addEventListener('pageshow',event=>{if(event.persisted&&dialog.open)closeDialog();});
     const syncActive=()=>{
       const rows=list.querySelectorAll('.site-command-item');
       rows.forEach((row,i)=>row.setAttribute('data-current',String(i===active)));
@@ -115,10 +132,10 @@
         syncActive();
       } else if(event.key==='Enter') {
         event.preventDefault();
-        window.location.assign(visible[active].url);
+        const target=visible[active].url;closeDialog();window.location.assign(target);
       }
     });
-    dialog.addEventListener('click',event=>{if(event.target===dialog)closeDialog();});
+    dialog.addEventListener('click',event=>{if(event.target===dialog)closeDialog();else if(event.target.closest?.('.site-command-item')&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey)closeDialog();});
     dialog.addEventListener('close',()=>{if(lastFocus?.isConnected)lastFocus.focus();});
     document.addEventListener('keydown',event=>{
       if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k') {
@@ -265,6 +282,8 @@
     nav.append(details);
     document.addEventListener('click',event=>{if(!details.contains(event.target))details.open=false;});
     document.addEventListener('keydown',event=>{if(event.key==='Escape')details.open=false;});
+    let requested=false;
+    function loadAccount(){if(requested)return;requested=true;
     fetch('/api/account/me',{credentials:'same-origin',cache:'no-store'})
       .then(async response=>{if(!response.ok)throw Error('Account API unavailable');return response.json();})
       .then(data=>{
@@ -277,10 +296,12 @@
           profile.href=p.profileUrl;profile.hidden=false;
         }
         if(typeof p.avatar==='string'&&p.avatar.startsWith('https://')){
-          avatar.src=p.avatar;avatar.hidden=false;fallback.hidden=true;
-          avatar.referrerPolicy='no-referrer';
+          avatar.referrerPolicy='no-referrer';avatar.src=p.avatar;avatar.hidden=false;fallback.hidden=true;
         }
-      }).catch(()=>{status.textContent='Account currently unavailable · Public browsing still works';});
+      }).catch(()=>{requested=false;status.textContent='Account currently unavailable · Public browsing still works';});
+    }
+    details.addEventListener('toggle',()=>{if(details.open)loadAccount();});
+    if(['servers','customs'].includes(page))loadAccount();
   }
 
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });

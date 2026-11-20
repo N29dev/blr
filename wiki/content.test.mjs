@@ -37,3 +37,13 @@ test('reference label wrapping and width-based fitting',()=>{
   for(const {name,nel} of STYLES_WIKI){const result=iconSpec(name,'style','',nel,measure);assert.ok(result.lines.every(line=>measure(line)*result.font<=74.001));}
   for(const {name} of FLOWS){const result=iconSpec(name,'flow','',false,measure);assert.ok(result.lines.every(line=>measure(line)*result.font<=74.001));}
 });
+
+import {matchesQuery} from './content.mjs';
+test('wiki search normalizes punctuation, word order, aliases and prioritizes exact matches',()=>{
+ assert.equal(searchWiki('nagi')[0].url,'/styles/nagi/');
+ assert.equal(searchWiki('nel aiku')[0].url,'/styles/aiku/');
+ assert.ok(searchWiki('buddhas blessing').some(x=>x.url==='/flows/buddha-s-blessing/'));
+ assert.ok(searchWiki('progression').some(x=>x.url==='/progression/'));
+ assert.ok(matchesQuery("king's authority","authority kings"));
+ assert.equal(searchWiki('  ').length,0);
+});

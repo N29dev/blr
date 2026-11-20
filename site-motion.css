@@ -23,19 +23,18 @@
 .n29-nav-brand:hover .n29-nav-mark{
   transform:rotate(-5deg);box-shadow:0 9px 26px rgba(118,217,252,.20);
 }
-.n29-hero-enter{animation:n29-hero-enter .72s cubic-bezier(.2,.8,.2,1) both}
+.n29-hero-enter{animation:n29-hero-enter .18s ease-out both}
 @keyframes n29-hero-enter{
-  from{opacity:0;transform:translate3d(0,17px,0);filter:blur(4px)}
-  to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}
+  from{opacity:.82;transform:translate3d(0,5px,0)}
+  to{opacity:1;transform:none}
 }
 .n29-hero-enter[data-n29-enter="2"]{animation-delay:.10s}
 .n29-hero-enter[data-n29-enter="3"]{animation-delay:.17s}
 .n29-will-reveal{
-  opacity:0;transform:translate3d(0,23px,0);filter:blur(4px);
+  opacity:.88;transform:translate3d(0,5px,0);
   transition:
-    opacity .75s cubic-bezier(.22,1,.36,1),
-    transform .75s cubic-bezier(.22,1,.36,1),
-    filter .75s cubic-bezier(.22,1,.36,1);
+    opacity .18s ease,
+    transform .18s ease;
   transition-delay:var(--n29-reveal-delay,0ms);
 }
 .n29-will-reveal.n29-revealed{opacity:1;transform:none;filter:none}
@@ -107,18 +106,21 @@ body[data-page="tech"] .eyebrow .dot{animation:n29-pip-glow 3.4s ease-in-out inf
   .n29-nav {view-transition-name:n29-shared-nav;}
   body[data-page="servers"] header.hero,
   body[data-page="customs"] header.hero {view-transition-name:n29-match-hero;}
-  @keyframes n29-page-out {
-    to{opacity:0;filter:blur(3px);transform:translate3d(-9px,0,0)}
-  }
-  @keyframes n29-page-in {
-    from{opacity:0;filter:blur(3px);transform:translate3d(9px,0,0)}
-  }
-  ::view-transition-old(root) {animation:.22s ease-in both n29-page-out;}
-  ::view-transition-new(root) {animation:.29s cubic-bezier(.22,1,.36,1) both n29-page-in;}
+  /* The shared header is stable across routes; never blur or slide full documents.
+     The scroll position remains native, including history and anchors. */
+  @keyframes n29-page-out {to{opacity:0}}
+  @keyframes n29-page-in {from{opacity:0}}
+  ::view-transition-group(root){animation-duration:.16s}
+  ::view-transition-old(root){animation:.12s ease-out both n29-page-out}
+  ::view-transition-new(root){animation:.16s ease-out both n29-page-in}
+  ::view-transition-group(n29-shared-nav){animation-duration:.16s}
   ::view-transition-old(n29-shared-nav),
-  ::view-transition-new(n29-shared-nav){animation-duration:.14s;}
+  ::view-transition-new(n29-shared-nav){animation-duration:.12s}
   ::view-transition-old(n29-match-hero),
-  ::view-transition-new(n29-match-hero){animation-duration:.31s;}
+  ::view-transition-new(n29-match-hero){animation-duration:.16s}
+  /* No second entrance animation while a native route transition is running. */
+  html:active-view-transition .n29-hero-enter{animation:none!important}
+  html:active-view-transition .n29-will-reveal{opacity:1!important;transform:none!important;transition:none!important}
 }
 /* The public server mode picker and custom server mode links now use one
  * segmented navigation design without modifying server controls or state. */
@@ -188,3 +190,7 @@ body[data-page="tech"] .faq details:hover{
   body[data-page="tech"] .style-tile,
   body[data-page="tech"] .faq details{transition:none!important;transform:none!important}
 }
+
+/* No page-specific changes to the header during navigation. */
+.n29-nav.n29-scrolled{background:#161c26!important;box-shadow:none!important;border-bottom-color:#303945!important}
+.n29-nav-links a:hover,.n29-nav-brand:hover .n29-nav-mark{transform:none}
