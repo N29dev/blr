@@ -47,3 +47,17 @@ test('wiki search normalizes punctuation, word order, aliases and prioritizes ex
  assert.ok(matchesQuery("king's authority","authority kings"));
  assert.equal(searchWiki('  ').length,0);
 });
+
+test('Otoya wiki rarity reflects November rework, separately from tech snapshot',()=>{assert.equal(byId('otoya').group,'legendary');assert.ok(byId('hiori').nel);});
+import fs from 'node:fs';
+import {projectAnnouncements} from './announcement-projector.mjs';
+import reviewed from './announcement-data.mjs';
+test('reviewed archive and route records remain source-linked and generated from one dataset',()=>{
+ const records=projectAnnouncements(reviewed,STYLES_WIKI.map(x=>x.id),FLOWS.map(x=>x.id));
+ assert.ok(records.updates.length>=120);
+ assert.equal(records.updates[0].date,'2026-11-14');
+ assert.ok(records.codes.every(x=>x.status==='Unverified'&&x.reward));
+ assert.ok(!records['styles/karasu'].abilities.some(a=>a.name==='Extraordinary Striker Pass'));
+ assert.ok(records['styles/otoya'].abilities.some(a=>a.name==='Ninjaristic Presence'));
+ for(const [key,data] of Object.entries(records)){assert.deepEqual(JSON.parse(fs.readFileSync(new URL('./records/'+key+'.json',import.meta.url),'utf8')),data);const walk=x=>{if(Array.isArray(x))x.forEach(walk);else if(x&&typeof x==='object'){if(x.source)assert.match(x.source,/^https:\/\/discord\.com\/channels\/1304535758899777626\/1304576435800899694\/\d+$/);Object.values(x).forEach(walk);}};walk(data);}
+});

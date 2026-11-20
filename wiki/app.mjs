@@ -1,4 +1,4 @@
-import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki,matchesQuery} from './content.mjs?v=3';
+import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki,matchesQuery} from './content.mjs?v=4';
 // One lightweight icon renderer for existing static wiki cards and article infoboxes.
 // The accessible name remains in the surrounding link or heading.
 import {iconSpec,ICON_FONT_FAMILY} from './icons.mjs?v=3';
@@ -13,7 +13,7 @@ function mastery(root,style){const s=el('div',null,'wiki-details-section');s.app
 function showDetail(style){const d=$('wiki-style-detail');d.replaceChildren();if($('wiki-directory'))$('wiki-directory').hidden=true;d.hidden=false;$('wiki-style-title').textContent=style.name;document.title=style.name+' · BL:R Wiki';$('wiki-style-subtitle').textContent=style.groupLabel+' · Article in development';d.append(link('← All styles','/styles/'),el('p','Roster snapshot: '+ROSTER_AS_OF+(style.nel?' · NEL variant grouped with base style':''),'wiki-muted'));const article=ARTICLES[style.id]||{};section(d,'Overview',article.overview,'Gameplay overview has not been verified yet.');renderAbilities(d,article.abilities);section(d,'Flows & evolutions',article.evolutions,'No verified unlock requirements or kit changes yet.');section(d,'Progression',article.progression,'No verified in-game progression requirements yet.');mastery(d,style);section(d,'Advanced mastery',article.mastery,'No reviewed style-specific guide yet.');section(d,'Counterplay & goalkeeping',article.counterplay,'No reviewed counterplay guide yet.');section(d,'Patch history',article.history,'No sourced patch history for this style yet.');const rules=el('div',null,'wiki-details-section');rules.append(el('h2','Tech rules'),el('p','The separate directory contains the community moderation snapshot. Unlisted techniques are not automatically allowed.'),link('Open Tech Rules ↗','/tech/'));d.append(rules);}
 const params=new URLSearchParams(location.search);
 if($('wiki-style-grid')){const style=byId(params.get('style'));if(style)showDetail(style);else{const search=$('wiki-style-search'),rarity=$('wiki-rarity'),grid=$('wiki-style-grid');for(const r of RARITIES){const o=el('option',r.label);o.value=r.id;rarity.append(o);}search.value=params.get('q')||'';const requested=params.get('rarity');if(RARITIES.some(r=>r.id===requested))rarity.value=requested;const render=()=>{const found=filterStyles(search.value,rarity.value);grid.replaceChildren();$('wiki-result-count').textContent=found.length+' of '+STYLES_WIKI.length+' styles';for(const s of found){const a=link('','/styles/'+encodeURIComponent(s.id)+'/');a.append(el('small',s.groupLabel+(s.nel?' · NEL':''),'wiki-badge'),el('strong',s.name),el('small',ARTICLES[s.id]?'View article ↗':'Profile • information pending ↗'));grid.append(a);}if(!found.length)grid.append(el('p','No styles match your search.','wiki-muted'));};search.addEventListener('input',render);rarity.addEventListener('change',render);if(params.has('style'))$('wiki-style-subtitle').textContent='Style not found. Browse the roster below.';render();}}
-if($('wiki-patch-list'))renderRecords($('wiki-patch-list'),PATCHES,'No verified entries published.');
+if($('wiki-patch-list'))$('wiki-patch-list').textContent='Loading announcement archive…';
 if($('wiki-ability-list')){const list=$('wiki-ability-list');for(const style of STYLES_WIKI){if(ARTICLES[style.id]?.abilities?.length)list.append(el('p'),link(style.name,'/styles/'+style.id+'/'));}}
 if($('wiki-evolution-list')){const list=$('wiki-evolution-list');for(const style of STYLES_WIKI.filter(s=>s.nel)){const item=el('p');item.append(link(style.name+' / NEL ↗','/styles/'+style.id+'/'));list.append(item);}}
 
@@ -75,3 +75,5 @@ function renderWikiIcons(){
   document.addEventListener('visibilitychange',sync);
 }
 renderWikiIcons();
+
+if(/^\/(?:styles\/[a-z0-9-]+|flows\/[a-z0-9-]+|updates|codes|abilities|mechanics|progression|evolutions|cosmetics)\/$/.test(location.pathname))import('./announcement-ui.mjs?v=1').then(m=>m.hydrateAnnouncements()).catch(()=>{});

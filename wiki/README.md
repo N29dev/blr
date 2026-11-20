@@ -7,3 +7,13 @@ The icon renderer uses shared CSS and a small palette map in icons.mjs; screensh
 Icon typography uses the observed line breaks from the reference tiles, a single local-font canvas measurement per distinct line, and relative container sizes; no font downloads, layout polling, resize handlers or per-frame JS are added.
 
 UI maintenance: first-paint icons are embedded as small semantic markup; browser enhancement measures local font widths once. Versioned shared assets avoid mismatched CSS and module caches. Native cross-document transitions use opacity only and preserve normal navigation; mobile section navigation is a native disclosure. Search/filter state is URL-based. The dated roster and moderation snapshot remain separate from unverified game mechanics.
+
+## Official update archive (reviewed import)
+
+The source is the supplied Discord update-channel exports, 900 unique messages from 2024-11-24 through 2026-11-14 UTC. The public archive is a **curated first pass**, not a full mirror. Release claims and dates are from the announcements; they do not establish current values or active codes.
+
+- Review new local JSON exports: `node wiki/import-discord.mjs path/to/export.json > review.local.json`. Never commit raw exports or review queues (they may include personal metadata or conversations).
+- Edit only the reviewed, paraphrased entries in `wiki/announcement-data.mjs`; preserve source message IDs, dates, exact code and ability names, and mark pending or superseded claims appropriately.
+- Generate route-specific JSON: `node wiki/build-announcements.mjs` and validate with `node wiki/build-announcements.mjs --check`. Existing tests compare generated records against the curated source.
+- The homepage and directory do not download the patch corpus. Updates load the compact archive; each style/flow loads only its own record file. Codes deliberately carry unverified redemption status.
+- Missing ability conditions, cooldowns, flow effects and active-code state are not inferred. Keep the tech moderation snapshot distinct from updated wiki rarity data.

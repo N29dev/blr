@@ -294,3 +294,19 @@ test('wiki icons have a static first paint without JavaScript or sprite download
  const context=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:850}});
  try{const page=await context.newPage();await page.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await page.goto(base+'/styles/');assert.equal(await page.locator('.kb-icon-label').count(),45);assert.ok(await page.locator('a[href="/styles/gagamaru/"] .kb-icon-label').innerText());}finally{await context.close();}
 });
+
+test('announcement archive filters, codes stay unverified and style records load on demand',async()=>{
+ const {context,page}=await open('/updates/',390,850);
+ try{
+  await page.locator('.announcement-card').first().waitFor();
+  assert.equal(await page.locator('.announcement-card').count(),20);
+  assert.match(await page.locator('.announcement-card').first().innerText(),/Otoya rework/);
+  await page.locator('input[placeholder="Search announcements…"]').fill('Otoya');
+  assert.ok(await page.locator('.announcement-card').count()>0);
+  assert.match(await page.locator('.announcement-card').first().innerText(),/Otoya/);
+  await assertNoOverflow(page,'Updates archive');
+  await page.goto(base+'/styles/otoya/');await page.locator('#announced-abilities').waitFor();assert.match(await page.locator('#announced-abilities').innerText(),/Ninjaristic Presence/);await assertNoOverflow(page,'Otoya abilities');
+  await page.goto(base+'/flows/ice/');await page.locator('.announcement-card').first().waitFor();assert.match(await page.locator('.announcement-card').first().innerText(),/Ice rework/i);
+  await page.goto(base+'/codes/');await page.locator('.code-entry').first().waitFor();assert.match(await page.locator('.code-entry').first().innerText(),/unverified/i);await assertNoOverflow(page,'Codes');
+ }finally{await context.close();}
+});
