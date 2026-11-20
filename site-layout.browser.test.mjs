@@ -266,3 +266,31 @@ for(const width of [360,820,1440]){
     }finally{await context.close();}
   });
 }
+
+test('wiki navigation stays consistent across article, finder and rules pages',async()=>{
+ const {context,page}=await open('/',390,850);
+ try{
+  const nav=()=>page.locator('.n29-nav-links a').evaluateAll(a=>a.map(x=>x.getAttribute('href')));
+  const baseline=await nav();
+  for(const path of ['/styles/','/styles/nagi/','/flows/','/flows/trap/','/servers/','/servers/customs/','/tech/']){
+   await page.goto(base+path,{waitUntil:'load'});assert.deepEqual(await nav(),baseline,path);
+   const account=await rect(page,'.n29-account-nav'),search=await rect(page,'.n29-nav-search'),links=await rect(page,'.n29-nav-links');
+   assert.ok(Math.abs(account.y-search.y)<5,path+' account shares header row');assert.ok(links.y>=search.bottom-2,path+' nav row overlap');await assertNoOverflow(page,path);
+  }
+ }finally{await context.close();}
+});
+test('mobile wiki section navigation, filter history and full search are usable',async()=>{
+ const {context,page}=await open('/styles/',360,780);
+ try{
+  const menu=page.locator('.kb-mobile-nav');assert.ok(await menu.isVisible());await menu.locator('summary').click();assert.ok(await menu.getByRole('link',{name:'Cosmetics'}).isVisible());await menu.locator('summary').click();
+  await page.locator('#kb-filter').fill('nel nagi');assert.equal(await page.locator('.kb-tile:visible').count(),1);assert.ok(page.url().includes('q='));
+  await page.locator('.kb-tile:visible').click();await page.waitForURL('**/styles/nagi/');await page.goBack();
+  assert.equal(await page.locator('#kb-filter').inputValue(),'nel nagi');assert.equal(await page.locator('.kb-tile:visible').count(),1);
+  await page.locator('#kb-filter').fill('does not exist');assert.ok(await page.locator('.kb-filter-empty').isVisible());await page.locator('.kb-clear-filter').click();assert.equal(await page.locator('.kb-tile:visible').count(),45);
+  await page.locator('[data-command-open]').click();const query=page.locator('.site-command-search');await query.fill('progression');await page.waitForFunction(()=>!!document.querySelector('.site-command-item[href="/progression/"]'));await query.press('Enter');await page.waitForURL('**/progression/');
+ }finally{await context.close();}
+});
+test('wiki icons have a static first paint without JavaScript or sprite downloads',async()=>{
+ const context=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:850}});
+ try{const page=await context.newPage();await page.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await page.goto(base+'/styles/');assert.equal(await page.locator('.kb-icon-label').count(),45);assert.ok(await page.locator('a[href="/styles/gagamaru/"] .kb-icon-label').innerText());}finally{await context.close();}
+});

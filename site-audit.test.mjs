@@ -6,7 +6,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,existsSync} from 'node:fs';
+import {readFileSync,existsSync,readdirSync} from 'node:fs';
 import {join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -17,6 +17,7 @@ const pages=[
   '/servers/','/servers/customs/','/tech/','/tech/admin/',
   '/leaderboard/','/leaderboard/admin.html','/wiki/','/wiki/styles/','/styles/','/flows/','/search/','/styles/nagi/','/flows/trap/','/abilities/','/evolutions/','/progression/','/mastery/','/mechanics/','/updates/','/codes/','/cosmetics/','/guides/'
 ];
+for(const kind of ['styles','flows'])for(const entry of readdirSync(join(root,kind),{withFileTypes:true}))if(entry.isDirectory()&&!pages.includes('/'+kind+'/'+entry.name+'/'))pages.push('/'+kind+'/'+entry.name+'/');
 const pageFile=route=>join(root,route.endsWith('/')?route.slice(1)+'index.html':route.slice(1));
 const read=path=>readFileSync(join(root,path),'utf8');
 const fromRoute=route=>readFileSync(pageFile(route),'utf8');
@@ -67,18 +68,18 @@ test('shared portfolio navigation is present with correct page identity',()=>{
   for(const [route,current] of Object.entries(active)){
     const html=fromRoute(route);
     assert.equal((html.match(/class="n29-nav"/g)||[]).length,1,route+' missing/duplicate nav');
-    assert.ok(html.includes('/site-unify.css?v=2'),route+' missing shared theme');
+    assert.ok(html.includes('/site-unify.css?v=3'),route+' missing shared theme');
     assert.ok(html.includes('aria-current="page">'+current+'</a>'),route+' wrong selected nav item');
-    assert.ok(html.includes('/site-motion.css?v=1'),route+' missing motion CSS');
-    assert.ok(html.includes('/site-motion.js?v=1'),route+' missing motion JS');
+    assert.ok(html.includes('/site-motion.css?v=2'),route+' missing motion CSS');
+    assert.ok(html.includes('/site-motion.js?v=2'),route+' missing motion JS');
     for(const href of ['/','/servers/','/servers/customs/','/tech/',['/tools/','/clipper.html','/tiktok-downloader.html'].includes(route)?'/tools/':'/styles/','/tech/#support'])
       assert.ok(html.includes('href="'+href+'"'),route+' missing nav '+href);
   }
   for(const route of ['/leaderboard/','/404.html']){
     const html=fromRoute(route);
     assert.ok(html.includes('class="n29-nav"'),route+' missing nav');
-    assert.ok(html.includes('/site-motion.css?v=1'));
-    assert.ok(html.includes('/site-motion.js?v=1'));
+    assert.ok(html.includes('/site-motion.css?v=2'));
+    assert.ok(html.includes('/site-motion.js?v=2'));
   }
 });
 

@@ -17,9 +17,9 @@ test('all major BLR pages use the portfolio-inspired shared navbar and styleshee
   for(const page of pages){
     const source=read(page);
     assert.ok(source.includes('class="n29-nav"'),page+' lacks shared nav');
-    assert.ok(source.includes('/site-unify.css?v=2'),page+' lacks theme');
-    assert.ok(source.includes('/site-responsive.css?v=1'),page+' missing shared mobile/search stylesheet');
-    assert.ok(source.includes('/site-experience.js?v=4'),page+' lacks searchable quick nav');
+    assert.ok(source.includes('/site-unify.css?v=3'),page+' lacks theme');
+    assert.ok(source.includes('/site-responsive.css?v=2'),page+' missing shared mobile/search stylesheet');
+    assert.ok(source.includes('/site-experience.js?v=5'),page+' lacks searchable quick nav');
     assert.ok(source.includes('family=Space+Grotesk'),page+' lacks portfolio headline font');
     assert.ok(source.includes('family=DM+Sans'),page+' lacks portfolio body font');
     assert.ok(source.includes(['tools/index.html','clipper.html','tiktok-downloader.html'].includes(page)?'href="/tools/"':'href="/styles/"'),page+' knowledge or creator route');
@@ -69,8 +69,8 @@ test('skip link is shared and search UI is the same on each page',()=>{
   for(const page of ['index.html','tools/index.html','servers/index.html','servers/customs/index.html',
                      'tech/index.html','clipper.html','tiktok-downloader.html','leaderboard/index.html']){
     const html=read(page);
-    assert.ok(html.includes('/site-responsive.css?v=1'),page);
-    assert.ok(html.includes('/site-experience.js?v=4'),page);
+    assert.ok(html.includes('/site-responsive.css?v=2'),page);
+    assert.ok(html.includes('/site-experience.js?v=5'),page);
   }
   const css=read('site-responsive.css');
   assert.ok(css.includes('a.skip-link:focus'));
@@ -109,7 +109,7 @@ test('misc routes and pages retain their existing functionality hooks',()=>{
   assert.ok(read('clipper.html').includes('id="export"'));
   assert.ok(read('tiktok-downloader.html').includes('id="fix-file"'));
   assert.ok(read('leaderboard/index.html').includes('class="n29-nav"'));
-  assert.ok(read('leaderboard/index.html').includes('/site-unify.css?v=2'));
+  assert.ok(read('leaderboard/index.html').includes('/site-unify.css?v=3'));
   assert.ok(read('404.html').includes('class="n29-nav"'));
   assert.ok(read('404.html').includes('href="/styles/"'));
   assert.ok(read('sitemap.xml').includes('https://blr.n29.kz/styles/'));

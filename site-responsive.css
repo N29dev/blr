@@ -228,3 +228,24 @@ dialog.site-command-dialog .site-command-help{
 @media(prefers-reduced-motion:reduce){
   .n29-nav .n29-nav-search,dialog.site-command-dialog *{transition:none!important;animation:none!important}
 }
+/* Identical, fixed-footprint header on wiki and live feature pages.
+   The account lives in the first row instead of creating an implicit grid row. */
+.n29-nav{background:#161c26!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:1px solid #303945!important}
+.n29-nav-inner{gap:10px!important}
+.n29-nav .n29-nav-brand{font-family:"DM Sans",system-ui,sans-serif!important;letter-spacing:-.025em!important;font-weight:750!important;font-size:16px!important}
+.n29-nav .n29-nav-mark{background:#263849!important;color:#a7d8ff!important;box-shadow:none!important;border-radius:8px}
+.n29-nav .n29-account-nav{margin:0!important;flex:0 0 42px!important;width:42px;min-width:42px}
+.n29-nav .n29-account-trigger{box-sizing:border-box;display:grid;place-items:center;width:42px;height:42px;padding:4px!important;border-radius:8px;gap:0}
+.n29-nav .n29-account-label{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.n29-nav .n29-account-menu{max-width:calc(100vw - 24px)}
+.n29-nav .n29-nav-links{flex:1 1 auto;justify-content:center;overflow-x:auto;scrollbar-width:none}
+.n29-nav .n29-nav-links::-webkit-scrollbar{display:none}
+@media(max-width:1080px){
+  .n29-nav-inner{display:grid!important;grid-template-columns:minmax(0,1fr) auto 42px!important;grid-template-areas:"brand search account" "links links links"!important;gap:7px 8px!important;align-items:center!important;width:calc(100% - 24px)!important;min-height:0!important;padding:8px 0 6px!important}
+  .n29-nav-brand{grid-area:brand!important;min-width:0!important;max-width:100%!important}
+  .n29-nav-search{grid-area:search!important;justify-self:end!important;margin:0!important}
+  .n29-account-nav{grid-area:account!important;justify-self:end!important}
+  .n29-nav-links{grid-area:links!important;display:flex!important;justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;flex-wrap:nowrap!important;max-width:100%!important;width:100%!important;gap:3px!important}
+  .n29-nav-links a{flex:0 0 auto!important;min-height:42px!important;white-space:nowrap!important}
+}
+@media(max-width:360px){.n29-nav .n29-nav-brand{font-size:14px!important;gap:6px!important}.n29-nav .n29-nav-search{min-width:0!important;padding:8px!important}}

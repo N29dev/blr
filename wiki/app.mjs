@@ -1,7 +1,7 @@
-import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki} from './content.mjs';
+import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki,matchesQuery} from './content.mjs?v=3';
 // One lightweight icon renderer for existing static wiki cards and article infoboxes.
 // The accessible name remains in the surrounding link or heading.
-import {iconSpec,ICON_FONT_FAMILY} from './icons.mjs';
+import {iconSpec,ICON_FONT_FAMILY} from './icons.mjs?v=3';
 const $=id=>document.getElementById(id);
 function el(tag,text,cls){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
 function link(label,url){const a=el('a',label);a.href=url;return a;}
@@ -18,7 +18,21 @@ if($('wiki-ability-list')){const list=$('wiki-ability-list');for(const style of 
 if($('wiki-evolution-list')){const list=$('wiki-evolution-list');for(const style of STYLES_WIKI.filter(s=>s.nel)){const item=el('p');item.append(link(style.name+' / NEL ↗','/styles/'+style.id+'/'));list.append(item);}}
 
 if($('wiki-style-detail')?.dataset.style){const s=byId($('wiki-style-detail').dataset.style);if(s)showDetail(s);}
-if($('kb-directory')){const query=$('kb-filter'),rarity=$('kb-rarity'),groups=[...document.querySelectorAll('[data-roster-group]')],cards=[...document.querySelectorAll('#kb-directory .kb-tile')];const render=()=>{const term=query.value.trim().toLowerCase();let count=0;for(const c of cards){c.hidden=!(c.dataset.name.includes(term)&&(!rarity?.value||rarity.value===c.dataset.rarity));if(!c.hidden)count++;}for(const g of groups)g.hidden=!g.querySelector('.kb-tile:not([hidden])');$('kb-count').textContent=count+' entries';};query.value=params.get('q')||'';query.addEventListener('input',render);rarity?.addEventListener('change',render);render();}
+if($('kb-directory')){
+  const query=$('kb-filter'),rarity=$('kb-rarity'),directory=$('kb-directory'),groups=[...directory.querySelectorAll('[data-roster-group]')],cards=[...directory.querySelectorAll('.kb-tile')];
+  const countNode=$('kb-count'),actions=el('div',null,'kb-directory-actions'),clear=el('button','Clear filters','kb-clear-filter'),empty=el('p','No matching entries. Try a different name or clear filters.','kb-filter-empty');
+  clear.type='button';countNode.before(actions);actions.append(countNode,clear);directory.after(empty);
+  function restore(){const p=new URLSearchParams(location.search);query.value=p.get('q')||'';if(rarity)rarity.value=[...rarity.options].some(o=>o.value===p.get('rarity'))?p.get('rarity'):'';}
+  function render(persist=false){
+    let count=0;
+    for(const card of cards){card.hidden=!(matchesQuery(card.dataset.name,query.value)&&(!rarity?.value||rarity.value===card.dataset.rarity));if(!card.hidden)count++;}
+    for(const group of groups)group.hidden=!group.querySelector('.kb-tile:not([hidden])');
+    countNode.textContent=count+' of '+cards.length+' entries';empty.hidden=!!count;clear.hidden=!query.value&&!rarity?.value;
+    if(persist){const url=new URL(location.href);query.value.trim()?url.searchParams.set('q',query.value.trim()):url.searchParams.delete('q');rarity?.value?url.searchParams.set('rarity',rarity.value):url.searchParams.delete('rarity');history.replaceState(history.state,'',url);}
+  }
+  restore();render();query.addEventListener('input',()=>render(true));rarity?.addEventListener('change',()=>render(true));clear.addEventListener('click',()=>{query.value='';if(rarity)rarity.value='';render(true);query.focus();});
+  window.addEventListener('pageshow',event=>{if(event.persisted){restore();render();}});
+}
 if($('kb-search-results')){const q=params.get('q')||'';$('kb-search').value=q;const results=q.trim()?searchWiki(q):[];$('kb-search-count').textContent=q.trim()?results.length+' results for “'+q+'”':'Enter a search term.';for(const item of results){const a=link('',item.url);a.className='kb-category';a.append(el('strong',item.name),el('span',item.kind));$('kb-search-results').append(a);}}
 if(location.pathname==='/'&&['#stats','#tools','#discord'].includes(location.hash)){const dest={'#stats':'https://n29.kz/blr-profile/','#tools':'https://n29.kz/creator/','#discord':'https://n29.kz/'}[location.hash];location.replace(dest);}
 
@@ -48,10 +62,9 @@ function renderWikiIcons(){
     icon.dataset.palette=spec.palette;
     if(!isFlow)icon.classList.add('kb-styles');
     if(spec.master){icon.dataset.master='true';masters.push(icon);}
-    const label=el('span',null,'kb-icon-label');
-    for(const line of spec.lines)label.append(el('span',line,'kb-icon-line'));
+    const already=Array.from(icon.querySelectorAll('.kb-icon-line'),n=>n.textContent);
+    if(already.join('\n')!==spec.lines.join('\n')){const label=el('span',null,'kb-icon-label');for(const line of spec.lines)label.append(el('span',line,'kb-icon-line'));icon.replaceChildren(label);}
     icon.style.setProperty('--icon-font',spec.font+'cqi');
-    icon.replaceChildren(label);
   }
   // No fallback animation on older browsers and no timers or per-frame JavaScript.
   if(!masters.length||!('IntersectionObserver' in window))return;
