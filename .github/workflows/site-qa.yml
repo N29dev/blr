@@ -26,6 +26,7 @@ jobs:
       - name: JavaScript source syntax
         run: |
           node --check wiki/app.mjs
+          node --check wiki/announcement-ui.mjs
           node --check site-experience.js
           node --check site-motion.js
           node --check home-matchday.js

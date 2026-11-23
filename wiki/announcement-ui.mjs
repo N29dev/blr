@@ -3,10 +3,42 @@ const $=s=>document.querySelector(s);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
 const link=(text,href)=>{const n=node('a',text);n.href=href;return n;};
 const note='These are dated official announcements, not live-tested current stats. Later patches may change their contents.';
-const source=r=>{const a=link('Discord source ↗',r.source);a.target='_blank';a.rel='noopener noreferrer';return a;};
+const source=r=>{const a=link((r.sourceLabel||'Discord source')+' ↗',r.source);a.target='_blank';a.rel='noopener noreferrer';return a;};
 const meta=r=>{const p=node('div',null,'announcement-meta');p.append(node('time',r.date),document.createTextNode(' · '),source(r));return p;};
 const titleFor=(slug,list)=>list.find(x=>x.id===slug)?.name||slug;
-function card(r,showTargets=false){const section=node('article',null,'announcement-card');const h=node('h3',r.title);section.append(h,meta(r),node('p',r.text));if(r.type)section.append(node('span',r.type,'announcement-tag'));if(showTargets){const chips=node('div',null,'announcement-links');for(const id of r.styles||[])chips.append(link(titleFor(id,STYLES_WIKI),'/styles/'+id+'/'));for(const id of r.flows||[])chips.append(link(titleFor(id,FLOWS),'/flows/'+id+'/'));if(chips.childNodes.length)section.append(chips);}return section;}
+function card(r,showTargets=false){
+ const section=node('article',null,'announcement-card');
+ section.append(node('h3',r.title),meta(r),node('p',r.text));
+ if(r.type)section.append(node('span',r.type,'announcement-tag'));
+ if(showTargets){const chips=node('div',null,'announcement-links');
+  for(const id of r.styles||[])chips.append(link(titleFor(id,STYLES_WIKI),'/styles/'+id+'/'));
+  for(const id of r.flows||[])chips.append(link(titleFor(id,FLOWS),'/flows/'+id+'/'));
+  if(chips.childNodes.length)section.append(chips);
+ }
+ if(r.balanceChanges?.length){
+  const details=node('details',null,'og-balance-details');
+  details.append(node('summary','Announced balance adjustments ('+r.balanceChanges.length+')'),node('p',r.balanceNotice,'wiki-muted'));
+  const groups=new Map();for(const c of r.balanceChanges){if(!groups.has(c.style))groups.set(c.style,[]);groups.get(c.style).push(c);}
+  for(const [style,items] of groups){
+   const group=node('section',null,'og-balance-group'),h4=node('h4');h4.append(link(titleFor(style,STYLES_WIKI),'/styles/'+style+'/'));group.append(h4);
+   const list=node('ul',null,'og-balance-list');
+   for(const c of items){const li=node('li');li.append(node('span',c.kind,'og-kind'),document.createTextNode(' '),node('strong',c.move+': '),document.createTextNode(c.description));list.append(li);}
+   group.append(list);details.append(group);
+  }
+  section.append(details);
+ }
+ if(r.shop?.length||r.bundles?.length){
+  const extras=node('div',null,'og-extras');
+  if(r.shop?.length)extras.append(node('p','Limited shop: '+r.shop.join(' · ')));
+  if(r.bundles?.length)extras.append(node('p','Bundles: '+r.bundles.join(' · ')));
+  section.append(extras);
+ }
+ return section;
+}
+function ogPatch(og,style=null){
+ const items=style?og.changes.filter(c=>c.style===style):og.changes;
+ return {id:og.id,date:og.date,title:og.title,type:'Event',text:style?'OG update announcement affecting this style. Live values remain unverified.':og.summary,source:og.source,sourceLabel:og.sourceLabel,styles:style?[]:[...new Set(items.map(c=>c.style))],flows:[],balanceChanges:items,balanceNotice:og.balanceNotice,shop:style?[]:og.shop,bundles:style?[]:og.bundles};
+}
 function block(root,heading,rows){if(!rows?.length)return;const section=node('section',null,'wiki-details-section');section.append(node('h2',heading));for(const row of rows)section.append(card(row));root.append(section);}
 function table(headers,rows){const wrap=node('div',null,'wiki-table-scroll');const t=node('table',null,'wiki-table announcement-table');const head=node('thead'),hr=node('tr');for(const h of headers)hr.append(node('th',h));head.append(hr);t.append(head);const body=node('tbody');for(const r of rows){const tr=node('tr');for(const cell of r){const td=node('td');if(cell instanceof Node)td.append(cell);else td.textContent=cell||'Not specified';tr.append(td);}body.append(tr);}t.append(body);wrap.append(t);return wrap;}
 function filterList(root,rows,{searchText,types=null,renderItem,unit='entries',queryPlaceholder='Search announcements…',pageSize=20}){
@@ -18,7 +50,7 @@ function filterList(root,rows,{searchText,types=null,renderItem,unit='entries',q
  function changed(){const url=new URL(location.href);q.value.trim()?url.searchParams.set('q',q.value.trim()):url.searchParams.delete('q');select?.value?url.searchParams.set('type',select.value):url.searchParams.delete('type');history.replaceState(history.state,'',url);render();}
  q.addEventListener('input',changed);select?.addEventListener('change',changed);more.addEventListener('click',()=>{shown+=pageSize;render(false);});render();
 }
-function renderArchive(root,rows){filterList(root,rows,{searchText:r=>[r.date,r.title,r.type,r.text,...r.styles.map(id=>titleFor(id,STYLES_WIKI)),...r.flows.map(id=>titleFor(id,FLOWS))].join(' '),types:rows.map(r=>r.type),renderItem:r=>card(r,true),unit:'updates'});}
+function renderArchive(root,rows){filterList(root,rows,{searchText:r=>[r.date,r.title,r.type,r.text,...r.styles.map(id=>titleFor(id,STYLES_WIKI)),...r.flows.map(id=>titleFor(id,FLOWS)),...(r.balanceChanges||[]).flatMap(c=>[c.move,c.description])].join(' '),types:rows.map(r=>r.type),renderItem:r=>card(r,true),unit:'updates'});}
 function renderCodes(root,rows){filterList(root,rows,{searchText:r=>[r.code,r.reward,r.date].join(' '),unit:'announced codes',queryPlaceholder:'Search code or reward…',renderItem:r=>{const a=node('article',null,'announcement-card code-entry');const heading=node('h3',r.code);const copy=node('button','Copy code','kb-clear-filter');copy.type='button';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(r.code);copy.textContent='Copied';}catch{copy.textContent='Select code to copy';}});a.append(heading,node('p',r.reward),node('p','Redemption status: unverified','wiki-muted'),meta(r),copy);return a;},pageSize:30});}
 function renderAbilityIndex(root,rows){root.replaceChildren();const wrap=node('div',null,'kb-categories');for(const r of rows.sort((a,b)=>titleFor(a.slug,STYLES_WIKI).localeCompare(titleFor(b.slug,STYLES_WIKI)))){const a=link('', '/styles/'+r.slug+'/#announced-abilities');a.className='kb-category';a.append(node('strong',titleFor(r.slug,STYLES_WIKI)),node('span',r.count+' documented abilities · latest '+r.date));wrap.append(a);}root.append(node('p',note,'wiki-muted'),wrap);}
 function updateStyle(root,data){if(!root)return;const count=data.abilities.length+data.facts.length+data.history.length;if(!count)return;
@@ -38,8 +70,22 @@ export async function hydrateAnnouncements(){
  const style=/^styles\/[a-z0-9-]+$/.test(route),flow=/^flows\/[a-z0-9-]+$/.test(route);
  if(style)target=$('#wiki-style-detail');if(flow)target=$('.kb-article article');if(!target)return;
  const known=['updates','codes','abilities','mechanics','progression','evolutions','cosmetics'];if(!style&&!flow&&!known.includes(route))return;
- try{const response=await fetch('/wiki/records/'+route+'.json?v=1');if(!response.ok)throw Error('Archive unavailable');const data=await response.json();
- if(style){updateStyle(target,data);import('./tested-ui.mjs?v=1').then(m=>m.renderTestedAbilities(target,route.split('/')[1],data.history)).catch(()=>{});}else if(flow)updateFlow(target,data);else if(route==='updates')renderArchive(target,data);else if(route==='codes')renderCodes(target,data);else if(route==='abilities')renderAbilityIndex(target,data);else {target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',data);}
+ try{
+ const [response,og]=await Promise.all([fetch('/wiki/records/'+route+'.json?v=1'),fetch('/wiki/og-update.json?v=1').then(r=>r.ok?r.json():null).catch(()=>null)]);
+ if(!response.ok)throw Error('Archive unavailable');
+ const data=await response.json();
+ if(style){
+  const slug=route.split('/')[1],history=og?.changes?.some(c=>c.style===slug)?[ogPatch(og,slug),...data.history]:data.history;
+  updateStyle(target,{...data,history});
+  import('./tested-ui.mjs?v=1').then(m=>m.renderTestedAbilities(target,slug,history)).catch(()=>{});
+ }else if(flow)updateFlow(target,data);
+ else if(route==='updates')renderArchive(target,og?[ogPatch(og),...data]:data);
+ else if(route==='codes'){const fresh=og?og.codes.map(c=>({...c,id:og.id,date:og.date,source:og.source,sourceLabel:og.sourceLabel})):[];renderCodes(target,[...fresh,...data]);}
+ else if(route==='abilities')renderAbilityIndex(target,data);
+ else if(route==='cosmetics'){
+  const extra=og?{id:og.id,date:og.date,title:'BL:R OG limited shop and bundle',text:[...og.shop,...og.bundles].join(', ')+'.',source:og.source,sourceLabel:og.sourceLabel,kind:'cosmetics',targets:[]}:null;
+  target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',extra?[extra,...data]:data);
+ }else{target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',data);}
  }catch{if(!style&&!flow)target.replaceChildren(node('p','The announcement archive could not be loaded. Reload to retry.','wiki-muted'));else target.prepend(node('p','Announcement records could not be loaded. Reload to retry.','wiki-muted'));}
  if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./community-ui.mjs?v=1').then(m=>m.addCommunityReferences(target,route)).catch(()=>{});
 }

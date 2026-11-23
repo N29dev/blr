@@ -90,3 +90,15 @@ test('community research is isolated from announcement records and references re
  assert.ok(COMMUNITY_NOTES['styles/mcnagi-fryshiro']);
  assert.ok(COMMUNITY_NOTES['styles/easter-kaiser']);
 });
+
+test('OG patch data is kept separate from tested values and includes all announced codes',()=>{
+ const og=JSON.parse(fs.readFileSync(new URL('./og-update.json',import.meta.url),'utf8'));
+ assert.equal(og.date,'2026-11-21');
+ assert.deepEqual(og.codes.map(x=>x.code),['OGBACK','SAEVSRIN','GOODLUCK']);
+ assert.equal(og.shop.length,4);
+ assert.ok(og.bundles.includes('OG Bundle'));
+ assert.equal(og.changes.length,30);
+ assert.ok(og.changes.every(c=>byId(c.style)&&c.status==='Unverified'&&c.move&&c.description));
+ assert.match(og.balanceNotice,/NOT verified/);
+ assert.equal(og.source,'https://discord.com/channels/1304535758899777626/1304576435800899694');
+});

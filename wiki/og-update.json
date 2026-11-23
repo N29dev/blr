@@ -1,0 +1,247 @@
+{
+  "id": "blr-og-2026-11-21",
+  "date": "2026-11-21",
+  "title": "BL:R OG — Classic Itoshi Brothers gamemode",
+  "summary": "A separate OG gamemode revisits the early Blue Lock: Rivals / classic Itoshi Brothers era, before World Class and Master styles. The announcement also lists balancing, a limited shop, new codes and the OG Bundle. Some announced balance changes may not be live yet.",
+  "source": "https://discord.com/channels/1304535758899777626/1304576435800899694",
+  "sourceLabel": "Official announcement channel",
+  "balanceNotice": "Announcement claims only — NOT verified live in-game values. Some changes may not yet be implemented or may differ. Manually tested ability values remain separate.",
+  "shop": [
+    "Rin Emote",
+    "Metavision Aura Cosmetic",
+    "Rin vs Sae Playercard",
+    "Sae Goal Effect"
+  ],
+  "bundles": [
+    "OG Bundle"
+  ],
+  "codes": [
+    {
+      "code": "OGBACK",
+      "reward": "5 lucky OG style spins + 5 lucky OG flow spins",
+      "status": "Unverified"
+    },
+    {
+      "code": "SAEVSRIN",
+      "reward": "5 lucky OG spins (type unspecified by announcement)",
+      "status": "Unverified"
+    },
+    {
+      "code": "GOODLUCK",
+      "reward": "5 lucky normal spins",
+      "status": "Unverified"
+    }
+  ],
+  "changes": [
+    {
+      "style": "reo",
+      "move": "Copy",
+      "description": "Cooldown increased to 42s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "reo",
+      "move": "Camouflage",
+      "description": "Hitbox −20%; steal speed −13%; range −12%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "reo",
+      "move": "Copy restrictions",
+      "description": "Cannot copy Master or Limited styles.",
+      "kind": "Restriction",
+      "status": "Unverified"
+    },
+    {
+      "style": "sendou",
+      "move": "Ace Shot",
+      "description": "Shot range when aimed high −15%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "karasu",
+      "move": "Blackwing Curve",
+      "description": "Shot range and shot speed −15%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "karasu",
+      "move": "Arm Lock",
+      "description": "Distance −4%; must actually hit the opponent to stun, not just be nearby.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "otoya",
+      "move": "Nin.",
+      "description": "Shot range when aimed high −12%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "otoya",
+      "move": "Shuriken Volley",
+      "description": "Speed, shot range and steal range −14%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "zantetsu",
+      "move": "Explosive Acceleration",
+      "description": "Animation speed +12%.",
+      "kind": "Buff",
+      "status": "Unverified"
+    },
+    {
+      "style": "zantetsu",
+      "move": "Left-Curved Shot",
+      "description": "Shot range −10%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "king",
+      "move": "Twisted Path / Feast",
+      "description": "Shot power and range +13%.",
+      "kind": "Buff",
+      "status": "Unverified"
+    },
+    {
+      "style": "aiku",
+      "move": "Total Clearance",
+      "description": "Range −9%; must be closer to the ball.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "ness",
+      "move": "Weapon Disabler",
+      "description": "Range −7%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "bunny",
+      "move": "Bunny Hop",
+      "description": "Cooldown increased to 40s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "bunny",
+      "move": "Scissor Kick",
+      "description": "Cooldown increased to 40s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "bunny",
+      "move": "Crown Hopper",
+      "description": "Cooldown increased to 40s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "bunny",
+      "move": "Rabbit Trap",
+      "description": "Cooldown increased to 40s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "subzero-loki",
+      "move": "Godspeed Freeze",
+      "description": "Steal hitbox −6%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "krampus-barou",
+      "move": "Crash Steal",
+      "description": "Cooldown increased to 45s; steal hitbox −6%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "krampus-barou",
+      "move": "Blizzard Fang Shot",
+      "description": "Cooldown increased to 42s; shot speed −12%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "krampus-barou",
+      "move": "Krampus Chop Dribble",
+      "description": "Cooldown increased to 45s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "krampus-barou",
+      "move": "Predator Krampus",
+      "description": "Flow speed cannot stack; cooldown increased to 40s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "demon-shidou",
+      "move": "Demon Header",
+      "description": "Animation speed −10%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "demon-shidou",
+      "move": "Demon Shot",
+      "description": "Base shot power −15%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "demon-shidou",
+      "move": "Dragon Header",
+      "description": "Shot power −30%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "mcnagi-fryshiro",
+      "move": "Zero Reset Turn",
+      "description": "Cooldown increased to 45s; distance −20%.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "santa-lavinho",
+      "move": "Wrapped Dribble",
+      "description": "Cooldown increased to 45s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "santa-lavinho",
+      "move": "Sleigh Ride",
+      "description": "Movement speed +30%; travel distance unchanged.",
+      "kind": "Buff",
+      "status": "Unverified"
+    },
+    {
+      "style": "reaper-sae",
+      "move": "Scytle Pass / Death Call",
+      "description": "Cooldowns increased to 42s each (move spelling follows announcement).",
+      "kind": "Nerf",
+      "status": "Unverified"
+    },
+    {
+      "style": "reaper-sae",
+      "move": "Graveyard",
+      "description": "Duration decreased to 7s.",
+      "kind": "Nerf",
+      "status": "Unverified"
+    }
+  ]
+}

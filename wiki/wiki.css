@@ -57,3 +57,21 @@ body[data-page="wiki"]{margin:0}body[data-page="wiki"] .kb-layout,body[data-page
 .announcement-results{margin:12px 0}.announcement-table{font-size:.84rem;min-width:535px}.announcement-table td{overflow-wrap:anywhere;vertical-align:top}.announcement-table td:last-child{white-space:nowrap}
 .code-entry h3{font-family:ui-monospace,monospace;user-select:all;color:#e7f0fd}.code-entry button{margin-top:9px}.announcement-results [hidden]{display:none!important}
 @media(max-width:670px){.announcement-card{padding:10px 11px}.announcement-card h3{font-size:.95rem}.announcement-table{min-width:520px}}
+
+/* OG patch: announcement-only claims, never silently overwrite tested values. */
+.og-balance-details{margin:12px 0 3px;border-top:1px solid #344253;padding-top:9px}
+.og-balance-details summary{cursor:pointer;color:#a4d2ff;font-weight:700;font-size:.87rem}
+.og-balance-details[open] summary{margin-bottom:9px}
+.og-balance-group{margin:10px 0;padding:10px 12px;background:rgba(15,24,35,.5);border:1px solid #303945;border-radius:7px}
+.og-balance-group h4{font-size:.88rem;margin:0 0 5px}
+.og-balance-list{margin:5px 0 0;padding-left:19px}
+.og-balance-list li{font-size:.85rem;line-height:1.6;margin:5px 0}
+.og-kind{display:inline-block;font-size:.7rem;color:#b2c7de;border:1px solid #3b4f62;border-radius:3px;padding:0 4px}
+.og-extras{margin-top:10px;border-top:1px solid #344253;padding-top:7px}
+.og-extras p{margin:4px 0;font-size:.84rem}
+.kb-featured-update{border:1px solid #3a5473;background:linear-gradient(112deg,#182335,#151c29 60%,#1c2038)}
+.kb-featured-update h2{margin:0 0 8px}
+.kb-featured-update p{max-width:65ch;margin:6px 0 12px}
+.kb-featured-links{display:flex;flex-wrap:wrap;gap:8px}
+.kb-featured-links a{font-size:.86rem;border:1px solid #3b526d;border-radius:6px;padding:8px 11px;color:#bad9ff;text-decoration:none}
+.kb-featured-links a:hover{background:#25344b}
