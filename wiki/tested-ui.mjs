@@ -2,18 +2,20 @@ import {FIELDS,needsRetest,wikiRequest} from './tested-data.mjs?v=2';
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
 const labels={input:'Input',cooldown:'Cooldown',playerIframes:'Player i-frames',ballIframes:'Ball i-frames',duration:'Duration',range:'Range',chargeTime:'Charge time',condition:'Conditions',effect:'Effects',notes:'Notes'};
 const seconds=new Set(['cooldown','playerIframes','ballIframes','duration','chargeTime']);
-const groups=[['base','Base kit'],['awakening','Awakening kit'],['chemical','Chemical reactions']];
+const groups=[['base','Base'],['awakening','Awk'],['chemical','Chem']];
 export function kitGroup(kit){const k=String(kit||'').toLowerCase().trim();if(/chem|reaction|synergy/.test(k))return 'chemical';if(/awak|\bawk\b/.test(k))return 'awakening';if(/base|normal|default/.test(k))return 'base';return 'other';}
 const css=`
-#tested-abilities .tested-list{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
-#tested-abilities .tested-column{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:8px}
-#tested-abilities .tested-column[data-kit=other]{flex:1 0 100%}
-#tested-abilities .tested-column-title{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0;padding:7px 2px;border-bottom:1px solid #334355;color:#dce8f7;font-size:.9rem;line-height:1.4}
-#tested-abilities .tested-column-count{font-size:.72rem;color:#a9b9cc;font-weight:400}
-#tested-abilities .tested-empty{margin:0;padding:10px;border:1px dashed #334153;border-radius:7px;font-size:.8rem;color:#a9b9cc}
-#tested-abilities .tested-column > .tested-card{grid-area:auto!important;position:static!important;display:block;padding:10px;margin:0;min-width:0;width:100%}
-#tested-abilities .tested-column .tested-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media(max-width:1100px){#tested-abilities .tested-column{flex:1 0 100%}#tested-abilities .tested-column .tested-stats{grid-template-columns:repeat(auto-fit,minmax(min(100%,105px),1fr))}}
+#tested-abilities .tested-tabs{display:flex;gap:4px;padding:4px;border:1px solid #334153;border-radius:9px;background:#111923;margin:0 0 12px}
+#tested-abilities .tested-tab{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 5px;border:1px solid transparent;border-radius:6px;background:transparent;color:#a9b9cc;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;white-space:nowrap}
+#tested-abilities .tested-tab[aria-selected=true]{background:#25384c;border-color:#41617c;color:#e5f1ff}
+#tested-abilities .tested-tab:focus-visible{outline:2px solid #8acbff;outline-offset:2px}
+#tested-abilities .tested-tab-count{font-size:.72rem;opacity:.8;font-weight:400}
+#tested-abilities .tested-list{display:block}
+#tested-abilities .tested-column{min-width:0;display:flex;flex-direction:column;gap:8px}
+#tested-abilities .tested-column[hidden]{display:none!important}
+#tested-abilities .tested-empty{margin:0;padding:12px;border:1px dashed #334153;border-radius:7px;font-size:.85rem;color:#a9b9cc}
+#tested-abilities .tested-column > .tested-card{grid-area:auto!important;position:static!important;display:block;padding:12px 14px;margin:0;min-width:0;width:100%}
+@media(max-width:400px){#tested-abilities .tested-tab{font-size:.8rem;gap:4px}}
 #tested-abilities .tested-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
 #tested-abilities .tested-header h3{font-size:1rem;line-height:1.35;margin:0}
 #tested-abilities .tested-kit,#tested-abilities .tested-date{font-size:.75rem;line-height:1.4;color:#acbbce}
@@ -34,20 +36,32 @@ export async function renderTestedAbilities(root,slug,history){
  const section=el('section',null,'wiki-details-section');section.id='tested-abilities';const style=el('style',css);section.append(style,el('h2','Manually tested abilities'));
  const note=el('p','Loading tested values…','wiki-muted');section.append(note);const anchor=[...root.querySelectorAll(':scope > .wiki-details-section')].find(s=>['Announced abilities','Abilities','Patch history'].includes(s.querySelector('h2')?.textContent));root.insertBefore(section,anchor||null);
  const refresh=el('button','Refresh values','kb-clear-filter');refresh.type='button';section.querySelector('h2').append(refresh);
- const list=el('div',null,'tested-list');section.append(list);
- let pending=false,lastFetch=0;
+ const tabs=el('div',null,'tested-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Ability kit');tabs.hidden=true;
+ const list=el('div',null,'tested-list');section.append(tabs,list);
+ let pending=false,lastFetch=0,activeKit='base';
+ function selectKit(id,focus=false){
+  activeKit=id;
+  for(const button of tabs.querySelectorAll('[role=tab]')){const selected=button.dataset.kit===id;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;if(selected&&focus)button.focus();}
+  for(const panel of list.children)panel.hidden=panel.dataset.kit!==id;
+ }
+ tabs.addEventListener('keydown',e=>{
+  const buttons=[...tabs.querySelectorAll('[role=tab]')];const i=buttons.indexOf(e.target);if(i<0)return;
+  let next;if(e.key==='ArrowRight')next=(i+1)%buttons.length;else if(e.key==='ArrowLeft')next=(i+buttons.length-1)%buttons.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=buttons.length-1;else return;
+  e.preventDefault();selectKit(buttons[next].dataset.kit,true);
+ });
  async function reload(){
  if(pending||!section.isConnected)return;pending=true;refresh.disabled=true;refresh.textContent='Refreshing…';
  try{
  const {entries}=await wikiRequest('/styles/'+slug+'?fresh='+Date.now());if(!Array.isArray(entries))throw Error();
  list.replaceChildren();lastFetch=Date.now();
- if(!entries.length){note.textContent='No manually tested values published yet.';return;}
- note.textContent=entries.length+' tested '+(entries.length===1?'ability':'abilities')+'. “Review after patch” indicates possible changes.';
- const columns=new Map();const fragment=document.createDocumentFragment();
- for(const [id,title] of [...groups,...(entries.some(r=>kitGroup(r.kit)==='other')?[['other','Other variants']]:[])]){
-  const col=el('div',null,'tested-column');col.dataset.kit=id;
+ note.textContent=entries.length?entries.length+' tested '+(entries.length===1?'ability':'abilities')+'. “Review after patch” indicates possible changes.':'No manually tested values published yet.';
+ const columns=new Map();const fragment=document.createDocumentFragment(),tabFragment=document.createDocumentFragment();
+ const kits=[...groups,...(entries.some(r=>kitGroup(r.kit)==='other')?[['other','Other']]:[])];
+ if(!kits.some(([id])=>id===activeKit))activeKit='base';
+ for(const [id,title] of kits){
+  const col=el('div',null,'tested-column');col.dataset.kit=id;col.id='tested-panel-'+id;col.setAttribute('role','tabpanel');col.setAttribute('aria-labelledby','tested-tab-'+id);
   const count=entries.filter(r=>kitGroup(r.kit)===id).length;
-  const heading=el('h3',title,'tested-column-title');heading.append(el('span',String(count),'tested-column-count'));col.append(heading);
+  const button=el('button',title,'tested-tab');button.type='button';button.id='tested-tab-'+id;button.dataset.kit=id;button.setAttribute('role','tab');button.setAttribute('aria-controls',col.id);button.append(el('span',String(count),'tested-tab-count'));button.addEventListener('click',()=>selectKit(id));tabFragment.append(button);
   if(!count)col.append(el('p','No tested abilities yet.','tested-empty'));
   columns.set(id,col);fragment.append(col);
  }
@@ -65,7 +79,7 @@ export async function renderTestedAbilities(root,slug,history){
   if(r.evidence){try{const u=new URL(r.evidence);if(u.protocol==='https:'){const a=el('a','Testing evidence ↗','tested-evidence');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';card.append(a);}}catch{}}
   columns.get(kitGroup(r.kit)).append(card);
  }
- list.append(fragment);
+ list.append(fragment);tabs.replaceChildren(tabFragment);tabs.hidden=false;selectKit(activeKit);
  }catch{note.textContent=list.childElementCount?'Refresh failed. Showing previously loaded values.':'Tested values are currently unavailable. Announcement history below remains available.';}
  finally{pending=false;refresh.disabled=false;refresh.textContent='Refresh values';}
  }
