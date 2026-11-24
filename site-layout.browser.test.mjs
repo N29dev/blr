@@ -300,10 +300,12 @@ test('announcement archive filters, codes stay unverified and style records load
  try{
   await page.locator('.announcement-card').first().waitFor();
   assert.equal(await page.locator('.announcement-card').count(),20);
-  assert.match(await page.locator('.announcement-card').first().innerText(),/Otoya rework/);
+  assert.match(await page.locator('.announcement-card').nth(0).innerText(),/BL:R OG/);
+  assert.match(await page.locator('.announcement-card').nth(1).innerText(),/Otoya rework/);
   await page.locator('input[placeholder="Search announcements…"]').fill('Otoya');
   assert.ok(await page.locator('.announcement-card').count()>0);
   assert.match(await page.locator('.announcement-card').first().innerText(),/Otoya/);
+  assert.ok(await page.locator('.announcement-card').filter({hasText:'Otoya rework'}).count()>0);
   await assertNoOverflow(page,'Updates archive');
   await page.goto(base+'/styles/otoya/');await page.locator('#announced-abilities').waitFor();assert.match(await page.locator('#announced-abilities').innerText(),/Ninjaristic Presence/);await assertNoOverflow(page,'Otoya abilities');
   await page.goto(base+'/flows/ice/');await page.locator('.announcement-card').first().waitFor();assert.match(await page.locator('.announcement-card').first().innerText(),/Ice rework/i);
