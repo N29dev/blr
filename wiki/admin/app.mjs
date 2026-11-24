@@ -1,5 +1,5 @@
 import {STYLES_WIKI} from '../content.mjs?v=4';
-import {FIELDS,today,needsRetest,wikiRequest} from '../tested-data.mjs?v=1';
+import {FIELDS,today,needsRetest,wikiRequest} from '../tested-data.mjs?v=2';
 const $=id=>document.getElementById(id),form=$('record'),style=$('style');
 const node=(tag,value)=>{const e=document.createElement(tag);if(value!==undefined)e.textContent=value;return e;};
 let key='',entries=[],announcements=[],patches=[],selected=null,dirty=false,busy=false,sequence=0,loadedStyle='';

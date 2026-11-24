@@ -2,7 +2,7 @@ export const WIKI_API='https://glutony.scp343hey.workers.dev/api/wiki';
 export const FIELDS=[
  ['name','Ability name','text',120],['kit','Kit / variant','text',80],['input','Input / key','text',80],
  ['cooldown','Cooldown (s)','number'],['playerIframes','Player i-frames (s)','number'],['ballIframes','Ball i-frames (s)','number'],
- ['duration','Ability duration (s)','number'],['range','Range (studs)','number'],['chargeTime','Charge time (s)','number'],
+ ['duration','Ability duration (s)','number'],['range','Range (game m)','number'],['chargeTime','Charge time (s)','number'],
  ['testedOn','Last tested (UTC date)','date'],['condition','Activation conditions','textarea',600],['effect','Effects and interactions','textarea',1500],['notes','Testing notes / variable values','textarea',1500],['evidence','Evidence HTTPS URL','url',500]
 ];
 export const today=()=>new Date().toISOString().slice(0,10);
