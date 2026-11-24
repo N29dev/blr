@@ -309,7 +309,7 @@
   function initWebsitePresence(){
     if(location.origin!=='https://blr.n29.kz'||location.pathname.startsWith('/tech/admin/')||location.pathname.startsWith('/auth/'))return;
     const home=location.pathname==='/';
-    const anchor=home?document.querySelector('.kb-heading, .hero'):document.querySelector('footer');
+    const anchor=(home?document.querySelector('.kb-heading, .hero'):null)||document.querySelector('footer, .footer, .n29-bottom')||document.querySelector('main, .wrap')||document.body;
     if(!anchor)return;
     const box=createNode('div','n29-site-presence');
     box.hidden=true;
@@ -324,7 +324,7 @@
     const today=createNode('span','','');
     const total=createNode('span','','');
     box.append(live,today,total);
-    if(home)anchor.after(box);else anchor.append(box);
+    if(home&&anchor.matches('.kb-heading, .hero'))anchor.after(box);else anchor.append(box);
     let id=null;
     try{
       if(navigator.globalPrivacyControl!==true && navigator.doNotTrack!=='1'){
