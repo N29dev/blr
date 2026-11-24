@@ -1,0 +1,19 @@
+{
+  "name": "blr-presence",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-24",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "blr.n29.kz/api/presence",
+      "zone_name": "n29.kz"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "PRESENCE_DB",
+      "database_name": "blr-presence",
+      "database_id": "e585bf82-33da-4dcf-a391-96d45345f91f"
+    }
+  ]
+}
