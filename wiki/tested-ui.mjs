@@ -3,8 +3,8 @@ const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.te
 const labels={input:'Input',cooldown:'Cooldown',playerIframes:'Player i-frames',ballIframes:'Ball i-frames',duration:'Duration',range:'Range',chargeTime:'Charge time',condition:'Conditions',effect:'Effects',notes:'Notes'};
 const seconds=new Set(['cooldown','playerIframes','ballIframes','duration','chargeTime']);
 const css=`
-#tested-abilities .tested-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:10px;align-items:start}
-#tested-abilities .tested-card{padding:12px 14px;margin:0;min-width:0}
+#tested-abilities .tested-list{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+#tested-abilities .tested-list > .tested-card{grid-area:auto!important;position:static!important;display:block;padding:12px 14px;margin:0;min-width:0;width:100%}
 #tested-abilities .tested-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
 #tested-abilities .tested-header h3{font-size:1rem;line-height:1.35;margin:0}
 #tested-abilities .tested-kit,#tested-abilities .tested-date{font-size:.75rem;line-height:1.4;color:#acbbce}

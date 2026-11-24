@@ -334,6 +334,12 @@ test('public tested abilities render all records and refresh after edits',async(
  await page.getByRole('button',{name:'Refresh values',exact:true}).click();
  await page.waitForFunction(()=>document.querySelectorAll('#tested-abilities .tested-card').length===3);
  assert.match(await page.locator('#tested-abilities').innerText(),/Center of the World/);
+ const cards=await page.locator('#tested-abilities .tested-card').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width,height:r.height};}));
+ assert.ok(cards.every(r=>r.width>0&&r.height>0));
+ for(let i=1;i<cards.length;i++)assert.ok(cards[i].top>=cards[i-1].bottom-0.5,'Tested ability cards must not overlap');
+ await page.setViewportSize({width:1440,height:1000});
+ const desktop=await page.locator('#tested-abilities .tested-card').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
+ for(let i=1;i<desktop.length;i++)assert.ok(desktop[i].top>=desktop[i-1].bottom-0.5,'Desktop tested cards must not overlap');
  await assertNoOverflow(page,'Tested ability cards');
  }finally{await context.close();}
 });
