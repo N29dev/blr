@@ -2,9 +2,18 @@ import {FIELDS,needsRetest,wikiRequest} from './tested-data.mjs?v=2';
 const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
 const labels={input:'Input',cooldown:'Cooldown',playerIframes:'Player i-frames',ballIframes:'Ball i-frames',duration:'Duration',range:'Range',chargeTime:'Charge time',condition:'Conditions',effect:'Effects',notes:'Notes'};
 const seconds=new Set(['cooldown','playerIframes','ballIframes','duration','chargeTime']);
+const groups=[['base','Base kit'],['awakening','Awakening kit'],['chemical','Chemical reactions']];
+export function kitGroup(kit){const k=String(kit||'').toLowerCase().trim();if(/chem|reaction|synergy/.test(k))return 'chemical';if(/awak|\bawk\b/.test(k))return 'awakening';if(/base|normal|default/.test(k))return 'base';return 'other';}
 const css=`
-#tested-abilities .tested-list{display:flex;flex-direction:column;gap:10px;align-items:stretch}
-#tested-abilities .tested-list > .tested-card{grid-area:auto!important;position:static!important;display:block;padding:12px 14px;margin:0;min-width:0;width:100%}
+#tested-abilities .tested-list{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
+#tested-abilities .tested-column{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:8px}
+#tested-abilities .tested-column[data-kit=other]{flex:1 0 100%}
+#tested-abilities .tested-column-title{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0;padding:7px 2px;border-bottom:1px solid #334355;color:#dce8f7;font-size:.9rem;line-height:1.4}
+#tested-abilities .tested-column-count{font-size:.72rem;color:#a9b9cc;font-weight:400}
+#tested-abilities .tested-empty{margin:0;padding:10px;border:1px dashed #334153;border-radius:7px;font-size:.8rem;color:#a9b9cc}
+#tested-abilities .tested-column > .tested-card{grid-area:auto!important;position:static!important;display:block;padding:10px;margin:0;min-width:0;width:100%}
+#tested-abilities .tested-column .tested-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:1100px){#tested-abilities .tested-column{flex:1 0 100%}#tested-abilities .tested-column .tested-stats{grid-template-columns:repeat(auto-fit,minmax(min(100%,105px),1fr))}}
 #tested-abilities .tested-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
 #tested-abilities .tested-header h3{font-size:1rem;line-height:1.35;margin:0}
 #tested-abilities .tested-kit,#tested-abilities .tested-date{font-size:.75rem;line-height:1.4;color:#acbbce}
@@ -34,7 +43,16 @@ export async function renderTestedAbilities(root,slug,history){
  list.replaceChildren();lastFetch=Date.now();
  if(!entries.length){note.textContent='No manually tested values published yet.';return;}
  note.textContent=entries.length+' tested '+(entries.length===1?'ability':'abilities')+'. “Review after patch” indicates possible changes.';
- for(const r of entries.sort((a,b)=>a.kit.localeCompare(b.kit)||a.name.localeCompare(b.name))){
+ const columns=new Map();const fragment=document.createDocumentFragment();
+ for(const [id,title] of [...groups,...(entries.some(r=>kitGroup(r.kit)==='other')?[['other','Other variants']]:[])]){
+  const col=el('div',null,'tested-column');col.dataset.kit=id;
+  const count=entries.filter(r=>kitGroup(r.kit)===id).length;
+  const heading=el('h3',title,'tested-column-title');heading.append(el('span',String(count),'tested-column-count'));col.append(heading);
+  if(!count)col.append(el('p','No tested abilities yet.','tested-empty'));
+  columns.set(id,col);fragment.append(col);
+ }
+ const order={C:0,V:1,B:2,G:3};const rank=r=>order[String(r.input||'').trim().toUpperCase()]??99;
+ for(const r of [...entries].sort((a,b)=>rank(a)-rank(b)||String(a.name).localeCompare(String(b.name)))){
   const card=el('article',null,'announcement-card tested-card'),header=el('div',null,'tested-header');header.append(el('h3',r.name),el('span',r.kit,'tested-kit'));card.append(header);
   const review=needsRetest(r,history),date=el('p','Tested '+r.testedOn,'tested-date');if(review)date.append(el('span',' · Review after patch','tested-review'));card.append(date);
   const stats=el('dl',null,'tested-stats'),details=el('dl',null,'tested-text');
@@ -45,8 +63,9 @@ export async function renderTestedAbilities(root,slug,history){
   }
   if(stats.childElementCount)card.append(stats);if(details.childElementCount)card.append(details);
   if(r.evidence){try{const u=new URL(r.evidence);if(u.protocol==='https:'){const a=el('a','Testing evidence ↗','tested-evidence');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';card.append(a);}}catch{}}
-  list.append(card);
+  columns.get(kitGroup(r.kit)).append(card);
  }
+ list.append(fragment);
  }catch{note.textContent=list.childElementCount?'Refresh failed. Showing previously loaded values.':'Tested values are currently unavailable. Announcement history below remains available.';}
  finally{pending=false;refresh.disabled=false;refresh.textContent='Refresh values';}
  }

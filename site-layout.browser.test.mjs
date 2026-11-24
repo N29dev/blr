@@ -330,16 +330,20 @@ test('public tested abilities render all records and refresh after edits',async(
  await page.reload();
  await page.locator('#tested-abilities .tested-card').first().waitFor();
  assert.equal(await page.locator('#tested-abilities .tested-card').count(),1);
- records=[...records,{name:'Nin.',kit:'Base',testedOn:'2026-11-24',cooldown:40,range:185},{name:'Center of the World',kit:'Awakening',testedOn:'2026-11-24',cooldown:70,range:290}];
+ records=[...records,{name:'Nin.',kit:'Base',testedOn:'2026-11-24',cooldown:40,range:185},{name:'Center of the World',kit:'Awakening',testedOn:'2026-11-24',cooldown:70,range:290},{name:'Test chemistry',kit:'Chemical reaction',testedOn:'2026-11-24',cooldown:80}];
  await page.getByRole('button',{name:'Refresh values',exact:true}).click();
- await page.waitForFunction(()=>document.querySelectorAll('#tested-abilities .tested-card').length===3);
+ await page.waitForFunction(()=>document.querySelectorAll('#tested-abilities .tested-card').length===4);
  assert.match(await page.locator('#tested-abilities').innerText(),/Center of the World/);
- const cards=await page.locator('#tested-abilities .tested-card').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width,height:r.height};}));
- assert.ok(cards.every(r=>r.width>0&&r.height>0));
- for(let i=1;i<cards.length;i++)assert.ok(cards[i].top>=cards[i-1].bottom-0.5,'Tested ability cards must not overlap');
+ assert.equal(await page.locator('[data-kit="base"] .tested-card').count(),2);
+ assert.equal(await page.locator('[data-kit="awakening"] .tested-card').count(),1);
+ assert.equal(await page.locator('[data-kit="chemical"] .tested-card').count(),1);
+ const bounds=async()=>page.locator('#tested-abilities .tested-card').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};}));
+ const nonoverlap=cards=>{assert.ok(cards.every(r=>r.width>0&&r.height>0));for(let i=0;i<cards.length;i++)for(let j=i+1;j<cards.length;j++){const a=cards[i],b=cards[j];assert.ok(a.right<=b.left+0.5||b.right<=a.left+0.5||a.bottom<=b.top+0.5||b.bottom<=a.top+0.5,'Tested ability cards must not overlap');}};
+ nonoverlap(await bounds());await assertNoOverflow(page,'Mobile tested cards');
  await page.setViewportSize({width:1440,height:1000});
- const desktop=await page.locator('#tested-abilities .tested-card').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));
- for(let i=1;i<desktop.length;i++)assert.ok(desktop[i].top>=desktop[i-1].bottom-0.5,'Desktop tested cards must not overlap');
+ nonoverlap(await bounds());
+ const cols=await page.locator('#tested-abilities .tested-column').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {left:r.left,top:r.top};}));
+ assert.equal(cols.length,3);assert.ok(cols[0].left<cols[1].left&&cols[1].left<cols[2].left,'Kit columns must be side by side on desktop');
  await assertNoOverflow(page,'Tested ability cards');
  }finally{await context.close();}
 });
