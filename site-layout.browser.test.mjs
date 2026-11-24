@@ -321,3 +321,19 @@ test('wiki private editor requires authorization and loads tested entries withou
  await page.locator('#key').fill('test-key');await page.getByRole('button',{name:'Unlock',exact:true}).click();await page.locator('#workspace').waitFor();await page.locator('#style').selectOption('otoya');await page.getByRole('button',{name:/Ninjaristic Presence/}).waitFor();await page.getByRole('button',{name:/Ninjaristic Presence/}).click();assert.equal(await page.locator('[name="name"]').inputValue(),'Ninjaristic Presence');assert.equal(await page.locator('[name="cooldown"]').inputValue(),'');assert.equal(await page.locator('[name="testedOn"]').inputValue(),'');await assertNoOverflow(page,'Wiki editor');assert.equal(await page.evaluate(()=>JSON.stringify(localStorage).includes('test-key')),false);
  }finally{await context.close();}
 });
+
+test('public tested abilities render all records and refresh after edits',async()=>{
+ const {context,page}=await open('/styles/otoya/',390,850);
+ try{
+ let records=[{name:'Ninjaristic Presence',kit:'Base',testedOn:'2026-11-24',cooldown:45,range:0}];
+ await page.route('https://glutony.scp343hey.workers.dev/api/wiki/styles/otoya**',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({entries:records})}));
+ await page.reload();
+ await page.locator('#tested-abilities .tested-card').first().waitFor();
+ assert.equal(await page.locator('#tested-abilities .tested-card').count(),1);
+ records=[...records,{name:'Nin.',kit:'Base',testedOn:'2026-11-24',cooldown:40,range:185},{name:'Center of the World',kit:'Awakening',testedOn:'2026-11-24',cooldown:70,range:290}];
+ await page.getByRole('button',{name:'Refresh values',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelectorAll('#tested-abilities .tested-card').length===3);
+ assert.match(await page.locator('#tested-abilities').innerText(),/Center of the World/);
+ await assertNoOverflow(page,'Tested ability cards');
+ }finally{await context.close();}
+});

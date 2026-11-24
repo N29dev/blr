@@ -24,11 +24,16 @@ const css=`
 export async function renderTestedAbilities(root,slug,history){
  const section=el('section',null,'wiki-details-section');section.id='tested-abilities';const style=el('style',css);section.append(style,el('h2','Manually tested abilities'));
  const note=el('p','Loading tested values…','wiki-muted');section.append(note);const anchor=[...root.querySelectorAll(':scope > .wiki-details-section')].find(s=>['Announced abilities','Abilities','Patch history'].includes(s.querySelector('h2')?.textContent));root.insertBefore(section,anchor||null);
- try{
- const {entries}=await wikiRequest('/styles/'+slug);if(!Array.isArray(entries))throw Error();
- if(!entries.length){note.textContent='No manually tested values published yet.';return;}
- note.textContent='Tested in-game values. “Review after patch” indicates possible changes.';
+ const refresh=el('button','Refresh values','kb-clear-filter');refresh.type='button';section.querySelector('h2').append(refresh);
  const list=el('div',null,'tested-list');section.append(list);
+ let pending=false,lastFetch=0;
+ async function reload(){
+ if(pending||!section.isConnected)return;pending=true;refresh.disabled=true;refresh.textContent='Refreshing…';
+ try{
+ const {entries}=await wikiRequest('/styles/'+slug+'?fresh='+Date.now());if(!Array.isArray(entries))throw Error();
+ list.replaceChildren();lastFetch=Date.now();
+ if(!entries.length){note.textContent='No manually tested values published yet.';return;}
+ note.textContent=entries.length+' tested '+(entries.length===1?'ability':'abilities')+'. “Review after patch” indicates possible changes.';
  for(const r of entries.sort((a,b)=>a.kit.localeCompare(b.kit)||a.name.localeCompare(b.name))){
   const card=el('article',null,'announcement-card tested-card'),header=el('div',null,'tested-header');header.append(el('h3',r.name),el('span',r.kit,'tested-kit'));card.append(header);
   const review=needsRetest(r,history),date=el('p','Tested '+r.testedOn,'tested-date');if(review)date.append(el('span',' · Review after patch','tested-review'));card.append(date);
@@ -42,5 +47,13 @@ export async function renderTestedAbilities(root,slug,history){
   if(r.evidence){try{const u=new URL(r.evidence);if(u.protocol==='https:'){const a=el('a','Testing evidence ↗','tested-evidence');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';card.append(a);}}catch{}}
   list.append(card);
  }
- }catch{note.textContent='Tested values are currently unavailable. Announcement history below remains available.';}
+ }catch{note.textContent=list.childElementCount?'Refresh failed. Showing previously loaded values.':'Tested values are currently unavailable. Announcement history below remains available.';}
+ finally{pending=false;refresh.disabled=false;refresh.textContent='Refresh values';}
+ }
+ refresh.addEventListener('click',reload);
+ const refreshIfStale=()=>{if(!document.hidden&&Date.now()-lastFetch>3000)reload()};
+ window.addEventListener('focus',refreshIfStale);
+ document.addEventListener('visibilitychange',refreshIfStale);
+ window.addEventListener('pageshow',event=>{if(event.persisted)reload()});
+ await reload();
 }
