@@ -304,10 +304,86 @@
     if(['servers','customs'].includes(page))loadAccount();
   }
 
+
+  // Anonymous, visible-browser presence; one identifier shared by tabs, not a Roblox account.
+  function initWebsitePresence(){
+    if(location.origin!=='https://blr.n29.kz'||location.pathname.startsWith('/tech/admin/')||location.pathname.startsWith('/auth/'))return;
+    const home=location.pathname==='/';
+    const anchor=home?document.querySelector('.kb-heading, .hero'):document.querySelector('footer');
+    if(!anchor)return;
+    const box=createNode('div','n29-site-presence');
+    box.hidden=true;
+    box.setAttribute('aria-label','Website visitor statistics');
+    box.title='Online: browsers active in the last 2.5 minutes. Today: unique browsers since midnight UTC. Total: one visit per browser per UTC day since the counter launched. Approximate; no Roblox accounts or IP addresses are stored.';
+    box.style.cssText='display:none;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:9px 12px;margin:12px 0;color:inherit;font:inherit;font-size:12px;line-height:1.5;border:1px solid rgba(125,211,252,.18);border-radius:10px;background:rgba(125,211,252,.035);width:fit-content;max-width:100%;box-sizing:border-box;';
+    const live=createNode('span','');
+    const dot=createNode('span','','●');
+    dot.setAttribute('aria-hidden','true');dot.style.cssText='color:#70d9a1;margin-right:6px;font-size:10px;';
+    const online=createNode('strong','','');
+    live.append(dot,online);
+    const today=createNode('span','','');
+    const total=createNode('span','','');
+    box.append(live,today,total);
+    if(home)anchor.after(box);else anchor.append(box);
+    let id=null;
+    try{
+      if(navigator.globalPrivacyControl!==true && navigator.doNotTrack!=='1'){
+        const key='n29.blr.presence.v1';
+        const valid=v=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
+        let entry=null;
+        try{entry=JSON.parse(localStorage.getItem(key)||'null');}catch{}
+        if(!entry||!valid(entry.id)||!Number.isFinite(entry.expires)||entry.expires<=Date.now()){
+          entry={id:crypto.randomUUID(),expires:Date.now()+7*86400000};
+          localStorage.setItem(key,JSON.stringify(entry));
+        }
+        id=entry.id;
+        window.addEventListener('storage',event=>{
+          if(event.key!==key)return;
+          try{const next=JSON.parse(event.newValue||'null');id=next&&valid(next.id)&&next.expires>Date.now()?next.id:null;}catch{id=null;}
+        });
+      }
+    }catch{/* Storage disabled: show aggregate counts without counting this browser. */}
+    const nf=new Intl.NumberFormat();
+    let busy=false,lastRequest=0,timer=null,shown=false;
+    async function refresh(force=false){
+      if(document.visibilityState!=='visible'||busy||(!force&&Date.now()-lastRequest<45000))return;
+      busy=true;lastRequest=Date.now();
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),8000);
+      try{
+        const opts={method:id?'POST':'GET',credentials:'omit',cache:'no-store',signal:controller.signal};
+        if(id){opts.headers={'Content-Type':'application/json'};opts.body=JSON.stringify({id});}
+        const response=await fetch('/api/presence',opts);
+        if(!response.ok)throw Error('Presence unavailable');
+        const data=await response.json();
+        if(![data.online,data.today,data.total].every(n=>Number.isSafeInteger(n)&&n>=0))throw Error('Invalid presence data');
+        online.textContent=nf.format(data.online)+' online now';
+        today.textContent=nf.format(data.today)+' visitors today';
+        total.textContent=nf.format(data.total)+' total visits';
+        dot.style.color='#70d9a1';
+        today.hidden=false;total.hidden=false;
+        box.hidden=false;box.style.display='flex';shown=true;
+      }catch{
+        if(shown){online.textContent='Visitor count unavailable';dot.style.color='#8592a5';today.hidden=true;total.hidden=true;}
+      }finally{clearTimeout(timeout);busy=false;}
+    }
+    const stop=()=>{if(timer!==null){clearInterval(timer);timer=null;}};
+    function resume(force=false){
+      if(document.visibilityState!=='visible'){stop();return;}
+      if(timer===null)timer=setInterval(()=>refresh(),60000);
+      refresh(force);
+    }
+    document.addEventListener('visibilitychange',()=>resume(false));
+    window.addEventListener('pagehide',stop);
+    window.addEventListener('pageshow',event=>{if(event.persisted)resume(true);});
+    resume(true);
+  }
+
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
   try { initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
   try { initSiteConnections(); } catch(error) { console.warn('Site map enhancement unavailable',error); }
+  try { initWebsitePresence(); } catch(error) { console.warn('Visitor statistics unavailable',error); }
   if(page==='home') {
     try { initHomeFilters(); } catch(error) { console.warn('Tool filters unavailable',error); }
   }
