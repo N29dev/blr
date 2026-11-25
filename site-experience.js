@@ -308,23 +308,26 @@
   // Anonymous, visible-browser presence; one identifier shared by tabs, not a Roblox account.
   function initWebsitePresence(){
     if(location.origin!=='https://blr.n29.kz'||location.pathname.startsWith('/tech/admin/')||location.pathname.startsWith('/auth/'))return;
-    const home=location.pathname==='/';
-    const anchor=(home?document.querySelector('.kb-heading, .hero'):null)||document.querySelector('footer, .footer, .n29-bottom')||document.querySelector('main, .wrap')||document.body;
+    const nav=document.querySelector('.n29-nav');
+    const anchor=nav||document.querySelector('header, main, .wrap')||document.body;
     if(!anchor)return;
     const box=createNode('div','n29-site-presence');
-    box.hidden=true;
+    // A dedicated compact strip inside the sticky nav avoids crowding the links/search/account grid.
     box.setAttribute('aria-label','Website visitor statistics');
     box.title='Online: browsers active in the last 2.5 minutes. Today: unique browsers since midnight UTC. Total: one visit per browser per UTC day since the counter launched. Approximate; no Roblox accounts or IP addresses are stored.';
-    box.style.cssText='display:none;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:9px 12px;margin:12px 0;color:inherit;font:inherit;font-size:12px;line-height:1.5;border:1px solid rgba(125,211,252,.18);border-radius:10px;background:rgba(125,211,252,.035);width:fit-content;max-width:100%;box-sizing:border-box;';
+    box.style.cssText='display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3px 16px;padding:4px 8px;margin:0;color:#a9bdd1;font:500 11px/1.5 system-ui,sans-serif;border-top:1px solid rgba(160,190,220,.10);background:rgba(8,15,28,.22);width:100%;max-width:100%;box-sizing:border-box;font-variant-numeric:tabular-nums;';
     const live=createNode('span','');
     const dot=createNode('span','','●');
-    dot.setAttribute('aria-hidden','true');dot.style.cssText='color:#70d9a1;margin-right:6px;font-size:10px;';
-    const online=createNode('strong','','');
+    dot.setAttribute('aria-hidden','true');dot.style.cssText='color:#8592a5;margin-right:5px;font-size:9px;';
+    const online=createNode('strong','','Loading visitors…');
+    online.style.cssText='font-weight:650;color:#d9e5ef;';
     live.append(dot,online);
     const today=createNode('span','','');
     const total=createNode('span','','');
+    live.style.whiteSpace=today.style.whiteSpace=total.style.whiteSpace='nowrap';
+    today.hidden=true;total.hidden=true;
     box.append(live,today,total);
-    if(home&&anchor.matches('.kb-heading, .hero'))anchor.after(box);else anchor.append(box);
+    if(nav)nav.append(box);else anchor.prepend(box);
     let id=null;
     try{
       if(navigator.globalPrivacyControl!==true && navigator.doNotTrack!=='1'){
@@ -344,7 +347,7 @@
       }
     }catch{/* Storage disabled: show aggregate counts without counting this browser. */}
     const nf=new Intl.NumberFormat();
-    let busy=false,lastRequest=0,timer=null,shown=false;
+    let busy=false,lastRequest=0,timer=null;
     async function refresh(force=false){
       if(document.visibilityState!=='visible'||busy||(!force&&Date.now()-lastRequest<45000))return;
       busy=true;lastRequest=Date.now();
@@ -362,9 +365,9 @@
         total.textContent=nf.format(data.total)+' total visits';
         dot.style.color='#70d9a1';
         today.hidden=false;total.hidden=false;
-        box.hidden=false;box.style.display='flex';shown=true;
+        online.style.color='#c7f5db';
       }catch{
-        if(shown){online.textContent='Visitor count unavailable';dot.style.color='#8592a5';today.hidden=true;total.hidden=true;}
+        online.textContent='Visitor count unavailable';online.style.color='#a9bdd1';dot.style.color='#8592a5';today.hidden=true;total.hidden=true;
       }finally{clearTimeout(timeout);busy=false;}
     }
     const stop=()=>{if(timer!==null){clearInterval(timer);timer=null;}};
