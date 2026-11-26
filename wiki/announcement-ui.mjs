@@ -88,6 +88,6 @@ export async function hydrateAnnouncements(){
   target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',extra?[extra,...data]:data);
  }else{target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',data);}
  }catch{if(!style&&!flow)target.replaceChildren(node('p','The announcement archive could not be loaded. Reload to retry.','wiki-muted'));else target.prepend(node('p','Announcement records could not be loaded. Reload to retry.','wiki-muted'));}
- if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./gameplay-reference.mjs?v=1').then(m=>{if(style)m.renderStyleReference(target,route.split('/')[1]);else if(flow)m.renderFlowReference(target,route.split('/')[1]);else m.renderMechanicsReference(target,route);}).catch(console.error);
+ if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./gameplay-reference.mjs?v=2').then(m=>{if(style)m.renderStyleReference(target,route.split('/')[1]);else if(flow)m.renderFlowReference(target,route.split('/')[1]);else m.renderMechanicsReference(target,route);}).catch(console.error);
  if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./community-ui.mjs?v=1').then(m=>m.addCommunityReferences(target,route)).catch(()=>{});
 }
