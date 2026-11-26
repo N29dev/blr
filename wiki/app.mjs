@@ -1,4 +1,4 @@
-import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki,matchesQuery} from './content.mjs?v=4';
+import {STYLES_WIKI,RARITIES,ARTICLES,PATCHES,PRACTICE,ROSTER_AS_OF,filterStyles,byId,searchWiki,matchesQuery} from './content.mjs?v=5';
 // One lightweight icon renderer for existing static wiki cards and article infoboxes.
 // The accessible name remains in the surrounding link or heading.
 import {iconSpec,ICON_FONT_FAMILY} from './icons.mjs?v=3';
