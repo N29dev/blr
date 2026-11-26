@@ -1,4 +1,4 @@
-import {renderAbilityMath} from './ability-math.mjs?v=1';
+import {renderAbilityMath} from './ability-math.mjs?v=2';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
 const S='client review · 26 Nov 2026';
@@ -45,6 +45,29 @@ const mechanics={
  'Five Stage Volley':{type:'Cutscene shot',short:'Possession-based awakened volley.',context:'Mastery IV · On-ball'},
  'Two Stage Volley':{type:'Cutscene shot',short:'Off-ball awakened volley targeting an opponent-held ball.',context:'Mastery IV · Off-ball'}
 };
+
+// Structured, client-side activation gates and observable phase descriptions.
+// A null phase time means event-dependent or not specified, not zero seconds.
+const behavior={
+ Trap:{gates:['C ready','Ability use lock elapsed','Ball not anchored','Global ability lock elapsed (initial trap)'],branches:[['On-ball','Lift sequence; 2 s recast timer; 0.9 s wait before trap animation'],['Off-ball','1 s recast timer; trap animation starts without the lift wait']],phases:[['Activation','Request trap; play initial animation'],['Possession-dependent','Ball/player trap animation; cleanup may occur on loss of possession or state change'],['Cleanup','Apply full cooldown and stop trap animation']]},
+ 'Trap Shot':{gates:['Trap follow-up state','C ready','Ball not anchored','Stamina > 10','On-ball'],phases:[['0 s','Play shot animation'],['0.35 s','Request shot'],['Response','Set initial ball velocity'],['0.6 s','Scheduled cleanup']]},
+ Dash:{gates:['V ready'],branches:[['Local movement X < 0','Left relative to character facing'],['Otherwise','Right relative to character facing']],phases:[['Activation','Select lateral direction; request movement; play matching animation'],['Server movement','Distance and duration not specified in this client module']]},
+ 'Skull Trap':{gates:['C ready','No internal trap state','Ball not anchored','Character not already Trapped'],phases:[['0 s','Request Skull Trap; clear existing body movers; start animation'],['0.5 s','Begin possession/state monitoring'],['Possession acquired','Pause player trap animation; keep ball animation'],['3 s','Scheduled animation stop; cleanup conditional'],['After cleanup + 1.4 s','Apply full cooldown if follow-up still pending and not shooting']]},
+ 'Breakdance Shot':{gates:['On-ball','C ready','No internal trap state','Character Trapped attribute'],phases:[['0 s','Start shot animation'],['1.5 s','Request shot; call shared shot helper with camera direction'],['2 s','Scheduled cleanup']]},
+ 'Zero Reset Turn':{gates:['On-ball','Grounded','V ready','No internal trap state'],phases:[['0 s','Request skill; start forward dash toward 5-stud target'],['0.2 s','Start velocity-driven curved steering'],['~0.4 s','Ten 0.02 s steering tweens complete nominally; remove movement controllers'],['0.6 s','Scheduled cleanup; reset ball velocity']]},
+ 'Direct Heel Lift':{gates:['On-ball','Grounded','B ready','No internal trap state'],phases:[['0 s','Start animations; request skill'],['Same activation','Start forward dash toward 60-stud target (0.5 s helper parameter); register shot helper'],['Response / helper','Shot timing and realized movement not established'],['1.5 s','Scheduled cleanup']]},
+ 'I Am Nagi':{gates:['On-ball','Awakened','Grounded (not jumping/freefall)','Ball not anchored','B ready'],phases:[['0 s','Disable shiftlock, enter cutscene, anchor character'],['0.1 s','Request skill; start animations; capture camera direction'],['Response','Launch ball; unanchor character; restore shiftlock'],['10 s','Fallback state/anchor cleanup']]},
+ 'Effortless Miracle':{gates:['Awakening mastery kit','Air-ball rule','V ready'],phases:[['Activation','Mark Effortless Miracle used; invoke cutscene helper with camera direction'],['Helper / server','Movement and cutscene duration not established']]},
+ 'Five Stage Volley':{gates:['Awakening mastery kit','On-ball','Grounded','B ready'],phases:[['Activation','Invoke cutscene helper with camera direction'],['Helper / server','Movement and cutscene duration not established']]},
+ 'Two Stage Volley':{gates:['Awakening mastery kit','Off-ball','B ready','Ball on a character','Opponent or training dummy'],phases:[['Activation','Validate ball holder; invoke cutscene helper with camera direction'],['Helper / server','Movement and cutscene duration not established']]}
+};
+function renderBehavior(name){
+ const b=behavior[name];if(!b)return null;const box=el('details',null,'ta-behavior');box.append(el('summary','Activation conditions & movement phases'));
+ const gates=el('div',null,'ta-gates');for(const gate of b.gates)gates.append(el('span',gate));box.append(el('h4','All activation gates','ta-detail-group'),gates);
+ if(b.branches){box.append(el('h4','Conditional branches','ta-detail-group'));const branch=el('dl',null,'ta-branches');for(const [a,c] of b.branches){const d=el('div');d.append(el('dt',a),el('dd',c));branch.append(d);}box.append(branch);}
+ box.append(el('h4','Phase sequence','ta-detail-group'));const phases=el('ol',null,'ta-phases');for(const [at,desc] of b.phases){const item=el('li'),t=el('div',at,'ta-phase-time');item.append(t,el('div',desc,'ta-phase-text'));phases.append(item);}box.append(phases,el('p','Client-visible gates and nominal events only. Server validation and animation root motion may add conditions or alter timing.','ta-missing'));return box;
+}
+
 const keyOrder=['Cooldown','Singularity cooldown','Singularity cleanup cooldown','Shot power','Forward dash target','Movement distance parameter','On-ball recast timer','Recast timer','Shot request delay','Request delay','Dash time parameter','Off-ball recast timer'];
 const labelShort={'Singularity cooldown':'With Singularity','Singularity cleanup cooldown':'With Singularity','Forward dash target':'Dash target','Movement distance parameter':'Movement parameter','On-ball recast timer':'On-ball recast','Off-ball recast timer':'Off-ball recast','Shot request delay':'Request delay','Dash time parameter':'Dash time parameter'};
 function prominent(stats){return keyOrder.map(k=>stats.find(x=>x.label===k)).filter(Boolean).slice(0,4);}
@@ -81,6 +104,17 @@ const css=`
 #technical-abilities .ta-card p{font-size:.82rem;line-height:1.5;margin:7px 0}
 #technical-abilities .ta-short{color:#dce6f2}
 #technical-abilities .ta-requirements{color:#aebed0!important}
+#technical-abilities .ta-gates{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}
+#technical-abilities .ta-gates span{font-size:.74rem;padding:4px 7px;border:1px solid #3b536b;background:#1b2b3c;border-radius:5px;color:#c4d8ed}
+#technical-abilities .ta-branches{margin:6px 0;display:grid;gap:5px}
+#technical-abilities .ta-branches>div{background:#101923;border:1px solid #303d4c;padding:8px;border-radius:5px}
+#technical-abilities .ta-branches dd{font-size:.79rem;font-weight:400}
+#technical-abilities .ta-phases{list-style:none!important;margin:8px 0;padding:0 0 0 8px;display:grid;gap:0}
+#technical-abilities .ta-phases li{position:relative;margin:0;padding:0 0 12px 14px;border-left:1px solid #405267}
+#technical-abilities .ta-phases li:before{content:"";position:absolute;left:-4px;top:4px;width:7px;height:7px;background:#91bce6;border-radius:50%}
+#technical-abilities .ta-phases li:last-child{padding-bottom:0}
+#technical-abilities .ta-phase-time{font-size:.74rem;font-weight:600;color:#91bce6;font-variant-numeric:tabular-nums}
+#technical-abilities .ta-phase-text{font-size:.8rem;line-height:1.5;color:#d1deee}
 #technical-abilities .ta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--ta-line);border-radius:6px;overflow:hidden;background:var(--ta-line);margin:9px 0}
 #technical-abilities .ta-grid>div{background:var(--ta-faint);padding:8px 9px;min-width:0}
 #technical-abilities dt{font-size:.72rem;color:var(--ta-muted);line-height:1.3}
@@ -127,7 +161,7 @@ export function renderTechnicalAbilities(root,slug){
   detail.open=expanded.has(a.name);detail.addEventListener('toggle',()=>{if(detail.open)expanded.add(a.name);else expanded.delete(a.name);});
   detail.append(el('p',a.description));if(m.formula)detail.append(el('p',m.formula));
   for(const g of ['Timing','Movement','Ball physics']){const rows=a.stats.filter(x=>groupStat(x)===g);if(!rows.length)continue;detail.append(el('h4',g,'ta-detail-group'));const dl=el('dl',null,'ta-detail-rows');for(const x of rows){const row=el('div'),dd=el('dd',valueText(x,units.value));dd.append(el('span',x.kind,'ta-kind'));row.append(el('dt',x.label),dd);dl.append(row);}detail.append(dl);}
-  detail.append(el('p','Still needs testing: '+a.unknown.join(', ')+'.','ta-missing'));const math=renderAbilityMath(a.name);if(math)card.append(math);card.append(detail);return card;
+  detail.append(el('p','Still needs testing: '+a.unknown.join(', ')+'.','ta-missing'));const math=renderAbilityMath(a.name);if(math)card.append(math);const phase=renderBehavior(a.name);if(phase)card.append(phase);card.append(detail);return card;
  }
  function render(){
   list.replaceChildren();overview.replaceChildren();for(const b of tabs.children)b.setAttribute('aria-pressed',String(b.dataset.kit===active));
