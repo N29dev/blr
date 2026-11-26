@@ -66,6 +66,19 @@ function analyzeReplay(frames,geometry,options={}){
    }
   }
  }
+ // Remote-player counter credits are stored as sparse events, not per-frame snapshots.
+ // Keep local snapshot-based counts for legacy and new recordings; never count them twice.
+ const remoteCounters={goal_credit:'Goals',assist:'Assists',save:'Saves',steal:'Steals',ankle_break:'AnkleBreakers',pass_count:'FilteredPasses'};
+ for(const f of frames){
+  if(f.t>end+.1)break;
+  if(!Array.isArray(f.events))continue;
+  for(const e of f.events){
+   if(!e||e.source!=='counter'||!Object.hasOwn(remoteCounters,e.type)||!Number.isFinite(e.t)||e.t<start||e.t>end||Math.abs(e.t-f.t)>.1||!Number.isSafeInteger(e.delta)||e.delta<=0)continue;
+   const id=String(e.playerId);if(id===localId)continue;
+   const a=actors.get(id);if(!a||replayNpc(a,options.roster||{}))continue;
+   const key=remoteCounters[e.type];a.counters[key]=(a.counters[key]??0)+e.delta;
+  }
+ }
  for(const a of actors.values()){if(!a.styles.size&&identity.get(a.id)?.style)a.styles.add(identity.get(a.id).style);if(!a.flows.size&&identity.get(a.id)?.flow)a.flows.add(identity.get(a.id).flow);a.average=a.seconds?[a.x/a.seconds,a.z/a.seconds]:null;a.team=a.teamSeconds.Home&&a.teamSeconds.Away?'Mixed':a.teamSeconds.Home?'Home':'Away'}
  return {actors,teams,covered,gapSeconds,ballHeat,ballSeconds,nx,nz,start,end,actorLimit};
 }
