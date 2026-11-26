@@ -108,7 +108,7 @@ for(const width of [1440,820,390,360]){
 }
 
 
-const sitePages=['/','/tools/','/servers/','/servers/customs/','/tech/','/clipper.html','/tiktok-downloader.html','/leaderboard/','/404.html'];
+const sitePages=['/','/field/','/replays/','/tools/','/servers/','/servers/customs/','/tech/','/clipper.html','/tiktok-downloader.html','/leaderboard/','/404.html'];
 for(const route of sitePages){
   for(const width of [390,820]){
     test('Shared Quick Jump is consistent on '+route+' at '+width+'px',async()=>{
@@ -134,6 +134,10 @@ for(const route of sitePages){
         assert.ok(computed.radius!=='0px','Different modal border radius on '+route);
         const query=dialog.locator('.site-command-search');
         assert.ok(await query.isVisible(),route+' search input hidden');
+        await query.fill('Replay Studio');
+        assert.ok(await dialog.locator('.site-command-item[href="/replays/"]').count()>0,'Replay Studio must be discoverable');
+        await query.fill('Field Lab');
+        assert.ok(await dialog.locator('.site-command-item[href="/field/"]').count()>0,'Field Lab must be discoverable');
         await query.fill('style directory');
         assert.ok(await dialog.locator('.site-command-item').count()>0,'Style search yields no results');
         assert.ok((await dialog.locator('.site-command-item').first().innerText()).toLowerCase().includes('style'));
@@ -378,3 +382,28 @@ for(const width of [1440,390]){
     }finally{await context.close();}
   });
 }
+
+test('Replay imports reject malformed data and isolate label fingerprints',async()=>{
+  const {context,page}=await open('/replays/',1440,900);
+  try{
+    const result=await page.evaluate(async()=>{
+      const base={t:0,players:[{id:1,team:'Home',cf:[0,10,0]}]};
+      const input=frames=>[new File([JSON.stringify(frames)],'chunk_000001.json')];
+      const first=await parseReplayFiles(input([base]));
+      const other=await parseReplayFiles(input([{...base,players:[{id:1,team:'Home',cf:[5,10,0]}]}]));
+      let rejected=false;try{await parseReplayFiles(input([{...base,players:[null]}]))}catch{rejected=true}
+      return {different:first.fp!==other.fp,rejected,frames:first.chunks.length};
+    });
+    assert.deepEqual(result,{different:true,rejected:true,frames:1});
+  }finally{await context.close();}
+});
+test('Field Lab shares measured geometry and preserves game-meter ability modes',async()=>{
+  const {context,page}=await open('/field/',1440,900);
+  try{
+    assert.equal(await page.locator('#calibration').inputValue(),'studs');
+    assert.ok((await page.locator('#pitch-size').textContent()).includes('544.27 × 406.08 studs'));
+    await page.locator('[data-mode="shot"]').click();
+    assert.equal(await page.locator('#calibration').inputValue(),'405');
+    assert.ok((await page.locator('#pitch-size').textContent()).includes('540 × 405 m'));
+  }finally{await context.close();}
+});
