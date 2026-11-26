@@ -240,6 +240,7 @@ export const RARE_LUA_REVIEW={
           "p": 225,
           "k": 0.2,
           "mode": "fixed",
+          "horizontalFacing": true,
           "conditional": true
         }
       },

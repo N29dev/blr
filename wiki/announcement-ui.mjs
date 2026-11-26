@@ -77,7 +77,7 @@ export async function hydrateAnnouncements(){
  if(style){
   const slug=route.split('/')[1],history=og?.changes?.some(c=>c.style===slug)?[ogPatch(og,slug),...data.history]:data.history;
   updateStyle(target,{...data,history});
-  import('./technical-abilities.mjs?v=9').then(m=>m.renderTechnicalAbilities(target,slug)).catch(()=>{});
+  import('./technical-abilities.mjs?v=10').then(m=>m.renderTechnicalAbilities(target,slug)).catch(()=>{});
   import('./tested-ui.mjs?v=6').then(m=>m.renderTestedAbilities(target,slug,history)).catch(()=>{});
  }else if(flow)updateFlow(target,data);
  else if(route==='updates')renderArchive(target,og?[ogPatch(og),...data]:data);

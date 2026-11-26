@@ -1,7 +1,7 @@
-import {RARE_LUA_REVIEW,renderCurveReference,renderRarePass} from './rare-lua-review.mjs?v=1';
+import {RARE_LUA_REVIEW,renderCurveReference,renderRarePass} from './rare-lua-review.mjs?v=2';
 import {EPIC_REVIEW} from './epic-review.mjs?v=1';
 import {DERIVED_KITS} from './derived-kits.mjs?v=2';
-import {renderAbilityMath} from './ability-math.mjs?v=4';
+import {renderAbilityMath} from './ability-math.mjs?v=5';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
 const S='client review · 26 Nov 2026';
@@ -232,7 +232,7 @@ function derivedCard(a,units,expanded,slug){
  let previews=0;const review=rareReview[slug]||EPIC_REVIEW[slug]?.moves;for(const imp of a.implementations){const shot=review&&a.kit==='chemical'?null:imp.shot;const m=renderAbilityMath(a.name,{shot,motion:imp.motion});if(m){if(a.implementations.length>1)m.querySelector('summary').append(el('span',' · '+imp.label));card.append(m);previews++;}if(review){for(const stat of rareRanges(a,imp)){card.append(rangePreview(stat,units));previews++;}}}
  if(reviewed?.pass){card.append(guidedPassPreview(reviewed.pass,units));previews++;}
  if(fresh?.pass){card.append(renderRarePass(fresh.pass));previews++;}
- if(review){if(!previews)card.append(el('p','Interactive range / movement model unavailable: no resolved formula or distance threshold for this branch.','ta-missing'));card.append(el('p','Review: '+(typeof review[a.name]==='string'?review[a.name]:'Verify branch-specific activation, timing and actual movement before publishing measurements.'),'ta-missing'));}
+ if(review){if(!previews)card.append(el('p','Interactive range / movement model unavailable: no resolved formula or distance threshold for this branch.','ta-missing'));card.append(el('p','Review: '+(fresh?'Actual server acceptance, measured movement, protection and timing still need gameplay testing.':typeof review[a.name]==='string'?review[a.name]:'Verify branch-specific activation, timing and actual movement before publishing measurements.'),'ta-missing'));}
  const detail=el('details');detail.append(el('summary','Timing, mechanics & verification'));detail.open=expanded.has(id+'-stats');detail.addEventListener('toggle',()=>{if(detail.open)expanded.add(id+'-stats');else expanded.delete(id+'-stats');});
  for(const imp of a.implementations){detail.append(el('h4',imp.label,'ta-detail-group'));const dl=el('dl',null,'ta-detail-rows');for(const x of imp.stats){const row=el('div'),dd=el('dd',valueText(x,units));dd.append(el('span',x.kind,'ta-kind'));row.append(el('dt',x.label),dd);dl.append(row);}if(imp.stats.length)detail.append(dl);else detail.append(el('p','No resolved numeric parameters.','ta-missing'));detail.append(el('p','Review reference: ability export, lines '+imp.source.from+'–'+imp.source.to+'.','ta-missing'));}
  detail.append(el('p','Configured values are not necessarily effective values. Callback delays are not a guaranteed execution timeline. Server overrides and animation timing require individual review and gameplay measurement.','ta-missing'));card.append(detail);return card;
