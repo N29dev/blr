@@ -1,3 +1,4 @@
+import {renderAbilityMath} from './ability-math.mjs?v=1';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
 const S='client review · 26 Nov 2026';
@@ -126,7 +127,7 @@ export function renderTechnicalAbilities(root,slug){
   detail.open=expanded.has(a.name);detail.addEventListener('toggle',()=>{if(detail.open)expanded.add(a.name);else expanded.delete(a.name);});
   detail.append(el('p',a.description));if(m.formula)detail.append(el('p',m.formula));
   for(const g of ['Timing','Movement','Ball physics']){const rows=a.stats.filter(x=>groupStat(x)===g);if(!rows.length)continue;detail.append(el('h4',g,'ta-detail-group'));const dl=el('dl',null,'ta-detail-rows');for(const x of rows){const row=el('div'),dd=el('dd',valueText(x,units.value));dd.append(el('span',x.kind,'ta-kind'));row.append(el('dt',x.label),dd);dl.append(row);}detail.append(dl);}
-  detail.append(el('p','Still needs testing: '+a.unknown.join(', ')+'.','ta-missing'));card.append(detail);return card;
+  detail.append(el('p','Still needs testing: '+a.unknown.join(', ')+'.','ta-missing'));const math=renderAbilityMath(a.name);if(math)card.append(math);card.append(detail);return card;
  }
  function render(){
   list.replaceChildren();overview.replaceChildren();for(const b of tabs.children)b.setAttribute('aria-pressed',String(b.dataset.kit===active));
