@@ -476,3 +476,23 @@ test('Nagi mathematical previews react to input and retain exact steering coordi
   await assertNoOverflow(page,'Nagi math previews');
  }finally{await context.close();}
 });
+
+test('Nagi playback and conditional phase details are available',async()=>{
+ const {context,page}=await open('/styles/nagi/',390,900);
+ try{
+  const section=page.locator('#technical-abilities');
+  await section.locator('.ta-card').first().waitFor();
+  assert.equal(await section.locator('.ta-behavior').count(),7);
+  const turn=section.locator('.ta-card').filter({has:page.getByRole('heading',{name:'Zero Reset Turn',exact:true})});
+  await turn.getByText('Mathematical steering path',{exact:true}).click();
+  assert.ok(await turn.locator('math').count()>=3);
+  await turn.getByRole('button',{name:'▶ Play',exact:true}).click();
+  await page.waitForFunction(()=>Number(document.querySelector('[aria-label="Ability timeline progress"]')?.value)>0);
+  await turn.getByRole('button',{name:'Reset playback'}).click();
+  assert.equal(Number(await turn.getByLabel('Ability timeline progress').inputValue()),0);
+  await turn.getByText('Activation conditions & movement phases',{exact:true}).click();
+  assert.equal(await turn.locator('.ta-gates span').count(),4);
+  assert.equal(await turn.locator('.ta-phases li').count(),4);
+  await assertNoOverflow(page,'Nagi animation controls');
+ }finally{await context.close();}
+});
