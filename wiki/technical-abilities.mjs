@@ -1,4 +1,5 @@
-import {renderAbilityMath} from './ability-math.mjs?v=3';
+import {DERIVED_KITS} from './derived-kits.mjs?v=2';
+import {renderAbilityMath} from './ability-math.mjs?v=4';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
 const S='client review · 26 Nov 2026';
@@ -113,6 +114,7 @@ const css=`
 #technical-abilities .ta-phases li{position:relative;margin:0;padding:0 0 12px 14px;border-left:1px solid #405267}
 #technical-abilities .ta-phases li:before{content:"";position:absolute;left:-4px;top:4px;width:7px;height:7px;background:#91bce6;border-radius:50%}
 #technical-abilities .ta-phases li:last-child{padding-bottom:0}
+#technical-abilities .ta-impl+.ta-impl{border-top:1px solid #303d4c;margin-top:10px;padding-top:8px}
 #technical-abilities .ta-phase-time{font-size:.74rem;font-weight:600;color:#91bce6;font-variant-numeric:tabular-nums}
 #technical-abilities .ta-phase-text{font-size:.8rem;line-height:1.5;color:#d1deee}
 #technical-abilities .ta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--ta-line);border-radius:6px;overflow:hidden;background:var(--ta-line);margin:9px 0}
@@ -139,8 +141,37 @@ function slotSummary(active){
  const rows=active==='base'?[['C','Trap → Trap Shot','I: Skull Trap → Breakdance Shot'],['V','Dash','II: Zero Reset Turn'],['B','Not available normally','III: Direct Heel Lift']]:[['C','Trap → Trap Shot','IV: Skull Trap → Breakdance Shot'],['V','Dash','IV: Effortless Miracle → Zero Reset Turn'],['B','I Am Nagi','IV: Five Stage / Two Stage Volley']];
  for(const [key,base,mastery] of rows){const slot=el('div',null,'ta-slot');slot.append(el('b',key),el('p',base),el('p',mastery));summary.append(slot);}return summary;
 }
+
+function derivedCard(a,units,expanded){
+ const card=el('article',null,'announcement-card ta-card'),head=el('div',null,'ta-head'),name=el('div',null,'ta-name'),id=[a.name,a.input,a.kit,a.variant,a.sourceLine].join('|');
+ const types=[...new Set(a.implementations.flatMap(i=>[...(i.shot?['Shot']:[]),...(i.motion?.length?['Movement']:[]),...(i.phases.some(p=>p.at==='Cutscene')?['Cutscene']:[])]))];
+ name.append(el('h3',a.name),el('div',a.variant+' · '+(a.kit==='awakening'?'Awakening':a.kit==='chemical'?'Chemical reaction':'Base kit'),'ta-meta'));head.append(el('span',a.input,'ta-key'),name,el('span',types.join(' / ')||'Ability','ta-type'));card.append(head);
+ if(a.selection.length)card.append(el('p',a.selection.join(' · '),'ta-requirements'));else card.append(el('p','Slot selection is client-derived; exact activation branch may depend on game state.','ta-requirements'));
+ const all=a.implementations.flatMap(i=>i.stats),quick=[];
+ for(const label of ['Client cooldown argument','Cooldown','Shot power','Dash target distance','Travel distance parameter','Distance parameter','Movement speed parameter','Ball activation range','Player activation range','Duration parameter','Cutscene fallback cleanup']){const vals=all.filter(x=>x.label===label);if(vals.length&&new Set(vals.map(x=>x.value)).size===1){if(quick.length<4)quick.push(vals[0]);}}
+ if(quick.length)card.append(statsGrid(quick,units));card.append(el('div','Player i-frames · ability-specific ball i-frames · measured range — not established unless separately tested.','ta-foot'));
+ const body=el('details');body.append(el('summary','Activation conditions & movement phases'));body.open=expanded.has(id+'-conditions');body.addEventListener('toggle',()=>{if(body.open)expanded.add(id+'-conditions');else expanded.delete(id+'-conditions');});
+ for(const imp of a.implementations){const block=el('div',null,'ta-impl');if(a.implementations.length>1)block.append(el('h4',imp.label,'ta-detail-group'));if(imp.checks.length){const gates=el('div',null,'ta-gates');for(const q of imp.checks)gates.append(el('span',q));block.append(el('p','Checks encountered in this implementation (may belong to different branches).','ta-missing'),gates);}if(imp.phases.length){const phases=el('ol',null,'ta-phases');for(const p of imp.phases){const li=el('li');li.append(el('div',p.at,'ta-phase-time'),el('div',p.text,'ta-phase-text'));phases.append(li);}block.append(phases);}if(!imp.checks.length&&!imp.phases.length)block.append(el('p','Detailed conditions and execution order are not resolved from this implementation.','ta-missing'));body.append(block);}card.append(body);
+ for(const imp of a.implementations){const m=renderAbilityMath(a.name,{shot:imp.shot,motion:imp.motion});if(m){if(a.implementations.length>1)m.prepend(el('div',imp.label,'ta-meta'));card.append(m);}}
+ const detail=el('details');detail.append(el('summary','Timing, mechanics & verification'));detail.open=expanded.has(id+'-stats');detail.addEventListener('toggle',()=>{if(detail.open)expanded.add(id+'-stats');else expanded.delete(id+'-stats');});
+ for(const imp of a.implementations){detail.append(el('h4',imp.label,'ta-detail-group'));const dl=el('dl',null,'ta-detail-rows');for(const x of imp.stats){const row=el('div'),dd=el('dd',valueText(x,units));dd.append(el('span',x.kind,'ta-kind'));row.append(el('dt',x.label),dd);dl.append(row);}if(imp.stats.length)detail.append(dl);else detail.append(el('p','No resolved numeric parameters.','ta-missing'));detail.append(el('p','Review reference: ability export, lines '+imp.source.from+'–'+imp.source.to+'.','ta-missing'));}
+ detail.append(el('p','Configured values are not necessarily effective values. Callback delays are not a guaranteed execution timeline. Server overrides and animation timing require individual review and gameplay measurement.','ta-missing'));card.append(detail);return card;
+}
+function renderDerived(root,slug){
+ const data=DERIVED_KITS[slug];if(!data||root.querySelector('#technical-abilities'))return;
+ const section=el('section',null,'wiki-details-section');section.id='technical-abilities';const intro=el('div',null,'ta-intro');intro.append(el('h2','Moveset'),el('span',data.entries.length+' slot / branch records','ta-count'));section.append(el('style',css),intro,el('p','Client-kit reference · 26 Nov 2026. Names and slot bindings are source-derived; conditional branches and server behavior are not independently gameplay-verified.','ta-subtitle'));
+ const controls=el('div',null,'ta-controls'),tabs=el('div',null,'ta-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Ability kit');const filter=el('div',null,'ta-filter'),variant=el('select'),units=el('select');variant.setAttribute('aria-label','Mastery level');units.setAttribute('aria-label','Distance units');
+ const variants=['all',...new Set(data.entries.map(x=>x.variant))];for(const v of variants){const o=el('option',v==='all'?'All levels':v);o.value=v;variant.append(o);}for(const [v,l] of [['stud','Studs'],['game','Game m (approx.)']]){const o=el('option',l);o.value=v;units.append(o);}filter.append(variant,units);controls.append(tabs,filter);
+ const search=el('input');search.type='search';search.placeholder='Search moves…';search.setAttribute('aria-label','Search technical moveset');search.style.cssText='width:100%;box-sizing:border-box;margin:5px 0 10px;padding:9px;color:inherit;background:#101923;border:1px solid #405267;border-radius:6px';
+ const overview=el('div'),list=el('div',null,'ta-list');const expanded=new Set();let active='base';
+ function render(){list.replaceChildren();overview.replaceChildren();for(const b of tabs.children)b.setAttribute('aria-pressed',String(b.dataset.kit===active));const q=search.value.toLowerCase().trim(),rows=data.entries.filter(a=>a.kit===active&&(variant.value==='all'||a.variant===variant.value)&&a.name.toLowerCase().includes(q));if(active!=='chemical'){const summary=el('div',null,'ta-kit-summary');for(const key of ['C','V','B']){const item=el('div',null,'ta-slot');const names=[...new Set(rows.filter(a=>a.input===key).map(a=>a.name))];item.append(el('b',key),el('p',names.join(' / ')||'No separate replacement recorded'));summary.append(item);}overview.append(summary);if(active==='awakening')overview.append(el('p','Unchanged base slots may remain available during awakening. This view lists recorded awakening assignments.','ta-subtitle'));}if(!rows.length){list.append(el('p',active==='chemical'?'No matching dedicated reaction slot recorded here. See the configured chemical reactions section below.':'No matching moves in this kit or filter.','ta-empty'));return;}for(const key of ['C','V','B','—']){const group=rows.filter(a=>a.input===key);if(!group.length)continue;list.append(el('h3',key==='—'?'Unresolved input':key+' slot','ta-group'));for(const a of group)list.append(derivedCard(a,units.value,expanded));}}
+ for(const [id,title] of [['base','Base'],['awakening','Awk'],['chemical','Chem']]){const b=el('button',title+' ('+data.entries.filter(x=>x.kit===id).length+')');b.type='button';b.dataset.kit=id;b.addEventListener('click',()=>{active=id;variant.value='all';render();});tabs.append(b);}variant.addEventListener('change',render);units.addEventListener('change',render);search.addEventListener('input',render);section.append(controls,search,overview,list);
+ const about=el('details');about.append(el('summary','About these values'),el('p','This is an automatically derived starting reference from client slot definitions and matched implementations, not a fully hand-reviewed wiki. Configured ranges, power and cooldowns may be overridden. Mathematical previews model only explicitly identified launch or movement target formulas. Unknown values are kept unknown.'));const link=el('a','View manually tested abilities','ta-link');link.href='#tested-abilities';about.append(link);section.append(about);
+ const anchor=[...root.querySelectorAll(':scope > .wiki-details-section')].find(s=>s.id==='tested-abilities'||['Abilities','Announced abilities','Patch history'].includes(s.querySelector('h2')?.textContent));root.insertBefore(section,anchor||null);render();
+}
+
 export function renderTechnicalAbilities(root,slug){
- const data=TECHNICAL_ABILITIES[slug];if(!data||!root||root.querySelector('#technical-abilities'))return;
+ if(!root||root.querySelector('#technical-abilities'))return;const data=TECHNICAL_ABILITIES[slug];if(!data){renderDerived(root,slug);return;}
  const section=el('section',null,'wiki-details-section');section.id='technical-abilities';
  const intro=el('div',null,'ta-intro');intro.append(el('h2','Moveset'),el('span',data.entries.length+' moves · 4 mastery levels','ta-count'));
  section.append(el('style',css),intro,el('p','Regular Nagi and mastery upgrades · Client-derived reference, 26 Nov 2026. Actual measurements remain separate.','ta-subtitle'));
