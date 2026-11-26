@@ -79,7 +79,9 @@ for(const width of [1440,820,390,360]){
     try{
       await assertNoOverflow(page,'Creator Studio '+width);
       assert.equal(await page.locator('body').getAttribute('data-page'),'tools');
-      assert.equal(await page.locator('.studio-category').count(),2);
+      assert.equal(await page.locator('.studio-category').count(),3);
+      assert.equal(await page.locator('#replay-tools .tool-card').count(),1);
+      assert.ok(await page.locator('#replay-tool a[href="/replays/"]').isVisible());
       assert.equal(await page.locator('#video-tools .tool-card').count(),3);
       assert.equal(await page.locator('#tiktok-tools .tool-card').count(),2);
       assert.deepEqual(await page.locator('#video-tools .tool-card').evaluateAll(els=>els.map(el=>el.id)),
@@ -352,3 +354,27 @@ test('public tested abilities render all records and refresh after edits',async(
  await assertNoOverflow(page,'Tested ability cards');
  }finally{await context.close();}
 });
+
+for(const width of [1440,390]){
+  test('Replay Studio local demo and camera controls at '+width+'px',async()=>{
+    const {context,page}=await open('/replays/',width,900);
+    try{
+      await assertNoOverflow(page,'Replay Studio '+width);
+      assert.ok(await page.locator('.fairplay').isVisible());
+      assert.ok((await page.locator('#match option').first().textContent()).includes('Synthetic demo'));
+      assert.equal(await page.locator('#mode option').count(),7);
+      assert.ok(await page.locator('#canvas').isVisible());
+      assert.ok(Number(await page.locator('#seek').getAttribute('max'))>0);
+      for(const mode of ['orbit','top','pov','free','chase','ballorbit','player']){
+        await page.locator('#mode').selectOption(mode);
+        await page.waitForTimeout(50);
+      }
+      await page.locator('#play').click();
+      await page.waitForTimeout(300);
+      assert.ok(Number(await page.locator('#seek').inputValue())>0);
+      await page.locator('#play').click();
+      const blocked=await page.evaluate(async()=>{try{await fetch('/api/presence');return false}catch{return true}});
+      assert.ok(blocked,'Replay page must block network connections');
+    }finally{await context.close();}
+  });
+}
