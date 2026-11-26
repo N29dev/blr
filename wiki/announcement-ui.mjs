@@ -77,7 +77,7 @@ export async function hydrateAnnouncements(){
  if(style){
   const slug=route.split('/')[1],history=og?.changes?.some(c=>c.style===slug)?[ogPatch(og,slug),...data.history]:data.history;
   updateStyle(target,{...data,history});
-  import('./technical-abilities.mjs?v=10').then(m=>m.renderTechnicalAbilities(target,slug)).catch(()=>{});
+  import('./technical-abilities.mjs?v=11').then(m=>m.renderTechnicalAbilities(target,slug)).catch(()=>{});
   import('./tested-ui.mjs?v=6').then(m=>m.renderTestedAbilities(target,slug,history)).catch(()=>{});
  }else if(flow)updateFlow(target,data);
  else if(route==='updates')renderArchive(target,og?[ogPatch(og),...data]:data);
@@ -88,6 +88,6 @@ export async function hydrateAnnouncements(){
   target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',extra?[extra,...data]:data);
  }else{target.replaceChildren(node('p',note,'wiki-muted'));block(target,'Documented announcements',data);}
  }catch{if(!style&&!flow)target.replaceChildren(node('p','The announcement archive could not be loaded. Reload to retry.','wiki-muted'));else target.prepend(node('p','Announcement records could not be loaded. Reload to retry.','wiki-muted'));}
- if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./gameplay-reference.mjs?v=3').then(m=>{if(style)m.renderStyleReference(target,route.split('/')[1]);else if(flow)m.renderFlowReference(target,route.split('/')[1]);else m.renderMechanicsReference(target,route);}).catch(console.error);
+ if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./gameplay-reference.mjs?v=4').then(m=>{if(style)m.renderStyleReference(target,route.split('/')[1]);else if(flow)m.renderFlowReference(target,route.split('/')[1]);else m.renderMechanicsReference(target,route);}).catch(console.error);
  if(style||flow||['mechanics','progression','evolutions'].includes(route))import('./community-ui.mjs?v=1').then(m=>m.addCommunityReferences(target,route)).catch(()=>{});
 }
