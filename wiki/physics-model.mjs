@@ -2,7 +2,7 @@
 // Not an authoritative server simulation. Units are studs and seconds.
 export const PHYSICS=Object.freeze({gravity:142,ballMass:2.1014468669891357,ballRadius:.775,landingY:9.5,friction:1,elasticity:.5,dt:1/60});
 export function shotVelocity(power,tilt,angle,mode='minimum',multiplier=1){
- const a=angle*Math.PI/180,p=power*multiplier,x=p*Math.cos(a),y=p*(mode==='additive'?Math.sin(a)+tilt:Math.max(Math.sin(a),tilt));
+ const a=angle*Math.PI/180,p=power*multiplier,x=p*Math.cos(a),y=p*(mode==='additive'?Math.sin(a)+tilt:mode==='fixed'?tilt:Math.max(Math.sin(a),tilt));
  return {vx:x,vy:y,speed:Math.hypot(x,y),angle:Math.atan2(y,x)*180/Math.PI};
 }
 export function dashTarget(distance,duration,t){const u=Math.max(0,Math.min(1,t/duration));return distance*(1-(1-u)**2);}
