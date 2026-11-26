@@ -1,10 +1,29 @@
+/* AI keepers remain in some recordings when the game parks their models outside the pitch.
+ * Filter their samples, not human keepers or the entire NPC identity.
+ * The generous bounds are a display/analysis heuristic, not an official game rule.
+ */
+function replayNpc(p,roster={}){return p?.kind==='npc'||roster[String(p?.id)]?.kind==='npc'}
+function replayActiveActor(p,geometry,roster={}){
+ if(!p)return false;
+ if(!replayNpc(p,roster))return true;
+ const cf=p.cf,b=geometry.bounds,y=geometry.characterRestYApprox??geometry.illustrativeGroundY??7;
+ if(!Array.isArray(cf)||cf.length<3||!cf.slice(0,3).every(Number.isFinite))return false;
+ return cf[1]>=y-35&&cf[1]<=y+80&&cf[0]>=b.minX-60&&cf[0]<=b.maxX+60&&cf[2]>=b.minZ-60&&cf[2]<=b.maxZ+60;
+}
+function replayActiveFrames(frames,geometry,roster={}){
+ return frames.map(f=>{const ps=f.players||[];const players=ps.filter(p=>replayActiveActor(p,geometry,roster));return players.length===ps.length?f:{...f,players};});
+}
+function replayActiveRosterIds(frames,roster={}){
+ const observed=new Set();for(const f of frames)for(const p of f.players||[])observed.add(String(p.id));
+ return [...new Set([...Object.keys(roster).filter(id=>roster[id]?.kind!=='npc'||observed.has(id)),...observed])].sort((a,b)=>Number(a)-Number(b));
+}
 /* Offline, time-weighted match analytics. Never imputes unobserved possession or movement. */
 function analyzeReplay(frames,geometry,options={}){
  const nx=36,nz=27,b=geometry.bounds,dx=b.maxX-b.minX,dz=b.maxZ-b.minZ,actors=new Map(),ballHeat=new Float64Array(nx*nz),teams={Home:0,Away:0,free:0,unknown:0};
  const start=Number.isFinite(options.start)?options.start:frames[0]?.t??0,end=Number.isFinite(options.end)?options.end:frames.at(-1)?.t??start;
  const onField=cf=>Array.isArray(cf)&&Number.isFinite(cf[0])&&Number.isFinite(cf[2])&&cf[0]>=b.minX&&cf[0]<=b.maxX&&cf[2]>=b.minZ&&cf[2]<=b.maxZ;
  const bin=cf=>Math.min(nz-1,Math.floor((cf[2]-b.minZ)/dz*nz))*nx+Math.min(nx-1,Math.floor((cf[0]-b.minX)/dx*nx));
- const active=p=>p&&(p.team==='Home'||p.team==='Away')&&onField(p.cf);
+ const active=p=>p&&(p.team==='Home'||p.team==='Away')&&replayActiveActor(p,geometry,options.roster||{})&&onField(p.cf);
  const localId=options.localId==null?null:String(options.localId);const cut=f=>f?.localStats?.InCutscene===true||(localId!==null&&f.players?.some(p=>String(p.id)===localId&&p.states?.InCutscene===true));
  const idFor=p=>String(p.id);
  function get(p){const id=idFor(p);if(!actors.has(id)&&actors.size>=128){actorLimit=true;return null}if(!actors.has(id))actors.set(id,{id,team:p.team,kind:p.kind,seconds:0,held:0,distance:0,moveSeconds:0,excluded:0,maxSpeed:0,x:0,z:0,heat:new Float64Array(nx*nz),heldHeat:new Float64Array(nx*nz),withoutHeat:new Float64Array(nx*nz),teamSeconds:{Home:0,Away:0},counters:Object.create(null),styles:new Set(),flows:new Set()});return actors.get(id)}
