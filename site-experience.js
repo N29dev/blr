@@ -10,6 +10,7 @@
     { group:'Wiki', icon:'📚', title:'BL:R Wiki', detail:'Game knowledge, abilities, progression and mechanics', url:'/' },
     { group:'Wiki', icon:'👥', title:'Style directory', detail:'Search styles, kits and mastery', url:'/styles/' },
     { group:'Wiki', icon:'✦', title:'Flows', detail:'Browse flow profiles', url:'/flows/' },
+    { group:'Wiki', icon:'📏', title:'Field Lab', detail:'Measure field distances and visualize ability ranges', url:'/field/' },
     { group:'Wiki', icon:'📅', title:'Patch history', detail:'Documented game changes', url:'/updates/' },
     { group:'Wiki', icon:'🎯', title:'Mastery and counterplay', detail:'Practice, advanced usage and defensive guides', url:'/mastery/' },
     { group:'Play', icon:'⚽', title:'8v8 matches', detail:'Browse public 8v8 servers', url:'/servers/?mode=8v8' },
@@ -18,17 +19,17 @@
     { group:'Play', icon:'🤖', title:'Glutony Discord app', detail:'Install BL:R server finder commands in Discord', url:'https://discord.com/oauth2/authorize?client_id=1563907646757666926&integration_type=1&scope=applications.commands' },
     { group:'Rules', icon:'📜', title:'Allowed & banned tech', detail:'Search BL:R styles, techs and punishable bugs', url:'/tech/' },
     { group:'Rules', icon:'🔎', title:'Check if a tech is allowed', detail:'How to ask BL:R support staff about a technique', url:'/tech/#support' },
-    { group:'Create', icon:'🎬', title:'Creator Studio', detail:'Compress, trim, analyze and download videos; see method status', url:'/tools/' },
-    { group:'Create', icon:'⚽', title:'Replay Studio', detail:'Authorized post-match replay viewer, freecam and ball-follow cameras', url:'/replays/' },
-    { group:'Create', icon:'✂️', title:'MP4 clipper', detail:'Trim part of a public direct MP4', url:'/clipper.html' },
-    { group:'Create', icon:'📥', title:'TikTok downloader & repair', detail:'Download and repair MP4 duration metadata', url:'/tiktok-downloader.html' },
+    { group:'Create', icon:'🎬', title:'Creator Studio', detail:'Compress, trim, analyze and download videos; see method status', url:'https://n29.kz/creator/' },
+    { group:'Wiki', icon:'⚽', title:'Replay Studio', detail:'Authorized post-match replay viewer, freecam and ball-follow cameras', url:'/replays/' },
+    { group:'Create', icon:'✂️', title:'MP4 clipper', detail:'Trim part of a public direct MP4', url:'https://n29.kz/creator/clipper.html' },
+    { group:'Create', icon:'📥', title:'TikTok downloader & repair', detail:'Download and repair MP4 duration metadata', url:'https://n29.kz/creator/tiktok-downloader.html' },
     { group:'Create', icon:'🏅', title:'CC leaderboard (Sep 2026 archive)', detail:'Historical creator event results, not current rankings', url:'/leaderboard/' },
     { group:'Support', icon:'🛡️', title:'Ban appeal help', detail:'Support server and appeals channel for bug-abuse bans', url:'/tech/#support' },
     { group:'Support', icon:'💬', title:'BL:R support server', detail:'Join the official support Discord for tickets and appeals', url:'https://discord.gg/dgV4p83EHA' },
     { group:'Support', icon:'🌍', title:'Main BL:R Discord', detail:'Blue Lock: Rivals community server', url:'https://discord.gg/bluelockrivals' },
   ];
 
-  const indexReady=import('/wiki/content.mjs?v=3').then(({SEARCH_INDEX})=>{
+  const indexReady=import('/wiki/content.mjs?v=5').then(({SEARCH_INDEX})=>{
     const known=new Set(links.map(item=>item.url));
     for(const item of SEARCH_INDEX){
       if(known.has(item.url))continue;
@@ -39,7 +40,7 @@
   const normalize=value=>String(value).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/['’]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
   function findLinks(term){
     const q=normalize(term),tokens=q.split(' ').filter(Boolean);
-    const entries=links.filter(item=>item.group!=='Create'||['tools','clipper','tiktok','leaderboard'].includes(page));
+    const entries=links.filter(item=>item.group!=='Create'||item.title==='Creator Studio'||['tools','clipper','tiktok','leaderboard'].includes(page));
     if(!q)return entries.filter(item=>!['Styles','Flows'].includes(item.group));
     return entries.filter(item=>tokens.every(t=>normalize(item.group+' '+item.title+' '+item.detail).includes(t)))
       .map((item,index)=>({item,index,score:normalize(item.title)===q?0:normalize(item.title).startsWith(q)?1:normalize(item.title).includes(q)?2:3}))
@@ -413,10 +414,10 @@
   }
 
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
-  try { initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
+  try { if(page!=='replays')initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
   try { initSiteConnections(); } catch(error) { console.warn('Site map enhancement unavailable',error); }
-  try { initWebsitePresence(); } catch(error) { console.warn('Visitor statistics unavailable',error); }
+  try { if(page!=='replays')initWebsitePresence(); } catch(error) { console.warn('Visitor statistics unavailable',error); }
   if(page==='home') {
     try { initHomeFilters(); } catch(error) { console.warn('Tool filters unavailable',error); }
   }
