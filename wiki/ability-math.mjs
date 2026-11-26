@@ -22,7 +22,7 @@ const css=`
 #technical-abilities .am-box{margin-top:9px}
 #technical-abilities .am-title{font-size:.8rem;color:#b8cfe7;font-weight:600}
 #technical-abilities .am-caption{font-size:.73rem!important;color:#a9bbce!important;line-height:1.45}
-#technical-abilities .am-formula{font: .84rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;background:#101923;border:1px solid #303d4c;border-radius:6px;padding:8px 10px;margin:8px 0;overflow-wrap:anywhere;color:#dceaff}
+#technical-abilities .am-formula{font: .84rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;background:#101923;border:1px solid #303d4c;border-radius:6px;padding:8px 10px;margin:8px 0;overflow-wrap:anywhere;white-space:pre-wrap;color:#dceaff}
 #technical-abilities .am-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:9px 0}
 #technical-abilities .am-controls label{display:grid;gap:5px;min-width:0;font-size:.76rem;color:#b7c6d8}
 #technical-abilities .am-controls input{width:100%;min-width:0;accent-color:#9ac9ff}
