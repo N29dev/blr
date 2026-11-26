@@ -407,3 +407,23 @@ test('Field Lab shares measured geometry and preserves game-meter ability modes'
     assert.ok((await page.locator('#pitch-size').textContent()).includes('540 × 405 m'));
   }finally{await context.close();}
 });
+
+test('Replay goal markers detect scoring changes and seek to highlights',async()=>{
+  const {context,page}=await open('/replays/',1440,900);
+  try{
+    await page.locator('#eventList button').first().waitFor({state:'visible'});
+    assert.equal(await page.locator('#eventList button').count(),1);
+    assert.match(await page.locator('#eventList button').first().innerText(),/0:18.0.*Home goal.*1–0/s);
+    await page.locator('#eventList button').first().click();
+    assert.equal(Number(await page.locator('#seek').inputValue()),15);
+    await page.locator('#preRoll').uncheck();
+    await page.locator('#eventTrack button').first().click();
+    assert.equal(Number(await page.locator('#seek').inputValue()),18);
+    assert.equal(await page.locator('#score').textContent(),'1 : 0');
+    const events=await page.evaluate(()=>{
+      const rows=[[0,'2','1'],[1,'2','1'],[2,'2','2'],[3,'0','0'],[4,'0','0'],[5,'–','–'],[6,'1','0'],[7,'1','3']];
+      return detectReplayGoals(rows.map(([t,home,away])=>({t,scoreboard:{home,away,timer:'4:00'}})));
+    });
+    assert.deepEqual(events.map(e=>[e.t,e.team,e.count,e.exact]),[[2,'Away',1,true],[6,'Home',1,false],[7,'Away',3,false]]);
+  }finally{await context.close();}
+});
