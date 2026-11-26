@@ -427,3 +427,25 @@ test('Replay goal markers detect scoring changes and seek to highlights',async()
     assert.deepEqual(events.map(e=>[e.t,e.team,e.count,e.exact]),[[2,'Away',1,true],[6,'Home',1,false],[7,'Away',3,false]]);
   }finally{await context.close();}
 });
+
+
+test('Nagi technical abilities stack without overlap on mobile and desktop',async()=>{
+ for(const width of [390,1440]){
+  const {context,page}=await open('/styles/nagi/',width,900);
+  try{
+   const section=page.locator('#technical-abilities');
+   await section.locator('.ta-card').first().waitFor();
+   async function check(count){
+    const cards=section.locator('.ta-card:visible');
+    assert.equal(await cards.count(),count);
+    const boxes=await cards.evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width};}));
+    for(let i=0;i<boxes.length;i++){assert.ok(boxes[i].width>0);if(i)assert.ok(boxes[i].top>=boxes[i-1].bottom-1,'ability cards overlap');}
+   }
+   await check(7);
+   await section.getByRole('button',{name:'Awk (4)',exact:true}).click();await check(4);
+   await section.getByRole('button',{name:'Chem (0)',exact:true}).click();await check(0);
+   await section.getByRole('button',{name:'Base (7)',exact:true}).click();await check(7);
+   await assertNoOverflow(page,'Nagi technical abilities');
+  }finally{await context.close();}
+ }
+});
