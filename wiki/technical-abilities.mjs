@@ -142,7 +142,76 @@ function slotSummary(active){
  for(const [key,base,mastery] of rows){const slot=el('div',null,'ta-slot');slot.append(el('b',key),el('p',base),el('p',mastery));summary.append(slot);}return summary;
 }
 
-function derivedCard(a,units,expanded){
+
+ // Rare-tier review: keep configured distances, modeled trajectories and measured
+ // hitboxes separate. These notes describe outstanding verification, not new values.
+ const rareReview={
+  isagi:{
+   'Side Step Dribble':'Verify the movement target distance and direction of each stage; the 0.5 s tween alone cannot establish travel.',
+   'Direct Shot':'Regular and mastery launches differ. Configured power is not a measured landing range; do not reuse the regular trajectory for the mastery or chemistry branch.',
+   'Omnivision':'Verify the buff duration and whether the client callback corresponds to the actual state expiry.',
+   'Vision Stoppage':'The player selection radius is not a steal hitbox or shot distance. Verify jump height and the actual launch formula.',
+   'Meta-Burst Point':'Verify movement, range and the effective cooldown after the short client lock.',
+   'Fadeaway':'Verify target-selection distance, hitbox and movement.',
+   'Final Shot':'The shared release path is identified, but effective shot power is unresolved in this record.',
+   'Demon King':'Verify the actual effect duration and target range; callback delays are not cutscene length.',
+   'Adaptive Win':'The preview models the identified camera-directed launch branch, not its cutscene movement.',
+   'Two Gun Volley':'The preview models the identified camera-directed launch branch, not its cutscene movement.',
+   'I AM... A STRIKER!':'The matched Direct Shot implementation is not sufficient to establish the chemical reaction launch. Reaction-specific range and timing need testing.'
+  },
+  kurona:{
+   'OneTwo':'The short recast and longer cooldown arguments are distinct. Verify pass range and the return-pass window.',
+   'Bait Dribble':'The target-selection range is not movement distance; verify the actual dash target and travel.',
+   'Shark Steal':'Verify tackle shape, offset, active window and displacement.',
+   'Planet Hotline':'The modeled shot is only the identified launch branch. Verify teammate selection and cutscene movement.'
+  },
+  gagamaru:{
+   'Instincts Reaction':'Verify dash target distance, direction and actual save volume.',
+   'Scorpion Kick':'Verify launch power, angle and ball-contact conditions.',
+   'Fast Reactions':'This label shares a matched implementation with Diving Header. Verify whether the speed parameter and callback apply to this branch.',
+   'Diving Header':'Verify header reach, movement and active duration; the speed parameter is not a distance.',
+   'Super Reflexes':'Ball selection distance and pass range are separate. Neither establishes the save hitbox or actual flight. Verify the launch mode and goalkeeper-specific behavior.'
+  },
+  chigiri:{
+   'No-Break Dribble':'Verify movement duration and displacement independently of the configured speed.',
+   'Parkour Shot':'Model applies to the identified launch branch; verify movement and actual landing range.',
+   'High-Speed Speedster':'Verify whether the configured speed is additive and the effective buff duration.',
+   'Speedster':'Verify speed modifier semantics and actual boost duration.',
+   'Panther Illusion':'Verify movement or targeting range and final cooldown; short client lock is not the full cooldown.',
+   'Accelerate':'Movement speed, duration, and effective cooldown are unresolved in this record.',
+   'Match Cut-In':'The identified lateral target is one stage only; other movement targets and net travel need testing.',
+   'Blast':'Verify actual boost, duration and full cooldown.',
+   '44° Red Panther Sniper':'Model applies to the identified launch branch; the move name does not establish a fixed launch angle.'
+  },
+  raichi:{
+   'Victory Pass':'Player selection radius is not the pass flight distance. Verify pass direction, power and receiver conditions.',
+   'Stoppage':'Player selection radius is not the tackle hitbox. Verify contact shape and effect duration.',
+   'Disruption':'Player selection radius is not the tackle hitbox. Verify contact shape, offset and active window.',
+   'Matchup Victory':'The player selection radius is not the actual pass distance; fallback cleanup is not cutscene length.'
+  }
+ };
+ function rareRanges(a,imp){
+  const values=imp.stats.filter(x=>['Player activation range','Ball activation range','Pass range','Ball range'].includes(x.label)&&Number.isFinite(x.value)&&x.value>0&&/^stud/.test(x.unit));
+  if(a.name==='Super Reflexes'&&imp.checks.some(x=>x.includes('70 studs')))values.push({label:'Loose aerial ball selection distance',value:70,unit:'stud',kind:'Client check; world Y ≥ 14'});
+  return values;
+ }
+ function rangePreview(stat,units){
+  const detail=el('details'),summary=el('summary',stat.label+' · distance preview');detail.append(summary);
+  const ns='http://www.w3.org/2000/svg',svg=(tag,attrs,text)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text!=null)n.textContent=text;return n;};
+  const r=stat.value, g=svg('svg',{viewBox:'0 0 320 150',role:'img','aria-label':stat.label+' distance comparison','style':'width:100%;height:auto;background:#101923;border:1px solid #303d4c;border-radius:6px;margin-top:8px'});
+  const x=20,end=300,threshold=x+(end-x)*2/3;
+  g.append(svg('line',{x1:x,y1:76,x2:end,y2:76,stroke:'#647a91','stroke-width':2}),svg('line',{x1:x,y1:76,x2:threshold,y2:76,stroke:'#89d6a9','stroke-width':4}),svg('line',{x1:threshold,y1:46,x2:threshold,y2:102,stroke:'#9ac9ff','stroke-dasharray':'4 3'}),svg('circle',{cx:x,cy:76,r:5,fill:'#edf4ff'}));
+  const label=(px,py,t,anchor='middle')=>svg('text',{x:px,y:py,fill:'#c4d8ed','font-size':11,'text-anchor':anchor},t);
+  g.append(label(x,115,'Origin','start'),label(threshold,37,valueText(stat,units)),label(end,115,'1.5× limit','end'));
+  const marker=svg('circle',{cx:x,cy:76,r:7,fill:'#89d6a9'});g.append(marker);
+  const slider=el('input');slider.type='range';slider.min=0;slider.max=r*1.5;slider.step=r/150;slider.value=r*.75;slider.setAttribute('aria-label','Example target distance in studs');slider.style.cssText='width:100%;accent-color:#9ac9ff';
+  const out=el('output');out.style.cssText='display:block;font-size:.82rem;color:#c4d8ed';
+  function draw(){const d=Number(slider.value),inside=d<=r;marker.setAttribute('cx',x+(end-x)*d/(r*1.5));marker.setAttribute('fill',inside?'#89d6a9':'#e6b66e');out.textContent=valueText({...stat,value:Math.round(d*100)/100},units)+' · '+(inside?'Within numerical threshold':'Beyond numerical threshold');}
+  slider.addEventListener('input',draw);draw();
+  detail.append(g,slider,out,el('p','Distance comparison only. The configured threshold does not establish an actual hitbox, field coverage, successful activation, or shot landing distance. Direction, vertical separation, possession and server checks can matter.','ta-missing'));return detail;
+ }
+
+function derivedCard(a,units,expanded,slug){
  const card=el('article',null,'announcement-card ta-card'),head=el('div',null,'ta-head'),name=el('div',null,'ta-name'),id=[a.name,a.input,a.kit,a.variant,a.sourceLine].join('|');
  const types=[...new Set(a.implementations.flatMap(i=>[...(i.shot?['Shot']:[]),...(i.motion?.length?['Movement']:[]),...(i.phases.some(p=>p.at==='Cutscene')?['Cutscene']:[])]))];
  name.append(el('h3',a.name),el('div',a.variant+' · '+(a.kit==='awakening'?'Awakening':a.kit==='chemical'?'Chemical reaction':'Base kit'),'ta-meta'));head.append(el('span',a.input,'ta-key'),name,el('span',types.join(' / ')||'Ability','ta-type'));card.append(head);
@@ -152,19 +221,20 @@ function derivedCard(a,units,expanded){
  if(quick.length)card.append(statsGrid(quick,units));card.append(el('div','Player i-frames · ability-specific ball i-frames · measured range — not established unless separately tested.','ta-foot'));
  const body=el('details');body.append(el('summary','Activation conditions & movement phases'));body.open=expanded.has(id+'-conditions');body.addEventListener('toggle',()=>{if(body.open)expanded.add(id+'-conditions');else expanded.delete(id+'-conditions');});
  for(const imp of a.implementations){const block=el('div',null,'ta-impl');if(a.implementations.length>1)block.append(el('h4',imp.label,'ta-detail-group'));if(imp.checks.length){const gates=el('div',null,'ta-gates');for(const q of imp.checks)gates.append(el('span',q));block.append(el('p','Checks encountered in this implementation (may belong to different branches).','ta-missing'),gates);}if(imp.phases.length){const phases=el('ol',null,'ta-phases');for(const p of imp.phases){const li=el('li');li.append(el('div',p.at,'ta-phase-time'),el('div',p.text,'ta-phase-text'));phases.append(li);}block.append(phases);}if(!imp.checks.length&&!imp.phases.length)block.append(el('p','Detailed conditions and execution order are not resolved from this implementation.','ta-missing'));body.append(block);}card.append(body);
- for(const imp of a.implementations){const m=renderAbilityMath(a.name,{shot:imp.shot,motion:imp.motion});if(m){if(a.implementations.length>1)m.querySelector('summary').append(el('span',' · '+imp.label));card.append(m);}}
+ let previews=0;const review=rareReview[slug];for(const imp of a.implementations){const shot=review&&a.kit==='chemical'?null:imp.shot;const m=renderAbilityMath(a.name,{shot,motion:imp.motion});if(m){if(a.implementations.length>1)m.querySelector('summary').append(el('span',' · '+imp.label));card.append(m);previews++;}if(review){for(const stat of rareRanges(a,imp)){card.append(rangePreview(stat,units));previews++;}}}
+ if(review){if(!previews)card.append(el('p','Interactive range / movement model unavailable: no resolved formula or distance threshold for this branch.','ta-missing'));card.append(el('p','Review: '+(review[a.name]||'Verify branch-specific activation, timing and actual movement before publishing measurements.'),'ta-missing'));}
  const detail=el('details');detail.append(el('summary','Timing, mechanics & verification'));detail.open=expanded.has(id+'-stats');detail.addEventListener('toggle',()=>{if(detail.open)expanded.add(id+'-stats');else expanded.delete(id+'-stats');});
  for(const imp of a.implementations){detail.append(el('h4',imp.label,'ta-detail-group'));const dl=el('dl',null,'ta-detail-rows');for(const x of imp.stats){const row=el('div'),dd=el('dd',valueText(x,units));dd.append(el('span',x.kind,'ta-kind'));row.append(el('dt',x.label),dd);dl.append(row);}if(imp.stats.length)detail.append(dl);else detail.append(el('p','No resolved numeric parameters.','ta-missing'));detail.append(el('p','Review reference: ability export, lines '+imp.source.from+'–'+imp.source.to+'.','ta-missing'));}
  detail.append(el('p','Configured values are not necessarily effective values. Callback delays are not a guaranteed execution timeline. Server overrides and animation timing require individual review and gameplay measurement.','ta-missing'));card.append(detail);return card;
 }
 function renderDerived(root,slug){
  const skin=slug==='easter-kaiser';const data=DERIVED_KITS[skin?'kaiser':slug];if(!data||root.querySelector('#technical-abilities'))return;
- const section=el('section',null,'wiki-details-section');section.id='technical-abilities';const intro=el('div',null,'ta-intro');intro.append(el('h2','Moveset'),el('span',data.entries.length+' slot / branch records','ta-count'));section.append(el('style',css),intro,el('p',skin?'Easter Kaiser is configured as a Kaiser skin; the following is the parent style’s client kit, not independently verified skin behavior.':'Client-kit reference · 26 Nov 2026. Names and slot bindings are source-derived; conditional branches and server behavior are not independently gameplay-verified.','ta-subtitle'));
+ const section=el('section',null,'wiki-details-section');section.id='technical-abilities';const intro=el('div',null,'ta-intro');intro.append(el('h2','Moveset'),el('span',data.entries.length+' slot / branch records','ta-count'));section.append(el('style',css),intro,el('p',skin?'Easter Kaiser is configured as a Kaiser skin; the following is the parent style’s client kit, not independently verified skin behavior.':rareReview[slug]?'Rare-tier review · 26 Nov 2026. Includes configured selection-distance previews where available, modeled trajectories and explicit verification gaps. No new gameplay measurements.':'Client-kit reference · 26 Nov 2026. Names and slot bindings are source-derived; conditional branches and server behavior are not independently gameplay-verified.','ta-subtitle'));
  const controls=el('div',null,'ta-controls'),tabs=el('div',null,'ta-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Ability kit');const filter=el('div',null,'ta-filter'),variant=el('select'),units=el('select');variant.setAttribute('aria-label','Mastery level');units.setAttribute('aria-label','Distance units');
  const variants=['all',...new Set(data.entries.map(x=>x.variant))];for(const v of variants){const o=el('option',v==='all'?'All levels':v);o.value=v;variant.append(o);}for(const [v,l] of [['stud','Studs'],['game','Game m (approx.)']]){const o=el('option',l);o.value=v;units.append(o);}filter.append(variant,units);controls.append(tabs,filter);
  const search=el('input');search.type='search';search.placeholder='Search moves…';search.setAttribute('aria-label','Search technical moveset');search.style.cssText='width:100%;box-sizing:border-box;margin:5px 0 10px;padding:9px;color:inherit;background:#101923;border:1px solid #405267;border-radius:6px';
  const overview=el('div'),list=el('div',null,'ta-list');const expanded=new Set();let active='base';
- function render(){list.replaceChildren();overview.replaceChildren();for(const b of tabs.children)b.setAttribute('aria-pressed',String(b.dataset.kit===active));const q=search.value.toLowerCase().trim(),rows=data.entries.filter(a=>a.kit===active&&(variant.value==='all'||a.variant===variant.value)&&a.name.toLowerCase().includes(q));if(active!=='chemical'){const summary=el('div',null,'ta-kit-summary');for(const key of ['C','V','B']){const item=el('div',null,'ta-slot');const names=[...new Set(rows.filter(a=>a.input===key).map(a=>a.name))];item.append(el('b',key),el('p',names.join(' / ')||'No separate replacement recorded'));summary.append(item);}overview.append(summary);if(active==='awakening')overview.append(el('p','Unchanged base slots may remain available during awakening. This view lists recorded awakening assignments.','ta-subtitle'));}if(!rows.length){list.append(el('p',active==='chemical'?'No matching dedicated reaction slot recorded here. See the configured chemical reactions section below.':'No matching moves in this kit or filter.','ta-empty'));return;}for(const key of ['C','V','B','—']){const group=rows.filter(a=>a.input===key);if(!group.length)continue;list.append(el('h3',key==='—'?'Unresolved input':key+' slot','ta-group'));for(const a of group)list.append(derivedCard(a,units.value,expanded));}}
+ function render(){list.replaceChildren();overview.replaceChildren();for(const b of tabs.children)b.setAttribute('aria-pressed',String(b.dataset.kit===active));const q=search.value.toLowerCase().trim(),rows=data.entries.filter(a=>a.kit===active&&(variant.value==='all'||a.variant===variant.value)&&a.name.toLowerCase().includes(q));if(active!=='chemical'){const summary=el('div',null,'ta-kit-summary');for(const key of ['C','V','B']){const item=el('div',null,'ta-slot');const names=[...new Set(rows.filter(a=>a.input===key).map(a=>a.name))];item.append(el('b',key),el('p',names.join(' / ')||'No separate replacement recorded'));summary.append(item);}overview.append(summary);if(active==='awakening')overview.append(el('p','Unchanged base slots may remain available during awakening. This view lists recorded awakening assignments.','ta-subtitle'));}if(!rows.length){list.append(el('p',active==='chemical'?'No matching dedicated reaction slot recorded here. See the configured chemical reactions section below.':'No matching moves in this kit or filter.','ta-empty'));return;}for(const key of ['C','V','B','—']){const group=rows.filter(a=>a.input===key);if(!group.length)continue;list.append(el('h3',key==='—'?'Unresolved input':key+' slot','ta-group'));for(const a of group)list.append(derivedCard(a,units.value,expanded,slug));}}
  for(const [id,title] of [['base','Base'],['awakening','Awk'],['chemical','Chem']]){const b=el('button',title+' ('+data.entries.filter(x=>x.kit===id).length+')');b.type='button';b.dataset.kit=id;b.addEventListener('click',()=>{active=id;variant.value='all';render();});tabs.append(b);}variant.addEventListener('change',render);units.addEventListener('change',render);search.addEventListener('input',render);section.append(controls,search,overview,list);
  const about=el('details');about.append(el('summary','About these values'),el('p','This is an automatically derived starting reference from client slot definitions and matched implementations, not a fully hand-reviewed wiki. Configured ranges, power and cooldowns may be overridden. Mathematical previews model only explicitly identified launch or movement target formulas. Unknown values are kept unknown.'));const link=el('a','View manually tested abilities','ta-link');link.href='#tested-abilities';about.append(link);section.append(about);
  const anchor=[...root.querySelectorAll(':scope > .wiki-details-section')].find(s=>s.id==='tested-abilities'||['Abilities','Announced abilities','Patch history'].includes(s.querySelector('h2')?.textContent));root.insertBefore(section,anchor||null);render();
