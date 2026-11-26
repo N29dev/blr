@@ -53,6 +53,7 @@ function analyzeReplay(frames,geometry,options={}){
  for(const f of frames){
   if(f.t>end)break;
   const rows=[];
+  for(const p of f.players||[])if(typeof p.style==='string'&&p.style.length>0&&p.style.length<=128)rows.push([String(p.id),{Style:p.style}]);
   if(localId!==null&&f.localStats&&typeof f.localStats==='object')rows.push([localId,f.localStats]);
   for(const [id,v] of rows){
    const a=actors.get(id);if(!a)continue;
