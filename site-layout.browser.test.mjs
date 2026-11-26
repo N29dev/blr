@@ -442,6 +442,11 @@ test('Nagi technical abilities stack without overlap on mobile and desktop',asyn
     for(let i=0;i<boxes.length;i++){assert.ok(boxes[i].width>0);if(i)assert.ok(boxes[i].top>=boxes[i-1].bottom-1,'ability cards overlap');}
    }
    await check(7);
+   await section.getByLabel('Mastery level').selectOption('Mastery III');await check(1);
+   const heel=section.locator('.ta-card:visible');assert.match(await heel.innerText(),/Direct Heel Lift/);
+   await heel.locator('summary').click();assert.ok(await heel.getByText('Scheduled cleanup',{exact:true}).isVisible());
+   await section.getByLabel('Distance units').selectOption('game');assert.match(await heel.innerText(),/game m/);
+   await section.getByLabel('Mastery level').selectOption('all');await check(7);
    await section.getByRole('button',{name:'Awk (4)',exact:true}).click();await check(4);
    await section.getByRole('button',{name:'Chem (0)',exact:true}).click();await check(0);
    await section.getByRole('button',{name:'Base (7)',exact:true}).click();await check(7);
