@@ -39,8 +39,8 @@ const css=`
 #technical-abilities button[aria-pressed=true]{background:#25384c;color:#e5f1ff;border-color:#41617c}
 #technical-abilities button:focus-visible,#technical-abilities select:focus-visible{outline:2px solid #8acbff;outline-offset:2px}
 #technical-abilities select{font:inherit;max-width:100%;padding:8px;background:#111923;color:#edf4ff;border:1px solid #334153;border-radius:6px}
-#technical-abilities .ta-list{display:grid;gap:8px}
-#technical-abilities .ta-card{display:block;padding:12px 14px;min-width:0;margin:0}
+#technical-abilities .ta-list{display:flex;flex-direction:column;gap:8px;min-width:0}
+#technical-abilities .ta-list > .ta-card{grid-area:auto!important;position:static!important;display:block;box-sizing:border-box;width:100%;padding:12px 14px;min-width:0;margin:0}
 #technical-abilities .ta-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 #technical-abilities .ta-head h3{font-size:1rem;margin:0}
 #technical-abilities .ta-meta,#technical-abilities .ta-source{font-size:.75rem;color:#acbbce}
@@ -71,7 +71,7 @@ export function renderTechnicalAbilities(root,slug){
   card.append(stats,el('p','Requirements: '+a.condition),el('p','Not yet verified: '+a.unknown.join(', ')+'.','wiki-muted'));list.append(card);
  }
  };
- for(const [id,title] of [['base','Base'],['awakening','Awk'],['chemical','Chem']]){const b=el('button',title);b.type='button';b.dataset.kit=id;b.addEventListener('click',()=>{active=id;render();});tabs.append(b);}
+ for(const [id,title] of [['base','Base'],['awakening','Awk'],['chemical','Chem']]){const b=el('button',title);b.type='button';b.dataset.kit=id;const count=data.entries.filter(x=>x.kit===id).length;b.textContent=title+' ('+count+')';b.addEventListener('click',()=>{active=id;render();});tabs.append(b);}
  units.addEventListener('change',render);controls.append(tabs,units);section.append(controls,info,list);
  const archive=el('details');archive.append(el('summary','Older NEL Nagi kit (archive)'),el('p',data.archive));section.append(archive);
  const anchor=[...root.querySelectorAll(':scope > .wiki-details-section')].find(s=>['Abilities','Announced abilities','Patch history'].includes(s.querySelector('h2')?.textContent));root.insertBefore(section,anchor||null);render();
