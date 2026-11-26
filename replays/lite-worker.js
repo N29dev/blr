@@ -22,7 +22,7 @@ function cleanReplayFrame(f,roster,removeNpc){
  if(object(f.scoreboard))out.scoreboard={home:f.scoreboard.home,away:f.scoreboard.away,timer:f.scoreboard.timer};
  if(Array.isArray(f.playerScoreboard)&&f.playerScoreboard.length<=64){const seen=new Set();out.playerScoreboard=[];for(const p of f.playerScoreboard){if(!object(p)||!validId(p.id)||!['Home','Away'].includes(p.team)||seen.has(String(p.id))||roster[String(p.id)]?.kind==='npc')continue;seen.add(String(p.id));const row={id:p.id,team:p.team};if(typeof p.position==='string'&&/^[A-Z][A-Z0-9]{0,11}$/.test(p.position))row.position=p.position;for(const k of ['Points','Goals','Assists','Saves','Steals','Ping'])if(Number.isFinite(p[k])&&p[k]>=0&&p[k]<1e12)row[k]=Math.round(p[k]);out.playerScoreboard.push(row);}}
  if(object(f.localStats))out.localStats=Object.fromEntries(Object.entries(f.localStats).filter(([k,v])=>STAT_KEYS.has(k)&&(typeof v==='boolean'||typeof v==='string'&&v.length<=128||Number.isFinite(v))));
- if(Array.isArray(f.events)){const events=f.events.filter(e=>object(e)&&e.source==='counter'&&COUNTER_EVENTS.has(e.type)&&validId(e.playerId)&&Number.isFinite(e.t));if(events.length)out.events=events;}
+ if(Array.isArray(f.events)){const events=f.events.filter(e=>object(e)&&((e.source==='counter'&&COUNTER_EVENTS.has(e.type))||(e.source==='state'&&e.type==='stunned'&&roster[String(e.playerId)]?.kind!=='npc'&&f.players.some(p=>String(p.id)===String(e.playerId)&&p.kind!=='npc')))&&validId(e.playerId)&&Number.isFinite(e.t));if(events.length)out.events=events;}
  return {frame:out,removed:removed.size};
 }
 function createReducer(fps,emit){
@@ -85,7 +85,7 @@ async function convertReplay(selected,{fps=30,removeNpc=true}={},progress=()=>{}
  if(buffer.length)await zip.add('chunk_'+String(++chunks).padStart(6,'0')+'.json',buffer);
  const extensions=Array.isArray(meta.extensions)?meta.extensions.filter(x=>x!=='states'):[];
  await zip.add('players.json',roster);
- await zip.add('metadata.json',{...meta,version:2,convertedBy:'replay-lite-web-1.0',originalSampleRate:meta.originalSampleRate??meta.sampleRate,sampleRate:fps?(Number.isFinite(meta.sampleRate)?Math.min(fps,meta.sampleRate):fps):meta.sampleRate,frames:result.count,chunks,duration:result.last,eventMode:'match-counters-only',extensions:[...new Set([...extensions,'localStats','events','playerStyles'])]});
+ await zip.add('metadata.json',{...meta,version:2,convertedBy:'replay-lite-web-1.0',originalSampleRate:meta.originalSampleRate??meta.sampleRate,sampleRate:fps?(Number.isFinite(meta.sampleRate)?Math.min(fps,meta.sampleRate):fps):meta.sampleRate,frames:result.count,chunks,duration:result.last,eventMode:'match-counters-and-stun-starts',extensions:[...new Set([...extensions,'localStats','events','playerStyles'])]});
  const output=zip.finish();return {blob:output.blob,inputRaw,outputRaw:output.raw,inputBytes:selected.reduce((n,f)=>n+f.size,0),oldFrames:result.oldCount,frames:result.count,removed,discarded,overLimit:output.raw>MAX_REPLAY_BYTES||result.count>MAX_REPLAY_FRAMES};
 }
 self.onmessage=async({data})=>{try{const r=await convertReplay(data.files,data.options,p=>self.postMessage({type:'progress',...p}));self.postMessage({type:'done',...r});}catch(e){self.postMessage({type:'error',message:e?.message||String(e)});}};
