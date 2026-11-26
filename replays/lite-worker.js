@@ -20,6 +20,7 @@ function cleanReplayFrame(f,roster,removeNpc){
  if(object(f.ball)){out.ball=removed.has(String(f.ball.owner))?{state:'unknown'}:{state:f.ball.state,owner:f.ball.owner,cf:f.ball.cf};}
  if(object(f.camera)&&f.camera.cf)out.camera={cf:f.camera.cf,fov:f.camera.fov};
  if(object(f.scoreboard))out.scoreboard={home:f.scoreboard.home,away:f.scoreboard.away,timer:f.scoreboard.timer};
+ if(Array.isArray(f.playerScoreboard)&&f.playerScoreboard.length<=64){const seen=new Set();out.playerScoreboard=[];for(const p of f.playerScoreboard){if(!object(p)||!validId(p.id)||!['Home','Away'].includes(p.team)||seen.has(String(p.id))||roster[String(p.id)]?.kind==='npc')continue;seen.add(String(p.id));const row={id:p.id,team:p.team};if(typeof p.position==='string'&&/^[A-Z][A-Z0-9]{0,11}$/.test(p.position))row.position=p.position;for(const k of ['Points','Goals','Assists','Saves','Steals','Ping'])if(Number.isFinite(p[k])&&p[k]>=0&&p[k]<1e12)row[k]=Math.round(p[k]);out.playerScoreboard.push(row);}}
  if(object(f.localStats))out.localStats=Object.fromEntries(Object.entries(f.localStats).filter(([k,v])=>STAT_KEYS.has(k)&&(typeof v==='boolean'||typeof v==='string'&&v.length<=128||Number.isFinite(v))));
  if(Array.isArray(f.events)){const events=f.events.filter(e=>object(e)&&e.source==='counter'&&COUNTER_EVENTS.has(e.type)&&validId(e.playerId)&&Number.isFinite(e.t));if(events.length)out.events=events;}
  return {frame:out,removed:removed.size};
@@ -35,7 +36,7 @@ function createReducer(fps,emit){
   delete f.localStats;if(Object.keys(delta).length)f.localStats=delta;
   let styleChanged=false;for(const p of f.players){if(typeof p.style==='string'){const id=String(p.id);if(styles.get(id)===p.style)delete p.style;else{styles.set(id,p.style);styleChanged=true;}}}
   const scoreKey=JSON.stringify([f.scoreboard?.home,f.scoreboard?.away]),semanticKey=JSON.stringify([f.ball?.state,f.ball?.owner,f.players.map(p=>[String(p.id),p.team,p.hasBall,p.states?.InCutscene===true]).sort((a,b)=>a[0].localeCompare(b[0]))]);
-  const important=Boolean(f.localStats||styleChanged||f.events||score!==scoreKey||sem!==semanticKey);
+  const important=Boolean(f.localStats||f.playerScoreboard||styleChanged||f.events||score!==scoreKey||sem!==semanticKey);
   score=scoreKey;sem=semanticKey;
   const regular=lastSaved===null||!fps||Math.floor((f.t-first+1e-8)*fps)>Math.floor((lastSaved-first+1e-8)*fps);
   if(important||regular){send(f);pending=null;}else pending=f;
