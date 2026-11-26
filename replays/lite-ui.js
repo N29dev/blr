@@ -9,7 +9,7 @@
  input.addEventListener('change',()=>{clear();setBusy(false);status.textContent=input.files.length?input.files.length+' file(s) selected · '+fmt([...input.files].reduce((s,f)=>s+f.size,0)):'Choose your original replay.';});
  start.addEventListener('click',()=>{
   if(!input.files.length||worker)return;clear();bar.value=0;setBusy(true);status.textContent='Reading replay…';
-  try{worker=new Worker('/replays/lite-worker.js?v=1');}catch(e){stop('Converter unavailable: '+e.message);return;}
+  try{worker=new Worker('/replays/lite-worker.js?v=2');}catch(e){stop('Converter unavailable: '+e.message);return;}
   worker.onmessage=({data:r})=>{
    if(r.type==='progress'){bar.value=Math.max(0,Math.min(1,r.fraction));status.textContent=r.message;return;}
    if(r.type==='error'){stop('Conversion failed: '+r.message);return;}
