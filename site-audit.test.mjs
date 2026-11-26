@@ -15,7 +15,7 @@ const origin='https://blr.n29.kz';
 const pages=[
   '/','/404.html','/clipper.html','/tiktok-downloader.html','/tools/',
   '/servers/','/servers/customs/','/tech/','/tech/admin/',
-  '/leaderboard/','/leaderboard/admin.html','/wiki/','/wiki/styles/','/styles/','/flows/','/search/','/styles/nagi/','/flows/trap/','/abilities/','/evolutions/','/progression/','/mastery/','/mechanics/','/updates/','/codes/','/cosmetics/','/guides/'
+  '/field/','/replays/','/leaderboard/','/leaderboard/admin.html','/wiki/','/wiki/styles/','/styles/','/flows/','/search/','/styles/nagi/','/flows/trap/','/abilities/','/evolutions/','/progression/','/mastery/','/mechanics/','/updates/','/codes/','/cosmetics/','/guides/'
 ];
 for(const kind of ['styles','flows'])for(const entry of readdirSync(join(root,kind),{withFileTypes:true}))if(entry.isDirectory()&&!pages.includes('/'+kind+'/'+entry.name+'/'))pages.push('/'+kind+'/'+entry.name+'/');
 const pageFile=route=>join(root,route.endsWith('/')?route.slice(1)+'index.html':route.slice(1));
