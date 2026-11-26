@@ -19,6 +19,7 @@
     { group:'Rules', icon:'📜', title:'Allowed & banned tech', detail:'Search BL:R styles, techs and punishable bugs', url:'/tech/' },
     { group:'Rules', icon:'🔎', title:'Check if a tech is allowed', detail:'How to ask BL:R support staff about a technique', url:'/tech/#support' },
     { group:'Create', icon:'🎬', title:'Creator Studio', detail:'Compress, trim, analyze and download videos; see method status', url:'/tools/' },
+    { group:'Create', icon:'⚽', title:'Replay Studio', detail:'Authorized post-match replay viewer, freecam and ball-follow cameras', url:'/replays/' },
     { group:'Create', icon:'✂️', title:'MP4 clipper', detail:'Trim part of a public direct MP4', url:'/clipper.html' },
     { group:'Create', icon:'📥', title:'TikTok downloader & repair', detail:'Download and repair MP4 duration metadata', url:'/tiktok-downloader.html' },
     { group:'Create', icon:'🏅', title:'CC leaderboard (Sep 2026 archive)', detail:'Historical creator event results, not current rankings', url:'/leaderboard/' },
