@@ -1,3 +1,4 @@
+import {renderStraight3D} from './flight-3d.mjs?v=1';
 import {shotVelocity,dashTarget,trajectory,interpolateFlight} from './physics-model.mjs?v=2';
 // Mathematical gameplay illustrations. No original game code or assets.
 // A projectile model is an illustration, not a measurement of BL:R's ball drag or gravity.
@@ -80,28 +81,7 @@ function arrow(g,x1,y1,x2,y2,color){line(g,x1,y1,x2,y2,color);const a=Math.atan2
 function metric(dl,name,value){const d=el('div');d.append(el('dt',name),el('dd',value));dl.append(d);}
 function slider(parent,title,min,max,step,value){const l=el('label'),out=el('output'),input=el('input');input.type='range';input.min=min;input.max=max;input.step=step;input.value=value;input.setAttribute('aria-label',title);l.append(el('span',title),input,out);parent.append(l);return {input,out};}
 function numeric(parent,title,min,max,step,value){const l=el('label'),i=el('input');i.type='number';i.min=min;i.max=max;i.step=step;i.value=value;i.setAttribute('aria-label',title);l.append(el('span',title),i);parent.append(l);return i;}
-function shotView(root,shot){
- const {p,k,confirmed}=shot;const mode=shot.mode||(confirmed?'additive':'minimum');const additive=mode==='additive';const fixed=mode==='fixed';const horizontalFacing=shot.horizontalFacing===true;
- root.append(equation(row(sub(v('v'),v('x')),op('='),mn(p),...(horizontalFacing?[]:[mi('cos'),v('θ')])),row(sub(v('v'),v('y')),op('='),mn(p),op('('),...(fixed?[mn(k)]:additive?[mi('sin'),v('θ'),op('+'),mn(k)]:[mi('max'),op('('),mi('sin'),v('θ'),op(','),mn(k),op(')')]),op(')')),row(v('α'),op('='),mi('atan2'),op('('),sub(v('v'),v('y')),op(','),sub(v('v'),v('x')),op(')'))));
- const controls=el('div',null,'am-controls'),angle=slider(controls,'Camera elevation (degrees)',-45,75,1,15),gravity=numeric(controls,'Model gravity (stud/s²)',1,1000,1,142),height=numeric(controls,'Launch world Y (studs)',9.5,100,0.5,12);
- if(horizontalFacing){angle.input.value=0;angle.input.disabled=true;}
- const modelLabel=el('label'),drag=el('input');drag.type='checkbox';drag.checked=true;modelLabel.append(drag,el('span','Apply client drag'));controls.append(modelLabel);const vector=diagram('Camera elevation and initial velocity vectors',480,150),chart=diagram('Idealized ball trajectory, height versus distance'),stats=el('dl',null,'am-metrics');
- root.append(controls,vector,stats,chart);let flight=0,marker=null,project=null;const player=playback(root,{duration:()=>flight,draw:u=>{if(project&&marker){const q=project(u);marker.setAttribute('cx',q.x);marker.setAttribute('cy',q.y);}},labelText:'Flight playback progress'});root.append(el('p','Base-power launch model for the identified direction branch. Numerical 60 Hz client drag and upward adjustments; snapshot gravity 142; first crossing of world Y=9.5. Other aim modes, power modifiers, custom curves, acceleration, collisions, bounces and server correction are not modeled. This is not a measured trajectory.','am-caption'),el('div','Δt = 1/60 s · horizontal damping when Y ≤ 18 · upward Δv = 1.36667 stud/s when 8 < Y < 27','am-formula'));
- function draw(){
-  const theta=horizontalFacing?0:Number(angle.input.value),v=shotVelocity(p,k,theta,mode),g=Math.max(1,Math.min(1000,Number(gravity.value)||142)),h=Math.max(9.5,Math.min(100,Number(height.value)||12)),b=trajectory(v.vx,v.vy,{gravity:g,launchY:h,drag:drag.checked});
-  angle.out.value=theta+'°';vector.replaceChildren();chart.replaceChildren();stats.replaceChildren();
-  const ox=65,oy=78,scale=49/Math.max(p,v.speed);line(vector,20,oy,455,oy);label(vector,20,16,'Launch vectors · side view');label(vector,310,oy-8,'Horizontal');
-  arrow(vector,ox,oy,ox+p*Math.cos(rad(theta))*scale,oy-p*Math.sin(rad(theta))*scale,'#b7c3d0');
-  arrow(vector,ox,oy,ox+v.vx*scale,oy-v.vy*scale,'#89d6a9');
-  dot(vector,ox,oy,'#edf4ff');label(vector,205,35,horizontalFacing?'Fixed horizontal facing':'Camera θ = '+theta+'°','start','#b7c3d0');label(vector,205,53,'Launch α = '+fmt(v.angle)+'°','start','#89d6a9');label(vector,205,114,'vₓ = '+fmt(v.vx)+' · vᵧ = '+fmt(v.vy)+' stud/s');
-  metric(stats,'Launch speed',fmt(v.speed)+' stud/s');metric(stats,'Flight time (model)',fmt(b.t,2)+' s');metric(stats,b.landed?'Landing range (model)':'Range at limit',fmt(b.range)+' studs');
-  const x0=46,y0=192,xmax=Math.max(10,b.range)*1.08,ymax=Math.max(5,b.height)*1.12,sx=410/xmax,sy=165/ymax;
-  for(let i=0;i<=4;i++){const x=xmax*i/4,y=ymax*i/4;line(chart,x0+x*sx,27,x0+x*sx,y0,'#253443');line(chart,x0,y0-y*sy,456,y0-y*sy,'#253443');label(chart,x0+x*sx,208,fmt(x,0),'middle');label(chart,40,y0-y*sy+4,fmt(y,0),'end');}
-  line(chart,x0,27,x0,y0);line(chart,x0,y0,456,y0);label(chart,46,16,'Height (studs)');label(chart,456,224,'Distance (studs)','end');
-  const points=b.points.map(q=>(x0+q.x*sx)+','+(y0-q.y*sy));chart.append(svg('polyline',{points:points.join(' '),fill:'none',stroke:'#89d6a9','stroke-width':2.4,'stroke-linejoin':'round'}));dot(chart,x0,y0-h*sy);dot(chart,x0+b.range*sx,y0-b.points.at(-1).y*sy,'#89d6a9');flight=b.t;project=u=>{const q=interpolateFlight(b.points,u*b.t);return {x:x0+q.x*sx,y:y0-q.y*sy};};marker=svg('circle',{r:5,fill:'#fff',stroke:'#89d6a9','stroke-width':2});chart.append(marker);player.refresh();
- }
- for(const i of [angle.input,gravity,height,drag])i.addEventListener('input',draw);draw();
-}
+function shotView(root,shot){renderStraight3D(root,shot);}
 function turnView(root){
  root.append(equation(row(v('B'),op('('),v('u'),op(')'),op('='),sup(row(op('('),mn(1),op('−'),v('u'),op(')')),mn(2)),sub(v('P'),mn(0)),op('+'),mn(2),v('u'),op('('),mn(1),op('−'),v('u'),op(')'),sub(v('P'),mn(1)),op('+'),sup(v('u'),mn(2)),sub(v('P'),mn(2))),row(v('B'),op('('),v('u'),op(')'),op('='),op('('),mn(60),v('u'),op('('),mn(1),op('−'),v('u'),op(')'),op(','),op('−'),mn(50),v('u'),op(')')),row(mi('speed'),op('='),mn(1.8),op('×'),mn(63),op('='),mn(113.4),mi('stud/s'))));
  const controls=el('div',null,'am-controls'),progress=slider(controls,'Steering target u',0,1,.1,.5),g=diagram('Zero Reset Turn top-down steering target curve',480,260),stats=el('dl',null,'am-metrics');root.append(controls,g,stats);const timeline=el('div',null,'am-timeline');for(const [title,width] of [['0–0.1 s · forward target',1],['0.1–0.2 s · wait',1],['0.2–0.4 s · steering',2],['0.4–0.6 s · cleanup pending',2]]){const cell=el('div',title);cell.style.flex=String(width);timeline.append(cell);}root.append(timeline);const legend=el('div',null,'am-legend');for(const [name,color] of [['Steering target','#9ac9ff'],['Approximate player position','#e6b66e']]){const item=el('span',name);item.style.setProperty('--legend',color);legend.append(item);}root.append(legend);
@@ -132,9 +112,9 @@ function genericMotion(root,m,index){
  root.append(el('p','This is the moving constraint target, not a measured character path. Selected direction and collisions can alter the result. Stages are shown separately because their execution order may be conditional.','am-caption'));
 }
 export function renderAbilityMath(name,spec=null){
- if(spec){const motion=spec.motion||[],shot=spec.shot;if(!shot&&!motion.length)return null;const section=el('details',null,'am-box');section.append(el('summary',shot&&motion.length?'Math & movement previews':shot?'Math & trajectory preview':'Movement target preview'),el('style',css));const body=el('div');section.append(body);let initialized=false;section.addEventListener('toggle',()=>{if(!section.open||initialized)return;initialized=true;motion.forEach((m,i)=>genericMotion(body,m,i));if(shot){if(shot.conditional)body.append(el('p','Model for the identified launch branch; other branches can use a different formula.','am-caption'));shotView(body,shot);}});return section;}
+ if(spec){const motion=spec.motion||[],shot=spec.shot;if(!shot&&!motion.length)return null;const section=el('details',null,'am-box');section.append(el('summary',shot&&motion.length?'3D shot & movement previews':shot?'3D shot simulation':'Movement target preview'),el('style',css));const body=el('div');section.append(body);let initialized=false;section.addEventListener('toggle',()=>{if(!section.open||initialized)return;initialized=true;motion.forEach((m,i)=>genericMotion(body,m,i));if(shot){if(shot.conditional)body.append(el('p','Model for the identified launch branch; other branches can use a different formula.','am-caption'));shotView(body,shot);}});return section;}
  if(!shots[name]&&!['Zero Reset Turn','Dash'].includes(name))return null;
- const section=el('details',null,'am-box');section.append(el('summary',name==='Zero Reset Turn'?'Mathematical steering path':name==='Dash'?'Movement direction diagram':'Math & trajectory preview'),el('style',css));
+ const section=el('details',null,'am-box');section.append(el('summary',name==='Zero Reset Turn'?'Mathematical steering path':name==='Dash'?'Movement direction diagram':'3D shot simulation'),el('style',css));
  const body=el('div');section.append(body);let initialized=false;
  function init(){if(initialized)return;initialized=true;if(name==='Zero Reset Turn')turnView(body);else if(name==='Dash')movementView(body,name);else{if(name==='Direct Heel Lift')movementView(body,name);shotView(body,shots[name]);}}
  section.addEventListener('toggle',()=>{if(section.open)init();});return section;
