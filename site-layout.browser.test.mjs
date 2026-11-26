@@ -444,7 +444,7 @@ test('Nagi technical abilities stack without overlap on mobile and desktop',asyn
    await check(7);
    await section.getByLabel('Mastery level').selectOption('Mastery III');await check(1);
    const heel=section.locator('.ta-card:visible');assert.match(await heel.innerText(),/Direct Heel Lift/);
-   await heel.locator('summary').click();assert.ok(await heel.getByText('Scheduled cleanup',{exact:true}).isVisible());
+   await heel.getByText('Timing, mechanics & verification',{exact:true}).click();assert.ok(await heel.getByText('Scheduled cleanup',{exact:true}).isVisible());
    await section.getByLabel('Distance units').selectOption('game');assert.match(await heel.innerText(),/game m/);
    await section.getByLabel('Mastery level').selectOption('all');await check(7);
    await section.getByRole('button',{name:'Awk (4)',exact:true}).click();await check(4);
@@ -453,4 +453,26 @@ test('Nagi technical abilities stack without overlap on mobile and desktop',asyn
    await assertNoOverflow(page,'Nagi technical abilities');
   }finally{await context.close();}
  }
+});
+
+test('Nagi mathematical previews react to input and retain exact steering coordinates',async()=>{
+ const {context,page}=await open('/styles/nagi/',390,900);
+ try{
+  const section=page.locator('#technical-abilities');
+  await section.locator('.ta-card').first().waitFor();
+  const trap=section.locator('.ta-card').filter({has:page.getByRole('heading',{name:'Trap Shot',exact:true})});
+  await trap.getByText('Math & trajectory preview',{exact:true}).click();
+  const angle=trap.getByLabel('Camera elevation (degrees)');
+  await angle.fill('0');
+  assert.match(await trap.locator('.am-metrics').innerText(),/137\.7/);
+  await angle.fill('30');
+  assert.notEqual(await angle.inputValue(),'0');
+  const turn=section.locator('.ta-card').filter({has:page.getByRole('heading',{name:'Zero Reset Turn',exact:true})});
+  await turn.getByText('Mathematical steering path',{exact:true}).click();
+  const target=turn.getByLabel('Steering target u');
+  await target.fill('0.5');
+  assert.match(await turn.locator('.am-metrics').innerText(),/15 studs/);
+  assert.match(await turn.locator('.am-metrics').innerText(),/-25 studs/);
+  await assertNoOverflow(page,'Nagi math previews');
+ }finally{await context.close();}
 });
