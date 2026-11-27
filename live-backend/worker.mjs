@@ -2,6 +2,7 @@
 // No game client ingestion, player identifiers, or arbitrary frame uploads.
 import { DurableObject } from 'cloudflare:workers';
 import { encodeBatch } from '../live/codec.mjs';
+import { handleAuthorized, stopAuthorized } from './authorized-stream.mjs';
 export const HZ=60, BATCH=6, MAX_BATCHES=6000, HISTORY_BATCHES=50;
 const json=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});
 const fresh=()=>({id:null,startedAt:0,seq:0,active:false});
@@ -53,7 +54,7 @@ export class LiveDemoRoom extends DurableObject {
   if(this.state.active){await this.save({...this.state,active:false});this.broadcast({type:'end',...this.status()})}
   await this.ctx.storage.deleteAlarm();return json(this.status());
  }
- async alarm(){await this.stop()}
+ async alarm(){if(this.state.kind==='authorized'){const prev=this.pending||Promise.resolve();const next=prev.catch(()=>{}).then(()=>{if(this.state.active&&Date.now()-(this.state.lastBatchAt||this.state.startedAt)<15000)return this.ctx.storage.setAlarm((this.state.lastBatchAt||this.state.startedAt)+15000);return stopAuthorized(this)});this.pending=next;await next}else await this.stop()}
  async watch(request){
   if(request.headers.get('Upgrade')?.toLowerCase()!=='websocket')return json({error:'WebSocket required'},426);
   if(this.ctx.getWebSockets().length>=100)return json({error:'Demo room full'},503);
@@ -71,7 +72,13 @@ export class LiveDemoRoom extends DurableObject {
  webSocketError(ws){try{ws.close(1011,'WebSocket error')}catch{}}
  // Request routing stays inside the room so concurrent mutations can be serialized.
  async fetch(request){
-  const action=new URL(request.url).pathname.split('/').at(-1);
+  const path=new URL(request.url).pathname,action=path.split('/').at(-1);
+  if(path.startsWith('/stream/')){
+   if(action!=='watch'&&!await allowed(request,this.env))return json({error:'Unauthorized'},401);
+   const prev=this.pending||Promise.resolve();
+   const next=prev.catch(()=>{}).then(async()=>{try{return await handleAuthorized(this,request,action)}catch{return json({error:'Invalid stream request'},400)}});
+   this.pending=next;return next;
+  }
   if(action==='watch')return this.watch(request);
   if(action==='status')return json(this.status());
   if(!await allowed(request,this.env))return json({error:'Unauthorized'},401);
@@ -83,6 +90,8 @@ export class LiveDemoRoom extends DurableObject {
 }
 export default {async fetch(request,env){
  const path=new URL(request.url).pathname;
+ const stream=path.match(/^\/stream\/([a-f0-9]{32})\/(start|batch|watch|stop)$/);
+ if(stream){const read=stream[2]==='watch';if(request.method!==(read?'GET':'POST'))return json({error:'Method not allowed'},405);if(!read&&!await allowed(request,env))return json({error:'Unauthorized'},401);return env.LIVE_DEMO.getByName('stream:'+stream[1]).fetch(request)}
  if(!/^\/demo\/(status|watch|start|tick|stop)$/.test(path))return json({error:'Not found'},404);
  const read=/\/(status|watch)$/.test(path);
  if(request.method!==(read?'GET':'POST'))return json({error:'Method not allowed'},405);
