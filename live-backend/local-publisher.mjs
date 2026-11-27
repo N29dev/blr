@@ -10,7 +10,8 @@ export function normalizeFrame(raw,clock){
  const origin=clock.origin??raw.t,t=Math.round((raw.t-origin)*1000)/1000;
  if(t<=clock.last)throw Error('Frame timestamps must strictly increase');
  if(t>STREAM_LIMIT)return null;
- const frame=cleanFrame({...raw,t});
+ const events=Array.isArray(raw.events)?raw.events.map(e=>({...e,t:Math.max(0,Math.round((e.t-origin)*1000)/1000)})):undefined;
+ const frame=cleanFrame({...raw,t,events});
  if(frame.scoreboard?.timer!==undefined)frame.scoreboard.timer=Number(frame.scoreboard.timer);
  clock.origin=origin;clock.last=t;return frame;
 }
