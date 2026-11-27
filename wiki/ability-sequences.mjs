@@ -1,3 +1,4 @@
+import {createSequenceView} from './sequence-view.mjs?v=1';
 import {previewControls,bindPreviewPlayback} from './preview-playback.mjs?v=1';
 // Independent, schematic client-event diagrams. Positions and step lengths are illustrative,
 // not measurements or reconstructed server hitboxes. No game code is included.
@@ -98,13 +99,11 @@ export function abilitySequenceInfo(id,name){
  return {sid,kind,title:titles[kind],note:sp?.[0]||'This is a schematic interpretation of the client branch. The exact server result and hitbox are not verified.',steps:sp?sp.slice(1):defaults[kind]};
 }
 const el=(t,s)=>{const n=document.createElement(t);if(s!=null)n.textContent=s;return n;};
-const svg=(t,a={},s)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',t);for(const [k,v] of Object.entries(a))n.setAttribute(k,v);if(s!=null)n.textContent=s;return n;};
 const mix=(a,b,u)=>a.map((v,i)=>v+(b[i]-v)*u),clamp=x=>Math.max(0,Math.min(1,x));
-const colors={player:'#70c5ff',enemy:'#ff8c93',team:'#a9ed9d',ball:'#f8dc8c',ink:'#e6f0ee'};
 export function renderAbilitySequence({name,implementation=null,selection=[],branchLabel=''}){
  const info=abilitySequenceInfo(implementation?.source?.from,name),root=el('details');root.className='am-box ability-sequence';root.append(el('summary','Ability sequence · '+info.title+(branchLabel?' · '+branchLabel:'')));let initialized=false;
  root.addEventListener('toggle',()=>{if(!root.open||initialized)return;initialized=true;
-  const wrap=el('div');wrap.style.cssText='display:grid;gap:8px';root.append(wrap,el('p','Schematic preview — positions, stage lengths and interaction radius are illustrative. Not measured timing, distance, hitbox, or server validation.'));
+  const wrap=el('div');wrap.style.cssText='display:grid;gap:8px';root.append(wrap,el('p','Perspective gameplay illustration — positions, heights, playback timing and interaction radius are illustrative, not measured game physics. Exact numerical models remain separate.'));
   const intro=el('p',info.note);wrap.append(intro);
   const cond=el('p',selection.length?selection.join(' / '):'See the activation conditions in this ability card.');cond.style.cssText='font-size:.8rem;color:#b8cbe0';wrap.append(cond);
   const scenario=el('div');scenario.style.cssText='display:flex;gap:10px;flex-wrap:wrap;align-items:center';wrap.append(scenario);
@@ -114,32 +113,54 @@ export function renderAbilitySequence({name,implementation=null,selection=[],bra
   outcome.disabled=!gates;
   const possession=select('Starting ball',[['auto','Ability context'],['player','Player'],['loose','Loose / incoming'],['enemy','Opponent'],['team','Teammate']]);
   const direction=select('Movement direction',[['1','Forward / right'],['-1','Mirrored']]);
-  const view=svg('svg',{viewBox:'0 0 420 215',role:'img','aria-label':'Schematic gameplay ability sequence'});view.style.cssText='display:block;width:100%;height:auto;background:#102e2b;border-radius:8px;border:1px solid #47645d';wrap.append(view);
+  const camera=select('Camera',[['tactical','Tactical'],['side','Low angle'],['goal','Goal view']]);const view=createSequenceView();wrap.append(view.canvas);camera.addEventListener('change',()=>view.setCamera(camera.value));
   const stage=el('p');stage.setAttribute('role','status');stage.style.cssText='font-weight:600;min-height:1.4em';wrap.append(stage);
   const ctrl=previewControls(),range=el('input');range.type='range';range.min='0';range.step='0.01';range.setAttribute('aria-label','Ability stage progress');range.style.cssText='width:100%;accent-color:#70c5ff';wrap.append(ctrl.bar,range);
   const list=el('div');list.style.cssText='display:flex;flex-wrap:wrap;gap:5px';wrap.append(list);
   let t=0;
   function steps(){let q=info.steps.slice();if(info.sid===33533&&name==='Trap'&&possession.value==='player')q=['lift','catch','follow'];if(info.sid===24566&&possession.value==='player')q=['pass','receive'];if(info.sid===48531&&possession.value==='player')q=['release'];return q;}
-  function initial(q){const b=possession.value==='auto'?(q[0]==='force'?'team':q.includes('duel')?'enemy':q.includes('contact')||q.includes('jump')?'loose':'player'):possession.value;return {p:[105,127],b:b==='team'?[315,70]:b==='enemy'?[216,95]:b==='loose'?[35,64]:[116,127],owner:b,e:[216,95],mate:[315,70]};}
-  function state(q,start,step,u,failed){const s={...start,p:start.p.slice(),b:start.b.slice()};const sign=Number(direction.value),p=start.p,b=start.b,move=(dx,dy)=>[clamp((p[0]+dx)/420)*420,clamp((p[1]+dy)/215)*215];
-   if(step==='dash'||step==='side'||step==='jump'||step==='land'){let dest=step==='side'?move(42,sign*40):step==='jump'?move(36,-32):step==='land'?move(0,24):move(54,sign*12);s.p=mix(p,dest,u);if(s.owner==='player')s.b=[s.p[0]+10,s.p[1]];}
-   if(step==='contact'){const dest=[p[0]+16,p[1]-14];s.b=mix(b,failed?[330,35]:dest,u);s.owner='loose';}
-   if(step==='duel'){s.p=mix(p,[start.e[0]-20,start.e[1]+12],u);if(s.owner==='player')s.b=[s.p[0]+10,s.p[1]];}
-   if((step==='catch'||step==='acquire')&&!failed){s.b=mix(b,[p[0]+10,p[1]],u);if(u>=1)s.owner='player';}
-   if(step==='pass'||step==='release'||step==='redirect'||step==='force'){if(!failed){const end=step==='pass'?start.mate:step==='force'?[p[0]+10,p[1]]:step==='redirect'?[335,45]:[390,105];s.b=mix(b,end,u);s.b[1]-=Math.sin(Math.PI*u)*(step==='redirect'?12:19);s.owner=step==='force'&&u>=1?'player':'loose';}}
-   if(step==='receive'&&!failed){if(s.owner!=='player')s.owner='receiver';}
-   if(step==='lift'&&!failed){s.b=[p[0]+10,p[1]-25*u];s.owner='loose';}
+  const durations={dash:.62,side:.55,jump:.55,land:.42,contact:.68,duel:.65,catch:.4,acquire:.4,redirect:.9,pass:1.05,force:1.05,receive:.28,release:.95,follow:.45,request:.55,result:.6,enable:.35,hold:.9,disable:.35,lift:.6};
+  const duration=q=>q.reduce((sum,k)=>sum+(durations[k]||.6),0);
+  const eased=u=>u*u*(3-2*u),arc=u=>4*u*(1-u),gate=k=>['contact','duel','request','pass','force','release','lift','catch','acquire','follow'].includes(k);
+  function initial(q){const owner=possession.value==='auto'?(q[0]==='force'?'team':q.includes('duel')?'enemy':q.includes('contact')||q.includes('jump')?'loose':'player'):possession.value;
+   const p=[105,127,0],e=[216,95,0],mate=[315,70,0],b=owner==='team'?[325,70,3.6]:owner==='enemy'?[206,95,3.6]:owner==='loose'?[35,64,12]:[116,127,3.6];
+   return {p,b,owner,e,mate,yaw:0};
+  }
+  function state(start,k,u,failed){const s={...start,p:start.p.slice(),b:start.b.slice()},sign=Number(direction.value),p=start.p,b=start.b,v=eased(u);
+   const move=(dx,dz,y=0)=>[Math.max(18,Math.min(402,p[0]+dx)),Math.max(18,Math.min(197,p[1]+dz)),y];
+   if(['dash','side','jump','land'].includes(k)){
+    const dest=k==='side'?move(28,sign*36):k==='jump'?move(36,-12,18):k==='land'?move(8,0,0):move(62,sign*6);
+    s.p=mix(p,dest,k==='dash'?1-(1-u)**2:v);if(k==='jump')s.p[2]=p[2]+(dest[2]-p[2])*Math.sin(u*Math.PI/2);
+    s.yaw=k==='land'?start.yaw:Math.atan2(dest[1]-p[1],dest[0]-p[0]);if(s.owner==='player')s.b=[s.p[0]+Math.cos(s.yaw)*10,s.p[1]+Math.sin(s.yaw)*10,s.p[2]+3.6];
+   }
+   if(k==='contact'){
+    // Incoming ball must travel to the interaction area before the outcome, not teleport.
+    const dest=failed?[330,35,3.6]:[p[0]+12,p[1],Math.max(3.6,p[2]+12)];s.b=mix(b,dest,u);s.b[2]+=arc(u)*12;s.owner='loose';
+   }
+   if(k==='duel'){const dest=[start.e[0]-15,start.e[1]+8,0];s.p=mix(p,dest,v);s.yaw=Math.atan2(dest[1]-p[1],dest[0]-p[0]);if(s.owner==='player')s.b=[s.p[0]+10,s.p[1],3.6];}
+   if((k==='catch'||k==='acquire')&&!failed){s.b=mix(b,[p[0]+10,p[1],p[2]+3.6],v);if(u>=1)s.owner='player';}
+   if(['pass','release','redirect','force'].includes(k)&&!failed){
+    const end=k==='pass'?[start.mate[0]-9,start.mate[1],3.6]:k==='force'?[p[0]+10,p[1],p[2]+3.6]:k==='redirect'?[335,45,3.6]:[403,107,6.5];
+    s.b=mix(b,end,u);s.b[2]+=arc(u)*(k==='release'?22:k==='redirect'?13:9);s.owner=k==='force'&&u>=1?'player':'loose';
+   }
+   if(k==='receive'&&!failed&&s.owner!=='player')s.owner='receiver';
+   if(k==='lift'&&!failed){s.b=[p[0]+10,p[1],3.6+arc(u*.65)*23];s.owner='loose';}
    return s;
   }
-  function draw(value){const q=steps();t=Math.max(0,Math.min(q.length,value));range.max=q.length;range.value=t;const idx=Math.min(q.length-1,Math.floor(t)),u=t>=q.length?1:t-idx,failed=outcome.value==='failure';let s=initial(q),stopped=false;
-   for(let i=0;i<=idx;i++){const k=q[i];const isGate=['contact','duel','request','pass','force','release','lift'].includes(k);if(stopped)break;s=state(q,s,k,i===idx?u:1,failed);if(failed&&isGate&&i<idx)stopped=true;}
-   view.replaceChildren(svg('rect',{x:10,y:10,width:400,height:195,rx:4,stroke:'#a4c9ad','stroke-opacity':'.45',fill:'none'}),svg('path',{d:'M210 10 V205 M10 60 H57 V155 H10 M410 60 H363 V155 H410',stroke:'#a4c9ad','stroke-opacity':'.38',fill:'none'}),svg('circle',{cx:210,cy:107,r:35,stroke:'#a4c9ad','stroke-opacity':'.38',fill:'none'}));
-   function person(pt,color,label){view.append(svg('circle',{cx:pt[0],cy:pt[1],r:9,fill:color,stroke:'#102e2b','stroke-width':2}),svg('text',{x:pt[0],y:pt[1]+20,fill:colors.ink,'text-anchor':'middle','font-size':10},label));}
-   if(['duel','contact'].includes(q[idx])&&!stopped)view.append(svg('circle',{cx:s.p[0],cy:s.p[1],r:23,stroke:colors.player,'stroke-dasharray':'4 4',fill:colors.player,'fill-opacity':'.1'}));
-   if(['enable','hold','disable'].includes(q[idx]))view.append(svg('circle',{cx:s.p[0],cy:s.p[1],r:29,stroke:'#bfb3ff','stroke-width':2,fill:'none',opacity:q[idx]==='disable'?1-u:.7}));
-   if(q.includes('duel')||possession.value==='enemy')person(s.e,colors.enemy,'Opponent');if(q.includes('pass')||q.includes('force')||possession.value==='team')person(s.mate,colors.team,'Teammate');person(s.p,colors.player,'Player');view.append(svg('circle',{cx:s.b[0],cy:s.b[1],r:5,fill:colors.ball,stroke:'#27382d','stroke-width':1.5}));
-   stage.textContent=stopped?'Response rejected — subsequent stages not executed':(idx+1)+' / '+q.length+' · '+stageText[q[idx]]+(failed&&gates?' · rejection scenario':'');list.replaceChildren();q.forEach((k,i)=>{const v=el('span',String(i+1)+'. '+stageText[k]);v.style.cssText='font-size:.72rem;border-radius:5px;padding:5px 7px;background:'+(i===idx?'#34516b':'#1b2a37')+';color:#e5eff9';list.append(v);});
+  function sample(q,time,failed){let rem=time,s=initial(q),idx=q.length-1,u=1,stopped=false,k=q[idx];
+   for(let i=0;i<q.length;i++){k=q[i];const len=durations[k]||.6;idx=i;u=clamp(rem/len);if(stopped)break;s=state(s,k,u,failed);if(rem<len)break;if(failed&&gate(k)){stopped=true;break;}rem-=len;}
+   return {s,idx,u,k,stopped};
   }
-  const playback=bindPreviewPlayback({...ctrl,host:ctrl.bar,duration:()=>steps().length,read:()=>t,render:draw});range.addEventListener('input',()=>{playback.pause();draw(+range.value);});for(const s of [outcome,possession,direction])s.addEventListener('change',()=>{playback.pause();draw(0);});draw(0);
+  let lastLabel='';
+  function draw(value){const q=steps(),total=duration(q);t=Math.max(0,Math.min(total,value));range.max=total;range.value=t;const failed=outcome.value==='failure',f=sample(q,t,failed),{s,idx,u,k,stopped}=f;
+   const people=[{role:'player',label:'Player',pos:s.p,yaw:s.yaw,moving:!stopped&&['dash','side','duel','jump'].includes(k),stride:t*16}];
+   if(q.includes('duel')||possession.value==='enemy')people.push({role:'enemy',label:'Opponent',pos:s.e,yaw:Math.PI});
+   if(q.includes('pass')||q.includes('force')||possession.value==='team')people.push({role:'team',label:'Teammate',pos:s.mate,yaw:Math.PI});
+   const trail=[],playerTrail=[];for(let n=0;n<=16;n++){const at=Math.max(0,t-Math.min(.55,t)+(n/16)*Math.min(.55,t));const prev=sample(q,at,failed).s;if(s.owner==='loose'&&['contact','redirect','release','force','pass','lift'].includes(k))trail.push(prev.b);if(['dash','side','duel','jump'].includes(k))playerTrail.push(prev.p);}
+   view.render({people,ball:s.b,stage:k,u,stopped,trail,playerTrail});
+   const label=stopped?'Response rejected — subsequent stages not executed':(idx+1)+' / '+q.length+' · '+stageText[k]+(failed&&gates?' · rejection scenario':'');
+   if(label!==lastLabel){lastLabel=label;stage.textContent=label;list.replaceChildren();q.forEach((step,i)=>{const v=el('span',String(i+1)+'. '+stageText[step]);v.style.cssText='font-size:.72rem;border-radius:5px;padding:5px 7px;background:'+(i===idx?'#34516b':'#1b2a37')+';color:#e5eff9';list.append(v);});}
+  }
+  const playback=bindPreviewPlayback({...ctrl,host:ctrl.bar,duration:()=>duration(steps()),read:()=>t,render:draw});range.addEventListener('input',()=>{playback.pause();draw(+range.value);});for(const s of [outcome,possession,direction])s.addEventListener('change',()=>{playback.pause();draw(0);});draw(0);
  });return root;
 }
