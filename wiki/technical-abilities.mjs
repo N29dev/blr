@@ -4,7 +4,7 @@ import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMoveme
 import {MOVEMENT_REVIEW,renderMovementReview} from './movement-review.mjs?v=3';
 import {RARE_LUA_REVIEW,renderRarePass} from './rare-lua-review.mjs?v=2';
 import {EPIC_REVIEW} from './epic-review.mjs?v=1';
-import {DERIVED_KITS} from './derived-kits.mjs?v=5';
+import {DERIVED_KITS} from './derived-kits.mjs?v=6';
 import {renderAbilityMath} from './ability-math.mjs?v=18';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
