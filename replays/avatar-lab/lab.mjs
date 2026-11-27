@@ -7,7 +7,7 @@ const version='https://esm.sh/roavatar-renderer@1.10.4?bundle&deps=three@0.185.1
 const baseAssets='https://raw.githubusercontent.com/steinann/RoAvatar/5a055d2eef69c8fa232498729ff107372a4a4984/public/assets/';
 function bundledAsset(input){try{const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);if(!u.href.startsWith(baseAssets)||u.search||u.hash)return null;const name=u.href.slice(baseAssets.length);return /^(RigR6\.rbxm|RigR15\.rbxm|rbxasset\/[A-Za-z0-9_./-]+\.(mesh|png))$/.test(name)&&!name.includes('..')?u.href:null}catch{return null}}
 const validId=v=>typeof v==='string'&&/^[1-9][0-9]{0,15}$/.test(v)&&Number.isSafeInteger(Number(v));
-const state={library:null,init:null,active:null,queue:Promise.resolve(),cache:new Map(),objectUrls:new Map()};
+const state={library:null,init:null,active:null,userId:null,queue:Promise.resolve(),cache:new Map(),objectUrls:new Map()};
 const $=id=>document.getElementById(id);
 const failures=[];const deniedAssets=new Set();let stage='Ready';const say=v=>{stage=v;const el=$('status');if(el)el.textContent=v;};
 function note(v){failures.push(String(v).replace(/https:\/\/[a-z0-9-]+\.rbxcdn\.com\/[^\s]+/gi,'[Roblox CDN asset]').slice(0,400));if(failures.length>100)failures.shift();const el=$('diagnostics');if(el)el.textContent=failures.join('\n');}
@@ -17,17 +17,17 @@ function assetUrl(input,headers){
  const raw=typeof input==='string'?input:input instanceof URL?input.href:input.url;
  const url=new URL(raw,location.href),format=new Headers(headers||{}).get('Roblox-AssetFormat')||'';
  if(url.protocol!=='https:'||!(url.hostname==='avatar.roblox.com'||url.hostname==='assetdelivery.roblox.com'||/^[a-z0-9-]+\.rbxcdn\.com$/.test(url.hostname)))throw Error('Unsupported asset host');
- return endpoint+'?url='+encodeURIComponent(url.href)+'&format='+encodeURIComponent(format);
+ return endpoint+'?url='+encodeURIComponent(url.href)+'&format='+encodeURIComponent(format)+(url.hostname==='assetdelivery.roblox.com'&&state.userId?'&userId='+encodeURIComponent(state.userId):'');
 }
 async function publicFetch(input,init={}){
  if(init.method&&init.method.toUpperCase()!=='GET')return new Response('Read-only renderer',{status:405});
- try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(15000)});if(!r.ok){const detail=(await r.clone().text()).slice(0,100);if(r.status===403&&detail.includes('HTTP 401'))deniedAssets.add(String(input));note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+detail);}return r;}
+ try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(30000)});if(!r.ok){const detail=(await r.clone().text()).slice(0,100);if(r.status===403&&detail.includes('HTTP 401'))deniedAssets.add(String(input));note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+detail);}return r;}
  catch(e){note('Asset transport: '+String(input).slice(0,150)+' · '+e.message);return new Response('Public asset unavailable',{status:502})}
 }
 async function imageFetch(input){
  const key=bundledAsset(input)||assetUrl(input);
  if(!state.objectUrls.has(key)){
-  const response=await fetch(key,{credentials:'omit',signal:AbortSignal.timeout(15000)});
+  const response=await fetch(key,{credentials:'omit',signal:AbortSignal.timeout(30000)});
   if(!response.ok){note('Texture HTTP '+response.status+' · '+String(input).slice(0,150));throw Error('Texture unavailable: '+response.status);}
   const url=URL.createObjectURL(await response.blob());state.objectUrls.set(key,url);
   if(state.objectUrls.size>256){const oldest=state.objectUrls.keys().next().value;URL.revokeObjectURL(state.objectUrls.get(oldest));state.objectUrls.delete(oldest)}
@@ -40,7 +40,7 @@ async function initialize(){
   const {FLAGS,RBXRenderer}=lib;
   FLAGS.ONLINE_ASSETS=false;FLAGS.RIG_PATH=baseAssets;FLAGS.ASSETS_PATH=baseAssets+'rbxasset/';FLAGS.FETCH_FUNC=publicFetch;FLAGS.IMAGE_FUNC=imageFetch;
   FLAGS.INCLUDE_REQUEST_CREDENTIALS_OVERRIDE='omit';FLAGS.API_REQUEST_RETRY=false;
-  FLAGS.USE_WORKERS=false;FLAGS.GEAR_ENABLED=false;FLAGS.AUDIO_ENABLED=false;FLAGS.BEAMS_ENABLED=false;
+  FLAGS.ENABLE_API_CACHE=true;FLAGS.ENABLE_API_MESH_CACHE=true;FLAGS.ENABLE_API_RBX_CACHE=true;FLAGS.USE_WORKERS=false;FLAGS.GEAR_ENABLED=false;FLAGS.AUDIO_ENABLED=false;FLAGS.BEAMS_ENABLED=false;
   FLAGS.HIDE_LAYERED_CLOTHING=true;FLAGS.USE_POST_PROCESSING=false;FLAGS.ANIMATE_SKELETON=false;
   FLAGS.PARTICLES_START_FULL=0;
   say('Initializing WebGL and R6 assets…');if(!await deadline(RBXRenderer.fullSetup(true,false,false),30000,'WebGL setup'))throw Error('WebGL2 unavailable');
@@ -54,9 +54,10 @@ async function initialize(){
 async function renderAccount(id){
  deniedAssets.clear();
  if(!validId(id))throw Error('Invalid Roblox UserId');
- if(state.cache.has(id))return state.cache.get(id);
+ const hit=state.cache.get(id);if(hit&&Date.now()-hit.cachedAt<3600000){state.cache.delete(id);state.cache.set(id,hit);return hit}state.cache.delete(id);
  const {API,Authentication,OutfitModel,OutfitRenderer,RBXRenderer}=await initialize();
  if(state.active){state.active.destroy();state.active=null}
+ state.userId=id;
  say('Loading outfit metadata for '+id+'…');const model=await deadline(API.Avatar.GetUserAvatarModel(Number(id)),20000,'Outfit lookup');
  if(!(model instanceof OutfitModel))throw Error('Public outfit unavailable (HTTP '+(model?.status||'unknown')+')');
  model.outfit.playerAvatarType='R6';
@@ -77,7 +78,7 @@ async function renderAccount(id){
     scene.compiledRenderDesc.Connect(check),
     scene.failedRenderDesc.Connect(instance=>reject(Error('Mesh or texture failed: '+(instance?.Prop?.('Name')||'unknown instance'))))
    ];
-  }),45000,'Rig and mesh compilation');
+  }),90000,'Rig and mesh compilation');
  }catch(e){if(deniedAssets.size)throw Error(deniedAssets.size+' dependent asset request(s) were denied; see diagnostics for the IDs.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
  say('Rendering cached camera views…');outfit.stopAnimating();
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
@@ -91,7 +92,7 @@ async function renderAccount(id){
   RBXRenderer.renderScene(scene);
   images.push(RBXRenderer.getRenderer().domElement.toDataURL('image/png'));
  }
- const result={userId:id,images,views:8,elevations:[0.16,0.70],verticalSpan:2*distance*Math.tan(Math.PI/12)};
+ const result={userId:id,cachedAt:Date.now(),images,views:8,elevations:[0.16,0.70],verticalSpan:2*distance*Math.tan(Math.PI/12)};
  state.cache.set(id,result);if(state.cache.size>24)state.cache.delete(state.cache.keys().next().value);
  return result;
 }
