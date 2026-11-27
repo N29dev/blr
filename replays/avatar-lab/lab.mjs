@@ -62,12 +62,23 @@ async function renderAccount(id){
  model.outfit.playerAvatarType='R6';
  say('Compiling R6 rig, clothing and accessories…');const outfit=new OutfitRenderer(new Authentication(),model.outfit);state.active=outfit;
  outfit.doCameraUpdateOnLoad=false;outfit.doCameraUpdate=false;outfit.deltaTimeMultiplier=0;
+ // OutfitRenderer.onRenderSuccess additionally waits for a background, even
+ // when no background was requested. For a transparent sprite, wait for the
+ // rig's own description and render descendants instead.
  let connections=[];
  try{
   await deadline(new Promise((resolve,reject)=>{
-   connections=[outfit.onRenderSuccess.Connect(resolve),outfit.onError.Connect(()=>reject(Error('R6 rig or outfit could not load'))),outfit.onRenderError.Connect(()=>reject(Error('A mesh or texture could not compile')))];
-  }),45000,'Asset compilation');
- }catch(e){if(deniedAssets.size)throw Error(''+deniedAssets.size+' dependent asset request(s) were denied; see diagnostics for the IDs.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
+   let outfitReady=false;
+   const check=()=>{if(outfitReady&&outfit.currentRig&&RBXRenderer.firstScene.areInstancesCompiled(outfit.currentRig.GetDescendants()))resolve()};
+   const scene=RBXRenderer.firstScene;
+   connections=[
+    outfit.onSuccess.Connect(()=>{outfitReady=true;check()}),
+    outfit.onError.Connect(kind=>reject(Error('R6 rig or outfit failed: '+kind))),
+    scene.compiledRenderDesc.Connect(check),
+    scene.failedRenderDesc.Connect(instance=>reject(Error('Mesh or texture failed: '+(instance?.Prop?.('Name')||'unknown instance'))))
+   ];
+  }),45000,'Rig and mesh compilation');
+ }catch(e){if(deniedAssets.size)throw Error(deniedAssets.size+' dependent asset request(s) were denied; see diagnostics for the IDs.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
  say('Rendering cached camera views…');outfit.stopAnimating();
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
  const cx=Number.isFinite(p?.X)?p.X:0,cy=Number.isFinite(p?.Y)?p.Y:3,cz=Number.isFinite(p?.Z)?p.Z:0;
