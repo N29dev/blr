@@ -7,7 +7,7 @@ const ReplayFlow=(()=>{
   const history=new Map(),last=new Map();let present=new Set(),local={name:null,active:null,bar:null};
   function add(id,t,state){
    const prior=last.get(id);
-   if(prior&&prior.name===state.name&&prior.active===state.active&&prior.bar===state.bar&&prior.session===state.session)return;
+   if(prior&&prior.name===state.name&&prior.active===state.active&&prior.bar===state.bar&&prior.session===state.session&&prior.explicit===state.explicit)return;
    last.set(id,state);if(!history.has(id))history.set(id,[]);history.get(id).push({t,...state});
   }
   for(const f of frames){
@@ -17,14 +17,14 @@ const ReplayFlow=(()=>{
    for(const p of f.players||[]){
     const id=String(p.id);if(p.kind==='npc'||roster[id]?.kind==='npc')continue;next.add(id);
     const session=String(p.replaySessionId??p.id),prev=last.get(id),fresh=prev?.session!==session||!present.has(id);
-    let state=fresh?{name:null,active:null,bar:null,session}:{...prev};
-    if(p.flowObserved===true){state={name:name(p.flow),active:flag(p.inFlow),bar:bar(p.flowBar),session}}
+    let state=fresh?{name:null,active:null,bar:null,session,explicit:false}:{...prev};
+    if(p.flowObserved===true){state={name:name(p.flow),active:flag(p.inFlow),bar:bar(p.flowBar),session,explicit:true}}
     else{
-     if(Object.hasOwn(p,'flow'))state.name=name(p.flow);
-     if(Object.hasOwn(p,'inFlow'))state.active=flag(p.inFlow);
-     if(Object.hasOwn(p,'flowBar'))state.bar=bar(p.flowBar);
+     if(Object.hasOwn(p,'flow')){state.name=name(p.flow);state.explicit=true;}
+     if(Object.hasOwn(p,'inFlow')){state.active=flag(p.inFlow);state.explicit=true;}
+     if(Object.hasOwn(p,'flowBar')){state.bar=bar(p.flowBar);state.explicit=true;}
      // Legacy local stats describe the recording player only.
-     if(localId!=null&&id===String(localId)){if(state.name===null)state.name=local.name;if(state.active===null)state.active=local.active;if(state.bar===null)state.bar=local.bar}
+     if(!state.explicit&&localId!=null&&id===String(localId)){state.name=local.name;state.active=local.active;state.bar=local.bar}
     }
     add(id,f.t,state);
    }
