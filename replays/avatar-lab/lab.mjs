@@ -73,17 +73,31 @@ async function renderAccount(id){
  // OutfitRenderer.onRenderSuccess additionally waits for a background, even
  // when no background was requested. For a transparent sprite, wait for the
  // rig's own description and render descendants instead.
- let connections=[];
+ const omitted=[];let connections=[];
  try{
   await deadline(new Promise((resolve,reject)=>{
-   let outfitReady=false;
-   const check=()=>{if(outfitReady&&outfit.currentRig&&RBXRenderer.firstScene.areInstancesCompiled(outfit.currentRig.GetDescendants()))resolve()};
+   let outfitReady=false,settled=false;const failed=new Set();
    const scene=RBXRenderer.firstScene;
+   const check=()=>{
+    if(settled||!outfitReady||!outfit.currentRig)return;
+    const descendants=new Set(outfit.currentRig.GetDescendants());
+    for(const instance of failed){
+     if(!descendants.has(instance)){failed.delete(instance);continue}
+     let accessory=instance;
+     while(accessory&&accessory!==outfit.currentRig&&accessory.className!=='Accessory')accessory=accessory.parent;
+     if(!accessory||accessory===outfit.currentRig){settled=true;reject(Error('Essential mesh or texture failed: '+(instance?.Prop?.('Name')||'unknown instance')));return}
+     const name=String(accessory.Prop?.('Name')||'Accessory').slice(0,100);
+     omitted.push(name);note('Omitted unavailable accessory: '+name);
+     for(const child of accessory.GetDescendants())failed.delete(child);
+     failed.delete(accessory);accessory.Destroy();
+    }
+    if(scene.areInstancesCompiled(outfit.currentRig.GetDescendants())){settled=true;resolve()}
+   };
    connections=[
-    outfit.onSuccess.Connect(()=>{outfitReady=true;check()}),
-    outfit.onError.Connect(kind=>reject(Error('R6 rig or outfit failed: '+kind))),
-    scene.compiledRenderDesc.Connect(check),
-    scene.failedRenderDesc.Connect(instance=>reject(Error('Mesh or texture failed: '+(instance?.Prop?.('Name')||'unknown instance'))))
+    outfit.onSuccess.Connect(()=>{outfitReady=true;queueMicrotask(check)}),
+    outfit.onError.Connect(kind=>{settled=true;reject(Error('R6 rig or outfit failed: '+kind))}),
+    scene.compiledRenderDesc.Connect(()=>queueMicrotask(check)),
+    scene.failedRenderDesc.Connect(instance=>{failed.add(instance);queueMicrotask(check)})
    ];
   }),90000,'Rig and mesh compilation');
  }catch(e){if(deniedAssets.size)throw Error(deniedAssets.size+' dependent asset request(s) were denied; see diagnostics for the IDs.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
@@ -99,7 +113,7 @@ async function renderAccount(id){
   RBXRenderer.renderScene(scene);
   images.push(RBXRenderer.getRenderer().domElement.toDataURL('image/png'));
  }
- const result={userId:id,cachedAt:Date.now(),images,views:8,elevations:[0.16,0.70],verticalSpan:2*distance*Math.tan(Math.PI/12)};
+ const result={userId:id,cachedAt:Date.now(),images,omitted,views:8,elevations:[0.16,0.70],verticalSpan:2*distance*Math.tan(Math.PI/12)};
  state.cache.set(id,result);if(state.cache.size>24)state.cache.delete(state.cache.keys().next().value);
  return result;
 }
@@ -107,7 +121,7 @@ function enqueue(id){const job=state.queue.then(()=>renderAccount(id));state.que
 function show(result){
  $('preview').src=result.images[4];$('views').replaceChildren();
  result.images.forEach((image,i)=>{const b=document.createElement('button');b.textContent=(i<8?'Low ':'High ')+(i%8+1);b.onclick=()=>{$('preview').src=image};$('views').append(b)});
- $('status').textContent='Rendered static R6 · '+result.userId+' · '+result.images.length+' cached views.';
+ $('status').textContent='Rendered static R6 · '+result.userId+' · '+result.images.length+' cached views.'+(result.omitted?.length?' Partial outfit: '+result.omitted.join(', ')+' unavailable.':'');
 }
 $('load').onclick=async()=>{const id=$('uid').value.trim();$('load').disabled=true;failures.length=0;if($('diagnostics'))$('diagnostics').textContent='';say('Loading public outfit, rig, meshes and textures…');try{show(await enqueue(id))}catch(e){const previous=stage;say(previous+' — '+e.message);note(e.stack||e.message)}finally{$('load').disabled=false}};
 window.addEventListener('message',async event=>{
