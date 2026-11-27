@@ -76,4 +76,4 @@ function renderWikiIcons(){
 }
 renderWikiIcons();
 
-if(/^\/(?:styles\/[a-z0-9-]+|flows\/[a-z0-9-]+|updates|codes|abilities|mechanics|progression|evolutions|cosmetics)\/$/.test(location.pathname))import('./announcement-ui.mjs?v=31').then(m=>m.hydrateAnnouncements()).catch(()=>{});
+if(/^\/(?:styles\/[a-z0-9-]+|flows\/[a-z0-9-]+|updates|codes|abilities|mechanics|progression|evolutions|cosmetics)\/$/.test(location.pathname))import('./announcement-ui.mjs?v=32').then(m=>m.hydrateAnnouncements()).catch(()=>{});
