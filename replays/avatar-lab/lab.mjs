@@ -125,7 +125,15 @@ async function renderAccount(id){
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
  const cx=Number.isFinite(p?.X)?p.X:0,cy=Number.isFinite(p?.Y)?p.Y:3,cz=Number.isFinite(p?.Z)?p.Z:0;
  const camera=scene.camera;camera.fov=30;camera.near=.1;camera.far=150;camera.updateProjectionMatrix();
- const images=[];const distance=17,views=8,elevations=[0,30,45,60,90].map(v=>v*Math.PI/180);
+ const images=[],footRings=[];const distance=17,views=8,elevations=[0,30,45,60,90].map(v=>v*Math.PI/180);
+ // Use the actual rig's leg bottoms, not the sprite's bounding box (which
+ // may include oversized accessories). Keep the ring on the horizontal plane.
+ const soles=['Left Leg','Right Leg'].map(name=>{
+  const leg=outfit.currentRig?.FindFirstChild(name),pos=leg?.Prop('Position'),size=leg?.Prop('Size');
+  return Number.isFinite(pos?.Y)&&Number.isFinite(size?.Y)&&size.Y>0?pos.Y-size.Y/2:null;
+ }).filter(v=>v!==null&&Math.abs(v-cy)<8);
+ const footY=soles.length?Math.min(...soles):cy-2.5;
+ const ringRadius=2.15;
  // At the pole, define screen-up explicitly from the azimuth to keep the
  // overhead view oriented correctly instead of a degenerate lookAt basis.
  try{
@@ -136,9 +144,17 @@ async function renderAccount(id){
    camera.lookAt(cx,cy,cz);camera.updateMatrixWorld(true);
    RBXRenderer.renderScene(scene);
    images.push(RBXRenderer.getRenderer().domElement.toDataURL('image/png'));
+   // Capture ring geometry in the same projection as the transparent sprite.
+   const points=[];
+   for(let j=0;j<40;j++){
+    const t=j*2*Math.PI/40;
+    const q=camera.position.clone().set(cx+ringRadius*Math.cos(t),footY,cz+ringRadius*Math.sin(t)).project(camera);
+    points.push([(q.x+1)/2,(1-q.y)/2]);
+   }
+   footRings.push(points);
   }
  }finally{camera.up.set(0,1,0)}
- const result={userId:id,cachedAt:Date.now(),images,omitted,views,elevations,verticalSpan:2*distance*Math.tan(Math.PI/12)};
+ const result={userId:id,cachedAt:Date.now(),images,footRings,omitted,views,elevations,verticalSpan:2*distance*Math.tan(Math.PI/12)};
  state.cache.set(id,result);if(state.cache.size>24)state.cache.delete(state.cache.keys().next().value);
  return result;
 }
