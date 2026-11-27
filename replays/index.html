@@ -74,6 +74,7 @@ function networkTarget(){
  const first=frames[0]?.t??0,last=frames.at(-1)?.t??first;
  return Math.max(first,last-(networkDemo?.active?NETWORK_BUFFER:0));
 }
+function validLiveLabel(v){return typeof v==='string'&&/^[\p{L}\p{M}\p{N} _.'-]{1,32}$/u.test(v)&&!!v.trim()}
 function validNetworkFrame(f,personal=false){
  const xyz=cf=>Array.isArray(cf)&&cf.length>=3&&cf.slice(0,3).every(v=>Number.isFinite(v)&&Math.abs(v)<1000);
  if(personal){const ids=new Set();return f&&Number.isFinite(f.t)&&f.t>=0&&f.t<=600&&Array.isArray(f.players)&&f.players.length<=32&&f.players.every(p=>{if(!p||!Number.isInteger(p.id)||p.id<1||p.id>128||ids.has(p.id)||!['Home','Away'].includes(p.team)||!xyz(p.cf))return false;ids.add(p.id);return true})&&(!f.ball||xyz(f.ball.cf))}
@@ -126,17 +127,17 @@ function handleNetworkMessage(d,data){
  if(d.seq>=0&&m.seq>d.seq+1)d.gaps+=m.seq-d.seq-1;
  d.seq=m.seq;
  if(!d.initialized){
-  const players=Object.fromEntries(m.frames.flatMap(f=>f.players).map(p=>[String(p.id),{label:(d.personal?'Player ':'Demo ')+p.id,team:p.team}]));
+  const players=Object.fromEntries(m.frames.flatMap(f=>f.players).map(p=>[String(p.id),{label:(d.personal&&validLiveLabel(p.label))?p.label:(d.personal?'Player ':'Demo ')+p.id,team:p.team}]));
   const entry={name:d.personal?'Personal live · authorized match':'Shared live · synthetic 60 Hz',meta:{id:d.id,sampleRate:60,complete:false,kind:'network-synthetic'},players,frames:m.frames.slice(),fingerprint:'shared-demo-'+d.id};
   if(networkDemoIndex<0){networkDemoIndex=recordings.length;recordings.push(entry)}else recordings[networkDemoIndex]=entry;
   menu();$('match').value=String(networkDemoIndex);
   // Selecting the live recording must not close the pending network connection.
   liveDemo=null;selectMatch(networkDemoIndex);liveDemo={kind:'network',follow:true};
   d.initialized=true;$('followLiveDemo').hidden=false;$('followLiveDemo').disabled=true;$('play').textContent='Pause';
-  $('notice').textContent=d.personal?'Opt-in personal stream. Anonymous players, public match states and no recorded POV. Use the six independent camera modes.':'Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
+  $('notice').textContent=d.personal?'Opt-in personal stream. Optional approved display labels, public match states and no recorded POV. Use the six independent camera modes.':'Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
  }else{
   if(m.frames[0].t<=frames.at(-1)?.t)return;
-  if(d.personal){let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:'Player '+id,team:p.team};recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
+  if(d.personal){let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:validLiveLabel(p.label)?p.label:'Player '+id,team:p.team};recordings[networkDemoIndex].players[id]=roster[id];changed=true}else if(validLiveLabel(p.label)&&roster[id].label!==p.label){roster[id].label=p.label;recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
   recordings[networkDemoIndex].frames.push(...m.frames);
   frames.push(...replayActiveFrames(m.frames,calibration,roster));
   $('seek').max=frames.at(-1).t;$('analysisStart').max=frames.at(-1).t;$('analysisEnd').max=frames.at(-1).t;
