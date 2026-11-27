@@ -3,6 +3,9 @@
 // The existing replay viewer communicates only through a small image message protocol.
 const endpoint='https://glutony.scp343hey.workers.dev/api/replay/asset';
 const version='https://esm.sh/roavatar-renderer@1.10.4?bundle&deps=three@0.185.1';
+// Upstream's documented bundled base rig and compositing assets, pinned to its source revision.
+const baseAssets='https://raw.githubusercontent.com/steinann/RoAvatar/5a055d2eef69c8fa232498729ff107372a4a4984/public/assets/';
+function bundledAsset(input){try{const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);if(!u.href.startsWith(baseAssets)||u.search||u.hash)return null;const name=u.href.slice(baseAssets.length);return /^(RigR6\.rbxm|RigR15\.rbxm|rbxasset\/[A-Za-z0-9_./-]+\.(mesh|png))$/.test(name)&&!name.includes('..')?u.href:null}catch{return null}}
 const validId=v=>typeof v==='string'&&/^[1-9][0-9]{0,15}$/.test(v)&&Number.isSafeInteger(Number(v));
 const state={library:null,init:null,active:null,queue:Promise.resolve(),cache:new Map(),objectUrls:new Map()};
 const $=id=>document.getElementById(id);
@@ -18,11 +21,11 @@ function assetUrl(input,headers){
 }
 async function publicFetch(input,init={}){
  if(init.method&&init.method.toUpperCase()!=='GET')return new Response('Read-only renderer',{status:405});
- try{const url=assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(15000)});if(!r.ok)note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+(await r.clone().text()).slice(0,100));return r;}
+ try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(15000)});if(!r.ok)note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+(await r.clone().text()).slice(0,100));return r;}
  catch(e){note('Asset transport: '+String(input).slice(0,150)+' · '+e.message);return new Response('Public asset unavailable',{status:502})}
 }
 async function imageFetch(input){
- const key=assetUrl(input);
+ const key=bundledAsset(input)||assetUrl(input);
  if(!state.objectUrls.has(key)){
   const response=await fetch(key,{credentials:'omit',signal:AbortSignal.timeout(15000)});
   if(!response.ok){note('Texture HTTP '+response.status+' · '+String(input).slice(0,150));throw Error('Texture unavailable: '+response.status);}
@@ -35,7 +38,7 @@ async function initialize(){
  if(!state.init)state.init=(async()=>{
   say('Loading renderer dependency…');const lib=await deadline(import(version),30000,'Renderer download');
   const {FLAGS,RBXRenderer}=lib;
-  FLAGS.ONLINE_ASSETS=true;FLAGS.FETCH_FUNC=publicFetch;FLAGS.IMAGE_FUNC=imageFetch;
+  FLAGS.ONLINE_ASSETS=false;FLAGS.RIG_PATH=baseAssets;FLAGS.ASSETS_PATH=baseAssets+'rbxasset/';FLAGS.FETCH_FUNC=publicFetch;FLAGS.IMAGE_FUNC=imageFetch;
   FLAGS.INCLUDE_REQUEST_CREDENTIALS_OVERRIDE='omit';FLAGS.API_REQUEST_RETRY=false;
   FLAGS.USE_WORKERS=false;FLAGS.GEAR_ENABLED=false;FLAGS.AUDIO_ENABLED=false;FLAGS.BEAMS_ENABLED=false;
   FLAGS.HIDE_LAYERED_CLOTHING=true;FLAGS.USE_POST_PROCESSING=false;FLAGS.ANIMATE_SKELETON=false;
