@@ -68,17 +68,19 @@ globalThis.ReplayMotion=(()=>{
    const mode=vy>3?'jump':'fall';return {mode,id:ID[mode],rate:1,speed:0};
   }
   // Do not translate teleports or cutscene gaps into running cycles.
-  if(raw<1.5||raw>85||!usable)return {mode:'idle',id:ID.idle,rate:1,speed:0};
-  const speed=prior&&['walk','back','run'].includes(prior.mode)?prior.speed+(raw-prior.speed)*(1-Math.exp(-dt/.085)):raw;
+  if(raw>85||!usable)return {mode:'idle',id:ID.idle,rate:1,speed:0};
+  const moving=prior&&['walk','back','run'].includes(prior.mode);
+  if(raw<1.5&&(!moving||(prior.quiet??0)+dt>=.12))return {mode:'idle',id:ID.idle,rate:1,speed:0};
+  const speed=prior&&['walk','back','run'].includes(prior.mode)?prior.speed+(raw-prior.speed)*(1-Math.exp(-dt/.13)):raw;
   const threshold=actor.hasBall?25:28;
   const running=prior?.mode==='run'?speed>=threshold-1.5:speed>=threshold+1.5;
   const yaw=Number.isFinite(a[4])?a[4]:0;
-  const backwards=(Math.sin(yaw)*dx+Math.cos(yaw)*dz)/Math.max(1e-9,Math.hypot(dx,dz))>.1;
+  const backwards=raw<1.5?prior?.mode==='back':(Math.sin(yaw)*dx+Math.cos(yaw)*dz)/Math.max(1e-9,Math.hypot(dx,dz))>.1;
   const mode=running?'run':backwards?'back':'walk',id=running?ID.run:ID.walk;
   const divisor=running?32:backwards?24:14;
   // Observed displacement is a proxy for WalkSpeed; cap unusually fast
   // motion (dashes, lag corrections) to avoid exaggerated limb playback.
-  return {mode,id,rate:clamp(speed/divisor,.1,running?1.35:1.9),speed};
+  return {mode,id,rate:clamp(speed/divisor,.1,running?1.35:1.9),speed,quiet:raw<1.5?(prior?.quiet??0)+dt:0};
  }
  // A per-recording phase integrator. Store sparse immutable checkpoints to
  // make arbitrary seeks deterministic without retaining every actor-frame.
@@ -97,13 +99,32 @@ globalThis.ReplayMotion=(()=>{
    for(const actor of f.players||[]){
     const key=String(actor.id),old=current.get(key),g=gait(actor,prevActors.get(key),dt,ground,old,slideIds.has(key));
     const contiguous=old&&dt>0&&dt<=.25,phase=contiguous&&old.id===g.id?old.phase+dt*(old.rate+g.rate)/2:0;
-    next.set(key,{...g,phase,t:f.t});
+    const changed=contiguous&&old.id!==g.id;
+    const fade=changed?(g.mode==='slide'?.055:.16):old?.fade??.16;
+    const from=changed?{id:old.id,phase:old.phase+dt*old.rate,rate:old.rate,t:f.t}:contiguous&&old.from&&f.t-old.from.t<fade?old.from:null;
+    next.set(key,{...g,phase,t:f.t,from,fade});
    }
    cursor=i;current=next;
    if(i%120===0){checkpoints.set(i,next);if(checkpoints.size>256)checkpoints.delete(checkpoints.keys().next().value);}
   }
   return current;
  }
- function poseAt(states,actor,time){const g=states.get(String(actor.id));if(!g)return sample(ID.idle,0,true);return sample(g.id,g.phase+clamp(time-g.t,0,.25)*g.rate);}
- return {load,sample,list,transforms,point,gait,statesAt,poseAt,resetTimeline,ID,hasClips:()=>clips.size>0};
+ function poseAt(states,actor,time){
+  const g=states.get(String(actor.id));if(!g)return sample(ID.idle,0,true);
+  const target=sample(g.id,g.phase+clamp(time-g.t,0,.25)*g.rate);if(!target||!g.from)return target;
+  const elapsed=clamp(time-g.from.t,0,g.fade),u=elapsed/g.fade;if(u>=1)return target;
+  const source=sample(g.from.id,g.from.phase+elapsed*g.from.rate);if(!source)return target;
+  const w=u*u*(3-2*u),out={};
+  for(const name of names){const a=source[name]||identity,b=target[name]||identity;out[name]=interpolate({p:a.slice(0,3),q:quaternion(a)},{p:b.slice(0,3),q:quaternion(b)},w);}
+  return out;
+ }
+ function visualActor(actor,next,alpha,dt){
+  if(!next||!Array.isArray(actor?.cf)||!Array.isArray(next.cf)||actor.cf.length<6||next.cf.length<6||!(dt>0&&dt<=.25)||actor.team!==next.team||!actor.cf.slice(0,6).every(Number.isFinite)||!next.cf.slice(0,6).every(Number.isFinite))return actor;
+  const a=actor.cf,b=next.cf;if(Math.hypot(b[0]-a[0],b[1]-a[1],b[2]-a[2])>Math.max(5,85*dt))return actor;
+  const u=clamp(alpha,0,1),cf=a.slice();
+  for(let i=0;i<3;i++)cf[i]=a[i]+(b[i]-a[i])*u;
+  for(let i=3;i<6;i++)cf[i]=a[i]+Math.atan2(Math.sin(b[i]-a[i]),Math.cos(b[i]-a[i]))*u;
+  return {...actor,cf};
+ }
+ return {load,sample,list,transforms,point,gait,statesAt,poseAt,visualActor,resetTimeline,ID,hasClips:()=>clips.size>0};
 })();

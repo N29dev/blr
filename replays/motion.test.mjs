@@ -32,3 +32,14 @@ test('observed sliding overrides locomotion; never infer tackle from speed or st
  const frames=Array.from({length:15},(_,i)=>({t:i/10,players:[{...p,cf:[0,3,-3.3*i,0,0]}],events:i===1?[{type:'slide',source:'state',playerId:1,t:.1}]:i===12?[{type:'steal',source:'counter',playerId:1,t:1.2}]:[]}));
  m.resetTimeline();assert.equal(m.statesAt(frames,1,0).get('1').mode,'slide');assert.equal(m.statesAt(frames,5,0).get('1').mode,'slide');assert.notEqual(m.statesAt(frames,13,0).get('1').mode,'slide');assert.equal(m.statesAt(frames,1,0).get('1').phase,0);
 });
+
+test('render-only actor interpolation handles yaw wrapping and avoids teleports',()=>{
+ const a={id:1,team:'Home',cf:[0,3,0,0,Math.PI-.1,0]},b={...a,cf:[2,3,0,0,-Math.PI+.1,0]};
+ const mid=m.visualActor(a,b,.5,.1);assert.equal(mid.cf[0],1);assert.ok(Math.abs(mid.cf[4]-Math.PI)<1e-9);assert.equal(a.cf[0],0);
+ assert.equal(m.visualActor(a,{...b,cf:[200,3,0,0,0,0]},.5,.1),a);
+});
+test('brief stationary samples do not interrupt walking',()=>{
+ const p={id:1,cf:[0,3,0,0,0]},a={...p,cf:[0,3,-2.3,0,0]};
+ const walk=m.gait(a,p,.1,0);assert.equal(walk.mode,'walk');
+ assert.equal(m.gait(a,a,.033,0,walk).mode,'walk');
+});
