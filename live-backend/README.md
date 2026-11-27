@@ -50,3 +50,24 @@ This prints an unlisted viewing link and sends fictional telemetry through the a
 For a developer-owned/authorized Roblox experience, install LivePublisher.lua as a server-only ModuleScript and configure BLR_LIVE_TOKEN as a server secret in the experience. Call Live.Start(sample, consentCheck) with the developer's approved public telemetry adapter and participant consent check; this returns the unlisted viewer link. Call Live.Stop() to end. The module targets actual Heartbeat samples at up to 60 Hz and batches HTTP requests at 5/s. It is not an executor script and cannot be used as a drop-in integration for a third-party experience without authorization and an adapter. The streamer may open their own viewer link just like any other spectator.
 
 Personal-stream frame validation and website JavaScript syntax were checked. Cloudflare runtime, real experience integration, Lua execution and bandwidth have not yet been verified.
+
+## Standalone local-file publisher (no Roblox server API required)
+
+Requires Node 22+, an already deployed personal-stream backend, and the existing LIVE_DEMO_TOKEN in the local shell. The publisher never modifies the selected source file, reads game memory, injects scripts, or discovers recorder files automatically. The token stays in the local process and is not included in watch links. The shared administrator token is intended for the site owner only; do not distribute it.
+
+Offline parser/validation test:
+```sh
+node local-publisher.mjs --self-test
+```
+
+Independent fictional match test (choose a new filename):
+```sh
+node local-demo-source.mjs /tmp/blr-demo.ndjson 60
+node local-publisher.mjs /tmp/blr-demo.ndjson --consent --once
+```
+
+Open the printed link. Ctrl+C stops the publisher. For a continuously appended file from a developer-approved, opt-in telemetry source, omit --once. Start with a fresh file for each session; the publisher reads from the beginning. The format is one JSON frame per line, with strictly increasing seconds in t, anonymous integer participant IDs, teams and coordinate triples, and optional allowed ball, scoreboard, style and awakening fields (see cleanFrame in authorized-stream.mjs). No existing BLR recorder adapter is included. The --consent flag is an attestation, not an automated verification of permission.
+
+Source delay defaults to three seconds, configurable from one to ten with --delay=N. Actual sample rate is determined by the source; no missing frames are fabricated. Network requests are paced approximately five per second, with at most 24 samples per catch-up batch. The publisher stops on inactivity or excessive backlog. A delay configured in this local client is not a server-enforced security control. Personal streams remain JSON-based.
+
+Pure parser and validation logic was checked; live file following and remote networking require a Node/runtime test.
