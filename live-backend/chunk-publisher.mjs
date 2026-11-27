@@ -103,7 +103,7 @@ async function main(){
   const data=join(work,'session.ndjson'),end=join(work,'done');
   out=await open(data,'wx',0o600);
   let next=1,lastT=-1,sessionId=null,lastActivity=Date.now(),started=false,finished=false;
-  const states=new Map();
+  const states=new Map();let lastLabelCount=-1;
   while(running&&!finished){
    if(childError)throw childError;
    if(child&&exit!==null)throw Error('Publisher exited before source finished ('+exit+')');
@@ -123,6 +123,7 @@ async function main(){
        if(p&&typeof p.username==='string'&&/^[A-Za-z0-9_]{1,20}$/.test(p.username)){if(allNames)labels.set(id,p.username);else if(approved.has(p.username.toLowerCase()))labels.set(id,approved.get(p.username.toLowerCase()))}
       }
      }
+     if((allNames||approved.size)&&labels.size!==lastLabelCount){console.log('Roster labels found: '+labels.size+(labels.size===0?' (check players.json in the selected recording folder)':''));lastLabelCount=labels.size}
      let lines='';
      for(const raw of f){
       if(!Number.isFinite(raw?.t)||raw.t<=lastT)continue;
