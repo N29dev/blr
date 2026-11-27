@@ -82,7 +82,7 @@ function validNetworkFrame(f,personal=false){
 }
 function networkVisualFrame(a,b,at){
  if(!a||!b||b.t-a.t<=0||b.t-a.t>.034||at<=a.t)return a;
- const u=Math.min(1,(at-a.t)/(b.t-a.t)),mix=(x,y)=>x.map((v,i)=>i<3?v+(y[i]-v)*u:v);
+ const u=Math.min(1,(at-a.t)/(b.t-a.t)),mix=(x,y)=>x.map((v,i)=>i<3&&Number.isFinite(y[i])?v+(y[i]-v)*u:v);
  const next=new Map(b.players.map(p=>[p.id,p]));return {...a,players:a.players.map(p=>{const q=next.get(p.id);return q?{...p,cf:mix(p.cf,q.cf)}:p}),ball:a.ball&&b.ball?{...a.ball,cf:mix(a.ball.cf,b.ball.cf)}:a.ball};
 }
 function disconnectNetworkDemo(reason='Disconnected'){
@@ -127,17 +127,17 @@ function handleNetworkMessage(d,data){
  if(d.seq>=0&&m.seq>d.seq+1)d.gaps+=m.seq-d.seq-1;
  d.seq=m.seq;
  if(!d.initialized){
-  const players=Object.fromEntries(m.frames.flatMap(f=>f.players).map(p=>[String(p.id),{label:(d.personal&&validLiveLabel(p.label))?p.label:(d.personal?'Player ':'Demo ')+p.id,team:p.team}]));
+  const players=Object.fromEntries(m.frames.flatMap(f=>f.players).map(p=>[String(p.id),{label:(d.personal&&validLiveLabel(p.label))?p.label:(d.personal?'Player ':'Demo ')+p.id,team:p.team,kind:p.kind}]));
   const entry={name:d.personal?'Personal live · authorized match':'Shared live · synthetic 60 Hz',meta:{id:d.id,sampleRate:60,complete:false,kind:'network-synthetic',personalLive:d.personal},players,frames:m.frames.slice(),fingerprint:'shared-demo-'+d.id};
   if(networkDemoIndex<0){networkDemoIndex=recordings.length;recordings.push(entry)}else recordings[networkDemoIndex]=entry;
   menu();$('match').value=String(networkDemoIndex);
   // Selecting the live recording must not close the pending network connection.
   liveDemo=null;selectMatch(networkDemoIndex);liveDemo={kind:'network',follow:true};
   d.initialized=true;$('followLiveDemo').hidden=false;$('followLiveDemo').disabled=true;$('play').textContent='Pause';
-  $('notice').textContent=d.personal?'Opt-in personal stream. Optional approved display labels, public match states and no recorded POV. Use the six independent camera modes.':'Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
+  $('notice').textContent=d.personal?'Opt-in personal stream. Optional approved display labels, public match states and recorded POV when available. Independent camera modes remain available.':'Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
  }else{
   if(m.frames[0].t<=frames.at(-1)?.t)return;
-  if(d.personal){let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:validLiveLabel(p.label)?p.label:'Player '+id,team:p.team};recordings[networkDemoIndex].players[id]=roster[id];changed=true}else if(validLiveLabel(p.label)&&roster[id].label!==p.label){roster[id].label=p.label;recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
+  if(d.personal){let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:validLiveLabel(p.label)?p.label:'Player '+id,team:p.team,kind:p.kind};recordings[networkDemoIndex].players[id]=roster[id];changed=true}else if(validLiveLabel(p.label)&&roster[id].label!==p.label){roster[id].label=p.label;recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
   recordings[networkDemoIndex].frames.push(...m.frames);
   frames.push(...replayActiveFrames(m.frames,calibration,roster));
   $('seek').max=frames.at(-1).t;$('analysisStart').max=frames.at(-1).t;$('analysisEnd').max=frames.at(-1).t;
