@@ -1,4 +1,4 @@
--- ReplayRecorder Live v0.1 — standalone Lua adapter for approved sample sources.
+-- ReplayRecorder Live v0.2 — standalone Lua adapter for approved sample sources.
 -- No game APIs, executor functions, injection, remote listeners or network calls.
 -- Requires a host Lua runtime with standard io and an injected JSON encoder.
 -- The Node local-publisher.mjs tails the live NDJSON file and owns the secret.
@@ -98,11 +98,26 @@ function Recorder:StartRecording(path)
     return path
 end
 
-function Recorder:StartLive(path)
+local function marker(path)
+    local f = newFile(path)
+    local ok, err = f:close()
+    assert(ok, err)
+end
+
+-- Use the dedicated private folder already monitored by watch-live.mjs.
+-- The marker is written after the first valid sample, not while idle.
+function Recorder:StartLive(folder, session)
     assert(not self.live, "Already live")
     assert(self.consentCheck() == true, "Permission and consent required")
-    self.live = { file = newFile(path), path = path, first = nil, last = -1, count = 0 }
-    -- Start Node local-publisher.mjs with this path. It prints the viewing URL.
+    assert(type(folder) == "string" and #folder > 0, "Choose watched folder")
+    assert(type(session) == "string" and #session <= 64 and session:match("^[A-Za-z0-9][A-Za-z0-9_-]*$"), "Invalid unique session name")
+    local base = folder:gsub("/+$", "") .. "/" .. session
+    for _, ext in ipairs({".start", ".claimed", ".stop"}) do
+        local old = io.open(base .. ext, "rb")
+        if old then old:close(); error("Session name already used") end
+    end
+    local path = base .. ".ndjson"
+    self.live = { file = newFile(path), path = path, base = base, first = nil, last = -1, count = 0, marked = false }
     return path
 end
 
@@ -123,7 +138,12 @@ end
 function Recorder:StopLive()
     local s = self.live
     self.live = nil
-    return close(s)
+    local ok, err = close(s)
+    if s and s.marked then
+        local success, problem = pcall(marker, s.base .. ".stop")
+        if not success then return nil, tostring(problem) end
+    end
+    return ok, err
 end
 
 function Recorder:Status()
@@ -151,7 +171,7 @@ end
 -- Called by an approved source at its native sample rate (up to 60 Hz).
 -- Use a monotonic seconds timestamp from the source. No fabricated frames.
 function Recorder:PushFrame(raw, t)
-    if not self.record and not self.live then return false end
+    if not self.record and not self.live then self.last = nil; return false end
     local allowed, consent = pcall(self.consentCheck)
     if not allowed or consent ~= true then
         self:StopLive()
@@ -167,7 +187,13 @@ function Recorder:PushFrame(raw, t)
         if sink.first and t - sink.first >= 600 then
             self:StopLive()
         else
-            local ok, err = pcall(push, self, sink, frame, t)
+            local ok, err = pcall(function()
+                push(self, sink, frame, t)
+                if not sink.marked and sink.count > 0 then
+                    marker(sink.base .. ".start")
+                    sink.marked = true
+                end
+            end)
             if not ok then self:StopLive(); return false, tostring(err) end
         end
     end
