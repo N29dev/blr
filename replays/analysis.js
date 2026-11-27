@@ -104,14 +104,14 @@ function replayReconcileIdentities(frames,roster){
  }
  if(!map.size)return {frames,roster,merged:0};
  const remap=id=>map.get(String(id))??id;
- const session=p=>({...p,id:remap(p.id),replaySessionId:String(p.id)});
+ const session=p=>p&&p.id!=null?({...p,id:remap(p.id),replaySessionId:String(p.id)}):p;
  const result=frames.map(f=>({...f,players:(f.players||[]).map(session),
   ...(f.ball?.owner!=null?{ball:{...f.ball,owner:remap(f.ball.owner)}}:{}),
   ...(Array.isArray(f.playerScoreboard)?{playerScoreboard:f.playerScoreboard.map(session)}:{}),
   ...(Array.isArray(f.events)?{events:f.events.map(e=>e?.playerId!=null?{...e,playerId:remap(e.playerId)}:e)}:{})
  }));
  const next=Object.assign(Object.create(null),roster);for(const id of map.keys())delete next[id];
- return {frames:result,roster:next,merged:map.size};
+ return {frames:result,roster:next,merged:map.size,idMap:map};
 }
 function replayPositionHistory(frames){
  const known=new Map(),out=[];
