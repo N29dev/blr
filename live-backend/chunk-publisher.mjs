@@ -44,6 +44,7 @@ export function convertFrame(f,states,labels=new Map()){
  if(f.scoreboard)raw.scoreboard={home:number(f.scoreboard.home),away:number(f.scoreboard.away),timer:timer(f.scoreboard.timer)};
  if(Array.isArray(f.playerScoreboard))raw.playerScoreboard=f.playerScoreboard;
  if(f.camera)raw.camera=f.camera;
+ if(Number.isInteger(f.localPlayerId)){raw.localPlayerId=f.localPlayerId;raw.localStats=f.localStats}
  if(Array.isArray(f.events))raw.events=f.events;
  const out=cleanFrame(raw);
  // The publishing API expects the timer as a number.
@@ -130,7 +131,7 @@ async function main(){
      for(const raw of f){
       if(!Number.isFinite(raw?.t)||raw.t<=lastT)continue;
       if(raw.t>600){finished=true;break}
-      const frame=convertFrame(raw,states,labels);lastT=raw.t;lines+=JSON.stringify(frame)+'\n';
+      const frame=convertFrame({...raw,localPlayerId:m.localPlayerId},states,labels);lastT=raw.t;lines+=JSON.stringify(frame)+'\n';
      }
      if(lines){await out.writeFile(lines);lastActivity=Date.now()}
      next++;
