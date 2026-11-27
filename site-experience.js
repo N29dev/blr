@@ -413,19 +413,27 @@
     resume(true);
   }
 
-  // Shared primary navigation entry, including older static wiki pages.
-  function initReplayNav(){
-    const links=document.querySelector('.n29-nav .n29-nav-links');
-    if(!links)return;
-    let link=links.querySelector('a[href="/replays/"]');
-    if(!link){
-      link=createNode('a','','Replays');link.href='/replays/';
-      const before=links.querySelector('a[href="/tech/"]')||links.querySelector('.n29-nav-support');
-      links.insertBefore(link,before||null);
+  // Keep tool destinations discoverable across the shared navigation and wiki menus.
+  function initToolNav(){
+    function add(links,href,label,before){
+      if(!links)return;
+      let link=links.querySelector('a[href="'+href+'"]');
+      if(!link){link=createNode('a','',label);link.href=href;links.insertBefore(link,before||null)}
+      if(location.pathname.startsWith(href))link.setAttribute('aria-current','page');
     }
-    if(location.pathname.startsWith('/replays/'))link.setAttribute('aria-current','page');
+    const links=document.querySelector('.n29-nav .n29-nav-links');
+    if(links){
+      const before=links.querySelector('a[href="/tech/"]')||links.querySelector('.n29-nav-support');
+      add(links,'/field/','Field Lab',links.querySelector('a[href="/replays/"]')||before);
+      add(links,'/replays/','Replays',before);
+    }
+    for(const menu of document.querySelectorAll('.kb-sidebar nav,.kb-mobile-nav nav')){
+      const mechanics=menu.querySelector('a[href="/mechanics/"]');
+      add(menu,'/field/','Field Lab',mechanics?.nextElementSibling);
+      add(menu,'/replays/','Replay Studio',menu.querySelector('a[href="/tech/#support"]'));
+    }
   }
-  initReplayNav();
+  initToolNav();
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
   try { if(page!=='replays')initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
