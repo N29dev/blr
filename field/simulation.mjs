@@ -7,13 +7,15 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),mix=(a,b,u)=>a+(b-a)*u;
 const el=(tag,s)=>{const n=document.createElement(tag);if(s!=null)n.textContent=s;return n;};
 const nagiIds={'Dash':'nagi-dash','Zero Reset Turn':34188,'Direct Heel Lift':33975,'Trap Shot':33533,'Breakdance Shot':33896,'I Am Nagi':33723};
 const nagiShots={'Trap Shot':{p:130,k:.35,mode:'additive'},'Breakdance Shot':{p:170,k:.1,mode:'minimum'},'Direct Heel Lift':{p:160,k:.15,mode:'minimum'},'I Am Nagi':{p:161.5,k:.2,mode:'additive'}};
-export function fieldComponents(id,name,manual=false){
+export function fieldComponents(id,name,manual=false,implementation=null){
  const sid=id??(manual?nagiIds[name]:null),out=[],m=sourceMovement(sid),c=sourceCurve(sid),p=sourcePass(sid),s=sourceShot(sid);
  if(m)out.push({kind:'movement',spec:m,label:'Movement target',partial:m.params.some(p=>p.value==null)||!!(m.scenarioTime||m.steer||m.decay)});
  if(c)out.push({kind:'curve',spec:c,label:c.kind==='pass'?'Curved pass response':'Curved release response',partial:c.p==null&&!c.powers||c.tilt==null||!!c.tiltUnknown||c.side==='response'});
  if(p)out.push({kind:'pass',spec:p,label:'Guided pass response',partial:true});
  if(!c)for(const [i,q] of (s||[]).entries())out.push({kind:'shot',spec:q,label:'Ball release'+(s.length>1?' · response '+(i+1):''),partial:q.p==null||q.k==null||!!q.note});
+ if(!c&&!s&&implementation?.shot&&Number.isFinite(implementation.shot.p)&&Number.isFinite(implementation.shot.k))out.push({kind:'shot',spec:implementation.shot,label:'Conditional ball release',partial:true});
  if(manual&&!out.some(x=>x.kind==='shot')&&nagiShots[name])out.push({kind:'shot',spec:nagiShots[name],label:'Ball release',partial:false});
+ if(sid===4753&&m&&s?.[0]?.p!=null&&s[0].k!=null)out.unshift({kind:'combined',spec:{motion:m,shot:s[0],description:m.description+' '+s[0].note},label:'Movement + ball lift (same response)',partial:true});
  return out;
 }
 function sample(points,t){if(!points.length)return null;let a=0,b=points.length-1;while(a+1<b){const m=(a+b)>>1;if(points[m].t<=t)a=m;else b=m;}const p=points[a],q=points[b],u=clamp((t-p.t)/(q.t-p.t||1),0,1);return {x:mix(p.x,q.x,u),y:mix(p.y,q.y,u),z:mix(p.z,q.z,u),receiver:p.receiver&&q.receiver?p.receiver.map((v,i)=>mix(v,q.receiver[i],u)):p.receiver};}
@@ -53,8 +55,8 @@ function makeView(){
  }
  return {canvas,draw};
 }
-export function renderFieldSimulation({name,id,manual=false,selection=[],info=null}){
- const options=fieldComponents(id,name,manual),root=el('details');root.className='am-box';root.append(el('summary','Field simulation · '+(options.length?'formula components':'source unresolved')));
+export function renderFieldSimulation({name,id,manual=false,selection=[],info=null,implementation=null,branchLabel=''}){
+ const options=fieldComponents(id,name,manual,implementation),root=el('details');root.className='am-box';root.append(el('summary','Field simulation · '+(options.length?'formula components':'source unresolved')+(branchLabel?' · '+branchLabel:'')));
  let initialized=false;
  root.addEventListener('toggle',()=>{if(!root.open||initialized)return;initialized=true;
   if(!options.length){root.append(el('p','No complete numeric motion or ball-response model has been recovered for this implementation. Activation and server-dependent actions are documented below; no invented dummy motion is shown.'));if(info)root.append(el('p',info.note));return;}
@@ -72,18 +74,20 @@ export function renderFieldSimulation({name,id,manual=false,selection=[],info=nu
    const known=o.partial?'Partial / scenario inputs; not measured server motion.':'Source-derived component model; server and collision behavior may differ.';
    note.textContent=known+' '+(s.description||s.note||'')+' Field scale: replay calibration in studs. Ground/goal height illustrative. Only this component is simulated, not the full activation sequence.';
    const angle=field('Aim / body yaw °',0,-180,180),ox=field('Start X (stud)',Math.round(L*.35),5,L-5),oz=field('Start Z (stud)',Math.round(D*.5),5,D-5);
-   if(o.kind==='movement'){
-    const params=s.params.map(p=>field(p.name+(p.value==null?' (scenario)':''),p.value??p.default??30,0,300,.1));
-    rebuild=()=>{const origin=[+ox.value,+oz.value],opts={angles:Array.from({length:Math.max(2,s.stages.length)},()=>+angle.value),params:params.map(p=>+p.value)};max=Math.max(.01,s.total);time=0;slider.max=max;slider.value=0;
-     const point=t=>{const r=movementAt(s,opts,t);return s.vertical?[origin[0],origin[1],Math.max(0,r.z)]:[clamp(origin[0]+r.z,0,L),clamp(origin[1]+r.x,0,D),0];};
-     draw=()=>{const p=point(time),trail=Array.from({length:24},(_,i)=>point(time*i/23));view.draw({people:[{role:'player',label:'Player',pos:p,moving:time>0&&time<max}],ball:null,playerTrail:trail,time},camera.value);status.textContent=time.toFixed(2)+' / '+max.toFixed(2)+' s · target displacement '+Math.hypot(p[0]-origin[0],p[1]-origin[1],p[2]).toFixed(1)+' studs';};draw();
-    };
+   if(o.kind==='movement'||o.kind==='combined'){
+    const motion=o.kind==='combined'?s.motion:s,shot=o.kind==='combined'?s.shot:null;
+    const ballMode=shot?null:select('Ball',[['none','Not modeled'],['carry','With dummy (scenario)']]);if(ballMode)config.append(ballMode.parentElement);
+    const params=motion.params.map(p=>field(p.name+(p.value==null?' (scenario)':''),p.value??p.default??30,0,300,.1));
+    rebuild=()=>{const origin=[+ox.value,+oz.value],opts={angles:Array.from({length:Math.max(2,motion.stages.length)},()=>+angle.value),params:params.map(p=>+p.value)};const result=shot?straightFlight({power:shot.p,tilt:shot.k,elevation:0,mode:shot.mode,horizontalFacing:shot.horizontalFacing}):null;max=Math.max(.01,motion.total,result?.t||0);time=0;slider.max=max;slider.value=0;
+     const point=t=>{const r=movementAt(motion,opts,Math.min(t,motion.total));return motion.vertical?[origin[0],origin[1],Math.max(0,r.z)]:[clamp(origin[0]+r.z,0,L),clamp(origin[1]+r.x,0,D),0];};
+     draw=()=>{const p=point(time),trail=Array.from({length:24},(_,i)=>point(Math.min(time,motion.total)*i/23)),f=result?sample(result.points,Math.min(time,result.t)):null,a=+angle.value*Math.PI/180,b=f?[origin[0]+f.z*Math.cos(a)-f.x*Math.sin(a),origin[1]+f.z*Math.sin(a)+f.x*Math.cos(a),Math.max(0,f.y-FLOOR)]:ballMode?.value==='carry'?[p[0]+Math.cos(a)*1.7,p[1]+Math.sin(a)*1.7,p[2]+.775]:null;view.draw({people:[{role:'player',label:'Player',pos:p,moving:time>0&&time<motion.total}],ball:b,playerTrail:trail,time},camera.value);status.textContent=time.toFixed(2)+' / '+max.toFixed(2)+' s · target displacement '+Math.hypot(p[0]-origin[0],p[1]-origin[1],p[2]).toFixed(1)+' studs';};draw();
+    };if(ballMode)ballMode.addEventListener('change',()=>draw());
    }else{
     const power=o.kind==='pass'?null:field('Power'+(s.p==null?' (scenario)':''),s.p??s.powers?.[0]??150,1,400),tilt=o.kind==='pass'?null:field('Tilt'+(s.k==null&&s.tilt==null?' (scenario)':''),s.k??s.tilt??.2,-1,1,.01);
     const elevation=o.kind==='pass'?null:field('Elevation °',0,-45,75),distance=o.kind==='pass'||s.kind==='pass'?field('Receiver distance',70,5,400):null;
-    const bearing=distance?field('Receiver bearing °',0,-180,180):null;
+    const bearing=distance?field('Receiver bearing °',0,-180,180):null,receiverSpeed=distance?field('Receiver speed',0,0,35):null,receiverYaw=distance?field('Receiver movement °',90,-180,180):null;
     rebuild=()=>{const origin=[+ox.value,+oz.value],yaw=+angle.value*Math.PI/180,rotate=p=>{const a=world(p,origin),x=a[0]-origin[0],z=a[1]-origin[1];return [origin[0]+x*Math.cos(yaw)-z*Math.sin(yaw),origin[1]+x*Math.sin(yaw)+z*Math.cos(yaw),a[2]];};
-     const receiverOptions=distance?{distance:+distance.value,bearing:+bearing.value}:null;
+     const receiverOptions=distance?{distance:+distance.value,bearing:+bearing.value,receiverSpeed:+receiverSpeed.value,receiverYaw:+receiverYaw.value}:null;
      let result=o.kind==='pass'?guidedFlight(s,receiverOptions):o.kind==='curve'?curveFlight(s,{power:+power.value,tilt:+tilt.value,elevation:+elevation.value}):straightFlight({power:+power.value,tilt:+tilt.value,elevation:+elevation.value,mode:s.mode,horizontalFacing:s.horizontalFacing,verticalSpin:s.verticalSpin});
      if(o.kind==='curve'&&receiverOptions)result=withReceiver(result,receiverOptions);
      max=Math.max(.01,result.t);time=0;slider.max=max;slider.value=0;
