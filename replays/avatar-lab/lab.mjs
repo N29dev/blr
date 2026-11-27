@@ -10,7 +10,7 @@ const validId=v=>typeof v==='string'&&/^[1-9][0-9]{0,15}$/.test(v)&&Number.isSaf
 const state={library:null,init:null,active:null,queue:Promise.resolve(),cache:new Map(),objectUrls:new Map()};
 const $=id=>document.getElementById(id);
 const failures=[];const deniedAssets=new Set();let stage='Ready';const say=v=>{stage=v;const el=$('status');if(el)el.textContent=v;};
-function note(v){failures.push(String(v).slice(0,260));if(failures.length>15)failures.shift();const el=$('diagnostics');if(el)el.textContent=failures.join('\n');}
+function note(v){failures.push(String(v).replace(/https:\/\/[a-z0-9-]+\.rbxcdn\.com\/[^\s]+/gi,'[Roblox CDN asset]').slice(0,400));if(failures.length>100)failures.shift();const el=$('diagnostics');if(el)el.textContent=failures.join('\n');}
 window.addEventListener('unhandledrejection',e=>note('Promise: '+(e.reason?.message||e.reason)));
 const deadline=(p,ms,what)=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error(what+' timed out')),ms);Promise.resolve(p).then(v=>{clearTimeout(timer);resolve(v)},e=>{clearTimeout(timer);reject(e)})});
 function assetUrl(input,headers){
@@ -67,7 +67,7 @@ async function renderAccount(id){
   await deadline(new Promise((resolve,reject)=>{
    connections=[outfit.onRenderSuccess.Connect(resolve),outfit.onError.Connect(()=>reject(Error('R6 rig or outfit could not load'))),outfit.onRenderError.Connect(()=>reject(Error('A mesh or texture could not compile')))];
   }),45000,'Asset compilation');
- }catch(e){if(deniedAssets.size)throw Error('Roblox Asset Delivery requires authentication. '+deniedAssets.size+' asset request(s) denied; the complete outfit cannot be rendered anonymously.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
+ }catch(e){if(deniedAssets.size)throw Error(''+deniedAssets.size+' dependent asset request(s) were denied; see diagnostics for the IDs.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
  say('Rendering cached camera views…');outfit.stopAnimating();
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
  const cx=Number.isFinite(p?.X)?p.X:0,cy=Number.isFinite(p?.Y)?p.Y:3,cz=Number.isFinite(p?.Z)?p.Z:0;
