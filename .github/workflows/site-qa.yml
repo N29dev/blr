@@ -22,7 +22,7 @@ jobs:
       - name: Site navigation and full repository audit
         run: node --test site-navigation.test.mjs site-audit.test.mjs tech/data.test.mjs tech/ratings.test.mjs wiki/content.test.mjs
       - name: Replay analytics and time-weighted statistics
-        run: node --test replays/analysis.test.mjs
+        run: node --test replays/analysis.test.mjs replays/motion.test.mjs
       - name: All 36 globe region mappings
         run: node servers/globe-regions.test.mjs
       - name: JavaScript source syntax
