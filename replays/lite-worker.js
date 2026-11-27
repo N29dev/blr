@@ -1,7 +1,7 @@
 /* Browser-only replay conversion. Loaded in a dedicated worker. */
 importScripts('/replays/import.js?v=4','/field/geometry.js','/replays/analysis.js?v=3');
 const MAX_INPUT=2*1024**3,MAX_ENTRY=128*1024**2,MAX_SOURCE_FRAMES=500000;
-const STAT_KEYS=new Set(['AnkleBreakers','Assists','FilteredPasses','Goals','Points','Saves','Steals','Ping','Style','Flow','InCutscene']);
+const STAT_KEYS=new Set(['AnkleBreakers','Assists','FilteredPasses','Goals','Points','Saves','Steals','Ping','Style','Flow','InFlow','FlowBar','InCutscene']);
 const COUNTER_EVENTS=new Set(['ankle_break','assist','pass_count','goal_credit','save','steal']);
 const enc=new TextEncoder();
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -18,6 +18,10 @@ function cleanReplayFrame(f,roster,removeNpc){
   if([-1,0,1,2].includes(p.awk))a.awk=p.awk;
   if(typeof p.inAwakening==='boolean')a.inAwakening=p.inAwakening;
   if(typeof p.awkReadyFlag==='boolean')a.awkReadyFlag=p.awkReadyFlag;
+  if(p.flowObserved===true)a.flowObserved=true;
+  if(typeof p.flow==='string'&&p.flow.length<=128)a.flow=p.flow;
+  if(typeof p.inFlow==='boolean')a.inFlow=p.inFlow;
+  if(Number.isFinite(p.flowBar)&&p.flowBar>=0&&p.flowBar<=100)a.flowBar=p.flowBar;
   if(Array.isArray(p.abilitySlots)){
    const slots=new Map();
    for(const item of p.abilitySlots.slice(0,16)){
@@ -50,7 +54,7 @@ function createReducer(fps,emit){
   delete f.localStats;if(Object.keys(delta).length)f.localStats=delta;
   let styleChanged=false;for(const p of f.players){if(typeof p.style==='string'){const id=String(p.id);if(styles.get(id)===p.style)delete p.style;else{styles.set(id,p.style);styleChanged=true;}}}
   const scoreKey=JSON.stringify([f.scoreboard?.home,f.scoreboard?.away]),semanticKey=JSON.stringify([f.ball?.state,f.ball?.owner,f.players.map(p=>[String(p.id),p.team,p.hasBall,p.states?.InCutscene===true]).sort((a,b)=>a[0].localeCompare(b[0]))]);
-  const important=Boolean(f.localStats||f.playerScoreboard||styleChanged||f.players.some(p=>Array.isArray(p.abilitySlots)||[-1,0,1,2].includes(p.awk)||typeof p.inAwakening==='boolean'||typeof p.awkReadyFlag==='boolean')||f.events||score!==scoreKey||sem!==semanticKey);
+  const important=Boolean(f.localStats||f.playerScoreboard||styleChanged||f.players.some(p=>p.flowObserved===true||typeof p.flow==='string'||typeof p.inFlow==='boolean'||Number.isFinite(p.flowBar)||Array.isArray(p.abilitySlots)||[-1,0,1,2].includes(p.awk)||typeof p.inAwakening==='boolean'||typeof p.awkReadyFlag==='boolean')||f.events||score!==scoreKey||sem!==semanticKey);
   score=scoreKey;sem=semanticKey;
   const regular=lastSaved===null||!fps||Math.floor((f.t-first+1e-8)*fps)>Math.floor((lastSaved-first+1e-8)*fps);
   if(important||regular){send(f);pending=null;}else pending=f;
