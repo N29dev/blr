@@ -417,7 +417,7 @@
   try { if(page!=='replays')initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
   try { initSiteConnections(); } catch(error) { console.warn('Site map enhancement unavailable',error); }
-  try { if(page!=='replays')initWebsitePresence(); } catch(error) { console.warn('Visitor statistics unavailable',error); }
+  try { if(page!=='replays'||(document.body.dataset.presence==='enabled'&&!new URLSearchParams(location.search).has('live')&&!new URLSearchParams(location.search).has('room')))initWebsitePresence(); } catch(error) { console.warn('Visitor statistics unavailable',error); }
   if(page==='home') {
     try { initHomeFilters(); } catch(error) { console.warn('Tool filters unavailable',error); }
   }
