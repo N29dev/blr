@@ -5,7 +5,7 @@ const ReplayAvatarLab=(()=>{
  const status=message=>{const el=document.getElementById('avatarLabStatus');if(el)el.textContent=message};
  function boot(){
   if(frame)return;
-  frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/?embedded=1';frame.hidden=true;frame.referrerPolicy='no-referrer';document.body.append(frame);
+  frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1';frame.hidden=true;frame.referrerPolicy='no-referrer';document.body.append(frame);
   bootTimer=setTimeout(()=>{if(!ready){status('R6 renderer did not initialize · using body-color fallback');frame?.remove();frame=null;for(const id of queue.keys())failed.set(id,Date.now()+60000);queue.clear()}},20000);
  }
  function pump(){
@@ -18,7 +18,7 @@ const ReplayAvatarLab=(()=>{
  }
  function finish(data,error){
   if(!active)return;const {id,onChange,timer}=active;clearTimeout(timer);active=null;
-  if(data){cache.set(id,data);if(cache.size>24)cache.delete(cache.keys().next().value);status('R6 · '+cache.size+' outfits cached'+(queue.size?' · '+queue.size+' queued':''))}
+  if(data){cache.set(id,data);if(cache.size>24)cache.delete(cache.keys().next().value);status('R6 · '+cache.size+' outfits cached'+(data.omitted?.length?' · partial outfit (unavailable accessories omitted)':'')+(queue.size?' · '+queue.size+' queued':''))}
   else{failed.set(id,Date.now()+300000);status('R6 fallback · '+error)}
   onChange?.();pump();
  }
@@ -29,7 +29,7 @@ const ReplayAvatarLab=(()=>{
   if(d.type==='blr-r6-error'){finish(null,String(d.error||'Assets unavailable').slice(0,140));return}
   if(d.type!=='blr-r6-result'||!Array.isArray(d.images)||d.images.length!==16||!Number.isFinite(d.verticalSpan)||d.verticalSpan<5||d.verticalSpan>15||d.images.some(s=>typeof s!=='string'||s.length>400000||!s.startsWith('data:image/png;base64,'))){finish(null,'Invalid sprite response');return}
   const requestId=active.requestId;
-  Promise.all(d.images.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src}))).then(images=>{if(active?.requestId===requestId)finish({images,span:d.verticalSpan})},()=>{if(active?.requestId===requestId)finish(null,'Image decoding failed')});
+  Promise.all(d.images.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src}))).then(images=>{if(active?.requestId===requestId)finish({images,span:d.verticalSpan,omitted:Array.isArray(d.omitted)?d.omitted.filter(v=>typeof v==='string').slice(0,30):[]})},()=>{if(active?.requestId===requestId)finish(null,'Image decoding failed')});
  });
  function get(id,actor,camera,onChange){
   id=String(id||'');if(!/^[1-9][0-9]{0,15}$/.test(id)||!Number.isSafeInteger(Number(id)))return null;
