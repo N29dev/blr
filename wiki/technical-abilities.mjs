@@ -1,4 +1,4 @@
-import {abilitySequenceInfo,renderAbilitySequence} from './ability-sequences.mjs?v=2';
+import {abilitySequenceInfo,renderAbilitySequence} from './ability-sequences.mjs?v=3';
 import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots} from './flight-3d.mjs?v=13';
 import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=19';
 import {MOVEMENT_REVIEW,renderMovementReview} from './movement-review.mjs?v=3';
