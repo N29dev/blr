@@ -53,15 +53,19 @@ export function selfTest(){
  const f=convertFrame({t:0,players:[{id:1,team:'Home',cf:[1,2,3,0,0,0],style:'Nagi',awk:2,username:'ignored',abilitySlots:[1]}],camera:{},ball:{cf:[4,5,6,0,0,0],owner:1},scoreboard:{home:'2',away:'1',timer:'2:15'},playerScoreboard:[{id:1,team:'Home',position:'GK',Saves:3,Ping:120}]},states);
  const g=convertFrame({t:0.033,players:[{id:1,team:'Home',cf:[2,3,4,0,0,0]}]},states);
  if(f.ball.cf.length!==3||f.scoreboard.timer!==135||f.scoreboard.home!==2||f.players[0].username||f.players[0].abilitySlots||f.camera||f.playerScoreboard[0].Ping||g.players[0].style!=='Nagi'||g.players[0].awk!==2)throw Error('Lite schema conversion failed');
+ const named=convertFrame({t:.066,players:[{id:1,team:'Home',cf:[1,2,3]}]},states,new Map([['1','Example_Player']]));
+ if(named.players[0].label!=='Example_Player'||f.players[0].label!==undefined)throw Error('Optional username test failed');
  console.log('Chunk adapter self-test passed');
 }
 async function main(){
  const args=process.argv.slice(2);
  if(args.includes('--self-test'))return selfTest();
  const input=args.find(a=>!a.startsWith('--'));
- if(!input||!args.includes('--consent'))throw Error('Usage: node chunk-publisher.mjs <ReplayRecordings folder> --consent [--session]');
+ if(!input||!args.includes('--consent'))throw Error('Usage: node chunk-publisher.mjs <ReplayRecordings folder> --consent [--session] [--usernames | --labels=FILE]');
  if(!process.env.LIVE_DEMO_TOKEN||process.env.LIVE_DEMO_TOKEN.length<32)throw Error('Set LIVE_DEMO_TOKEN first');
  const labelPath=args.find(a=>a.startsWith('--labels='))?.slice(9);
+ const allNames=args.includes('--usernames');
+ if(allNames&&labelPath)throw Error('Choose --usernames or --labels, not both');
  const approved=new Map();
  if(labelPath){
   const mapping=await json(resolve(labelPath),65536);
@@ -94,6 +98,7 @@ async function main(){
   }
   if(!running||!session)return;
   console.log('Selected: '+session+' (read-only)');
+  if(allNames)console.log('Username sharing enabled for this authorized, consenting session.');
   work=await mkdtemp(join(tmpdir(),'blr-chunks-'));
   const data=join(work,'session.ndjson'),end=join(work,'done');
   out=await open(data,'wx',0o600);
@@ -112,10 +117,10 @@ async function main(){
      if(f===null)break;
      if(!Array.isArray(f)||f.length>1000)throw Error('Invalid chunk '+next);
      const labels=new Map();
-     if(approved.size){
+     if(allNames||approved.size){
       const roster=await json(join(session,'players.json'),262144);
       if(roster&&typeof roster==='object')for(const [id,p] of Object.entries(roster)){
-       if(p&&typeof p.username==='string'&&approved.has(p.username.toLowerCase()))labels.set(id,approved.get(p.username.toLowerCase()));
+       if(p&&typeof p.username==='string'&&/^[A-Za-z0-9_]{1,20}$/.test(p.username)){if(allNames)labels.set(id,p.username);else if(approved.has(p.username.toLowerCase()))labels.set(id,approved.get(p.username.toLowerCase()))}
       }
      }
      let lines='';
