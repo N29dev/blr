@@ -26,7 +26,7 @@ function timer(v){
  const n=number(v);if(n!==undefined)return n;
  if(typeof v==='string'){const m=v.trim().match(/^(\d{1,2}):(\d{2})$/);if(m&&Number(m[2])<60)return Number(m[1])*60+Number(m[2])}
 }
-const pos=cf=>Array.isArray(cf)&&cf.length>=3?cf.slice(0,3):undefined;
+const pos=cf=>Array.isArray(cf)&&cf.length>=3?cf.slice(0,cf.length>=6?6:3):undefined;
 export function convertFrame(f,states,labels=new Map()){
  if(!f||!Array.isArray(f.players)||!Number.isFinite(f.t))throw Error('Invalid Lite frame');
  const players=f.players.map(p=>{
@@ -35,7 +35,7 @@ export function convertFrame(f,states,labels=new Map()){
   if(Number.isInteger(p.awk))old.awk=p.awk;
   if(typeof p.inAwakening==='boolean')old.inAwakening=p.inAwakening;
   states.set(p.id,old);
-  return {id:p.id,team:p.team,cf:pos(p.cf),hasBall:p.hasBall,...old,label:labels.get(String(p.id))};
+  return {id:p.id,team:p.team,cf:pos(p.cf),hasBall:p.hasBall,kind:p.kind,...old,label:labels.get(String(p.id))};
  });
  const present=new Set(players.map(p=>p.id));
  for(const id of states.keys())if(!present.has(id))states.delete(id);
@@ -43,6 +43,8 @@ export function convertFrame(f,states,labels=new Map()){
  if(f.ball&&pos(f.ball.cf))raw.ball={cf:pos(f.ball.cf),owner:f.ball.owner};
  if(f.scoreboard)raw.scoreboard={home:number(f.scoreboard.home),away:number(f.scoreboard.away),timer:timer(f.scoreboard.timer)};
  if(Array.isArray(f.playerScoreboard))raw.playerScoreboard=f.playerScoreboard;
+ if(f.camera)raw.camera=f.camera;
+ if(Array.isArray(f.events))raw.events=f.events;
  const out=cleanFrame(raw);
  // The publishing API expects the timer as a number.
  if(out.scoreboard?.timer!==undefined)out.scoreboard.timer=Number(out.scoreboard.timer);
@@ -50,9 +52,9 @@ export function convertFrame(f,states,labels=new Map()){
 }
 export function selfTest(){
  const states=new Map();
- const f=convertFrame({t:0,players:[{id:1,team:'Home',cf:[1,2,3,0,0,0],style:'Nagi',awk:2,username:'ignored',abilitySlots:[1]}],camera:{},ball:{cf:[4,5,6,0,0,0],owner:1},scoreboard:{home:'2',away:'1',timer:'2:15'},playerScoreboard:[{id:1,team:'Home',position:'GK',Saves:3,Ping:120}]},states);
+ const f=convertFrame({t:0,players:[{id:1,team:'Home',cf:[1,2,3,0,0,0],style:'Nagi',awk:2,username:'ignored',abilitySlots:[1]}],camera:{cf:[1,2,3,0,0,0],fov:70},events:[{t:0,type:'save',playerId:1},{t:0,type:'ability_slot',playerId:1}],ball:{cf:[4,5,6,0,0,0],owner:1},scoreboard:{home:'2',away:'1',timer:'2:15'},playerScoreboard:[{id:1,team:'Home',position:'GK',Saves:3,Ping:120}]},states);
  const g=convertFrame({t:0.033,players:[{id:1,team:'Home',cf:[2,3,4,0,0,0]}]},states);
- if(f.ball.cf.length!==3||f.scoreboard.timer!==135||f.scoreboard.home!==2||f.players[0].username||f.players[0].abilitySlots||f.camera||f.playerScoreboard[0].Ping||g.players[0].style!=='Nagi'||g.players[0].awk!==2)throw Error('Lite schema conversion failed');
+ if(f.ball.cf.length!==6||f.scoreboard.timer!==135||f.scoreboard.home!==2||f.players[0].username||f.players[0].abilitySlots||f.camera?.fov!==70||f.events?.length!==1||f.playerScoreboard[0].Ping!==120||g.players[0].style!=='Nagi'||g.players[0].awk!==2)throw Error('Lite schema conversion failed');
  const named=convertFrame({t:.066,players:[{id:1,team:'Home',cf:[1,2,3]}]},states,new Map([['1','Example_Player']]));
  if(named.players[0].label!=='Example_Player'||f.players[0].label!==undefined)throw Error('Optional username test failed');
  console.log('Chunk adapter self-test passed');
