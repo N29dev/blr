@@ -125,22 +125,38 @@ async function renderAccount(id){
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
  const cx=Number.isFinite(p?.X)?p.X:0,cy=Number.isFinite(p?.Y)?p.Y:3,cz=Number.isFinite(p?.Z)?p.Z:0;
  const camera=scene.camera;camera.fov=30;camera.near=.1;camera.far=150;camera.updateProjectionMatrix();
- const images=[];const distance=17;
- for(const elev of [0.16,0.70])for(let i=0;i<8;i++){
-  const angle=i*Math.PI/4;
-  camera.position.set(cx+Math.sin(angle)*Math.cos(elev)*distance,cy+Math.sin(elev)*distance,cz+Math.cos(angle)*Math.cos(elev)*distance);
-  camera.lookAt(cx,cy,cz);camera.updateMatrixWorld(true);
-  RBXRenderer.renderScene(scene);
-  images.push(RBXRenderer.getRenderer().domElement.toDataURL('image/png'));
- }
- const result={userId:id,cachedAt:Date.now(),images,omitted,views:8,elevations:[0.16,0.70],verticalSpan:2*distance*Math.tan(Math.PI/12)};
+ const images=[];const distance=17,views=8,elevations=[0,30,45,60,90].map(v=>v*Math.PI/180);
+ // At the pole, define screen-up explicitly from the azimuth to keep the
+ // overhead view oriented correctly instead of a degenerate lookAt basis.
+ try{
+  for(const elev of elevations)for(let i=0;i<views;i++){
+   const angle=i*2*Math.PI/views,top=elev===Math.PI/2;
+   camera.position.set(cx+(top?0:Math.sin(angle)*Math.cos(elev)*distance),cy+Math.sin(elev)*distance,cz+(top?0:Math.cos(angle)*Math.cos(elev)*distance));
+   if(top)camera.up.set(-Math.sin(angle),0,-Math.cos(angle));else camera.up.set(0,1,0);
+   camera.lookAt(cx,cy,cz);camera.updateMatrixWorld(true);
+   RBXRenderer.renderScene(scene);
+   images.push(RBXRenderer.getRenderer().domElement.toDataURL('image/png'));
+  }
+ }finally{camera.up.set(0,1,0)}
+ const result={userId:id,cachedAt:Date.now(),images,omitted,views,elevations,verticalSpan:2*distance*Math.tan(Math.PI/12)};
  state.cache.set(id,result);if(state.cache.size>24)state.cache.delete(state.cache.keys().next().value);
  return result;
 }
 function enqueue(id){const job=state.queue.then(()=>renderAccount(id));state.queue=job.catch(()=>{});return job}
 function show(result){
- $('preview').src=result.images[4];$('views').replaceChildren();
- result.images.forEach((image,i)=>{const b=document.createElement('button');b.textContent=(i<8?'Low ':'High ')+(i%8+1);b.onclick=()=>{$('preview').src=image};$('views').append(b)});
+ let elevation=2,direction=4;
+ const levels=document.createElement('div'),directions=document.createElement('div');
+ levels.className=directions.className='view-group';
+ levels.setAttribute('aria-label','Elevation');directions.setAttribute('aria-label','Horizontal direction');
+ const refresh=()=>{
+  $('preview').src=result.images[elevation*result.views+direction];
+  [...levels.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===elevation)));
+  [...directions.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===direction)));
+ };
+ result.elevations.forEach((rad,i)=>{const b=document.createElement('button');b.type='button';b.textContent=Math.round(rad*180/Math.PI)+'°';b.onclick=()=>{elevation=i;refresh()};levels.append(b)});
+ for(let i=0;i<result.views;i++){const b=document.createElement('button');b.type='button';b.textContent=(i*360/result.views)+'°';b.onclick=()=>{direction=i;refresh()};directions.append(b)}
+ const label=text=>{const el=document.createElement('small');el.textContent=text;return el};
+ $('views').replaceChildren(label('Elevation · 0° level / 90° overhead'),levels,label('Horizontal direction'),directions);refresh();
  $('status').textContent='Rendered static R6 · '+result.userId+' · '+result.images.length+' cached views.'+(result.omitted?.length?' Partial outfit: '+result.omitted.join(', ')+' unavailable.':'');
 }
 $('load').onclick=async()=>{const id=$('uid').value.trim();$('load').disabled=true;failures.length=0;if($('diagnostics'))$('diagnostics').textContent='';say('Loading public outfit, rig, meshes and textures…');try{show(await enqueue(id))}catch(e){const previous=stage;say(previous+' — '+e.message);note(e.stack||e.message)}finally{$('load').disabled=false}};
