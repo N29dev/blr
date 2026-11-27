@@ -413,6 +413,19 @@
     resume(true);
   }
 
+  // Shared primary navigation entry, including older static wiki pages.
+  function initReplayNav(){
+    const links=document.querySelector('.n29-nav .n29-nav-links');
+    if(!links)return;
+    let link=links.querySelector('a[href="/replays/"]');
+    if(!link){
+      link=createNode('a','','Replays');link.href='/replays/';
+      const before=links.querySelector('a[href="/tech/"]')||links.querySelector('.n29-nav-support');
+      links.insertBefore(link,before||null);
+    }
+    if(location.pathname.startsWith('/replays/'))link.setAttribute('aria-current','page');
+  }
+  initReplayNav();
   document.querySelectorAll('.site-command-inline kbd').forEach(kbd=>{ kbd.textContent=navigator.platform?.includes('Mac')?'⌘ K':'Ctrl K'; });
   try { if(page!=='replays')initRobloxAccountNav(); } catch(error) { console.warn('Roblox account menu unavailable',error); }
   try { initCommandFinder(); } catch(error) { console.warn('Navigation enhancement unavailable',error); }
