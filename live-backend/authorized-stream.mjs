@@ -1,5 +1,5 @@
 // Authorized, opt-in personal spectator stream. Separate from the synthetic demo.
-// Never accepts Roblox account IDs, names, chat, camera or private cooldown telemetry.
+// Accepts optional opt-in display labels; no account IDs, chat, camera or private cooldown telemetry.
 export const STREAM_LIMIT=600, MAX_PACKET=96000, MAX_FRAMES=24, HISTORY=25;
 const reply=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});
 const whole=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
@@ -12,6 +12,7 @@ export function cleanFrame(f){
  for(const p of f.players){
   if(!p||!whole(p.id,1,128)||seen.has(p.id)||!['Home','Away'].includes(p.team)||!coords(p.cf))throw Error('Invalid participant');
   seen.add(p.id);const row={id:p.id,team:p.team,cf:cleanPosition(p.cf),hasBall:p.hasBall===true};
+  if(typeof p.label==='string'&&/^[\p{L}\p{M}\p{N} _.'-]{1,32}$/u.test(p.label)&&p.label.trim())row.label=p.label.trim();
   // Public-facing state only. Style labels are restricted to short display strings.
   if(typeof p.style==='string'&&/^[a-zA-Z0-9 .'-]{1,40}$/.test(p.style))row.style=p.style;
   if(typeof p.inAwakening==='boolean')row.inAwakening=p.inAwakening;
