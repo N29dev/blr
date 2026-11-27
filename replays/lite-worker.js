@@ -1,5 +1,5 @@
 /* Browser-only replay conversion. Loaded in a dedicated worker. */
-importScripts('/replays/import.js?v=2','/field/geometry.js','/replays/analysis.js?v=3');
+importScripts('/replays/import.js?v=4','/field/geometry.js','/replays/analysis.js?v=3');
 const MAX_INPUT=2*1024**3,MAX_ENTRY=128*1024**2,MAX_SOURCE_FRAMES=500000;
 const STAT_KEYS=new Set(['AnkleBreakers','Assists','FilteredPasses','Goals','Points','Saves','Steals','Ping','Style','Flow','InCutscene']);
 const COUNTER_EVENTS=new Set(['ankle_break','assist','pass_count','goal_credit','save','steal']);
@@ -70,36 +70,58 @@ function createZip(){
   dir.u32(0,0x02014b50);dir.u16(4,20);dir.u16(6,20);dir.u16(8,0x800);dir.u16(10,method);dir.u16(14,33);dir.u32(16,crc);dir.u32(20,packed.length);dir.u32(24,data.length);dir.u16(28,n.length);dir.u32(42,offset);
   parts.push(local.a,n,packed);central.push(dir.a,n);offset+=local.a.length+n.length+packed.length;
   if(offset>0xffffffff)throw Error('Output exceeds ZIP size limit.');
- },finish(){const length=central.reduce((n,b)=>n+b.length,0),end=header(22),count=central.length/2;end.u32(0,0x06054b50);end.u16(8,count);end.u16(10,count);end.u32(12,length);end.u32(16,offset);return {blob:new Blob([...parts,...central,end.a],{type:'application/zip'}),raw};}};
+ },finish(){const length=central.reduce((n,b)=>n+b.length,0),end=header(22),count=central.length/2;if(count>2000)throw Error('Output exceeds 2,000 ZIP entries; select fewer matches.');end.u32(0,0x06054b50);end.u16(8,count);end.u16(10,count);end.u32(12,length);end.u32(16,offset);return {blob:new Blob([...parts,...central,end.a],{type:'application/zip'}),raw};}};
 }
-async function convertReplay(selected,{fps=30,removeNpc=true}={},progress=()=>{}){
- if(![0,15,30,60].includes(fps))throw Error('Invalid target recording rate.');
- if(!selected.length)throw Error('Choose a replay ZIP or JSON files.');
- if(selected.reduce((n,f)=>n+f.size,0)>MAX_INPUT)throw Error('Input exceeds 2 GiB safety limit.');
- const zips=selected.filter(f=>/\.zip$/i.test(f.name));if(zips.length&&(zips.length!==1||selected.length!==1))throw Error('Select one ZIP or the JSON files of one match.');
- const entries=zips.length?await unpackReplayZip(zips[0],{maxTotal:MAX_INPUT,maxEntry:MAX_ENTRY}):selected;
- const names=new Set();for(const f of entries){const n=f.name.toLowerCase();if(names.has(n))throw Error('Duplicate JSON names. Select one match.');names.add(n);if(f.size>MAX_ENTRY)throw Error('Individual JSON exceeds 128 MiB: '+f.name);}
- const inputRaw=entries.reduce((n,f)=>n+f.size,0);if(inputRaw>MAX_INPUT)throw Error('Expanded replay exceeds 2 GiB safety limit.');
+async function convertReplayGroup(entries,{fps,removeNpc},zip,prefix,maxFrames,progress){
+ const inputRaw=entries.reduce((n,f)=>n+f.size,0);
  const read=async f=>{const s=await f.text();try{return JSON.parse(s);}catch{throw Error('Invalid JSON: '+f.name);}};
  let meta={},roster={},files=[];
  for(const f of entries){const n=f.name.toLowerCase();if(n==='metadata.json'){meta=await read(f);if(!object(meta))throw Error('Invalid metadata.');}else if(n==='players.json'){roster=normalizePlayers(await read(f));}else if(n.endsWith('.json'))files.push(f);}
  files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
- const zip=createZip();let buffer=[],chunks=0,removed=0,seen=0,discarded=0;
+ let buffer=[],chunks=0,removed=0,seen=0,discarded=0;
  const reducer=createReducer(fps,f=>buffer.push(f));
- async function flush(){while(buffer.length>=300){await zip.add('chunk_'+String(++chunks).padStart(6,'0')+'.json',buffer.splice(0,300));}}
+ async function flush(){while(buffer.length>=300){await zip.add(prefix+'chunk_'+String(++chunks).padStart(6,'0')+'.json',buffer.splice(0,300));}}
  for(let j=0;j<files.length;j++){
   const obj=await read(files[j]),fs=Array.isArray(obj)?obj:obj?.frames;
   if(!Array.isArray(fs))throw Error('Unsupported replay JSON: '+files[j].name);
   if(!Array.isArray(obj)){const embedded=obj.metadata||obj.meta;if(object(embedded))meta={...meta,...embedded};roster={...roster,...normalizePlayers(obj.players)};}
   fs.sort((a,b)=>(a?.t??-1)-(b?.t??-1));
-  for(const original of fs){if(++seen>MAX_SOURCE_FRAMES)throw Error('Replay exceeds 500,000 source frames. Split the recording.');const {frame,removed:n}=cleanReplayFrame(original,roster,removeNpc);removed+=n;discarded+=(Array.isArray(original.events)?original.events.length:0)-(frame.events?.length||0);reducer.push(frame);if(buffer.length>=300)await flush();}
+  for(const original of fs){if(++seen>maxFrames)throw Error('Replay exceeds 500,000 source frames. Split the recording.');const {frame,removed:n}=cleanReplayFrame(original,roster,removeNpc);removed+=n;discarded+=(Array.isArray(original.events)?original.events.length:0)-(frame.events?.length||0);reducer.push(frame);if(buffer.length>=300)await flush();}
   progress({fraction:(j+1)/Math.max(1,files.length)*.95,message:'Processed '+(j+1)+' of '+files.length+' JSON files · '+seen.toLocaleString()+' frames'});
  }
  const result=reducer.finish();if(!result.oldCount)throw Error('No replay frames found.');
- if(buffer.length)await zip.add('chunk_'+String(++chunks).padStart(6,'0')+'.json',buffer);
+ if(buffer.length)await zip.add(prefix+'chunk_'+String(++chunks).padStart(6,'0')+'.json',buffer);
  const extensions=Array.isArray(meta.extensions)?meta.extensions.filter(x=>x!=='states'):[];
- await zip.add('players.json',roster);
- await zip.add('metadata.json',{...meta,version:2,convertedBy:'replay-lite-web-1.0',originalSampleRate:meta.originalSampleRate??meta.sampleRate,sampleRate:fps?(Number.isFinite(meta.sampleRate)?Math.min(fps,meta.sampleRate):fps):meta.sampleRate,frames:result.count,chunks,duration:result.last,eventMode:extensions.includes('abilitySlots')||extensions.includes('awakeningStates')?'match-counters-stuns-and-ability-state':'match-counters-and-stun-starts',extensions:[...new Set([...extensions,'localStats','events','playerStyles'])]});
- const output=zip.finish();return {blob:output.blob,inputRaw,outputRaw:output.raw,inputBytes:selected.reduce((n,f)=>n+f.size,0),oldFrames:result.oldCount,frames:result.count,removed,discarded,overLimit:output.raw>MAX_REPLAY_BYTES||result.count>MAX_REPLAY_FRAMES};
+ await zip.add(prefix+'players.json',roster);
+ await zip.add(prefix+'metadata.json',{...meta,version:2,convertedBy:'replay-lite-web-1.0',originalSampleRate:meta.originalSampleRate??meta.sampleRate,sampleRate:fps?(Number.isFinite(meta.sampleRate)?Math.min(fps,meta.sampleRate):fps):meta.sampleRate,frames:result.count,chunks,duration:result.last,eventMode:extensions.includes('abilitySlots')||extensions.includes('awakeningStates')?'match-counters-stuns-and-ability-state':'match-counters-and-stun-starts',extensions:[...new Set([...extensions,'localStats','events','playerStyles'])]});
+ return {inputRaw,oldFrames:result.oldCount,frames:result.count,removed,discarded};
 }
+async function convertReplay(selected,{fps=30,removeNpc=true}={},progress=()=>{}){
+ if(![0,15,30,60].includes(fps))throw Error('Invalid target recording rate.');
+ if(!selected.length)throw Error('Choose replay ZIPs or JSON files.');
+ const groups=await replayFileGroups(selected,{maxTotal:MAX_INPUT,maxEntry:MAX_ENTRY}),matches=[];
+ // Combined replay JSONs own their metadata; loose numbered chunks belong to their directory.
+ for(const g of groups){
+  const chunks=[];
+  for(const f of g.files){
+   if(/^(metadata|players|chunk_\d+)\.json$/i.test(f.name)){chunks.push(f);continue;}
+   let v;try{v=JSON.parse(await f.text())}catch{throw Error('Invalid JSON: '+f.name)}
+   if(Array.isArray(v?.frames))matches.push({name:(g.name?g.name+' / ':'')+f.name.replace(/\.json$/i,''),files:[f]});
+   else chunks.push(f);
+  }
+  if(chunks.some(f=>! /^(metadata|players)\.json$/i.test(f.name)))matches.push({name:g.name,files:chunks});
+ }
+ if(!matches.length)throw Error('No replay frames found.');
+ const zip=createZip(),totals={inputRaw:0,oldFrames:0,frames:0,removed:0,discarded:0};const names=new Set();
+ for(let i=0;i<matches.length;i++){
+  const g=matches[i];let name=(g.name.split('/').filter(Boolean).at(-1)||'Match '+(i+1)).replace(/[^\p{L}\p{N} ._-]/gu,'_').slice(0,80).trim();
+  if(!name||name==='.'||name==='..')name='Match '+(i+1);
+  let unique=name,n=2;while(names.has(unique.toLowerCase()))unique=name+' '+n++;names.add(unique.toLowerCase());
+  const prefix=matches.length>1?unique+'/':'';
+  const part=await convertReplayGroup(g.files,{fps,removeNpc},zip,prefix,MAX_SOURCE_FRAMES-totals.oldFrames,p=>progress({fraction:(i+p.fraction)/matches.length,message:'Match '+(i+1)+'/'+matches.length+' · '+p.message}));
+  for(const k of Object.keys(totals))totals[k]+=part[k];
+ }
+ const output=zip.finish();return {blob:output.blob,...totals,matchCount:matches.length,outputRaw:output.raw,inputBytes:selected.reduce((n,f)=>n+f.size,0),overLimit:output.raw>MAX_REPLAY_BYTES||totals.frames>MAX_REPLAY_FRAMES};
+}
+
 self.onmessage=async({data})=>{try{const r=await convertReplay(data.files,data.options,p=>self.postMessage({type:'progress',...p}));self.postMessage({type:'done',...r});}catch(e){self.postMessage({type:'error',message:e?.message||String(e)});}};
