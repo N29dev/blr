@@ -1,10 +1,10 @@
-import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots,renderUnresolvedFlight} from './flight-3d.mjs?v=12';
-import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=18';
+import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots,renderUnresolvedFlight} from './flight-3d.mjs?v=13';
+import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=19';
 import {MOVEMENT_REVIEW,renderMovementReview} from './movement-review.mjs?v=3';
 import {RARE_LUA_REVIEW,renderRarePass} from './rare-lua-review.mjs?v=2';
 import {EPIC_REVIEW} from './epic-review.mjs?v=1';
-import {DERIVED_KITS} from './derived-kits.mjs?v=2';
-import {renderAbilityMath} from './ability-math.mjs?v=17';
+import {DERIVED_KITS} from './derived-kits.mjs?v=3';
+import {renderAbilityMath} from './ability-math.mjs?v=18';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
 const S='client review · 26 Nov 2026';
