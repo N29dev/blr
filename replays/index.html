@@ -128,7 +128,7 @@ function handleNetworkMessage(d,data){
  d.seq=m.seq;
  if(!d.initialized){
   const players=Object.fromEntries(m.frames.flatMap(f=>f.players).map(p=>[String(p.id),{label:(d.personal&&validLiveLabel(p.label))?p.label:(d.personal?'Player ':'Demo ')+p.id,team:p.team,kind:p.kind}]));
-  const entry={name:d.personal?'Personal live · authorized match':'Shared live · synthetic 60 Hz',meta:{id:d.id,sampleRate:60,complete:false,kind:'network-synthetic',personalLive:d.personal},players,frames:m.frames.slice(),fingerprint:'shared-demo-'+d.id};
+  const entry={name:d.personal?'Personal live · authorized match':'Shared live · synthetic 60 Hz',meta:{id:d.id,sampleRate:60,complete:false,kind:'network-synthetic',personalLive:d.personal,localPlayerId:d.personal?m.frames.find(f=>Number.isInteger(f.localPlayerId))?.localPlayerId:undefined},players,frames:m.frames.slice(),fingerprint:'shared-demo-'+d.id};
   if(networkDemoIndex<0){networkDemoIndex=recordings.length;recordings.push(entry)}else recordings[networkDemoIndex]=entry;
   menu();$('match').value=String(networkDemoIndex);
   // Selecting the live recording must not close the pending network connection.
@@ -137,7 +137,7 @@ function handleNetworkMessage(d,data){
   $('notice').textContent=d.personal?'Opt-in personal stream. Optional approved display labels, public match states and recorded POV when available. Independent camera modes remain available.':'Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
  }else{
   if(m.frames[0].t<=frames.at(-1)?.t)return;
-  if(d.personal){let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:validLiveLabel(p.label)?p.label:'Player '+id,team:p.team,kind:p.kind};recordings[networkDemoIndex].players[id]=roster[id];changed=true}else if(validLiveLabel(p.label)&&roster[id].label!==p.label){roster[id].label=p.label;recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
+  if(d.personal){if(meta.localPlayerId==null)meta.localPlayerId=m.frames.find(f=>Number.isInteger(f.localPlayerId))?.localPlayerId;let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:validLiveLabel(p.label)?p.label:'Player '+id,team:p.team,kind:p.kind};recordings[networkDemoIndex].players[id]=roster[id];changed=true}else if(validLiveLabel(p.label)&&roster[id].label!==p.label){roster[id].label=p.label;recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
   recordings[networkDemoIndex].frames.push(...m.frames);
   frames.push(...replayActiveFrames(m.frames,calibration,roster));
   $('seek').max=frames.at(-1).t;$('analysisStart').max=frames.at(-1).t;$('analysisEnd').max=frames.at(-1).t;
