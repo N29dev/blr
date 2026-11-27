@@ -38,6 +38,8 @@ async function initialize(){
  if(!state.init)state.init=(async()=>{
   say('Loading renderer dependency…');const lib=await deadline(import(version),30000,'Renderer download');
   const {FLAGS,RBXRenderer}=lib;
+  // Static replay avatars never use animation tracks. Do not fetch the default animation set.
+  if(Array.isArray(lib.AllAnimations))lib.AllAnimations.splice(0);
   FLAGS.ONLINE_ASSETS=false;FLAGS.RIG_PATH=baseAssets;FLAGS.ASSETS_PATH=baseAssets+'rbxasset/';FLAGS.FETCH_FUNC=publicFetch;FLAGS.IMAGE_FUNC=imageFetch;
   FLAGS.INCLUDE_REQUEST_CREDENTIALS_OVERRIDE='omit';FLAGS.API_REQUEST_RETRY=false;
   FLAGS.ENABLE_API_CACHE=true;FLAGS.ENABLE_API_MESH_CACHE=true;FLAGS.ENABLE_API_RBX_CACHE=true;FLAGS.USE_WORKERS=false;FLAGS.GEAR_ENABLED=false;FLAGS.AUDIO_ENABLED=false;FLAGS.BEAMS_ENABLED=false;
