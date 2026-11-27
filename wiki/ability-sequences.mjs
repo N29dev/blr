@@ -11,7 +11,7 @@ const groups={
  'targeted-pass':'4004 6320 7423 7510 10022 10861 12666 13852 14098 14857 15106 15705 22184 26292 26929 34372 34487 34612 40866 41104 45664 38812 39441 50193 38422 6773 53007',
  'forced-pass':'18630 19299',
  'steal-pass':'24566 50516',
- 'shot':'3817 5200 5360 5464 5854 6074 8456 8999 9249 9369 11310 11686 11724 11898 12517 13814 15939 16068 16636 16769 16791 18183 18948 19614 19706 20061 21045 21617 22978 23394 23641 23907 25003 25541 25676 25973 27720 28827 31862 31951 32223 32395 32565 32798 37471 37661 38270 38941 39383 40081 41229 41645 41882 42537 45783 45927 46172 46496 47043 47095 47972 48069 48126 49720 49786 51285 51705 51818 52893 53129 33833 33896 33723 25436 7778',
+ 'shot':'8253 3817 5200 5360 5464 5854 6074 8456 8999 9249 9369 11310 11686 11724 11898 12517 13814 15939 16068 16636 16769 16791 18183 18948 19614 19706 20061 21045 21617 22978 23394 23641 23907 25003 25541 25676 25973 27720 28827 31862 31951 32223 32395 32565 32798 37471 37661 38270 38941 39383 40081 41229 41645 41882 42537 45783 45927 46172 46496 47043 47095 47972 48069 48126 49720 49786 51285 51705 51818 52893 53129 33833 33896 33723 25436 7778',
  'movement':'3728 4753 4830 4916 5052 5269 5542 5634 5745 5994 6195 7312 7700 7731 7800 7909 8073 8207 8334 9173 10201 10567 11389 11762 12132 12349 13997 14239 14979 16193 17038 17735 22462 22646 22822 23456 23736 23818 24082 25176 26181 27501 27557 27804 28147 28622 33269 33478 34188 34740 37728 37890 38080 38162 40206 40511 40718 42002 42111 42807 43012 43450 43737 43823 43909 46003 46240 46333 47184 48199 49497 49970 51066 51922 52075 52452 53188 22098 39600',
  'trap':'11176 32669 34053 49600',
  'buff':'3074 3425 17456 23561 25283 36875 50760',
@@ -22,7 +22,7 @@ const groups={
 };
 const index=new Map();
 for(const [kind,ids] of Object.entries(groups))for(const id of ids.split(' '))index.set(+id,kind);
-const namedNagi={'Trap':32669,'Trap Shot':32798,'Dash':33478,'Skull Trap':34053,'Breakdance Shot':33896,'Zero Reset Turn':34188,'Direct Heel Lift':33975,'I Am Nagi':33723,'Effortless Miracle':33810,'Five Stage Volley':33833,'Two Stage Volley':33855};
+const namedNagi={'Trap':33533,'Trap Shot':33533,'Dash':33478,'Skull Trap':34053,'Breakdance Shot':33896,'Zero Reset Turn':34188,'Direct Heel Lift':33975,'I Am Nagi':33723,'Effortless Miracle':33810,'Five Stage Volley':33833,'Two Stage Volley':33855};
 const titles={'intercept-redirect':'Interception / redirect','intercept-pass':'Interception / receiver response','intercept-shot':'Ball acquisition / release','intercept-control':'Interception / control','steal':'Defensive interaction','counter':'Conditional interaction','targeted-pass':'Pass / ball transfer','forced-pass':'Forced teammate pass','steal-pass':'Defensive interaction / pass','shot':'Ball release','movement':'Movement / dribble','trap':'Trap / possession','buff':'Temporary state','combo':'Multi-stage ability','dash-shot':'Movement / shot','cutscene-request':'Target or cutscene request','request':'Client request / unresolved result'};
 const specific={
  29390:['Jump → interception response → land → Explosive Acceleration. The transition is conditional on the success state.','jump','catch','land','dash'],
@@ -45,7 +45,7 @@ const specific={
  19455:['Awakened on-ball route may unlock Impact.','dash','duel','follow'],
  18948:['Impact is the separate release branch, not part of every route activation. See the fixed-elevation flight component.','release'],
  19614:['Awakened Impact is a separate release branch.','release'],
- 24566:['On-ball: pass; off-ball: steal request, then pass only if possession and follow-up conditions are met.','duel','pass'],
+ 24566:['On-ball: pass; off-ball: steal request, then pass only if possession and follow-up conditions are met.','duel','acquire','pass','receive'],
  50516:['World-Class Core has a dash request and a teammate-pass request. The pass may be forced from a ball holder; branch selection matters.','duel','force','receive'],
  50357:['Off-ball airborne Rational Interception; guided ball flight is response-dependent.','jump','contact','pass'],
  50103:['Off-ball Rational Defense: response applies server-supplied ball velocity.','contact','redirect'],
@@ -57,7 +57,7 @@ const specific={
  28622:['Velocity Dash can unlock the separate Velocity Shot state.','dash','follow'],
  33975:['Movement precedes the launch branch. Use the detailed flight preview for the release only.','dash','release'],
  33269:['Three movement phases are consecutive, not three independent ability activations. Direction is a scenario here.','dash','side','dash'],
- 34188:['Mastery II client movement sequence; movement timing and exact displacement are not measured here.','dash','side','dash'],
+ 34188:['Mastery II: initial forward target followed by curved steering. This diagram is schematic; the separate mathematical steering preview contains the resolved target formula.','dash','side'],
  52634:['Awakened B uses server-acknowledged stages. Two stages precede the final shot request. No unverified shot path is drawn.','dash','dash','request'],
  53188:['Off-ball initial acceleration; a possession-dependent second activation is separate.','dash','follow'],
  46627:['Tiki-Taka state and Decoy Striker follow-up depend on possession and teammates.','pass','receive','follow'],
@@ -67,7 +67,7 @@ const specific={
  48531:['On-ball shot and off-ball aerial interception are different branches. Choose the initial possession below.','jump','contact','release'],
  48338:['Off-ball jump/interception request; a successful response can release the ball.','jump','contact','release'],
  48805:['Grounded off-ball jump/interception request; the shot is response-dependent.','jump','contact','release'],
- 6910:['The Final Boss checks a target and has separate request branches. Do not assume a shot or possession outcome without the response.','duel','request','result'],
+ 6910:['Off-ball: an eligible opponent must hold the ball within activation range; excludes a goalkeeper in the penalty area. A cutscene request follows. Server result is unresolved.','duel','request','result'],
  40637:['Copy selects another ability; its execution depends on what was copied.','request','follow'],
  7149:['Dartboard Lens sends a separate on-ball request. Server-side effect is unresolved.','request','result'],
  13452:['Instincts Reaction is a goalkeeper diving-direction request, not a generic shot.','side','request','result'],
@@ -88,13 +88,13 @@ const specific={
 };
 const defaults={
  'intercept-redirect':['contact','redirect'],'intercept-pass':['contact','pass'],'intercept-shot':['contact','release'],'intercept-control':['contact','catch'],
- 'steal':['duel','result'],'counter':['duel','result'],'targeted-pass':['pass','receive'],'forced-pass':['force','receive'],'steal-pass':['duel','pass'],
+ 'steal':['duel','result'],'counter':['duel','result'],'targeted-pass':['pass','receive'],'forced-pass':['force','receive'],'steal-pass':['duel','acquire','pass'],
  'shot':['release'],'movement':['dash'],'trap':['contact','catch','follow'],'buff':['enable','hold','disable'],'combo':['request','follow','result'],
  'dash-shot':['dash','release'],'cutscene-request':['request','result'],'request':['request','result']
 };
-const stageText={dash:'Movement / ability animation',side:'Directional movement',jump:'Aerial movement',contact:'Ball interaction / response gate',duel:'Target interaction / response gate',catch:'Ball control (success scenario)',land:'Land / complete movement',redirect:'Outgoing ball response',pass:'Pass response toward receiver',force:'Teammate-to-player pass response',receive:'Receiver contact (illustrative)',release:'Ball release response',follow:'Follow-up becomes available if accepted',request:'Client request',result:'Server result not fully established',enable:'Enable temporary state',hold:'State active',disable:'Disable / cleanup',lift:'Ball lift'};
+const stageText={dash:'Movement / ability animation',side:'Directional movement',jump:'Aerial movement',contact:'Ball interaction / response gate',duel:'Target interaction / response gate',acquire:'Possession acquired (success scenario)',catch:'Ball control (success scenario)',land:'Land / complete movement',redirect:'Outgoing ball response',pass:'Pass response toward receiver',force:'Teammate-to-player pass response',receive:'Receiver contact (illustrative)',release:'Ball release response',follow:'Follow-up becomes available if accepted',request:'Client request',result:'Server result not fully established',enable:'Enable temporary state',hold:'State active',disable:'Disable / cleanup',lift:'Ball lift'};
 export function abilitySequenceInfo(id,name){
- const sid=id??namedNagi[name],kind=index.get(sid)||'request',sp=specific[sid];
+ const sid=id??namedNagi[name],regularTrap=id==null&&name==='Trap',regularShot=id==null&&name==='Trap Shot',kind=regularTrap?'trap':regularShot?'shot':index.get(sid)||'request',sp=regularTrap?['Regular Nagi AirDribble implementation: trap acquisition, with an on-ball lift branch and separate Trap Shot follow-up.','contact','catch','follow']:regularShot?['Regular Nagi AirDribble implementation: trapped state and possession precede release.','release']:specific[sid];
  return {sid,kind,title:titles[kind],note:sp?.[0]||'This is a schematic interpretation of the client branch. The exact server result and hitbox are not verified.',steps:sp?sp.slice(1):defaults[kind]};
 }
 const el=(t,s)=>{const n=document.createElement(t);if(s!=null)n.textContent=s;return n;};
@@ -119,15 +119,15 @@ export function renderAbilitySequence({name,implementation=null,selection=[],bra
   const ctrl=previewControls(),range=el('input');range.type='range';range.min='0';range.step='0.01';range.setAttribute('aria-label','Ability stage progress');range.style.cssText='width:100%;accent-color:#70c5ff';wrap.append(ctrl.bar,range);
   const list=el('div');list.style.cssText='display:flex;flex-wrap:wrap;gap:5px';wrap.append(list);
   let t=0;
-  function steps(){let q=info.steps.slice();if(info.sid===24566&&possession.value==='player')q=['pass','receive'];if(info.sid===48531&&possession.value==='player')q=['release'];return q;}
+  function steps(){let q=info.steps.slice();if(info.sid===33533&&name==='Trap'&&possession.value==='player')q=['lift','catch','follow'];if(info.sid===24566&&possession.value==='player')q=['pass','receive'];if(info.sid===48531&&possession.value==='player')q=['release'];return q;}
   function initial(q){const b=possession.value==='auto'?(q[0]==='force'?'team':q.includes('duel')?'enemy':q.includes('contact')||q.includes('jump')?'loose':'player'):possession.value;return {p:[105,127],b:b==='team'?[315,70]:b==='enemy'?[216,95]:b==='loose'?[35,64]:[116,127],owner:b,e:[216,95],mate:[315,70]};}
   function state(q,start,step,u,failed){const s={...start,p:start.p.slice(),b:start.b.slice()};const sign=Number(direction.value),p=start.p,b=start.b,move=(dx,dy)=>[clamp((p[0]+dx)/420)*420,clamp((p[1]+dy)/215)*215];
    if(step==='dash'||step==='side'||step==='jump'||step==='land'){let dest=step==='side'?move(42,sign*40):step==='jump'?move(36,-32):step==='land'?move(0,24):move(54,sign*12);s.p=mix(p,dest,u);if(s.owner==='player')s.b=[s.p[0]+10,s.p[1]];}
    if(step==='contact'){const dest=[p[0]+16,p[1]-14];s.b=mix(b,failed?[330,35]:dest,u);s.owner='loose';}
    if(step==='duel'){s.p=mix(p,[start.e[0]-20,start.e[1]+12],u);if(s.owner==='player')s.b=[s.p[0]+10,s.p[1]];}
-   if(step==='catch'&&!failed){s.b=mix(b,[p[0]+10,p[1]],u);if(u>=1)s.owner='player';}
+   if((step==='catch'||step==='acquire')&&!failed){s.b=mix(b,[p[0]+10,p[1]],u);if(u>=1)s.owner='player';}
    if(step==='pass'||step==='release'||step==='redirect'||step==='force'){if(!failed){const end=step==='pass'?start.mate:step==='force'?[p[0]+10,p[1]]:step==='redirect'?[335,45]:[390,105];s.b=mix(b,end,u);s.b[1]-=Math.sin(Math.PI*u)*(step==='redirect'?12:19);s.owner=step==='force'&&u>=1?'player':'loose';}}
-   if(step==='receive'&&!failed){s.owner='receiver';}
+   if(step==='receive'&&!failed){if(s.owner!=='player')s.owner='receiver';}
    if(step==='lift'&&!failed){s.b=[p[0]+10,p[1]-25*u];s.owner='loose';}
    return s;
   }
