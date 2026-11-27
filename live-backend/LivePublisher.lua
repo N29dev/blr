@@ -40,7 +40,7 @@ function Live.Start(sample, consentCheck)
     state.connection = RunService.Heartbeat:Connect(function()
         if not state.running then return end
         local t = os.clock() - state.start
-        if t >= 600 or #state.frames >= 24 then state.running=false;return end
+        if t >= 600 or #state.frames >= 120 then state.running=false;return end
         -- Heartbeat may be slower than 60 Hz; do not duplicate missed observations.
         if t-state.lastSample < 1/60-0.001 then return end
         local ok, consent = pcall(consentCheck)
@@ -52,13 +52,18 @@ function Live.Start(sample, consentCheck)
         table.insert(state.frames, frame)
     end)
     task.spawn(function()
+        local nextSend = os.clock()+0.2
         while state.running or #state.frames > 0 do
-            task.wait(0.25)
+            task.wait(math.max(0.01,nextSend-os.clock()))
+            nextSend = math.max(nextSend+0.2,os.clock())
             if #state.frames > 0 then
                 local okConsent, consent=pcall(consentCheck)
                 if not okConsent or consent ~= true then state.running=false;table.clear(state.frames);break end
-                local frames=state.frames
-                state.frames={}
+                local frames={}
+                while #frames<12 and #state.frames>0 do
+                    if #frames>0 and state.frames[1].t-frames[1].t>0.45 then break end
+                    table.insert(frames,table.remove(state.frames,1))
+                end
                 local payload={id=state.id,seq=state.seq,frames=frames}
                 local ok, result=pcall(request,room,"batch",payload)
                 if not ok then
