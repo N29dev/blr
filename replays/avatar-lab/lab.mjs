@@ -9,7 +9,7 @@ function bundledAsset(input){try{const u=new URL(typeof input==='string'?input:i
 const validId=v=>typeof v==='string'&&/^[1-9][0-9]{0,15}$/.test(v)&&Number.isSafeInteger(Number(v));
 const state={library:null,init:null,active:null,queue:Promise.resolve(),cache:new Map(),objectUrls:new Map()};
 const $=id=>document.getElementById(id);
-const failures=[];let stage='Ready';const say=v=>{stage=v;const el=$('status');if(el)el.textContent=v;};
+const failures=[];const deniedAssets=new Set();let stage='Ready';const say=v=>{stage=v;const el=$('status');if(el)el.textContent=v;};
 function note(v){failures.push(String(v).slice(0,260));if(failures.length>15)failures.shift();const el=$('diagnostics');if(el)el.textContent=failures.join('\n');}
 window.addEventListener('unhandledrejection',e=>note('Promise: '+(e.reason?.message||e.reason)));
 const deadline=(p,ms,what)=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error(what+' timed out')),ms);Promise.resolve(p).then(v=>{clearTimeout(timer);resolve(v)},e=>{clearTimeout(timer);reject(e)})});
@@ -21,7 +21,7 @@ function assetUrl(input,headers){
 }
 async function publicFetch(input,init={}){
  if(init.method&&init.method.toUpperCase()!=='GET')return new Response('Read-only renderer',{status:405});
- try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(15000)});if(!r.ok)note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+(await r.clone().text()).slice(0,100));return r;}
+ try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(15000)});if(!r.ok){const detail=(await r.clone().text()).slice(0,100);if(r.status===403&&detail.includes('HTTP 401'))deniedAssets.add(String(input));note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+detail);}return r;}
  catch(e){note('Asset transport: '+String(input).slice(0,150)+' · '+e.message);return new Response('Public asset unavailable',{status:502})}
 }
 async function imageFetch(input){
@@ -52,6 +52,7 @@ async function initialize(){
  return state.init;
 }
 async function renderAccount(id){
+ deniedAssets.clear();
  if(!validId(id))throw Error('Invalid Roblox UserId');
  if(state.cache.has(id))return state.cache.get(id);
  const {API,Authentication,OutfitModel,OutfitRenderer,RBXRenderer}=await initialize();
@@ -66,7 +67,7 @@ async function renderAccount(id){
   await deadline(new Promise((resolve,reject)=>{
    connections=[outfit.onRenderSuccess.Connect(resolve),outfit.onError.Connect(()=>reject(Error('R6 rig or outfit could not load'))),outfit.onRenderError.Connect(()=>reject(Error('A mesh or texture could not compile')))];
   }),45000,'Asset compilation');
- }finally{connections.forEach(c=>c.Disconnect())}
+ }catch(e){if(deniedAssets.size)throw Error('Roblox Asset Delivery requires authentication. '+deniedAssets.size+' asset request(s) denied; the complete outfit cannot be rendered anonymously.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
  say('Rendering cached camera views…');outfit.stopAnimating();
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
  const cx=Number.isFinite(p?.X)?p.X:0,cy=Number.isFinite(p?.Y)?p.Y:3,cz=Number.isFinite(p?.Z)?p.Z:0;
