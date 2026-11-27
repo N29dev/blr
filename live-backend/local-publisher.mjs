@@ -1,5 +1,5 @@
 // Standalone publisher for an explicitly selected, authorized NDJSON source.
-import {open} from 'node:fs/promises';
+import {open,lstat} from 'node:fs/promises';
 import {randomBytes} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {cleanFrame,cleanBatch,MAX_PACKET,STREAM_LIMIT} from './authorized-stream.mjs';
@@ -40,6 +40,7 @@ async function main(){
  }
  const path=args.find(a=>!a.startsWith('--'));
  if(!path||!args.includes('--consent'))throw Error('Usage: node local-publisher.mjs <authorized.ndjson> --consent [--once] [--delay=3]');
+ const endMarker=args.find(a=>a.startsWith('--end-marker='))?.slice(13);
  const once=args.includes('--once'),delay=Number(args.find(a=>a.startsWith('--delay='))?.split('=')[1]??3);
  if(!Number.isFinite(delay)||delay<1||delay>10)throw Error('Delay must be 1–10 seconds');
  const token=process.env.LIVE_DEMO_TOKEN;
@@ -63,7 +64,9 @@ async function main(){
   if((await file.stat()).size<offset)throw Error('Source truncated; start a new stream');
   const {bytesRead}=await file.read(buf,0,buf.length,offset);offset+=bytesRead;
   if(!bytesRead){
-   if(once){eof=true;const final=partial+decoder.decode();if(final.trim())enqueue(JSON.parse(final));partial=''}
+   let ended=once;
+   if(!ended&&endMarker){try{const m=await lstat(endMarker);ended=m.isFile()&&!m.isSymbolicLink()}catch(e){if(e.code!=='ENOENT')throw e}}
+   if(ended){eof=true;const final=partial+decoder.decode();if(final.trim())enqueue(JSON.parse(final));partial=''}
    return;
   }
   const parsed=parseLines(decoder.decode(buf.subarray(0,bytesRead),{stream:true}),partial);partial=parsed.rest;
