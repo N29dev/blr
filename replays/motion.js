@@ -2,9 +2,9 @@
 globalThis.ReplayMotion=(()=>{
  const names=['Torso','Head','Left Arm','Right Arm','Left Leg','Right Leg'];
  const identity=[0,0,0,1,0,0,0,1,0,0,0,1];
- const ID=Object.freeze({idle:'18708846381',run:'72668568236405',shoot:'18668827116',slide:'18668814876',jump:'18908607940',fall:'18908617808',land:'18908620181',header:'18908622474',diveLeft:'18694489186',diveRight:'18694492159',diveForward:'18694494525',gkIdle:'121578069672153',catch:'97121751593499',throw:'131615442938117',stand:'18678636598',request:'134862602137681'});
+ const ID=Object.freeze({idle:'18708846381',walk:'18668804075',run:'72668568236405',shoot:'18668827116',slide:'18668814876',jump:'18908607940',fall:'18908617808',land:'18908620181',header:'18908622474',diveLeft:'18694489186',diveRight:'18694492159',diveForward:'18694494525',gkIdle:'121578069672153',catch:'97121751593499',throw:'131615442938117',stand:'18678636598',request:'134862602137681'});
  let clips=new Map();
- const label=id=>Object.keys(ID).find(k=>ID[k]===id)||'Clip '+id;
+ const label=id=>id===ID.walk?'walk / backward walk':Object.keys(ID).find(k=>ID[k]===id)||'Clip '+id;
  const validCF=a=>Array.isArray(a)&&a.length===12&&a.every(v=>Number.isFinite(v)&&Math.abs(v)<=1000);
  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  function quaternion(a){
@@ -51,10 +51,53 @@ globalThis.ReplayMotion=(()=>{
  const joints=[['Torso','root',cf([0,0,0],rootRot),cf([0,0,0],rootRot)],['Head','Torso',cf([0,1,0],rootRot),cf([0,-.5,0],rootRot)],['Right Arm','Torso',cf([1,.5,0],rightRot),cf([-.5,.5,0],rightRot)],['Left Arm','Torso',cf([-1,.5,0],leftRot),cf([.5,.5,0],leftRot)],['Right Leg','Torso',cf([1,-1,0],rightRot),cf([.5,1,0],rightRot)],['Left Leg','Torso',cf([-1,-1,0],leftRot),cf([-.5,1,0],leftRot)]];
  function transforms(pose={}){const world={root:identity};for(const [name,parent,c0,c1] of joints)world[name]=mul(mul(mul(world[parent],c0),pose[name]||identity),inv(c1));return world;}
  function point(a,x,y,z){return [a[0]+a[3]*x+a[4]*y+a[5]*z,a[1]+a[6]*x+a[7]*y+a[8]*z,a[2]+a[9]*x+a[10]*y+a[11]*z];}
- function estimate(actor,previous,dt,ground,time){const a=actor?.cf,b=previous?.cf;if(!a||!Number.isFinite(time))return null;
-  const usable=b&&dt>0&&dt<.3,vy=usable?(a[1]-b[1])/dt:0,speed=usable?Math.hypot(a[0]-b[0],a[2]-b[2])/dt:0;
-  if(a[1]>ground+4.2){return vy>3?sample(ID.jump,clamp((a[1]-ground-3)/20,0,.25)):sample(ID.fall,time,true);}
-  return speed>3&&speed<160?sample(ID.run,time*clamp(speed/22,.55,1.7),true):sample(ID.idle,time,true);
+ // Older lite recordings contain root positions, not Humanoid.WalkSpeed or
+ // the sprint input. Infer gait using the midpoint of BLR's base walk/run
+ // speeds (20/30 with ball, 23/33 without) with a small hysteresis band.
+ function gait(actor,previous,dt,ground,prior){
+  const a=actor?.cf,b=previous?.cf;
+  if(!a||a.length<3||!a.slice(0,3).every(Number.isFinite))return {mode:'idle',id:ID.idle,rate:1,speed:0};
+  const usable=b&&b.length>=3&&b.slice(0,3).every(Number.isFinite)&&dt>0&&dt<=.25;
+  const dx=usable?a[0]-b[0]:0,dz=usable?a[2]-b[2]:0,vy=usable?(a[1]-b[1])/dt:0,raw=usable?Math.hypot(dx,dz)/dt:0;
+  if(a[1]>ground+4.2){
+   const mode=vy>3?'jump':'fall';return {mode,id:ID[mode],rate:1,speed:0};
+  }
+  // Do not translate teleports or cutscene gaps into running cycles.
+  if(raw<1.5||raw>85||!usable)return {mode:'idle',id:ID.idle,rate:1,speed:0};
+  const speed=prior&&['walk','back','run'].includes(prior.mode)?prior.speed+(raw-prior.speed)*(1-Math.exp(-dt/.085)):raw;
+  const threshold=actor.hasBall?25:28;
+  const running=prior?.mode==='run'?speed>=threshold-1.5:speed>=threshold+1.5;
+  const yaw=Number.isFinite(a[4])?a[4]:0;
+  const backwards=(Math.sin(yaw)*dx+Math.cos(yaw)*dz)/Math.max(1e-9,Math.hypot(dx,dz))>.1;
+  const mode=running?'run':backwards?'back':'walk',id=running?ID.run:ID.walk;
+  const divisor=running?32:backwards?24:14;
+  // Observed displacement is a proxy for WalkSpeed; cap unusually fast
+  // motion (dashes, lag corrections) to avoid exaggerated limb playback.
+  return {mode,id,rate:clamp(speed/divisor,.1,running?1.35:1.9),speed};
  }
- return {load,sample,list,transforms,point,estimate,ID,hasClips:()=>clips.size>0};
+ // A per-recording phase integrator. Store sparse immutable checkpoints to
+ // make arbitrary seeks deterministic without retaining every actor-frame.
+ let timelineFrames=null,timelineGround=null,cursor=-1,current=new Map(),checkpoints=new Map();
+ function resetTimeline(){timelineFrames=null;timelineGround=null;cursor=-1;current=new Map();checkpoints=new Map();}
+ function statesAt(frames,index,ground){
+  if(timelineFrames!==frames||timelineGround!==ground||cursor>=frames.length){resetTimeline();timelineFrames=frames;timelineGround=ground;}
+  index=Math.min(index,frames.length-1);if(index<0)return new Map();
+  if(index<cursor){
+   let best=-1;for(const k of checkpoints.keys())if(k<=index&&k>best)best=k;
+   cursor=best;current=best<0?new Map():checkpoints.get(best);
+  }
+  while(cursor<index){
+   const i=cursor+1,f=frames[i],prev=frames[i-1],dt=f.t-(prev?.t??f.t),prevActors=new Map((prev?.players||[]).map(p=>[String(p.id),p])),next=new Map();
+   for(const actor of f.players||[]){
+    const key=String(actor.id),old=current.get(key),g=gait(actor,prevActors.get(key),dt,ground,old);
+    const contiguous=old&&dt>0&&dt<=.25,phase=contiguous&&old.id===g.id?old.phase+dt*(old.rate+g.rate)/2:0;
+    next.set(key,{...g,phase,t:f.t});
+   }
+   cursor=i;current=next;
+   if(i%120===0){checkpoints.set(i,next);if(checkpoints.size>256)checkpoints.delete(checkpoints.keys().next().value);}
+  }
+  return current;
+ }
+ function poseAt(states,actor,time){const g=states.get(String(actor.id));if(!g)return sample(ID.idle,0,true);return sample(g.id,g.phase+clamp(time-g.t,0,.25)*g.rate);}
+ return {load,sample,list,transforms,point,gait,statesAt,poseAt,resetTimeline,ID,hasClips:()=>clips.size>0};
 })();
