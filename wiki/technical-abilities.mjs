@@ -1,10 +1,10 @@
-import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots,renderUnresolvedFlight} from './flight-3d.mjs?v=7';
-import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=12';
+import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots,renderUnresolvedFlight} from './flight-3d.mjs?v=8';
+import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=13';
 import {MOVEMENT_REVIEW,renderMovementReview} from './movement-review.mjs?v=3';
 import {RARE_LUA_REVIEW,renderRarePass} from './rare-lua-review.mjs?v=2';
 import {EPIC_REVIEW} from './epic-review.mjs?v=1';
 import {DERIVED_KITS} from './derived-kits.mjs?v=2';
-import {renderAbilityMath} from './ability-math.mjs?v=12';
+import {renderAbilityMath} from './ability-math.mjs?v=13';
 // Community gameplay reference. Only derived statistics; no original game source.
 // Separate from manually tested values. Do not promote client timers to server-confirmed mechanics.
 const S='client review · 26 Nov 2026';
@@ -239,6 +239,7 @@ function derivedCard(a,units,expanded,slug){
  if(!flightPreviews&&mythicFlight){card.append(renderUnresolvedFlight(a.name,mythicFlight));flightPreviews++;previews++;}
  const worldFlight=slug==='don-lorenzo'&&a.name==='Zombie Steal'?{p:90,k:.5,context:'The configuration lists 90 power and 0.5 tilt. Effective release formula and whether this branch releases the ball are unresolved.'}:slug==='don-lorenzo'&&a.name==='Death of a Striker'?{p:80,k:.18,context:'Configured power 80 and tilt 0.18; no resolved release trajectory.'}:null;
  if(!flightPreviews&&worldFlight){card.append(renderUnresolvedFlight(a.name,worldFlight));flightPreviews++;previews++;}
+ if(slug==='loki'&&a.name==='Velocity Dash'&&!flightPreviews){card.append(renderUnresolvedFlight('Velocity Shot',{p:140,k:.18,context:'Separate possession-dependent follow-up. Configured power 140 and tilt 0.18; actual launch formula is unresolved.'}));flightPreviews++;previews++;}
  if(!flightPreviews&&(fresh?.pass||reviewed?.pass||(/shot|pass|volley|cross|impact|drive|sniper|trivela/i.test(a.name)&&!['Fake Shot','Cross Elastico Nutmeg'].includes(a.name)))){card.append(renderUnresolvedFlight(a.name));previews++;}
  if(review||!fresh){if(!previews)card.append(el('p','Interactive range / movement model unavailable: no resolved formula or distance threshold for this branch.','ta-missing'));card.append(el('p','Review: '+(fresh?'Actual server acceptance, measured movement, protection and timing still need gameplay testing.':typeof review?.[a.name]==='string'?review[a.name]:'Verify branch-specific activation, timing and actual movement before publishing measurements.'),'ta-missing'));}
  const detail=el('details');detail.append(el('summary','Timing, mechanics & verification'));detail.open=expanded.has(id+'-stats');detail.addEventListener('toggle',()=>{if(detail.open)expanded.add(id+'-stats');else expanded.delete(id+'-stats');});
