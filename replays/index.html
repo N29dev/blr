@@ -74,14 +74,15 @@ function networkTarget(){
  const first=frames[0]?.t??0,last=frames.at(-1)?.t??first;
  return Math.max(first,last-(networkDemo?.active?NETWORK_BUFFER:0));
 }
-function validNetworkFrame(f){
+function validNetworkFrame(f,personal=false){
  const xyz=cf=>Array.isArray(cf)&&cf.length>=3&&cf.slice(0,3).every(v=>Number.isFinite(v)&&Math.abs(v)<1000);
+ if(personal){const ids=new Set();return f&&Number.isFinite(f.t)&&f.t>=0&&f.t<=600&&Array.isArray(f.players)&&f.players.length<=32&&f.players.every(p=>{if(!p||!Number.isInteger(p.id)||p.id<1||p.id>128||ids.has(p.id)||!['Home','Away'].includes(p.team)||!xyz(p.cf))return false;ids.add(p.id);return true})&&(!f.ball||xyz(f.ball.cf))}
  return f&&Number.isFinite(f.t)&&f.t>=0&&f.t<=600&&Array.isArray(f.players)&&f.players.length===16&&f.players.every((p,i)=>p.id===i+1&&p.team===(i<8?'Home':'Away')&&xyz(p.cf))&&xyz(f.ball?.cf);
 }
 function networkVisualFrame(a,b,at){
  if(!a||!b||b.t-a.t<=0||b.t-a.t>.034||at<=a.t)return a;
  const u=Math.min(1,(at-a.t)/(b.t-a.t)),mix=(x,y)=>x.map((v,i)=>i<3?v+(y[i]-v)*u:v);
- return {...a,players:a.players.map((p,i)=>({...p,cf:mix(p.cf,b.players[i].cf)})),ball:{...a.ball,cf:mix(a.ball.cf,b.ball.cf)}};
+ const next=new Map(b.players.map(p=>[p.id,p]));return {...a,players:a.players.map(p=>{const q=next.get(p.id);return q?{...p,cf:mix(p.cf,q.cf)}:p}),ball:a.ball&&b.ball?{...a.ball,cf:mix(a.ball.cf,b.ball.cf)}:a.ball};
 }
 function disconnectNetworkDemo(reason='Disconnected'){
  const d=networkDemo;if(!d)return;networkDemo=null;
@@ -90,19 +91,20 @@ function disconnectNetworkDemo(reason='Disconnected'){
  $('startNetworkDemo').hidden=false;$('startLiveDemo').hidden=false;$('stopLiveDemo').hidden=true;$('followLiveDemo').hidden=true;$('stopLiveDemo').textContent='End demo';
  $('networkDetails').textContent='';$('liveDemoStatus').textContent=reason;
 }
-async function startNetworkDemo(){
+async function startNetworkDemo(room=null){
+ const personal=typeof room==='string'&&/^[a-f0-9]{32}$/.test(room);
  if(liveDemo||networkDemo)finishLiveDemo();
- const d={ws:null,retry:null,backoff:500,id:null,seq:-1,gaps:0,active:false,codec:null,viewers:0,format:'JSON',bytes:0,rateAt:performance.now(),lastAnalysis:0,initialized:false};
+ const d={personal,endpoint:personal?'wss://blr-live-demo.scp343hey.workers.dev/stream/'+room+'/watch':NETWORK_ENDPOINT,ws:null,retry:null,backoff:500,id:null,seq:-1,gaps:0,active:false,codec:null,viewers:0,format:'JSON',bytes:0,rateAt:performance.now(),lastAnalysis:0,initialized:false};
  networkDemo=d;
  $('startLiveDemo').hidden=true;$('startNetworkDemo').hidden=true;$('stopLiveDemo').hidden=false;$('stopLiveDemo').textContent='Disconnect';
- $('liveDemoStatus').textContent='Connecting to shared synthetic demo…';
+ $('liveDemoStatus').textContent=personal?'Connecting to private-link stream…':'Connecting to shared synthetic demo…';
  try{d.codec=await import('/live/codec.mjs?v=1')}catch{disconnectNetworkDemo('Could not load live codec');return}
  if(networkDemo===d)connectNetworkDemo(d);
 }
 function connectNetworkDemo(d){
  if(networkDemo!==d)return;
- const ws=new WebSocket(NETWORK_ENDPOINT);d.ws=ws;ws.binaryType='arraybuffer';
- ws.onopen=()=>{if(networkDemo===d&&d.ws===ws){d.backoff=500;$('liveDemoStatus').textContent='Connected · waiting for synthetic broadcast'}};
+ const ws=new WebSocket(d.endpoint);d.ws=ws;ws.binaryType='arraybuffer';
+ ws.onopen=()=>{if(networkDemo===d&&d.ws===ws){d.backoff=500;$('liveDemoStatus').textContent=d.personal?'Connected · waiting for publisher':'Connected · waiting for synthetic broadcast'}};
  ws.onmessage=e=>{if(networkDemo===d&&d.ws===ws)handleNetworkMessage(d,e.data)};
  ws.onclose=()=>{if(networkDemo!==d||d.ws!==ws)return;d.active=false;$('liveDemoStatus').textContent='Disconnected · reconnecting';d.retry=setTimeout(()=>connectNetworkDemo(d),d.backoff);d.backoff=Math.min(10000,d.backoff*2)};
  ws.onerror=()=>{if(networkDemo===d&&d.ws===ws)$('liveDemoStatus').textContent='Network connection error'};
@@ -115,24 +117,26 @@ function handleNetworkMessage(d,data){
  if(m.type==='hello'||m.type==='start'){
   if(m.id!==d.id){d.id=m.id;d.seq=-1;d.gaps=0;d.initialized=false}
   d.active=m.active===true;if(Number.isInteger(m.viewers))d.viewers=m.viewers;
-  $('liveDemoStatus').textContent=d.active?'LIVE · shared synthetic match':'Connected · waiting for test publisher';
+  $('liveDemoStatus').textContent=d.active?(d.personal?'LIVE · personal match':'LIVE · shared synthetic match'):'Connected · waiting for publisher';
   return;
  }
  if(m.type==='viewers'&&Number.isInteger(m.count)){d.viewers=m.count;return}
  if(m.type==='end'&&m.id===d.id){d.active=false;$('liveDemoStatus').textContent='Broadcast ended · rewind available';if(d.initialized&&selectedRecording===networkDemoIndex){meta.complete=true;initMatchAnalysis()}return}
- if(m.type!=='batch'||!d.id||m.id!==d.id||!Number.isInteger(m.seq)||m.seq<0||m.seq>=6000||m.seq<=d.seq||!Array.isArray(m.frames)||m.frames.length!==6||!m.frames.every((f,i)=>validNetworkFrame(f)&&Math.abs(f.t-(m.seq*6+i)/60)<1e-5))return;
+ if(m.type!=='batch'||!d.id||m.id!==d.id||!Number.isInteger(m.seq)||m.seq<0||m.seq>=(d.personal?100000:6000)||m.seq<=d.seq||!Array.isArray(m.frames)||!m.frames.length||(d.personal?m.frames.length>24:m.frames.length!==6)||!m.frames.every((f,i)=>validNetworkFrame(f,d.personal)&&(d.personal?(i===0||f.t>m.frames[i-1].t):Math.abs(f.t-(m.seq*6+i)/60)<1e-5)))return;
  if(d.seq>=0&&m.seq>d.seq+1)d.gaps+=m.seq-d.seq-1;
  d.seq=m.seq;
  if(!d.initialized){
-  const players=Object.fromEntries(m.frames[0].players.map(p=>[String(p.id),{label:'Demo '+p.id,team:p.team}]));
-  const entry={name:'Shared live · synthetic 60 Hz',meta:{id:d.id,sampleRate:60,complete:false,kind:'network-synthetic'},players,frames:m.frames.slice(),fingerprint:'shared-demo-'+d.id};
+  const players=Object.fromEntries(m.frames.flatMap(f=>f.players).map(p=>[String(p.id),{label:(d.personal?'Player ':'Demo ')+p.id,team:p.team}]));
+  const entry={name:d.personal?'Personal live · authorized match':'Shared live · synthetic 60 Hz',meta:{id:d.id,sampleRate:60,complete:false,kind:'network-synthetic'},players,frames:m.frames.slice(),fingerprint:'shared-demo-'+d.id};
   if(networkDemoIndex<0){networkDemoIndex=recordings.length;recordings.push(entry)}else recordings[networkDemoIndex]=entry;
   menu();$('match').value=String(networkDemoIndex);
   // Selecting the live recording must not close the pending network connection.
   liveDemo=null;selectMatch(networkDemoIndex);liveDemo={kind:'network',follow:true};
   d.initialized=true;$('followLiveDemo').hidden=false;$('followLiveDemo').disabled=true;$('play').textContent='Pause';
-  $('notice').textContent='Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
+  $('notice').textContent=d.personal?'Opt-in personal stream. Anonymous players, public match states and no recorded POV. Use the six independent camera modes.':'Shared synthetic 60 Hz stream. No real player data, style, awakening, recorded camera or personal statistics are present. Use the six independent camera modes; recorded POV is unavailable in this feed.';
  }else{
+  if(m.frames[0].t<=frames.at(-1)?.t)return;
+  if(d.personal){let changed=false;for(const f of m.frames)for(const p of f.players){const id=String(p.id);if(!roster[id]){roster[id]={label:'Player '+id,team:p.team};recordings[networkDemoIndex].players[id]=roster[id];changed=true}}if(changed){const selected=$('target').value;rosterIds=replayActiveRosterIds(frames,roster);$('target').replaceChildren(...rosterIds.map(id=>new Option(nameFor(id),id)));if(rosterIds.includes(selected))$('target').value=selected;rosterKey=''}}
   recordings[networkDemoIndex].frames.push(...m.frames);
   frames.push(...replayActiveFrames(m.frames,calibration,roster));
   $('seek').max=frames.at(-1).t;$('analysisStart').max=frames.at(-1).t;$('analysisEnd').max=frames.at(-1).t;
@@ -143,12 +147,13 @@ function advanceNetworkDemo(now,dt){
  const target=networkTarget();
  if(liveDemo.follow){t=Math.min(target,Math.max(frames[0].t,t)+dt*(target-t>.15?1.15:1));playing=false}
  if(now-d.rateAt>=1000){
+  if(d.personal){buildStyleHistory();buildKitHistory();buildBoardHistory();renderGoals();prepareTelemetry();}
   const rate=d.bytes*1000/Math.max(1,now-d.rateAt);d.bytes=0;d.rateAt=now;
   $('networkDetails').textContent=d.viewers+' viewers · '+d.format+' · '+(rate/1024).toFixed(1)+' KiB/s · '+d.gaps+' missing batches · '+Math.round(Math.max(0,frames.at(-1).t-t)*1000)+' ms behind received edge';
  }
  return liveDemo.follow;
 }
-$('startNetworkDemo').onclick=startNetworkDemo;
+$('startNetworkDemo').onclick=()=>startNetworkDemo();
 window.addEventListener('pagehide',()=>{if(networkDemo){clearTimeout(networkDemo.retry);networkDemo.ws?.close()}});
 let replayStyleHistory=new Map();
 // Compact replay candidate catalogue derived from wiki/derived-kits.mjs and the reviewed Nagi kit.
@@ -435,5 +440,5 @@ function initAnalyticsUI(){
  for(const id of ['analysisPlayer','heatMode','tacticsTeam'])$(id).onchange=renderMatchAnalysis;
 }
 
-function tick(now){advanceLiveDemo(now);const dt=Math.min(.1,Math.max(0,(now-(last||now))/1000));let moved=advanceNetworkDemo(now,dt);if($('mode').value==='free'&&keys.size){let c=freeBasis(),v=[0,0,0];if(keys.has('KeyW'))v=add(v,c.forward);if(keys.has('KeyS'))v=sub(v,c.forward);if(keys.has('KeyD'))v=add(v,c.right);if(keys.has('KeyA'))v=sub(v,c.right);if(keys.has('KeyE'))v[1]++;if(keys.has('KeyQ'))v[1]--;let speed=Number($('flySpeed').value)*(keys.has('ShiftLeft')||keys.has('ShiftRight')?3:1);if(Math.hypot(...v)>0){freePos=add(freePos,mul(norm(v),speed*dt));moved=true}}if(playing){t+=dt*Number($('speed').value);if(t>=Number($('seek').max)){t=Number($('seek').max);playing=false;if(liveDemo)setLiveDemoFollow(true);else $('play').textContent='Play'}draw()}else if(moved)draw();last=now;requestAnimationFrame(tick)}populateReplayIconLegend();initAnalyticsUI();menu();selectMatch(0);const liveQuery=new URLSearchParams(location.search).get('live');if(liveQuery==='demo')startLiveDemo();else if(liveQuery==='shared')startNetworkDemo();requestAnimationFrame(tick);
+function tick(now){advanceLiveDemo(now);const dt=Math.min(.1,Math.max(0,(now-(last||now))/1000));let moved=advanceNetworkDemo(now,dt);if($('mode').value==='free'&&keys.size){let c=freeBasis(),v=[0,0,0];if(keys.has('KeyW'))v=add(v,c.forward);if(keys.has('KeyS'))v=sub(v,c.forward);if(keys.has('KeyD'))v=add(v,c.right);if(keys.has('KeyA'))v=sub(v,c.right);if(keys.has('KeyE'))v[1]++;if(keys.has('KeyQ'))v[1]--;let speed=Number($('flySpeed').value)*(keys.has('ShiftLeft')||keys.has('ShiftRight')?3:1);if(Math.hypot(...v)>0){freePos=add(freePos,mul(norm(v),speed*dt));moved=true}}if(playing){t+=dt*Number($('speed').value);if(t>=Number($('seek').max)){t=Number($('seek').max);playing=false;if(liveDemo)setLiveDemoFollow(true);else $('play').textContent='Play'}draw()}else if(moved)draw();last=now;requestAnimationFrame(tick)}populateReplayIconLegend();initAnalyticsUI();menu();selectMatch(0);const liveQuery=new URLSearchParams(location.search).get('live');if(liveQuery==='demo')startLiveDemo();else if(liveQuery==='shared')startNetworkDemo();else if(liveQuery==='personal'){const room=new URLSearchParams(location.search).get('room');if(/^[a-f0-9]{32}$/.test(room||''))startNetworkDemo(room);else $('liveDemoStatus').textContent='Invalid personal stream link';}requestAnimationFrame(tick);
 </script></body></html>
