@@ -1,5 +1,5 @@
 import {previewControls,bindPreviewPlayback} from './preview-playback.mjs?v=1';
-import {renderStraight3D} from './flight-3d.mjs?v=9';
+import {renderStraight3D} from './flight-3d.mjs?v=10';
 import {shotVelocity,dashTarget,trajectory,interpolateFlight} from './physics-model.mjs?v=2';
 // Mathematical gameplay illustrations. No original game code or assets.
 // A projectile model is an illustration, not a measurement of BL:R's ball drag or gravity.
