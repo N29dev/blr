@@ -1,0 +1,15 @@
+{
+  "name": "blr-live-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cf dev",
+    "build": "cf build",
+    "deploy": "cf deploy"
+  },
+  "devDependencies": {
+    "cf": "latest",
+    "@cloudflare/vite-plugin": "rc",
+    "vite": "latest"
+  }
+}
