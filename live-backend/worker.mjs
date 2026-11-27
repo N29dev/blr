@@ -1,6 +1,7 @@
 // Replay Studio Live, synthetic-only backend prototype.
 // No game client ingestion, player identifiers, or arbitrary frame uploads.
 import { DurableObject } from 'cloudflare:workers';
+import { encodeBatch } from '../live/codec.mjs';
 export const HZ=60, BATCH=6, MAX_BATCHES=6000, HISTORY_BATCHES=50;
 const json=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});
 const fresh=()=>({id:null,startedAt:0,seq:0,active:false});
@@ -29,6 +30,8 @@ export class LiveDemoRoom extends DurableObject {
  constructor(ctx,env){super(ctx,env);this.state=fresh();ctx.blockConcurrencyWhile(async()=>{this.state=await ctx.storage.get('state')||fresh()})}
  async save(next){await this.ctx.storage.put('state',next);this.state=next}
  broadcast(message){const data=JSON.stringify(message);for(const ws of this.ctx.getWebSockets())try{ws.send(data)}catch{try{ws.close(1011,'Disconnected')}catch{}}}
+ sendBatch(ws,message,binary){const meta=ws.deserializeAttachment();ws.send(meta?.format==='binary-v1'&&binary?binary:JSON.stringify(message))}
+ broadcastBatch(message){let binary;try{binary=encodeBatch(message.seq,message.frames)}catch{}for(const ws of this.ctx.getWebSockets())try{this.sendBatch(ws,message,binary)}catch{try{ws.close(1011,'Disconnected')}catch{}}}
  status(){return {...this.state,kind:'synthetic',hz:HZ,batchSize:BATCH,viewers:this.ctx.getWebSockets().length}}
  async start(){
   if(this.state.active)return json(this.status(),409);
@@ -42,7 +45,7 @@ export class LiveDemoRoom extends DurableObject {
   if(Date.now()-s.startedAt<s.seq*100)return json({error:'Too early'},429);
   const seq=s.seq;if(seq>=MAX_BATCHES){await this.stop();return json({error:'Demo reached time limit'},409)}
   await this.save({...s,seq:seq+1});
-  this.broadcast({type:'batch',id:s.id,seq,frames:batchFor(seq)});
+  this.broadcastBatch({type:'batch',id:s.id,seq,frames:batchFor(seq)});
   if(this.state.seq>=MAX_BATCHES)await this.stop();
   return json({id:s.id,seq,accepted:true});
  }
@@ -56,9 +59,10 @@ export class LiveDemoRoom extends DurableObject {
   if(this.ctx.getWebSockets().length>=100)return json({error:'Demo room full'},503);
   const [client,server]=Object.values(new WebSocketPair());
   this.ctx.acceptWebSocket(server);
+  const format=new URL(request.url).searchParams.get('format')==='binary-v1'?'binary-v1':'json';server.serializeAttachment({format});
   const s=this.state;
-  server.send(JSON.stringify({type:'hello',...this.status(),historyStart:Math.max(0,s.seq-HISTORY_BATCHES)}));
-  for(let seq=Math.max(0,s.seq-HISTORY_BATCHES);seq<s.seq;seq++)server.send(JSON.stringify({type:'batch',id:s.id,seq,frames:batchFor(seq)}));
+  server.send(JSON.stringify({type:'hello',...this.status(),format,historyStart:Math.max(0,s.seq-HISTORY_BATCHES)}));
+  for(let seq=Math.max(0,s.seq-HISTORY_BATCHES);seq<s.seq;seq++){const message={type:'batch',id:s.id,seq,frames:batchFor(seq)};let binary;if(format==='binary-v1')try{binary=encodeBatch(seq,message.frames)}catch{}this.sendBatch(server,message,binary)}
   this.broadcast({type:'viewers',count:this.ctx.getWebSockets().length});
   return new Response(null,{status:101,webSocket:client});
  }
