@@ -68,12 +68,32 @@ async function renderAccount(id){
  say('Loading outfit metadata for '+id+'…');const model=await deadline(API.Avatar.GetUserAvatarModel(Number(id)),20000,'Outfit lookup');
  if(!(model instanceof OutfitModel))throw Error('Public outfit unavailable (HTTP '+(model?.status||'unknown')+')');
  model.outfit.playerAvatarType='R6';
+ const omitted=[];
+ // Match the R6 description's accessory and classic clothing GetRBX calls.
+ // Test the catalog models first, so a missing/removed catalog item does not
+ // reject the whole HumanoidDescription. Body parts use different representation
+ // headers and are left to the renderer.
+ const optionalTypes=new Set([2,8,11,12,18,41,42,43,44,45,46,47]);
+ const optional=model.outfit.assets.filter(a=>optionalTypes.has(Number(a.assetType?.id)));
+ say('Checking '+optional.length+' optional outfit items…');
+ for(let i=0;i<optional.length;i+=4){
+  await Promise.all(optional.slice(i,i+4).map(async asset=>{
+   const name=String(asset.name||asset.id).slice(0,100);
+   try{
+    const data=await deadline(API.Asset.GetRBX('rbxassetid://'+asset.id,undefined),32000,'Catalog item lookup');
+    if(data&&typeof data.generateTree==='function')return;
+    // The exact same asset lookup is cached by RoAvatar on success.
+    // Failed items may be unavailable, moderated or temporarily inaccessible.
+    throw Error('Catalog model unavailable'+(data?.status?' (HTTP '+data.status+')':''));
+   }catch(e){model.outfit.removeAsset(asset.id);omitted.push(name);note('Omitted unavailable catalog item: '+name+' · '+e.message)}
+  }));
+ }
  say('Compiling R6 rig, clothing and accessories…');const outfit=new OutfitRenderer(new Authentication(),model.outfit);state.active=outfit;
  outfit.doCameraUpdateOnLoad=false;outfit.doCameraUpdate=false;outfit.deltaTimeMultiplier=0;
  // OutfitRenderer.onRenderSuccess additionally waits for a background, even
  // when no background was requested. For a transparent sprite, wait for the
  // rig's own description and render descendants instead.
- const omitted=[];let connections=[];
+ let connections=[];
  try{
   await deadline(new Promise((resolve,reject)=>{
    let outfitReady=false,settled=false;const failed=new Set();
