@@ -21,7 +21,7 @@ export function parseLines(chunk,partial=''){
 }
 export function takeBatch(queue,elapsed,id,seq){
  const frames=[];
- while(queue.length&&frames.length<12&&queue[0].t<=elapsed){
+ while(queue.length&&frames.length<24&&queue[0].t<=elapsed){
   const f=queue[0];if(frames.length&&f.t-frames[0].t>.45)break;
   if(new TextEncoder().encode(JSON.stringify({id,seq,frames:[...frames,f]})).length>MAX_PACKET){if(!frames.length)throw Error('Frame exceeds packet limit');break}
   frames.push(queue.shift());
@@ -35,8 +35,8 @@ async function main(){
   for(let i=0;i<120;i++)q.push(normalizeFrame({t:5+i/60,players:[{id:1,team:'Home',cf:[1,2,3],username:'hidden',abilitySlots:[1]}],scoreboard:{home:0,away:0,timer:300}},c));
   let seq=0,lastT=-1,total=0;
   while(q.length){const p=takeBatch(q,5,'test',seq);cleanBatch(p,{id:'test',seq,lastT});if(p.frames.some(f=>f.players[0].username||f.players[0].abilitySlots||f.scoreboard.timer!==300))throw Error('Privacy test failed');lastT=p.frames.at(-1).t;total+=p.frames.length;seq++}
-  if(total!==120||seq!==10||parseLines('{"t":1}\n{"t":').rest!=='{"t":')throw Error('Batch/parser test failed');
-  console.log('Local publisher self-test passed: 120 samples, 10 batches');return;
+  if(total!==120||seq!==5||parseLines('{"t":1}\n{"t":').rest!=='{"t":')throw Error('Batch/parser test failed');
+  console.log('Local publisher self-test passed: 120 samples, 5 catch-up batches');return;
  }
  const path=args.find(a=>!a.startsWith('--'));
  if(!path||!args.includes('--consent'))throw Error('Usage: node local-publisher.mjs <authorized.ndjson> --consent [--once] [--delay=3]');
@@ -50,7 +50,7 @@ async function main(){
  const room=randomBytes(16).toString('hex'),watch='https://blr.n29.kz/replays/?live=personal&room='+room;
  const file=await open(path,'r');
  if(!(await file.stat()).isFile()){await file.close();throw Error('Select a regular file')}
- const decoder=new TextDecoder('utf-8',{fatal:true}),buf=Buffer.alloc(16384),queue=[],clock={origin:null,last:-1};
+ const decoder=new TextDecoder('utf-8',{fatal:true}),buf=Buffer.alloc(4096),queue=[],clock={origin:null,last:-1};
  let offset=0,partial='',running=true,eof=false,limited=false,session=null,seq=0,total=0,lastSend=0,startedAt=0,lastLog=0;
  process.on('SIGINT',()=>{running=false});process.on('SIGTERM',()=>{running=false});
  function enqueue(raw){
