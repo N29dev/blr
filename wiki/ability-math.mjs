@@ -1,4 +1,5 @@
-import {renderStraight3D} from './flight-3d.mjs?v=4';
+import {previewControls,bindPreviewPlayback} from './preview-playback.mjs?v=1';
+import {renderStraight3D} from './flight-3d.mjs?v=5';
 import {shotVelocity,dashTarget,trajectory,interpolateFlight} from './physics-model.mjs?v=2';
 // Mathematical gameplay illustrations. No original game code or assets.
 // A projectile model is an illustration, not a measurement of BL:R's ball drag or gravity.
@@ -17,15 +18,13 @@ function mathNode(tag,children=[]){const n=document.createElementNS(M,tag);for(c
 const mi=x=>mathNode('mi',[x]),mn=x=>mathNode('mn',[String(x)]),mo=x=>mathNode('mo',[x]),row=(...x)=>mathNode('mrow',x),sub=(a,b)=>mathNode('msub',[a,b]),sup=(a,b)=>mathNode('msup',[a,b]),frac=(a,b)=>mathNode('mfrac',[a,b]),sqrt=a=>mathNode('msqrt',[a]),v=x=>mi(x),op=x=>mo(x);
 function equation(...rows){const box=el('div',null,'am-equations');for(const r of rows){const math=mathNode('math',[r]);math.setAttribute('display','block');box.append(math);}return box;}
 function playback(root,{duration=()=>1,draw,step=0.001,labelText='Playback progress',initial=0}){
- const bar=el('div',null,'am-playback'),button=el('button','▶ Play','am-play'),reset=el('button','↺','am-reset'),range=el('input'),out=el('output');
- button.type=reset.type='button';reset.setAttribute('aria-label','Reset playback');range.type='range';range.min=0;range.max=1;range.step=step;range.value=initial;range.setAttribute('aria-label',labelText);
- bar.append(button,reset,range,out);root.append(bar);let frame=0,running=false,last=0,p=initial;
+ const controls=previewControls(),{bar}=controls,range=el('input'),out=el('output');
+ bar.classList.add('am-playback');range.type='range';range.min=0;range.max=1;range.step='any';range.value=initial;range.setAttribute('aria-label',labelText);range.style.cssText='flex:1;min-width:85px;accent-color:#9ac9ff';bar.append(range,out);root.append(bar);
+ let p=initial;
  function render(){range.value=p;out.value=fmt(p*duration(),2)+' s';draw(p);}
- function pause(){running=false;cancelAnimationFrame(frame);button.textContent='▶ Play';button.setAttribute('aria-pressed','false');}
- function tick(now){if(!running||!bar.isConnected||!bar.closest('details')?.open){pause();return;}if(last)p=Math.min(1,p+(now-last)/1000/Math.max(.001,duration()));last=now;render();if(p>=1)pause();else frame=requestAnimationFrame(tick);}
- button.addEventListener('click',()=>{if(running){pause();return;}if(p>=1)p=0;running=true;last=0;button.textContent='Ⅱ Pause';button.setAttribute('aria-pressed','true');frame=requestAnimationFrame(tick);});
- reset.addEventListener('click',()=>{pause();p=0;render();});range.addEventListener('input',()=>{pause();p=Number(range.value);render();});
- return {refresh:render,pause};
+ const player=bindPreviewPlayback({...controls,host:bar,duration,read:()=>p*duration(),render:time=>{p=Math.max(0,Math.min(1,time/Math.max(.001,duration())));render();}});
+ range.addEventListener('input',()=>{player.pause();p=Number(range.value);render();});
+ return {refresh:render,pause:player.pause};
 }
 // Ideal steering-only approximation: integrate unit vectors toward each sampled
 // target with piecewise constant directions. It omits tween easing, acceleration and physics.
