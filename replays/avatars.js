@@ -31,12 +31,12 @@ const ReplayAvatars=(()=>{
  const parts=[['head',0,2,0,1.3,1.25,1.3],['torso',0,.5,0,2,2,1],['leftArm',-1.5,.5,0,1,2,1],['rightArm',1.5,.5,0,1,2,1],['leftLeg',-.5,-1.5,0,1,2,1],['rightLeg',.5,-1.5,0,1,2,1]];
  const faces=[[0,1,2,3],[4,7,6,5],[0,4,5,1],[3,2,6,7],[1,5,6,2],[0,3,7,4]];
  const shade=(hex,f)=>'#'+[1,3,5].map(i=>Math.round(parseInt(hex.slice(i,i+2),16)*f).toString(16).padStart(2,'0')).join('');
- function drawRig({actor,colors,team,poly,view}){
+ function drawRig({actor,colors,team,poly,view,pose=null}){
   const [x,y,z]=actor.cf,angle=Number.isFinite(actor.cf[4])?actor.cf[4]:0,c=Math.cos(angle),s=Math.sin(angle);
-  const point=(a,b,d)=>[x+a*c+d*s,y+b,z-a*s+d*c],surfaces=[];
+  const point=(a,b,d)=>[x+a*c+d*s,y+b,z-a*s+d*c],surfaces=[];const animated=pose&&globalThis.ReplayMotion?ReplayMotion.transforms(pose):null;const nameMap={head:'Head',torso:'Torso',leftArm:'Left Arm',rightArm:'Right Arm',leftLeg:'Left Leg',rightLeg:'Right Leg'};
   for(const [part,px,py,pz,w,h,d] of parts){
    const color=/^#[0-9a-f]{6}$/i.test(colors?.[part]||'')?colors[part]:(part==='torso'?team:'#aab4c2');
-   const vs=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([a,b,e])=>point(px+a*w/2,py+b*h/2,pz+e*d/2));
+   const vs=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([a,b,e])=>animated?point(...ReplayMotion.point(animated[nameMap[part]],a*w/2,b*h/2,e*d/2)):point(px+a*w/2,py+b*h/2,pz+e*d/2));
    for(let i=0;i<faces.length;i++){const ps=faces[i].map(j=>vs[j]);surfaces.push({ps,depth:ps.reduce((v,p)=>v+view(p)[2],0)/4,color:shade(color,[.88,.75,.65,1,.79,.92][i])})}
   }
   surfaces.sort((a,b)=>b.depth-a.depth);for(const f of surfaces)poly(f.ps,f.color,'#111820',.45);
