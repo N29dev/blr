@@ -54,9 +54,14 @@ globalThis.ReplayMotion=(()=>{
  // Older lite recordings contain root positions, not Humanoid.WalkSpeed or
  // the sprint input. Infer gait using the midpoint of BLR's base walk/run
  // speeds (20/30 with ball, 23/33 without) with a small hysteresis band.
- function gait(actor,previous,dt,ground,prior){
+ function gait(actor,previous,dt,ground,prior,slideEvent=false){
   const a=actor?.cf,b=previous?.cf;
   if(!a||a.length<3||!a.slice(0,3).every(Number.isFinite))return {mode:'idle',id:ID.idle,rate:1,speed:0};
+  // Explicit replicated state is preferred. Older full recordings may store
+  // Sliding under states or carry a slide rising-edge event.
+  const sliding=typeof actor.sliding==='boolean'?actor.sliding:typeof actor.states?.Sliding==='boolean'?actor.states.Sliding:null;
+  const continued=sliding===null&&prior?.mode==='slide'&&prior.slideInferred&&dt>0&&dt<=.25&&prior.phase+dt<(clips.get(ID.slide)?.duration??1);
+  if(sliding===true||(sliding===null&&(slideEvent||continued)))return {mode:'slide',id:ID.slide,rate:1,speed:0,slideInferred:sliding===null};
   const usable=b&&b.length>=3&&b.slice(0,3).every(Number.isFinite)&&dt>0&&dt<=.25;
   const dx=usable?a[0]-b[0]:0,dz=usable?a[2]-b[2]:0,vy=usable?(a[1]-b[1])/dt:0,raw=usable?Math.hypot(dx,dz)/dt:0;
   if(a[1]>ground+4.2){
@@ -88,8 +93,9 @@ globalThis.ReplayMotion=(()=>{
   }
   while(cursor<index){
    const i=cursor+1,f=frames[i],prev=frames[i-1],dt=f.t-(prev?.t??f.t),prevActors=new Map((prev?.players||[]).map(p=>[String(p.id),p])),next=new Map();
+   const slideIds=new Set((Array.isArray(f.events)?f.events:[]).filter(e=>e?.type==='slide'&&e.source==='state'&&Number.isFinite(e.t)&&Math.abs(e.t-f.t)<=.1).map(e=>String(e.playerId)));
    for(const actor of f.players||[]){
-    const key=String(actor.id),old=current.get(key),g=gait(actor,prevActors.get(key),dt,ground,old);
+    const key=String(actor.id),old=current.get(key),g=gait(actor,prevActors.get(key),dt,ground,old,slideIds.has(key));
     const contiguous=old&&dt>0&&dt<=.25,phase=contiguous&&old.id===g.id?old.phase+dt*(old.rate+g.rate)/2:0;
     next.set(key,{...g,phase,t:f.t});
    }

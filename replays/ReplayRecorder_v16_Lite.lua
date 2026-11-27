@@ -2,7 +2,7 @@
 -- Use only in an experience or test session where the developer permits recording this way.
 -- Passive OnClientEvent listeners only; no remote firing/invocation, hooks, automation or network upload.
 -- Records visible match actors, ball, camera, scoreboard and replicated match-stat changes for all active players.
--- Reads only the replicated Stunned flag for human actors; records rising edges.
+-- Reads replicated Stunned rising edges and Sliding state for offline tackle animation.
 -- No shot/steal-attempt/dribble events. A stun does not prove an ankle break.
 -- Reads replicated style at 5 Hz; writes changes and chunk baselines.
 -- Records assigned positions from known player/character fields and match UI.
@@ -273,7 +273,7 @@ end
 local function metadata(s,complete)
     return {version=2,recorderVersion="0.16-lite",id=s.id,createdAt=s.createdAt,
         placeId=game.PlaceId, sampleRate=RATE,rotationUnit="radians",positionUnit="studs",
-        frames=s.count,chunks=s.chunks,duration=s.lastT,complete=complete,includeNames=true,statsSampleRate=STATS_RATE,scoreboardSampleRate=BOARD_RATE,extensions={"npc","localStats","events","playerStyles","playerScoreboard","abilitySlots","awakeningStates","flowStates"},eventMode="match-counters-stuns-and-ability-state",abilityClock="server clock or tick (candidate; raw preserved)",awakeningReadySource="PlayerStats.Awakening (unverified)",counterScope="replicated-active-players",localPlayerId=s.localId,droppedAbilityUpdates=s.droppedAbilityUpdates}
+        frames=s.count,chunks=s.chunks,duration=s.lastT,complete=complete,includeNames=true,statsSampleRate=STATS_RATE,scoreboardSampleRate=BOARD_RATE,extensions={"npc","localStats","events","playerStyles","playerScoreboard","abilitySlots","awakeningStates","flowStates","slideState"},eventMode="match-counters-stuns-and-ability-state",abilityClock="server clock or tick (candidate; raw preserved)",awakeningReadySource="PlayerStats.Awakening (unverified)",counterScope="replicated-active-players",localPlayerId=s.localId,droppedAbilityUpdates=s.droppedAbilityUpdates}
 end
 local function flush(s,complete)
     if #s.frames > 0 then
@@ -450,6 +450,10 @@ local function sample(s)
         local held=readValue(values,"HasBall")
         local entry={id=id,team=tm,kind=kind,cf=cf(root.CFrame),hasBall=held==true}
         if player then
+            local sliding=readValue(values,"Sliding")
+            if type(sliding)=="boolean" then
+                entry.sliding=sliding
+            end
             seenActors[id]=true
             -- Observe the existing boolean only, never infer the cause of a stun.
             local stunObject=values and values:FindFirstChild("Stunned")

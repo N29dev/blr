@@ -22,3 +22,13 @@ test('phase integrates speed and is deterministic across backward seeks',()=>{
  assert.deepEqual(m.statesAt(frames,10,0).get('1'),early);
  assert.deepEqual(m.statesAt(frames,250,0).get('1'),late);
 });
+
+test('observed sliding overrides locomotion; never infer tackle from speed or steals',()=>{
+ const p={id:'1',cf:[0,3,0,0,0]},a={...p,cf:[0,3,-3.3,0,0]};
+ assert.equal(m.gait({...a,sliding:true},p,.1,0).mode,'slide');
+ assert.equal(m.gait({...a,states:{Sliding:true}},p,.1,0).mode,'slide');
+ assert.equal(m.gait({...a,sliding:false},p,.1,0,null,true).mode,'run');
+ assert.equal(m.gait(a,p,.1,0).mode,'run');
+ const frames=Array.from({length:15},(_,i)=>({t:i/10,players:[{...p,cf:[0,3,-3.3*i,0,0]}],events:i===1?[{type:'slide',source:'state',playerId:1,t:.1}]:i===12?[{type:'steal',source:'counter',playerId:1,t:1.2}]:[]}));
+ m.resetTimeline();assert.equal(m.statesAt(frames,1,0).get('1').mode,'slide');assert.equal(m.statesAt(frames,5,0).get('1').mode,'slide');assert.notEqual(m.statesAt(frames,13,0).get('1').mode,'slide');assert.equal(m.statesAt(frames,1,0).get('1').phase,0);
+});
