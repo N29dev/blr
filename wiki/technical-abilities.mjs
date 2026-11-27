@@ -1,5 +1,5 @@
 import {abilitySequenceInfo} from './ability-sequences.mjs?v=3';
-import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots} from './flight-3d.mjs?v=13';
+import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots} from './flight-3d.mjs?v=14';
 import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=19';
 import {MOVEMENT_REVIEW,renderMovementReview} from './movement-review.mjs?v=3';
 import {RARE_LUA_REVIEW,renderRarePass} from './rare-lua-review.mjs?v=2';
