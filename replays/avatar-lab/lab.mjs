@@ -40,6 +40,11 @@ async function initialize(){
   const {FLAGS,RBXRenderer}=lib;
   // Static replay avatars never use animation tracks. Do not fetch the default animation set.
   if(Array.isArray(lib.AllAnimations))lib.AllAnimations.splice(0);
+  // The initial description comparison also explicitly loads dance/tool/pose
+  // tracks, independently of AllAnimations. Disable that routine in this
+  // isolated, static-only renderer.
+  if(typeof lib.HumanoidDescriptionWrapper?.prototype?._applyAnimations!=='function')throw Error('Static animation hook unavailable in pinned renderer');
+  lib.HumanoidDescriptionWrapper.prototype._applyAnimations=async function(){return undefined};
   FLAGS.ONLINE_ASSETS=false;FLAGS.RIG_PATH=baseAssets;FLAGS.ASSETS_PATH=baseAssets+'rbxasset/';FLAGS.FETCH_FUNC=publicFetch;FLAGS.IMAGE_FUNC=imageFetch;
   FLAGS.INCLUDE_REQUEST_CREDENTIALS_OVERRIDE='omit';FLAGS.API_REQUEST_RETRY=false;
   FLAGS.ENABLE_API_CACHE=true;FLAGS.ENABLE_API_MESH_CACHE=true;FLAGS.ENABLE_API_RBX_CACHE=true;FLAGS.USE_WORKERS=false;FLAGS.GEAR_ENABLED=false;FLAGS.AUDIO_ENABLED=false;FLAGS.BEAMS_ENABLED=false;
