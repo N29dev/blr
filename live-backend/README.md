@@ -1,6 +1,6 @@
 # Replay Studio Live — synthetic backend prototype
 
-This isolated Worker generates its own fictional match; it does not accept Roblox telemetry, arbitrary frames, usernames, or other game data. It is not yet deployed or wired into the website. Keep the local replay viewer unchanged until the network integration is tested.
+This isolated Worker generates its own fictional match; it does not accept Roblox telemetry, arbitrary frames, usernames, or other game data. The original JSON prototype has been deployed and successfully watched by the owner. The binary upgrade is committed but still needs redeployment and network validation. The local replay viewer is unchanged.
 
 ## Protocol
 
@@ -8,7 +8,9 @@ This isolated Worker generates its own fictional match; it does not accept Roblo
 - One synthetic demonstration room; up to 100 connected spectators.
 - POST /demo/start, /demo/tick, /demo/stop require Authorization: Bearer <LIVE_DEMO_TOKEN> (secret, minimum 32 characters).
 - GET /demo/status returns session metadata.
-- GET /demo/watch upgrades to a read-only WebSocket. Messages: hello, start, batch, viewers, end. A batch carries session id, zero-based sequence number, and frames with replay-relative timestamps.
+- GET /demo/watch upgrades to a read-only WebSocket. Messages: hello, start, batch, viewers, end. A JSON batch carries session id, zero-based sequence number, and frames with replay-relative timestamps.
+- GET /demo/watch?format=binary-v1 negotiates binary batches with JSON control messages. Each independent batch is 365 bytes: eight-byte header, absolute int16 coordinates for the first sample and int8 deltas for the following five. Coordinates are quantized to 1/64 stud. The codec assumes the fixed synthetic 16-player roster; it must not be used for real match data without a separately reviewed protocol.
+- At 10 batches/s the binary payload is 3,650 bytes/s, excluding network overhead. The original JSON averages approximately 11,953 bytes per batch over the first 100 batches. Old clients still receive JSON; new clients also accept JSON fallback.
 - Reconnecting spectators receive up to the last five seconds of synthetic history. Longer rewind is retained by the client once it is connected; persistent full-match history is not implemented.
 - Each demo is limited to ten minutes. No video upload or replay storage.
 - The test publisher sends only authenticated control commands; the server creates all frame contents. Sequential HTTP pacing can run slower than 10 batches/s under network latency; native frame timestamps stay at 60 Hz.
@@ -31,4 +33,4 @@ Open a WebSocket client at wss://YOUR-WORKER.workers.dev/demo/watch to inspect t
 
 ## Current validation
 
-Generator syntax and batch timestamp continuity were checked. Cloudflare runtime, deployment, cross-device playback, load, and reconnect behavior still need integration testing.
+Generator syntax and batch timestamp continuity were checked. All 6,000 synthetic batches were encoded and decoded, with maximum absolute coordinate error below 0.008 stud. Malformed packet length was rejected. Binary Cloudflare deployment, cross-device bandwidth, runtime load, and reconnect behavior still need integration testing.
