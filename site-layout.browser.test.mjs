@@ -368,6 +368,7 @@ for(const width of [1440,390]){
       assert.ok((await page.locator('#match option').first().textContent()).includes('Synthetic demo'));
       assert.equal(await page.locator('#mode option').count(),7);
       assert.ok(await page.locator('#canvas').isVisible());
+      assert.deepEqual(await page.evaluate(()=>[BLRFieldGeometry.version,BLRFieldGeometry.markings.rects.length,BLRFieldGeometry.markings.spots.length,BLRFieldGeometry.markings.curves.length]),[3,19,3,7]);
       assert.ok(Number(await page.locator('#seek').getAttribute('max'))>0);
       for(const mode of ['orbit','top','pov','free','chase','ballorbit','player']){
         await page.locator('#mode').selectOption(mode);
@@ -404,6 +405,8 @@ test('Field Lab shares measured geometry and preserves game-meter ability modes'
     assert.ok((await page.locator('#pitch-size').textContent()).includes('545.04 × 408.31 studs'));
     assert.equal(await page.locator('#white-line-parts rect').count(),19);
     assert.equal(await page.locator('#white-line-parts ellipse').count(),3);
+    assert.equal(await page.locator('#white-line-unions polyline').count(),7);
+    assert.equal(await page.evaluate(()=>BLRFieldGeometry.version),3);
     await page.locator('#field-settings > summary').click();
     await page.locator('#penalty-toggle').check();
     assert.ok(await page.locator('#penalty-layer').isVisible());
