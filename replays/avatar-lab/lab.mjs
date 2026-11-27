@@ -21,7 +21,7 @@ function assetUrl(input,headers){
 }
 async function publicFetch(input,init={}){
  if(init.method&&init.method.toUpperCase()!=='GET')return new Response('Read-only renderer',{status:405});
- try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(30000)});if(!r.ok){const detail=(await r.clone().text()).slice(0,100);if(r.status===403&&detail.includes('HTTP 401'))deniedAssets.add(String(input));note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+detail);}return r;}
+ try{const url=bundledAsset(input)||assetUrl(input,init.headers);const r=await fetch(url,{credentials:'omit',signal:AbortSignal.timeout(30000)});if(!r.ok){const detail=(await r.clone().text()).slice(0,280);if(r.status===403&&detail.includes('HTTP 401'))deniedAssets.add(String(input));note('HTTP '+r.status+' · '+String(input).slice(0,150)+' · '+detail);}return r;}
  catch(e){note('Asset transport: '+String(input).slice(0,150)+' · '+e.message);return new Response('Public asset unavailable',{status:502})}
 }
 async function imageFetch(input){
