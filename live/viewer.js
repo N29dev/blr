@@ -1,8 +1,10 @@
+import {decodeBatch} from './codec.mjs?v=1';
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('field'),ctx=canvas.getContext('2d');
-const endpoint='wss://blr-live-demo.scp343hey.workers.dev/demo/watch';
+const endpoint='wss://blr-live-demo.scp343hey.workers.dev/demo/watch?format=binary-v1';
 const HZ=60, BUFFER=.35, CAP=36006;
 let socket=null,retry=null,backoff=500,session=null,active=false,frames=[],lastSeq=-1,gaps=0,following=true,playing=false,time=0,lastRender=0,lastArrival=0;
+let wireBytes=0,wireStart=0,format='JSON';
 function status(s){$('status').textContent=s}
 function reset(id){session=id;frames=[];lastSeq=-1;gaps=0;following=true;playing=false;time=0;lastArrival=0;updateControls()}
 function updateControls(){
@@ -17,12 +19,13 @@ function validFrame(f){
  return f&&Number.isFinite(f.t)&&f.t>=0&&f.t<=600.1&&Array.isArray(f.players)&&f.players.length===16&&f.players.every(p=>p&&Number.isInteger(p.id)&&p.id>=1&&p.id<=16&&['Home','Away'].includes(p.team)&&Array.isArray(p.cf)&&p.cf.length>=3&&p.cf.slice(0,3).every(v=>Number.isFinite(v)&&Math.abs(v)<1000))&&Array.isArray(f.ball?.cf)&&f.ball.cf.slice(0,3).length===3&&f.ball.cf.slice(0,3).every(v=>Number.isFinite(v)&&Math.abs(v)<1000);
 }
 function message(event){
- if(typeof event.data!=='string'||event.data.length>100000)return;
- let m;try{m=JSON.parse(event.data)}catch{return}
+ let m;
+ if(event.data instanceof ArrayBuffer){if(!session)return;try{m={type:'batch',id:session,...decodeBatch(event.data)};format='Binary delta v1';wireBytes+=event.data.byteLength}catch{return}}
+ else {if(typeof event.data!=='string'||event.data.length>100000)return;try{m=JSON.parse(event.data)}catch{return}if(m?.type==='batch'){wireBytes+=new TextEncoder().encode(event.data).length;format='JSON'}}
  if(!m||typeof m!=='object')return;
  if(m.type==='hello'||m.type==='start'){
   if(m.id!==session)reset(m.id);
-  active=m.active===true;
+  active=m.active===true;if(m.type==='hello')format=m.format==='binary-v1'?'Binary delta v1':'JSON';
   if(Number.isInteger(m.viewers))$('viewers').textContent=m.viewers+' viewers';
   status(active?'LIVE · synthetic match':'Waiting for test publisher');
  }else if(m.type==='batch'){
@@ -39,7 +42,7 @@ function message(event){
 }
 function connect(){
  clearTimeout(retry);if(socket){socket.onclose=null;socket.close()}
- status('Connecting…');const ws=new WebSocket(endpoint);socket=ws;
+ status('Connecting…');const ws=new WebSocket(endpoint);ws.binaryType='arraybuffer';socket=ws;wireStart=performance.now();wireBytes=0;
  ws.onopen=()=>{if(socket===ws){backoff=500;status('Connected · waiting for session')}};
  ws.onmessage=e=>{if(socket===ws)message(e)};
  ws.onclose=()=>{if(socket!==ws)return;active=false;status('Disconnected · reconnecting');retry=setTimeout(connect,backoff);backoff=Math.min(10000,backoff*2)};
@@ -74,6 +77,7 @@ function loop(now){
   const sec=Math.floor(time);$('clock').textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')+' / '+Math.floor(last/60)+':'+String(Math.floor(last)%60).padStart(2,'0');
   $('buffer').textContent='Buffer: '+Math.round((last-time)*1000)+' ms';
  }
+ if(now-wireStart>=1000){const rate=wireBytes*1000/Math.max(1,now-wireStart);$('transport').textContent=format+' · '+(rate/1024).toFixed(1)+' KiB/s payload';wireStart=now;wireBytes=0}
  draw(time);requestAnimationFrame(loop);
 }
 window.addEventListener('pagehide',()=>{clearTimeout(retry);if(socket){socket.onclose=null;socket.close()}});
