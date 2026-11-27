@@ -1,4 +1,4 @@
-import {fieldComponents,renderFieldSimulation} from '../field/simulation.mjs?v=2';
+import {fieldComponents,renderFieldSimulation} from '../field/simulation.mjs?v=3';
 import {abilitySequenceInfo} from './ability-sequences.mjs?v=3';
 import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots} from './flight-3d.mjs?v=13';
 import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=19';
