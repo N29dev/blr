@@ -1,10 +1,10 @@
 export function updatePage(p,old,iconSpec){
- let h=old.replaceAll('/site-unify.css?v=2','/site-unify.css?v=3').replaceAll('/site-responsive.css?v=1','/site-responsive.css?v=2').replaceAll('/site-experience.js?v=4','/site-experience.js?v=5').replaceAll('/site-motion.css?v=1','/site-motion.css?v=2').replaceAll('/site-motion.js?v=1','/site-motion.js?v=2').replaceAll('/wiki/wiki.css?v=2','/wiki/wiki.css?v=3').replaceAll('/wiki/app.mjs?v=2','/wiki/app.mjs?v=3');
+ let h=old.replaceAll('/site-unify.css?v=2','/site-unify.css?v=3').replaceAll('/site-responsive.css?v=1','/site-responsive.css?v=2').replaceAll('/site-experience.js?v=4','/site-experience.js?v=5').replaceAll('/site-motion.css?v=1','/site-motion.css?v=2').replaceAll('/site-motion.js?v=1','/site-motion.js?v=2').replaceAll('/wiki/wiki.css?v=2','/wiki/wiki.css?v=7').replaceAll('/wiki/app.mjs?v=2','/wiki/app.mjs?v=3');
  const route=p==='index.html'?'/':'/'+p.replace(/index\.html$/,'');
  const active=route.startsWith('/styles/')?'/styles/':route.startsWith('/flows/')?'/flows/':route.startsWith('/tech/')?'/tech/':route;
  const wiki=h.includes('data-page="wiki"');
  const primary=wiki||['servers/index.html','servers/customs/index.html','tech/index.html','tech/admin/index.html','leaderboard/index.html','404.html'].includes(p);
- if(primary){const nav=[['/','Home'],['/styles/','Styles'],['/flows/','Flows'],['/updates/','Updates'],['/servers/','Servers'],['/servers/customs/','Customs'],['/tech/','Tech rules'],['/tech/#support','Support']];h=h.replace(/<div class="n29-nav-links">[\s\S]*?<\/div>/,'<div class="n29-nav-links">'+nav.map(([u,n])=>'<a href="'+u+'"'+(u===active?' aria-current="page"':'')+(u.includes('#support')?' class="n29-nav-support"':'')+'>'+n+'</a>').join('')+'</div>');}
+ if(primary){const nav=[['/','Home'],['/styles/','Styles'],['/flows/','Flows'],['/updates/','Updates'],['/servers/','Servers'],['/servers/customs/','Customs'],['/field/','Field Lab'],['/replays/','Replays'],['/tech/','Tech rules'],['/tech/#support','Support']];h=h.replace(/<div class="n29-nav-links">[\s\S]*?<\/div>/,'<div class="n29-nav-links">'+nav.map(([u,n])=>'<a href="'+u+'"'+(u===active?' aria-current="page"':'')+(u.includes('#support')?' class="n29-nav-support"':'')+'>'+n+'</a>').join('')+'</div>');}
  if(!wiki)return h;
  const tag=(name,flow,rarity,nel)=>{
    name=name.replace(/&amp;/g,'&').replace(/&apos;|&#39;/g,"'").replace(/&quot;/g,'"');
