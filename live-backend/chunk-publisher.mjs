@@ -27,7 +27,7 @@ function timer(v){
  if(typeof v==='string'){const m=v.trim().match(/^(\d{1,2}):(\d{2})$/);if(m&&Number(m[2])<60)return Number(m[1])*60+Number(m[2])}
 }
 const pos=cf=>Array.isArray(cf)&&cf.length>=3?cf.slice(0,3):undefined;
-export function convertFrame(f,states){
+export function convertFrame(f,states,labels=new Map()){
  if(!f||!Array.isArray(f.players)||!Number.isFinite(f.t))throw Error('Invalid Lite frame');
  const players=f.players.map(p=>{
   const old=states.get(p.id)||{};
@@ -35,7 +35,7 @@ export function convertFrame(f,states){
   if(Number.isInteger(p.awk))old.awk=p.awk;
   if(typeof p.inAwakening==='boolean')old.inAwakening=p.inAwakening;
   states.set(p.id,old);
-  return {id:p.id,team:p.team,cf:pos(p.cf),hasBall:p.hasBall,...old};
+  return {id:p.id,team:p.team,cf:pos(p.cf),hasBall:p.hasBall,...old,label:labels.get(String(p.id))};
  });
  const present=new Set(players.map(p=>p.id));
  for(const id of states.keys())if(!present.has(id))states.delete(id);
@@ -61,6 +61,16 @@ async function main(){
  const input=args.find(a=>!a.startsWith('--'));
  if(!input||!args.includes('--consent'))throw Error('Usage: node chunk-publisher.mjs <ReplayRecordings folder> --consent [--session]');
  if(!process.env.LIVE_DEMO_TOKEN||process.env.LIVE_DEMO_TOKEN.length<32)throw Error('Set LIVE_DEMO_TOKEN first');
+ const labelPath=args.find(a=>a.startsWith('--labels='))?.slice(9);
+ const approved=new Map();
+ if(labelPath){
+  const mapping=await json(resolve(labelPath),65536);
+  if(!mapping||Array.isArray(mapping)||typeof mapping!=='object')throw Error('Expected JSON object of consenting usernames and chosen display labels');
+  for(const [username,label] of Object.entries(mapping)){
+   if(!/^[A-Za-z0-9_]{1,20}$/.test(username)||typeof label!=='string'||!/^[\p{L}\p{M}\p{N} _.'-]{1,32}$/u.test(label)||!label.trim())throw Error('Invalid approved label mapping');
+   approved.set(username.toLowerCase(),label.trim());
+  }
+ }
  const root=resolve(input),stat=await lstat(root);
  if(!stat.isDirectory()||stat.isSymbolicLink())throw Error('Select a recording directory');
  const existing=new Set(await readdir(root));
@@ -101,11 +111,18 @@ async function main(){
      const f=await json(join(session,'chunk_'+String(next).padStart(6,'0')+'.json'));
      if(f===null)break;
      if(!Array.isArray(f)||f.length>1000)throw Error('Invalid chunk '+next);
+     const labels=new Map();
+     if(approved.size){
+      const roster=await json(join(session,'players.json'),262144);
+      if(roster&&typeof roster==='object')for(const [id,p] of Object.entries(roster)){
+       if(p&&typeof p.username==='string'&&approved.has(p.username.toLowerCase()))labels.set(id,approved.get(p.username.toLowerCase()));
+      }
+     }
      let lines='';
      for(const raw of f){
       if(!Number.isFinite(raw?.t)||raw.t<=lastT)continue;
       if(raw.t>600){finished=true;break}
-      const frame=convertFrame(raw,states);lastT=raw.t;lines+=JSON.stringify(frame)+'\n';
+      const frame=convertFrame(raw,states,labels);lastT=raw.t;lines+=JSON.stringify(frame)+'\n';
      }
      if(lines){await out.writeFile(lines);lastActivity=Date.now()}
      next++;
