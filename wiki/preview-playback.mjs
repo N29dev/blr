@@ -1,5 +1,6 @@
 // Shared, opt-in animation clock for wiki previews. No game data or network access.
 let active=null;
+if(typeof document!=='undefined')document.addEventListener('visibilitychange',()=>{if(document.hidden&&active)active();});
 export function bindPreviewPlayback({host,play,reset,speed,loop,duration,read,render}){
  let raf=null,last=null,running=false;
  const visible=()=>host.isConnected&&!document.hidden&&!host.closest('details:not([open])')&&!host.closest('[hidden]');
