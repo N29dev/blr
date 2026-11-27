@@ -1,5 +1,5 @@
 import {sourcePass,sourceShot,renderGuidedPass,renderSourceShots,renderUnresolvedFlight} from './flight-3d.mjs?v=5';
-import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=7';
+import {sourceMovement,sourceCurve,curveStats,sourceMechanics,renderSourceMovement,renderSourceCurve} from './source-motion-review.mjs?v=8';
 import {MOVEMENT_REVIEW,renderMovementReview} from './movement-review.mjs?v=3';
 import {RARE_LUA_REVIEW,renderRarePass} from './rare-lua-review.mjs?v=2';
 import {EPIC_REVIEW} from './epic-review.mjs?v=1';
