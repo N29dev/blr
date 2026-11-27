@@ -114,13 +114,19 @@ body[data-page="wiki"] .wiki-shell{padding:28px clamp(20px,3vw,44px) 56px}
 #kb-count{font-size:.82rem;color:#a8b9ce;margin:0}
 #kb-directory>.kb-block{border:1px solid #2c3949;border-radius:13px;padding:14px;background:rgba(23,30,40,.8)}
 #kb-directory>.kb-block h2{margin:0 0 12px}
-[data-roster-group="rare"]{--rarity-accent:#a5b9d6}
-[data-roster-group="epic"]{--rarity-accent:#6bbafa}
-[data-roster-group="legendary"]{--rarity-accent:#b595fa}
-[data-roster-group="mythic"]{--rarity-accent:#f1cc7e}
-[data-roster-group="world"]{--rarity-accent:#ff928f}
-[data-roster-group="master"]{--rarity-accent:#a8d8fa}
-[data-roster-group="other"],[data-roster-group="limited"]{--rarity-accent:#b9c9dd}
+/* Match Tech Rules and the original style palette. */
+body[data-page="wiki"]{
+ --rarity-rare:#54b0f9;--rarity-epic:#ac7bff;--rarity-legendary:#f1b444;
+ --rarity-mythic:#ff796e;--rarity-world:#c8d2e4;--rarity-master:#c6a1ff;
+ --rarity-other:#b9c9dd;--rarity-limited:#b9c9dd;
+}
+[data-roster-group="rare"],.kb-tile[data-rarity="rare"]{--rarity-accent:var(--rarity-rare)}
+[data-roster-group="epic"],.kb-tile[data-rarity="epic"]{--rarity-accent:var(--rarity-epic)}
+[data-roster-group="legendary"],.kb-tile[data-rarity="legendary"]{--rarity-accent:var(--rarity-legendary)}
+[data-roster-group="mythic"],.kb-tile[data-rarity="mythic"]{--rarity-accent:var(--rarity-mythic)}
+[data-roster-group="world"],.kb-tile[data-rarity="world"]{--rarity-accent:var(--rarity-world)}
+[data-roster-group="master"],.kb-tile[data-rarity="master"]{--rarity-accent:var(--rarity-master)}
+[data-roster-group="other"],[data-roster-group="limited"],.kb-tile[data-rarity="other"],.kb-tile[data-rarity="limited"]{--rarity-accent:var(--rarity-other)}
 #kb-directory [data-roster-group] h2{border-left:3px solid var(--rarity-accent,#9bd9fa);padding-left:10px}
 .kb-tiles{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
 .kb-preview{grid-template-columns:repeat(6,minmax(0,1fr))}
@@ -168,4 +174,92 @@ body[data-page="wiki"] .wiki-shell{padding:28px clamp(20px,3vw,44px) 56px}
  .kb-featured-update{padding:14px}
  .wiki-details-section{padding:12px}
  .kb-infobox{padding:12px}
+}
+
+/* Mastery is a per-style property, never a rarity group. These styles have
+   explicit mastery I–IV move replacements in derived-kits.mjs or
+   technical-abilities.mjs. Leave ordinary and Master-tier tiles unchanged. */
+.kb-tile[href="/styles/isagi/"],
+.kb-article:has(>article[data-style="isagi"])>.kb-infobox,
+.kb-tile[href="/styles/chigiri/"],
+.kb-article:has(>article[data-style="chigiri"])>.kb-infobox{--mastery-base:var(--rarity-rare);--mastery-edge-a:#346ce2;--mastery-edge-b:#59baf9;--mastery-inside:#243163}
+.kb-tile[href="/styles/bachira/"],
+.kb-article:has(>article[data-style="bachira"])>.kb-infobox{--mastery-base:var(--rarity-epic);--mastery-edge-a:#6425ef;--mastery-edge-b:#a33ce9;--mastery-inside:#2d2e63}
+.kb-tile[href="/styles/aiku/"],
+.kb-article:has(>article[data-style="aiku"])>.kb-infobox,
+.kb-tile[href="/styles/nagi/"],
+.kb-article:has(>article[data-style="nagi"])>.kb-infobox,
+.kb-tile[href="/styles/king/"],
+.kb-article:has(>article[data-style="king"])>.kb-infobox{--mastery-base:var(--rarity-legendary);--mastery-edge-a:#f1a23a;--mastery-edge-b:#e9e790;--mastery-inside:#3b454d}
+.kb-tile[href="/styles/reo/"],
+.kb-article:has(>article[data-style="reo"])>.kb-infobox,
+.kb-tile[href="/styles/rin/"],
+.kb-article:has(>article[data-style="rin"])>.kb-infobox,
+.kb-tile[href="/styles/shidou/"],
+.kb-article:has(>article[data-style="shidou"])>.kb-infobox{--mastery-base:var(--rarity-mythic);--mastery-edge-a:#e93323;--mastery-edge-b:#ff5442;--mastery-inside:#372e4c}
+.kb-tile[href="/styles/isagi/"] .kb-icon,
+.kb-tile[href="/styles/chigiri/"] .kb-icon,
+.kb-tile[href="/styles/bachira/"] .kb-icon,
+.kb-tile[href="/styles/aiku/"] .kb-icon,
+.kb-tile[href="/styles/nagi/"] .kb-icon,
+.kb-tile[href="/styles/king/"] .kb-icon,
+.kb-tile[href="/styles/reo/"] .kb-icon,
+.kb-tile[href="/styles/rin/"] .kb-icon,
+.kb-tile[href="/styles/shidou/"] .kb-icon,
+.kb-article:has(>article[data-style="isagi"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="chigiri"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="bachira"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="aiku"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="nagi"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="king"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="reo"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="rin"])>.kb-infobox .kb-icon,
+.kb-article:has(>article[data-style="shidou"])>.kb-infobox .kb-icon{
+ --inside:#1b253d;--halo:#a9a9a955;
+}
+/* 125deg creates a descending diagonal with base on the left, silver on right. */
+.kb-tile[href="/styles/isagi/"] .kb-icon::before,
+.kb-article:has(>article[data-style="isagi"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/chigiri/"] .kb-icon::before,
+.kb-article:has(>article[data-style="chigiri"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/bachira/"] .kb-icon::before,
+.kb-article:has(>article[data-style="bachira"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/aiku/"] .kb-icon::before,
+.kb-article:has(>article[data-style="aiku"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/nagi/"] .kb-icon::before,
+.kb-article:has(>article[data-style="nagi"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/king/"] .kb-icon::before,
+.kb-article:has(>article[data-style="king"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/reo/"] .kb-icon::before,
+.kb-article:has(>article[data-style="reo"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/rin/"] .kb-icon::before,
+.kb-article:has(>article[data-style="rin"])>.kb-infobox .kb-icon::before,
+.kb-tile[href="/styles/shidou/"] .kb-icon::before,
+.kb-article:has(>article[data-style="shidou"])>.kb-infobox .kb-icon::before{
+ background:linear-gradient(125deg,var(--mastery-edge-a) 0%,var(--mastery-edge-b) 50%,#fefefe 50%,#a9a9a9 75%,#818caa 100%);
+}
+.kb-tile[href="/styles/isagi/"] .kb-icon::after,
+.kb-article:has(>article[data-style="isagi"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/chigiri/"] .kb-icon::after,
+.kb-article:has(>article[data-style="chigiri"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/bachira/"] .kb-icon::after,
+.kb-article:has(>article[data-style="bachira"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/aiku/"] .kb-icon::after,
+.kb-article:has(>article[data-style="aiku"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/nagi/"] .kb-icon::after,
+.kb-article:has(>article[data-style="nagi"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/king/"] .kb-icon::after,
+.kb-article:has(>article[data-style="king"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/reo/"] .kb-icon::after,
+.kb-article:has(>article[data-style="reo"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/rin/"] .kb-icon::after,
+.kb-article:has(>article[data-style="rin"])>.kb-infobox .kb-icon::after,
+.kb-tile[href="/styles/shidou/"] .kb-icon::after,
+.kb-article:has(>article[data-style="shidou"])>.kb-infobox .kb-icon::after{
+ background:linear-gradient(125deg,var(--mastery-inside) 0 50%,#1b253d 50% 100%);
+ box-shadow:inset 0 0 8px #ffffff25,inset 0 0 0 1px #ffffff26;
+}
+#kb-directory [data-roster-group="master"] h2{
+ border-left-color:transparent;
+ border-image:linear-gradient(180deg,#f4ab64,#ce94ff 54%,#71e3ef) 1;
 }
