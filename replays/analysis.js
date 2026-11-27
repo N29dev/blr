@@ -92,10 +92,17 @@ function replayReconcileIdentities(frames,roster){
   const id=String(p.id),v=spans.get(id);
   if(v)v.end=f.t;else spans.set(id,{start:f.t,end:f.t});
  }
+ const uid=p=>[p.userId,p.UserId,p.robloxUserId].map(v=>String(v??'')).find(v=>/^[1-9][0-9]{0,15}$/.test(v));
+ const usernames=new Map();
+ for(const p of Object.values(roster)){
+  const name=typeof p.username==='string'?p.username.trim().toLowerCase():'',id=uid(p);if(p.kind==='npc'||!name||!id)continue;
+  if(!usernames.has(name))usernames.set(name,new Set());usernames.get(name).add(id);
+ }
  for(const [id,p] of Object.entries(roster)){
-  if(p.kind==='npc'||typeof p.username!=='string'||!p.username.trim()||!spans.has(id))continue;
-  const key=p.username.trim().toLowerCase();
-  if(!groups.has(key))groups.set(key,[]);groups.get(key).push(id);
+  if(p.kind==='npc'||!spans.has(id))continue;
+  const name=typeof p.username==='string'?p.username.trim().toLowerCase():'',account=uid(p),known=usernames.get(name);
+  const key=account?'id:'+account:!name||known?.size>1?null:known?.size===1?'id:'+ [...known][0]:'name:'+name;
+  if(!key)continue;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(id);
  }
  for(const ids of groups.values()){
   ids.sort((a,b)=>spans.get(a).start-spans.get(b).start);
@@ -110,7 +117,7 @@ function replayReconcileIdentities(frames,roster){
   ...(Array.isArray(f.playerScoreboard)?{playerScoreboard:f.playerScoreboard.map(session)}:{}),
   ...(Array.isArray(f.events)?{events:f.events.map(e=>e?.playerId!=null?{...e,playerId:remap(e.playerId)}:e)}:{})
  }));
- const next=Object.assign(Object.create(null),roster);for(const id of map.keys())delete next[id];
+ const next=Object.assign(Object.create(null),roster);for(const [id,canonical] of map){if(!uid(next[canonical])&&uid(roster[id]))next[canonical]={...next[canonical],userId:uid(roster[id])};delete next[id];}
  return {frames:result,roster:next,merged:map.size,idMap:map};
 }
 function replayPositionHistory(frames){
