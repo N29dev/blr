@@ -194,3 +194,23 @@ body[data-page="tech"] .faq details:hover{
 /* No page-specific changes to the header during navigation. */
 .n29-nav.n29-scrolled{background:#161c26!important;box-shadow:none!important;border-bottom-color:#303945!important}
 .n29-nav-links a:hover,.n29-nav-brand:hover .n29-nav-mark{transform:none}
+
+/* Keep the shared header stationary during same-origin navigation. The body
+   crossfade is intentionally short and does not animate layout or scrolling. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(root){animation-duration:160ms;animation-timing-function:ease-out}
+  ::view-transition-old(root){animation:100ms ease-out both n29-page-out}
+  ::view-transition-new(root){animation:160ms ease-out both n29-page-in}
+  ::view-transition-group(n29-shared-nav){animation-duration:160ms;animation-timing-function:ease-out}
+  ::view-transition-old(n29-shared-nav){animation:none;opacity:0}
+  ::view-transition-new(n29-shared-nav){animation:none;opacity:1}
+  ::view-transition-image-pair(n29-shared-nav){isolation:auto}
+  /* Navigation indicators and scroll progress are not separate moving layers. */
+  .n29-scroll-progress{view-transition-name:none}
+  html:active-view-transition .kb-tile,
+  html:active-view-transition .kb-category,
+  html:active-view-transition .n29-glow{transition:none!important;transform:none!important}
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
