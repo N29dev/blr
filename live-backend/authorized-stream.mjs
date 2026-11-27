@@ -1,11 +1,12 @@
 // Authorized, opt-in personal spectator stream. Separate from the synthetic demo.
-// Accepts optional opt-in display labels; no account IDs, chat, camera or private cooldown telemetry.
+// Accepts optional opt-in display labels; no account IDs, chat or private cooldown telemetry.
 export const STREAM_LIMIT=600, MAX_PACKET=96000, MAX_FRAMES=24, HISTORY=25;
 const reply=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});
 const whole=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
-const coords=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=10000);
+const coords=v=>Array.isArray(v)&&[3,6].includes(v.length)&&v.every((x,i)=>Number.isFinite(x)&&Math.abs(x)<=(i<3?10000:Math.PI+.001));
 const num=v=>Math.round(v*64)/64;
-const cleanPosition=v=>v.map(num);
+const cleanPosition=v=>v.map((x,i)=>i<3?num(x):Math.round(x*1000)/1000);
+const publicEvents=new Set(['ankle_break','assist','pass_count','goal_credit','save','steal','stunned','awakening_start']);
 export function cleanFrame(f){
  if(!f||!Number.isFinite(f.t)||f.t<0||f.t>STREAM_LIMIT||!Array.isArray(f.players)||f.players.length>32)throw Error('Invalid frame');
  const seen=new Set(),players=[];
@@ -16,19 +17,22 @@ export function cleanFrame(f){
   // Public-facing state only. Style labels are restricted to short display strings.
   if(typeof p.style==='string'&&/^[a-zA-Z0-9 .'-]{1,40}$/.test(p.style))row.style=p.style;
   if(typeof p.inAwakening==='boolean')row.inAwakening=p.inAwakening;
-  if([0,1,2].includes(p.awk))row.awk=p.awk;
+  if([-1,0,1,2].includes(p.awk))row.awk=p.awk;
+  if(['player','npc'].includes(p.kind))row.kind=p.kind;
   players.push(row);
  }
  const out={t:Math.round(f.t*1000)/1000,players};
  if(f.ball&&coords(f.ball.cf)){out.ball={cf:cleanPosition(f.ball.cf),state:'free'};if(seen.has(f.ball.owner)){out.ball.owner=f.ball.owner;out.ball.state='held'}}
- if(f.scoreboard&&whole(f.scoreboard.home,0,999)&&whole(f.scoreboard.away,0,999)){out.scoreboard={home:f.scoreboard.home,away:f.scoreboard.away};if(whole(f.scoreboard.timer,0,3600))out.scoreboard.timer=String(f.scoreboard.timer)}
+ if(f.camera&&coords(f.camera.cf)&&f.camera.cf.length===6&&Number.isFinite(f.camera.fov)&&f.camera.fov>=1&&f.camera.fov<=120)out.camera={cf:cleanPosition(f.camera.cf),fov:f.camera.fov};
+ if(Array.isArray(f.events)){const events=[];for(const e of f.events.slice(0,128)){if(!e||!publicEvents.has(e.type)||!whole(e.playerId,1,128)||!Number.isFinite(e.t)||e.t<0||e.t>f.t+.01)continue;const row={t:Math.round(e.t*1000)/1000,type:e.type,playerId:e.playerId};if(['state','counter','replicated'].includes(e.source))row.source=e.source;for(const k of ['delta','value'])if(whole(e[k],0,1000000))row[k]=e[k];events.push(row)}if(events.length)out.events=events;}
+ if(f.scoreboard&&whole(f.scoreboard.home,0,999)&&whole(f.scoreboard.away,0,999)){out.scoreboard={home:f.scoreboard.home,away:f.scoreboard.away};const timer=typeof f.scoreboard.timer==='string'&&/^\d+$/.test(f.scoreboard.timer)?Number(f.scoreboard.timer):f.scoreboard.timer;if(whole(timer,0,3600))out.scoreboard.timer=String(timer)}
  if(Array.isArray(f.playerScoreboard)&&f.playerScoreboard.length<=32){
   const rows=[],ids=new Set();
   for(const p of f.playerScoreboard){
    const actor=players.find(a=>a.id===p?.id);if(!actor||ids.has(p.id))continue;ids.add(p.id);
    const row={id:p.id,team:actor.team};
    if(typeof p.position==='string'&&/^[A-Z][A-Z0-9]{0,7}$/.test(p.position))row.position=p.position;
-   for(const k of ['Points','Goals','Assists','Saves','Steals'])if(whole(p[k],0,1000000))row[k]=p[k];
+   for(const k of ['Points','Goals','Assists','Saves','Steals','Ping'])if(whole(p[k],0,1000000))row[k]=p[k];
    rows.push(row);
   }
   out.playerScoreboard=rows;
