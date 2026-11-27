@@ -1,5 +1,5 @@
 export function updatePage(p,old,iconSpec){
- let h=old.replaceAll('/site-unify.css?v=2','/site-unify.css?v=3').replaceAll('/site-responsive.css?v=1','/site-responsive.css?v=2').replaceAll('/site-experience.js?v=4','/site-experience.js?v=5').replaceAll('/site-motion.css?v=1','/site-motion.css?v=2').replaceAll('/site-motion.js?v=1','/site-motion.js?v=2').replaceAll('/wiki/wiki.css?v=2','/wiki/wiki.css?v=7').replaceAll('/wiki/app.mjs?v=2','/wiki/app.mjs?v=3');
+ let h=old.replaceAll('/site-unify.css?v=2','/site-unify.css?v=3').replaceAll('/site-responsive.css?v=1','/site-responsive.css?v=2').replaceAll('/site-experience.js?v=4','/site-experience.js?v=5').replaceAll('/site-motion.css?v=1','/site-motion.css?v=2').replaceAll('/site-motion.js?v=1','/site-motion.js?v=2').replace(/\/wiki\/wiki\.css\?v=\d+/g,'/wiki/wiki.css?v=7').replaceAll('/wiki/app.mjs?v=2','/wiki/app.mjs?v=3');
  const route=p==='index.html'?'/':'/'+p.replace(/index\.html$/,'');
  const active=route.startsWith('/styles/')?'/styles/':route.startsWith('/flows/')?'/flows/':route.startsWith('/tech/')?'/tech/':route;
  const wiki=h.includes('data-page="wiki"');
