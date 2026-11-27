@@ -1,7 +1,8 @@
-/* Independent image client for the optional static R6 lab. No library code is linked here. */
+/* Independent image client for optional static R6 rendering. Each job owns its iframe. */
 const ReplayAvatarLab=(()=>{
- const cache=new Map(),queue=new Map(),failed=new Map();let frame=null,ready=false,active=null,serial=0,bootTimer=null;
- const origin=location.origin;
+ const cache=new Map(),queue=new Map(),failed=new Map(),attempts=new Map();
+ let active=null,serial=0,wake=null,allowed=new Set(),generation=0;
+ const origin=location.origin,validId=id=>/^[1-9][0-9]{0,15}$/.test(id)&&Number.isSafeInteger(Number(id));
  function validViews(d){
   if(!Array.isArray(d.elevations)||d.views!==8)return false;
   const levels=d.elevations;
@@ -20,43 +21,83 @@ const ReplayAvatarLab=(()=>{
   const i=((Math.round((azimuth-yaw)*hit.views/(2*Math.PI))%hit.views)+hit.views)%hit.views;
   return level*hit.views+i;
  }
- const status=message=>{const el=document.getElementById('avatarLabStatus');if(el)el.textContent=message};
- function boot(){
-  if(frame)return;
-  frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1&v=13';frame.hidden=true;frame.referrerPolicy='no-referrer';document.body.append(frame);
-  bootTimer=setTimeout(()=>{if(!ready){status('R6 renderer did not initialize · using body-color fallback');frame?.remove();frame=null;for(const id of queue.keys())failed.set(id,Date.now()+60000);queue.clear()}},20000);
+
+ const enabled=()=>document.getElementById('avatarMode')?.value==='roavatar'&&!document.getElementById('avatarMode')?.disabled;
+ function report(){
+  const el=document.getElementById('avatarLabStatus');if(!el)return;
+  const ids=[...allowed],loaded=ids.filter(id=>cache.has(id)).length,errors=ids.filter(id=>failed.has(id)).length,partial=ids.filter(id=>cache.get(id)?.omitted?.length).length;
+  el.textContent=enabled()?'R6 · '+loaded+'/'+ids.length+' resolved outfits'+(active?' · rendering '+active.id:'')+(queue.size?' · '+queue.size+' queued':'')+(partial?' · '+partial+' partial':'')+(errors?' · '+errors+' unavailable (see roster)':''):'';
+ }
+ function dispose(job){if(!job)return;clearTimeout(job.timer);job.frame?.remove()}
+ function schedule(){
+  clearTimeout(wake);wake=null;if(!enabled()||active)return;
+  let earliest=Infinity;for(const v of queue.values())earliest=Math.min(earliest,v.after);
+  if(earliest!==Infinity)wake=setTimeout(pump,Math.max(0,earliest-Date.now()));
  }
  function pump(){
-  if(!ready||active||!queue.size)return;
-  if(document.getElementById('avatarMode')?.value!=='roavatar'){queue.clear();return}
-  const [id,onChange]=queue.entries().next().value;queue.delete(id);
-  const requestId=String(++serial);active={id,onChange,requestId,timer:setTimeout(()=>finish(null,'Renderer timed out'),120000)};
-  status('Loading R6 outfit '+id+' · '+queue.size+' queued');
-  frame.contentWindow.postMessage({type:'blr-r6-render',userId:id,requestId},origin);
+  if(active||!enabled())return;
+  const now=Date.now(),entry=[...queue].find(([id,v])=>allowed.has(id)&&v.after<=now);
+  if(!entry){report();schedule();return}
+  const [id,task]=entry;queue.delete(id);clearTimeout(wake);wake=null;
+  const frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1&v=14';frame.hidden=true;frame.referrerPolicy='no-referrer';
+  const job={id,task,frame,requestId:String(++serial),generation,ready:false,timer:null};active=job;
+  attempts.set(id,(attempts.get(id)||0)+1);
+  job.timer=setTimeout(()=>{if(active===job)finish(null,'Renderer initialization timed out')},40000);
+  document.body.append(frame);report();
  }
  function finish(data,error){
-  if(!active)return;const {id,onChange,timer}=active;clearTimeout(timer);active=null;
-  if(data){cache.set(id,data);if(cache.size>24)cache.delete(cache.keys().next().value);status('R6 · '+cache.size+' outfits cached'+(data.omitted?.length?' · partial outfit (unavailable accessories omitted)':'')+(queue.size?' · '+queue.size+' queued':''))}
-  else{failed.set(id,Date.now()+300000);status('R6 fallback · '+error)}
-  onChange?.();pump();
+  const job=active;if(!job)return;active=null;dispose(job);
+  if(data){cache.delete(job.id);cache.set(job.id,data);failed.delete(job.id);attempts.delete(job.id);if(cache.size>32){const old=[...cache.keys()].find(id=>!allowed.has(id))||cache.keys().next().value;cache.delete(old)}}
+  else if(job.generation===generation&&allowed.has(job.id)){
+   const count=attempts.get(job.id)||1;
+   if(count<3&&enabled()){queue.set(job.id,{...job.task,after:Date.now()+[0,8000,35000][count]});failed.delete(job.id)}
+   else failed.set(job.id,String(error||'Assets unavailable').slice(0,180));
+  }
+  job.task.onChange?.();report();pump();
  }
  window.addEventListener('message',event=>{
-  if(event.origin!==origin||!frame||event.source!==frame.contentWindow)return;
-  const d=event.data;if(d?.type==='blr-r6-ready'){ready=true;clearTimeout(bootTimer);pump();return}
-  if(!active||d?.requestId!==active.requestId||d.userId!==active.id)return;
-  if(d.type==='blr-r6-error'){finish(null,String(d.error||'Assets unavailable').slice(0,140));return}
-  if(d.type!=='blr-r6-result'||!validViews(d)||!Number.isFinite(d.verticalSpan)||d.verticalSpan<5||d.verticalSpan>15||d.images.some(s=>typeof s!=='string'||s.length>400000||!s.startsWith('data:image/png;base64,'))){finish(null,'Invalid sprite response');return}
-  const footRings=Array.isArray(d.footRings)&&d.footRings.length===d.images.length&&d.footRings.every(r=>Array.isArray(r)&&r.length===40&&r.every(p=>Array.isArray(p)&&p.length===2&&p.every(v=>Number.isFinite(v)&&Math.abs(v)<4)))?d.footRings:null;
-  const requestId=active.requestId;
-  Promise.all(d.images.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src}))).then(images=>{if(active?.requestId===requestId)finish({images,footRings,span:d.verticalSpan,views:d.views,elevations:d.elevations,omitted:Array.isArray(d.omitted)?d.omitted.filter(v=>typeof v==='string').slice(0,30):[]})},()=>{if(active?.requestId===requestId)finish(null,'Image decoding failed')});
- });
- function get(id,actor,camera,onChange){
-  id=String(id||'');if(!/^[1-9][0-9]{0,15}$/.test(id)||!Number.isSafeInteger(Number(id)))return null;
-  const hit=cache.get(id);if(hit){
-   const i=viewIndex(hit,actor,camera);return {image:hit.images[i],footRing:hit.footRings?.[i]||null,span:hit.span};
+  const job=active;if(!job||event.origin!==origin||event.source!==job.frame.contentWindow)return;
+  const d=event.data;
+  if(d?.type==='blr-r6-ready'){
+   if(job.ready)return;job.ready=true;clearTimeout(job.timer);
+   job.timer=setTimeout(()=>{if(active===job)finish(null,'Avatar rendering timed out')},240000);
+   job.frame.contentWindow.postMessage({type:'blr-r6-render',userId:job.id,requestId:job.requestId},origin);return;
   }
-  if((failed.get(id)||0)>Date.now()||active?.id===id||queue.has(id)||queue.size>=24)return null;
-  queue.set(id,onChange);boot();pump();return null;
+  if(!job.ready||d?.requestId!==job.requestId||d.userId!==job.id)return;
+  if(d.type==='blr-r6-error'){finish(null,String(d.error||'Assets unavailable'));return}
+  if(d.type!=='blr-r6-result'||!validViews(d)||!Number.isFinite(d.verticalSpan)||d.verticalSpan<5||d.verticalSpan>15||d.images.some(s=>typeof s!=='string'||s.length>500000||!s.startsWith('data:image/png;base64,'))){finish(null,'Invalid sprite response');return}
+  const footRings=Array.isArray(d.footRings)&&d.footRings.length===d.images.length&&d.footRings.every(r=>Array.isArray(r)&&r.length===40&&r.every(p=>Array.isArray(p)&&p.length===2&&p.every(v=>Number.isFinite(v)&&Math.abs(v)<4)))?d.footRings:null;
+  Promise.all(d.images.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src}))).then(images=>{if(active===job)finish({images,footRings,span:d.verticalSpan,views:d.views,elevations:d.elevations,omitted:Array.isArray(d.omitted)?d.omitted.filter(v=>typeof v==='string').slice(0,30):[]})},()=>{if(active===job)finish(null,'Image decoding failed')});
+ });
+ function setRoster(ids){
+  allowed=new Set(ids.map(String).filter(validId));
+  for(const id of queue.keys())if(!allowed.has(id))queue.delete(id);
+  if(active&&(!allowed.has(active.id)||!enabled())){const job=active;active=null;dispose(job);attempts.delete(job.id)}
+  for(const id of attempts.keys())if(!allowed.has(id))attempts.delete(id);
+  report();pump();
  }
- return {get};
+ function request(id,onChange){
+  id=String(id||'');if(!validId(id)||!enabled())return;
+  allowed.add(id);
+  if(cache.has(id)||failed.has(id)||active?.id===id||queue.has(id))return;
+  if(queue.size>=64)return;
+  queue.set(id,{onChange,after:Date.now()});pump();report();
+ }
+ function get(id,actor,camera,onChange){
+  id=String(id||'');if(!validId(id))return null;
+  const hit=cache.get(id);if(hit){const i=viewIndex(hit,actor,camera);return {image:hit.images[i],footRing:hit.footRings?.[i]||null,span:hit.span}}
+  request(id,onChange);return null;
+ }
+ function state(id){
+  id=String(id||'');if(!validId(id))return 'Resolving Roblox ID';
+  const hit=cache.get(id);if(hit)return hit.omitted?.length?'R6 ready (partial)':'R6 ready';
+  if(active?.id===id)return 'Rendering R6';
+  if(queue.has(id))return (attempts.get(id)||0)?'Retry queued':'R6 queued';
+  if(failed.has(id))return 'R6 unavailable: '+failed.get(id);
+  return 'R6 pending';
+ }
+ function retry(onChange){
+  generation++;for(const id of allowed){failed.delete(id);attempts.delete(id);if(!cache.has(id)&&active?.id!==id)queue.set(id,{onChange,after:Date.now()})}report();pump();
+ }
+ return {get,request,setRoster,state,retry};
 })();
