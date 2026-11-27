@@ -71,7 +71,7 @@ async function replayFileGroups(selected,{maxTotal=MAX_REPLAY_BYTES,maxEntry=MAX
   }else if(/\.json$/i.test(f.name))loose.push(f);
  }
  if(loose.length)groupEntries(loose,'');
- return groups;
+ return groups.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
 }
 async function parseReplayFiles(selected){
  const groups=await replayFileGroups(selected),matches=[];let count=0;
@@ -97,5 +97,5 @@ async function parseReplayFiles(selected){
   }
   await addMatch(group.name,chunks,m,p,bytes);
  }
- return matches;
+ return matches.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
 }
