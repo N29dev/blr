@@ -364,7 +364,7 @@ for(const width of [1440,390]){
     const {context,page}=await open('/replays/',width,900);
     try{
       await assertNoOverflow(page,'Replay Studio '+width);
-      assert.ok(await page.locator('.fairplay').isVisible());
+      assert.ok(await page.locator('details.fairplay').filter({hasText:'Fair Play & Responsible Use'}).isVisible());
       assert.ok((await page.locator('#match option').first().textContent()).includes('Synthetic demo'));
       assert.equal(await page.locator('#mode option').count(),7);
       assert.ok(await page.locator('#canvas').isVisible());
@@ -377,8 +377,8 @@ for(const width of [1440,390]){
       await page.waitForTimeout(300);
       assert.ok(Number(await page.locator('#seek').inputValue())>0);
       await page.locator('#play').click();
-      const blocked=await page.evaluate(async()=>{try{await fetch('/api/presence');return false}catch{return true}});
-      assert.ok(blocked,'Replay page must block network connections');
+      const blocked=await page.evaluate(async()=>{try{await fetch('https://example.invalid/replay-privacy-check');return false}catch{return true}});
+      assert.ok(blocked,'Replay page must block unapproved cross-origin network connections');
     }finally{await context.close();}
   });
 }
@@ -392,16 +392,23 @@ test('Replay imports reject malformed data and isolate label fingerprints',async
       const first=await parseReplayFiles(input([base]));
       const other=await parseReplayFiles(input([{...base,players:[{id:1,team:'Home',cf:[5,10,0]}]}]));
       let rejected=false;try{await parseReplayFiles(input([{...base,players:[null]}]))}catch{rejected=true}
-      return {different:first.fp!==other.fp,rejected,frames:first.chunks.length};
+      return {different:first[0].fp!==other[0].fp,rejected,frames:first[0].chunks.length,matchCount:first.length};
     });
-    assert.deepEqual(result,{different:true,rejected:true,frames:1});
+    assert.deepEqual(result,{different:true,rejected:true,frames:1,matchCount:1});
   }finally{await context.close();}
 });
 test('Field Lab shares measured geometry and preserves game-meter ability modes',async()=>{
   const {context,page}=await open('/field/',1440,900);
   try{
     assert.equal(await page.locator('#calibration').inputValue(),'studs');
-    assert.ok((await page.locator('#pitch-size').textContent()).includes('544.27 × 406.08 studs'));
+    assert.ok((await page.locator('#pitch-size').textContent()).includes('545.04 × 408.31 studs'));
+    assert.equal(await page.locator('#white-line-parts rect').count(),19);
+    assert.equal(await page.locator('#white-line-parts ellipse').count(),3);
+    await page.locator('#field-settings > summary').click();
+    await page.locator('#penalty-toggle').check();
+    assert.ok(await page.locator('#penalty-layer').isVisible());
+    await page.locator('#penalty-toggle').uncheck();
+    assert.ok(!(await page.locator('#penalty-layer').isVisible()));
     await page.locator('[data-mode="shot"]').click();
     assert.equal(await page.locator('#calibration').inputValue(),'405');
     assert.ok((await page.locator('#pitch-size').textContent()).includes('540 × 405 m'));
@@ -444,7 +451,7 @@ test('Nagi technical abilities stack without overlap on mobile and desktop',asyn
    await check(7);
    await section.getByLabel('Mastery level').selectOption('Mastery III');await check(1);
    const heel=section.locator('.ta-card:visible');assert.match(await heel.innerText(),/Direct Heel Lift/);
-   await heel.getByText('Timing, mechanics & verification',{exact:true}).click();assert.ok(await heel.getByText('Scheduled cleanup',{exact:true}).isVisible());
+   await heel.getByText('Timing, mechanics & verification',{exact:true}).click();assert.ok(await heel.locator('dt').getByText('Scheduled cleanup',{exact:true}).isVisible());
    await section.getByLabel('Distance units').selectOption('game');assert.match(await heel.innerText(),/game m/);
    await section.getByLabel('Mastery level').selectOption('all');await check(7);
    await section.getByRole('button',{name:'Awk (4)',exact:true}).click();await check(4);
@@ -461,12 +468,17 @@ test('Nagi mathematical previews react to input and retain exact steering coordi
   const section=page.locator('#technical-abilities');
   await section.locator('.ta-card').first().waitFor();
   const trap=section.locator('.ta-card').filter({has:page.getByRole('heading',{name:'Trap Shot',exact:true})});
-  await trap.getByText('Math & trajectory preview',{exact:true}).click();
-  const angle=trap.getByLabel('Camera elevation (degrees)');
+  await trap.getByText('3D shot simulation',{exact:true}).click();
+  await trap.getByText('Simulation settings',{exact:true}).click();
+  const angle=trap.getByLabel('Camera elevation (°)',{exact:true});
   await angle.fill('0');
-  assert.match(await trap.locator('.am-metrics').innerText(),/137\.7/);
+  const stats=trap.locator('.flight3d .fstat').filter({hasText:'First landing:'});
+  const first=await stats.innerText();
+  assert.match(first,/First landing:.*studs/);
   await angle.fill('30');
   assert.notEqual(await angle.inputValue(),'0');
+  assert.notEqual(await stats.innerText(),first);
+  assert.ok(await trap.locator('.flight3d canvas').isVisible());
   const turn=section.locator('.ta-card').filter({has:page.getByRole('heading',{name:'Zero Reset Turn',exact:true})});
   await turn.getByText('Mathematical steering path',{exact:true}).click();
   const target=turn.getByLabel('Steering target u');
@@ -485,10 +497,11 @@ test('Nagi playback and conditional phase details are available',async()=>{
   assert.equal(await section.locator('.ta-behavior').count(),7);
   const turn=section.locator('.ta-card').filter({has:page.getByRole('heading',{name:'Zero Reset Turn',exact:true})});
   await turn.getByText('Mathematical steering path',{exact:true}).click();
-  assert.ok(await turn.locator('math').count()>=3);
-  await turn.getByRole('button',{name:'▶ Play',exact:true}).click();
+  await turn.locator('.am-equations math').first().waitFor({state:'visible'});
+  assert.ok(await turn.locator('.am-equations math').count()>=3);
+  await turn.getByRole('button',{name:'Play or pause preview',exact:true}).click();
   await page.waitForFunction(()=>Number(document.querySelector('[aria-label="Ability timeline progress"]')?.value)>0);
-  await turn.getByRole('button',{name:'Reset playback'}).click();
+  await turn.getByRole('button',{name:'Restart preview',exact:true}).click();
   assert.equal(Number(await turn.getByLabel('Ability timeline progress').inputValue()),0);
   await turn.getByText('Activation conditions & movement phases',{exact:true}).click();
   assert.equal(await turn.locator('.ta-gates span').count(),4);

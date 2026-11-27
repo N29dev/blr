@@ -70,16 +70,16 @@ test('shared portfolio navigation is present with correct page identity',()=>{
     assert.equal((html.match(/class="n29-nav"/g)||[]).length,1,route+' missing/duplicate nav');
     assert.ok(html.includes('/site-unify.css?v=3'),route+' missing shared theme');
     assert.ok(html.includes('aria-current="page">'+current+'</a>'),route+' wrong selected nav item');
-    assert.ok(html.includes('/site-motion.css?v=2'),route+' missing motion CSS');
-    assert.ok(html.includes('/site-motion.js?v=2'),route+' missing motion JS');
+    assert.ok(/\/site-motion\.css\?v=\d+/.test(html),route+' missing motion CSS');
+    assert.ok(/\/site-motion\.js\?v=\d+/.test(html),route+' missing motion JS');
     for(const href of ['/','/servers/','/servers/customs/','/tech/',['/tools/','/clipper.html','/tiktok-downloader.html'].includes(route)?'/tools/':'/styles/','/tech/#support'])
       assert.ok(html.includes('href="'+href+'"'),route+' missing nav '+href);
   }
   for(const route of ['/leaderboard/','/404.html']){
     const html=fromRoute(route);
     assert.ok(html.includes('class="n29-nav"'),route+' missing nav');
-    assert.ok(html.includes('/site-motion.css?v=2'));
-    assert.ok(html.includes('/site-motion.js?v=2'));
+    assert.ok(/\/site-motion\.css\?v=\d+/.test(html));
+    assert.ok(/\/site-motion\.js\?v=\d+/.test(html));
   }
 });
 
