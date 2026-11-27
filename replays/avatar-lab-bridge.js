@@ -39,7 +39,7 @@ const ReplayAvatarLab=(()=>{
   const now=Date.now(),entry=[...queue].find(([id,v])=>allowed.has(id)&&v.after<=now);
   if(!entry){report();schedule();return}
   const [id,task]=entry;queue.delete(id);clearTimeout(wake);wake=null;
-  const frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1&v=14';frame.hidden=true;frame.referrerPolicy='no-referrer';
+  const frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1&v=15';frame.hidden=true;frame.referrerPolicy='no-referrer';
   const job={id,task,frame,requestId:String(++serial),generation,ready:false,timer:null};active=job;
   attempts.set(id,(attempts.get(id)||0)+1);
   job.timer=setTimeout(()=>{if(active===job)finish(null,'Renderer initialization timed out')},40000);

@@ -88,6 +88,10 @@ async function renderAccount(id){
    }catch(e){model.outfit.removeAsset(asset.id);omitted.push(name);note('Omitted unavailable catalog item: '+name+' · '+e.message)}
   }));
  }
+ // Retry only when a required render descendant fails. Never remove a base rig
+ // instance: remove the public catalog override and let the R6 description
+ // regenerate the corresponding default part. Each attempt has fresh signals.
+ const compile=async()=>{
  say('Compiling R6 rig, clothing and accessories…');const outfit=new OutfitRenderer(new Authentication(),model.outfit);state.active=outfit;
  outfit.doCameraUpdateOnLoad=false;outfit.doCameraUpdate=false;outfit.deltaTimeMultiplier=0;
  // OutfitRenderer.onRenderSuccess additionally waits for a background, even
@@ -105,7 +109,7 @@ async function renderAccount(id){
      if(!descendants.has(instance)){failed.delete(instance);continue}
      let accessory=instance;
      while(accessory&&accessory!==outfit.currentRig&&accessory.className!=='Accessory')accessory=accessory.parent;
-     if(!accessory||accessory===outfit.currentRig){settled=true;reject(Error('Essential mesh or texture failed: '+(instance?.Prop?.('Name')||'unknown instance')));return}
+     if(!accessory||accessory===outfit.currentRig){settled=true;const name=String(instance?.Prop?.('Name')||'unknown instance');const error=Error('Essential mesh or texture failed: '+name);error.bodyPart=name;reject(error);return}
      const name=String(accessory.Prop?.('Name')||'Accessory').slice(0,100);
      omitted.push(name);note('Omitted unavailable accessory: '+name);
      for(const child of accessory.GetDescendants())failed.delete(child);
@@ -120,7 +124,34 @@ async function renderAccount(id){
     scene.failedRenderDesc.Connect(instance=>{failed.add(instance);queueMicrotask(check)})
    ];
   }),90000,'Rig and mesh compilation');
- }catch(e){if(deniedAssets.size)throw Error(deniedAssets.size+' dependent asset request(s) were denied; see diagnostics for the IDs.');throw e;}finally{connections.forEach(c=>c.Disconnect())}
+ }finally{connections.forEach(c=>c.Disconnect())}
+ return outfit;
+
+ };
+ const bodyTypes={'torso':27,'head':17,'left arm':29,'right arm':28,'left leg':30,'right leg':31};
+ const clothes=new Set([2,11,12]);
+ let outfit=null,lastError=null;
+ for(let attempt=0;attempt<3;attempt++){
+  try{outfit=await compile();break;}
+  catch(e){
+   lastError=e;
+   if(state.active){state.active.destroy();state.active=null}
+   if(!e.bodyPart||attempt===2)break;
+   const part=e.bodyPart.toLowerCase(),type=bodyTypes[part];
+   if(type===undefined)break;
+   const assets=model.outfit.assets.slice();
+   let drop=assets.filter(a=>Number(a.assetType?.id)===type||(part==='head'&&Number(a.assetType?.id)===79));
+   if(!drop.length&&(part==='torso'||part.includes('arm')||part.includes('leg')))drop=assets.filter(a=>clothes.has(Number(a.assetType?.id)));
+   if(!drop.length)break;
+   for(const asset of drop){
+    const name=String(asset.name||asset.id).slice(0,100);
+    model.outfit.removeAsset(asset.id);omitted.push(name);
+    note('Fallback for '+e.bodyPart+': omitted '+name+' (asset '+asset.id+')');
+   }
+   note('Retrying R6 compilation with standard body geometry or without unavailable classic clothing.');
+  }
+ }
+ if(!outfit){if(deniedAssets.size)note(deniedAssets.size+' dependent asset request(s) denied');throw lastError||Error('R6 rig unavailable');}
  say('Rendering cached camera views…');outfit.stopAnimating();
  const scene=RBXRenderer.firstScene,root=outfit.currentRig?.FindFirstChild('HumanoidRootPart'),p=root?.Prop('Position');
  const cx=Number.isFinite(p?.X)?p.X:0,cy=Number.isFinite(p?.Y)?p.Y:3,cz=Number.isFinite(p?.Z)?p.Z:0;
