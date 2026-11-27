@@ -34,3 +34,19 @@ Open a WebSocket client at wss://YOUR-WORKER.workers.dev/demo/watch to inspect t
 ## Current validation
 
 Generator syntax and batch timestamp continuity were checked. All 6,000 synthetic batches were encoded and decoded, with maximum absolute coordinate error below 0.008 stud. Malformed packet length was rejected. Binary Cloudflare deployment, cross-device bandwidth, runtime load, and reconnect behavior still need integration testing.
+
+## Unlisted authorized personal streams (new prototype)
+
+The separate /stream/<32-hex-room>/ endpoints accept authenticated, anonymous match samples from a developer-authorized source. The room link is a bearer-style viewing capability: anyone with it can watch, so share it only with intended consenting spectators. No player account IDs, names, chat, camera or private ability cooldowns are accepted. The ten-minute limit and 15-second inactivity timeout apply; the backend deletes its short reconnect history at stop. Viewers retain already received frames locally. Personal streams currently use validated JSON, not the fixed-roster synthetic binary codec.
+
+After deploying the updated Worker with the existing secret, run from live-backend:
+
+```sh
+node personal-demo.mjs 120
+```
+
+This prints an unlisted viewing link and sends fictional telemetry through the actual personal-stream route. Open the link yourself or on another device.
+
+For a developer-owned/authorized Roblox experience, install LivePublisher.lua as a server-only ModuleScript and configure BLR_LIVE_TOKEN as a server secret in the experience. Call Live.Start(sample, consentCheck) with the developer's approved public telemetry adapter and participant consent check; this returns the unlisted viewer link. Call Live.Stop() to end. The module targets actual Heartbeat samples at up to 60 Hz and batches HTTP requests at 5/s. It is not an executor script and cannot be used as a drop-in integration for a third-party experience without authorization and an adapter. The streamer may open their own viewer link just like any other spectator.
+
+Personal-stream frame validation and website JavaScript syntax were checked. Cloudflare runtime, real experience integration, Lua execution and bandwidth have not yet been verified.
