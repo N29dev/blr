@@ -98,3 +98,18 @@ touch "$HOME/BLR-Live/$NAME.stop"
 ```
 
 The first terminal prints the unique website watch link. The standalone publisher automatically stops on inactivity if a stop marker is omitted. The watcher does not capture matches; a separate authorized, opt-in source must continuously write the agreed anonymous NDJSON schema. Marker filename validation was checked; real process spawning, live file following and remote network behavior are not yet integration-tested.
+
+## Existing v0.15 Lite recording folders
+
+For a developer-authorized, opt-in live session, the chunk bridge can read the existing v0.15 Lite output without changing its Lua script:
+
+```sh
+node chunk-publisher.mjs --self-test
+node chunk-publisher.mjs "/absolute/path/to/ReplayRecordings" --consent
+```
+
+Start the bridge before the approved recorder starts a new session. The bridge ignores existing sessions, waits for one new v0.15 Lite directory and reads only committed chunk files (as indicated by metadata.json). Once samples arrive, it starts the existing local publisher and prints its unlisted viewer link. When metadata.complete becomes true, the publisher drains the buffered samples and ends the stream. Ctrl+C stops it early. To explicitly select an already-running authorized session directory, add --session to the command and pass that directory instead of the parent; this reads from the beginning, so avoid joining a long-running recording if near-live timing matters.
+
+The existing recorder is documented as post-match-only; permission for live sharing must be obtained separately. The bridge has no game APIs, and does not edit or overwrite any recording. It converts only the personal-stream schema supported by the Worker; usernames, private ability slots, raw events and camera are not transmitted. It preserves actual timestamps (the original recorder uses 30 Hz and flushes about every 5 seconds), converts score text to numbers, and carries sparse style/awakening state forward. Expect at least approximately 8 seconds of source/publisher delay plus network/render buffering under normal conditions. The standalone personal-stream backend must already be deployed. No new Worker configuration is needed.
+
+Schema conversion self-test passed; real file-following, child-process and end-to-end testing remain to be verified. The --consent flag is an explicit attestation and not permission verification.
