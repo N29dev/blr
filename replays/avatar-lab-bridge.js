@@ -23,7 +23,7 @@ const ReplayAvatarLab=(()=>{
  const status=message=>{const el=document.getElementById('avatarLabStatus');if(el)el.textContent=message};
  function boot(){
   if(frame)return;
-  frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1&v=12';frame.hidden=true;frame.referrerPolicy='no-referrer';document.body.append(frame);
+  frame=document.createElement('iframe');frame.title='Static R6 rendering service';frame.src='/replays/avatar-lab/index.html?embedded=1&v=13';frame.hidden=true;frame.referrerPolicy='no-referrer';document.body.append(frame);
   bootTimer=setTimeout(()=>{if(!ready){status('R6 renderer did not initialize · using body-color fallback');frame?.remove();frame=null;for(const id of queue.keys())failed.set(id,Date.now()+60000);queue.clear()}},20000);
  }
  function pump(){
@@ -46,13 +46,14 @@ const ReplayAvatarLab=(()=>{
   if(!active||d?.requestId!==active.requestId||d.userId!==active.id)return;
   if(d.type==='blr-r6-error'){finish(null,String(d.error||'Assets unavailable').slice(0,140));return}
   if(d.type!=='blr-r6-result'||!validViews(d)||!Number.isFinite(d.verticalSpan)||d.verticalSpan<5||d.verticalSpan>15||d.images.some(s=>typeof s!=='string'||s.length>400000||!s.startsWith('data:image/png;base64,'))){finish(null,'Invalid sprite response');return}
+  const footRings=Array.isArray(d.footRings)&&d.footRings.length===d.images.length&&d.footRings.every(r=>Array.isArray(r)&&r.length===40&&r.every(p=>Array.isArray(p)&&p.length===2&&p.every(v=>Number.isFinite(v)&&Math.abs(v)<4)))?d.footRings:null;
   const requestId=active.requestId;
-  Promise.all(d.images.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src}))).then(images=>{if(active?.requestId===requestId)finish({images,span:d.verticalSpan,views:d.views,elevations:d.elevations,omitted:Array.isArray(d.omitted)?d.omitted.filter(v=>typeof v==='string').slice(0,30):[]})},()=>{if(active?.requestId===requestId)finish(null,'Image decoding failed')});
+  Promise.all(d.images.map(src=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src}))).then(images=>{if(active?.requestId===requestId)finish({images,footRings,span:d.verticalSpan,views:d.views,elevations:d.elevations,omitted:Array.isArray(d.omitted)?d.omitted.filter(v=>typeof v==='string').slice(0,30):[]})},()=>{if(active?.requestId===requestId)finish(null,'Image decoding failed')});
  });
  function get(id,actor,camera,onChange){
   id=String(id||'');if(!/^[1-9][0-9]{0,15}$/.test(id)||!Number.isSafeInteger(Number(id)))return null;
   const hit=cache.get(id);if(hit){
-   return {image:hit.images[viewIndex(hit,actor,camera)],span:hit.span};
+   const i=viewIndex(hit,actor,camera);return {image:hit.images[i],footRing:hit.footRings?.[i]||null,span:hit.span};
   }
   if((failed.get(id)||0)>Date.now()||active?.id===id||queue.has(id)||queue.size>=24)return null;
   queue.set(id,onChange);boot();pump();return null;
