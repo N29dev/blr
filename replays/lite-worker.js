@@ -15,6 +15,20 @@ function cleanReplayFrame(f,roster,removeNpc){
   if(typeof p.kind==='string')a.kind=p.kind;
   if(typeof p.style==='string'&&p.style.length<=128)a.style=p.style;
   if(typeof p.states?.InCutscene==='boolean')a.states={InCutscene:p.states.InCutscene};
+  if([-1,0,1,2].includes(p.awk))a.awk=p.awk;
+  if(typeof p.inAwakening==='boolean')a.inAwakening=p.inAwakening;
+  if(typeof p.awkReadyFlag==='boolean')a.awkReadyFlag=p.awkReadyFlag;
+  if(Array.isArray(p.abilitySlots)){
+   const slots=new Map();
+   for(const item of p.abilitySlots.slice(0,16)){
+    if(!object(item)||![1,2,3].includes(item.slot))continue;
+    const slot={slot:item.slot,name:typeof item.name==='string'&&item.name.trim()?item.name.slice(0,128):'?'};
+    for(const k of ['cdUntil','rawCooldown','serverAt','tickAt','observedAt'])if(Number.isFinite(item[k])&&item[k]>=0)slot[k]=item[k];
+    if(['server','tick','zero'].includes(item.clock))slot.clock=item.clock;
+    slots.set(item.slot,slot);
+   }
+   a.abilitySlots=[...slots.values()];
+  }
   out.players.push(a);
  }
  if(object(f.ball)){out.ball=removed.has(String(f.ball.owner))?{state:'unknown'}:{state:f.ball.state,owner:f.ball.owner,cf:f.ball.cf};}
@@ -22,7 +36,7 @@ function cleanReplayFrame(f,roster,removeNpc){
  if(object(f.scoreboard))out.scoreboard={home:f.scoreboard.home,away:f.scoreboard.away,timer:f.scoreboard.timer};
  if(Array.isArray(f.playerScoreboard)&&f.playerScoreboard.length<=64){const seen=new Set();out.playerScoreboard=[];for(const p of f.playerScoreboard){if(!object(p)||!validId(p.id)||!['Home','Away'].includes(p.team)||seen.has(String(p.id))||roster[String(p.id)]?.kind==='npc')continue;seen.add(String(p.id));const row={id:p.id,team:p.team};if(typeof p.position==='string'&&/^[A-Z][A-Z0-9]{0,11}$/.test(p.position))row.position=p.position;for(const k of ['Points','Goals','Assists','Saves','Steals','Ping'])if(Number.isFinite(p[k])&&p[k]>=0&&p[k]<1e12)row[k]=Math.round(p[k]);out.playerScoreboard.push(row);}}
  if(object(f.localStats))out.localStats=Object.fromEntries(Object.entries(f.localStats).filter(([k,v])=>STAT_KEYS.has(k)&&(typeof v==='boolean'||typeof v==='string'&&v.length<=128||Number.isFinite(v))));
- if(Array.isArray(f.events)){const events=f.events.filter(e=>object(e)&&((e.source==='counter'&&COUNTER_EVENTS.has(e.type))||(e.source==='state'&&e.type==='stunned'&&roster[String(e.playerId)]?.kind!=='npc'&&f.players.some(p=>String(p.id)===String(e.playerId)&&p.kind!=='npc')))&&validId(e.playerId)&&Number.isFinite(e.t));if(events.length)out.events=events;}
+ if(Array.isArray(f.events)){const events=f.events.filter(e=>object(e)&&((e.source==='counter'&&COUNTER_EVENTS.has(e.type))||(e.source==='state'&&e.type==='stunned'&&roster[String(e.playerId)]?.kind!=='npc'&&f.players.some(p=>String(p.id)===String(e.playerId)&&p.kind!=='npc')))&&validId(e.playerId)&&Number.isFinite(e.t));for(const e of f.events){if(!object(e)||!validId(e.playerId)||!Number.isFinite(e.t)||e.t<0||roster[String(e.playerId)]?.kind==='npc')continue;if(e.type==='ability_slot'&&e.source==='replicated'&&[1,2,3].includes(e.slot)){const v={type:e.type,t:e.t,playerId:e.playerId,source:e.source,slot:e.slot};if(typeof e.name==='string')v.name=e.name.slice(0,128);for(const k of ['cdUntil','rawCooldown','serverAt','tickAt','batchSize'])if(Number.isFinite(e[k])&&e[k]>=0)v[k]=e[k];for(const k of ['nameChanged','cooldownChanged'])if(typeof e[k]==='boolean')v[k]=e[k];if(['server','tick','zero'].includes(e.clock))v.clock=e.clock;events.push(v)}else if(e.type==='awakening_start'&&e.source==='replicated'||e.type==='awakening_state'&&e.source==='playerStats'&&[-1,0,1,2].includes(e.awk)){const v={type:e.type,t:e.t,playerId:e.playerId,source:e.source};if([-1,0,1,2].includes(e.awk))v.awk=e.awk;for(const k of ['inAwakening','readyFlag'])if(typeof e[k]==='boolean')v[k]=e[k];events.push(v)}}if(events.length)out.events=events;}
  return {frame:out,removed:removed.size};
 }
 function createReducer(fps,emit){
@@ -36,7 +50,7 @@ function createReducer(fps,emit){
   delete f.localStats;if(Object.keys(delta).length)f.localStats=delta;
   let styleChanged=false;for(const p of f.players){if(typeof p.style==='string'){const id=String(p.id);if(styles.get(id)===p.style)delete p.style;else{styles.set(id,p.style);styleChanged=true;}}}
   const scoreKey=JSON.stringify([f.scoreboard?.home,f.scoreboard?.away]),semanticKey=JSON.stringify([f.ball?.state,f.ball?.owner,f.players.map(p=>[String(p.id),p.team,p.hasBall,p.states?.InCutscene===true]).sort((a,b)=>a[0].localeCompare(b[0]))]);
-  const important=Boolean(f.localStats||f.playerScoreboard||styleChanged||f.events||score!==scoreKey||sem!==semanticKey);
+  const important=Boolean(f.localStats||f.playerScoreboard||styleChanged||f.players.some(p=>Array.isArray(p.abilitySlots)||[-1,0,1,2].includes(p.awk)||typeof p.inAwakening==='boolean'||typeof p.awkReadyFlag==='boolean')||f.events||score!==scoreKey||sem!==semanticKey);
   score=scoreKey;sem=semanticKey;
   const regular=lastSaved===null||!fps||Math.floor((f.t-first+1e-8)*fps)>Math.floor((lastSaved-first+1e-8)*fps);
   if(important||regular){send(f);pending=null;}else pending=f;
@@ -85,7 +99,7 @@ async function convertReplay(selected,{fps=30,removeNpc=true}={},progress=()=>{}
  if(buffer.length)await zip.add('chunk_'+String(++chunks).padStart(6,'0')+'.json',buffer);
  const extensions=Array.isArray(meta.extensions)?meta.extensions.filter(x=>x!=='states'):[];
  await zip.add('players.json',roster);
- await zip.add('metadata.json',{...meta,version:2,convertedBy:'replay-lite-web-1.0',originalSampleRate:meta.originalSampleRate??meta.sampleRate,sampleRate:fps?(Number.isFinite(meta.sampleRate)?Math.min(fps,meta.sampleRate):fps):meta.sampleRate,frames:result.count,chunks,duration:result.last,eventMode:'match-counters-and-stun-starts',extensions:[...new Set([...extensions,'localStats','events','playerStyles'])]});
+ await zip.add('metadata.json',{...meta,version:2,convertedBy:'replay-lite-web-1.0',originalSampleRate:meta.originalSampleRate??meta.sampleRate,sampleRate:fps?(Number.isFinite(meta.sampleRate)?Math.min(fps,meta.sampleRate):fps):meta.sampleRate,frames:result.count,chunks,duration:result.last,eventMode:extensions.includes('abilitySlots')||extensions.includes('awakeningStates')?'match-counters-stuns-and-ability-state':'match-counters-and-stun-starts',extensions:[...new Set([...extensions,'localStats','events','playerStyles'])]});
  const output=zip.finish();return {blob:output.blob,inputRaw,outputRaw:output.raw,inputBytes:selected.reduce((n,f)=>n+f.size,0),oldFrames:result.oldCount,frames:result.count,removed,discarded,overLimit:output.raw>MAX_REPLAY_BYTES||result.count>MAX_REPLAY_FRAMES};
 }
 self.onmessage=async({data})=>{try{const r=await convertReplay(data.files,data.options,p=>self.postMessage({type:'progress',...p}));self.postMessage({type:'done',...r});}catch(e){self.postMessage({type:'error',message:e?.message||String(e)});}};
