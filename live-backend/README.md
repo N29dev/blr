@@ -71,3 +71,30 @@ Open the printed link. Ctrl+C stops the publisher. For a continuously appended f
 Source delay defaults to three seconds, configurable from one to ten with --delay=N. Actual sample rate is determined by the source; no missing frames are fabricated. Network requests are paced approximately five per second, with at most 24 samples per catch-up batch. The publisher stops on inactivity or excessive backlog. A delay configured in this local client is not a server-enforced security control. Personal streams remain JSON-based.
 
 Pure parser and validation logic was checked; live file following and remote networking require a Node/runtime test.
+
+## Automatic folder watcher
+
+Run in a dedicated private folder:
+
+```sh
+mkdir -p ~/BLR-Live
+chmod 700 ~/BLR-Live
+node watch-live.mjs ~/BLR-Live --consent
+```
+
+Only explicitly opted-in sessions are picked up. An approved source/operator creates a fresh session's `<session>.ndjson` and then a new empty `<session>.start` marker after the watcher starts. The marker is renamed to `.claimed` so completed sessions cannot accidentally restart. The watcher does not scan Roblox installations or existing replay folders. Use a unique session name each time. Creating `<session>.stop` stops the current publisher immediately (unsent delayed samples may be discarded). Existing local files remain unchanged. The watcher accepts one active session at a time, ignores start markers older than 30 seconds, and needs the existing administrator token in its environment.
+
+Test using only fictional data, in a second terminal:
+
+```sh
+NAME="demo-$(date +%s)"
+node local-demo-source.mjs "$HOME/BLR-Live/$NAME.ndjson" 60 --live &
+SOURCE_PID=$!
+while [ ! -f "$HOME/BLR-Live/$NAME.ndjson" ]; do sleep 0.1; done
+touch "$HOME/BLR-Live/$NAME.start"
+wait "$SOURCE_PID"
+sleep 5
+touch "$HOME/BLR-Live/$NAME.stop"
+```
+
+The first terminal prints the unique website watch link. The standalone publisher automatically stops on inactivity if a stop marker is omitted. The watcher does not capture matches; a separate authorized, opt-in source must continuously write the agreed anonymous NDJSON schema. Marker filename validation was checked; real process spawning, live file following and remote network behavior are not yet integration-tested.
