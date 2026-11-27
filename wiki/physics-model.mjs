@@ -50,7 +50,7 @@ export function flight3D(initial,{launchY=12,drag=true,postLanding=POST_LANDING_
  points.push(sample());
  for(let i=0;i<1500;i++){
   const step=landing?Math.min(dt,Math.max(0,landing.t+postLanding-t)):dt;if(step<=1e-9)break;
-  if(correct)correct(velocity,t,step);
+  if(correct)correct(velocity,t,step,position);
   if(dragging&&Math.hypot(...velocity)<=10)dragging=false;
   if(dragging&&position[1]<=18){k-=step/dt/3000;velocity[0]*=k;velocity[2]*=k;}
   if(dragging&&position[1]>8&&position[1]<27)velocity[1]+=1.3666666746139526*step/dt;
@@ -59,4 +59,21 @@ export function flight3D(initial,{launchY=12,drag=true,postLanding=POST_LANDING_
   position=a.position;velocity=a.velocity;rolling=a.rolling;t+=step;points.push(sample());
  }
  return {points,t,landed:!!landing,landing,postLanding:landing?Math.max(0,t-landing.t):0,end:landing?'Post-landing preview complete':'Simulation limit',range:landing?Math.hypot(landing.x,landing.z):Math.hypot(position[0],position[2]),height:Math.max(...points.map(p=>p.y))};
+}
+
+// Kaiser Impact, regular C: fixed release direction, linear power decay, then shared ball physics.
+export const KAISER_IMPACT=Object.freeze({power:205,tilt:.05,duration:.5,decay:190,minPower:40,maxDisplacement:200,rayLength:10});
+export function kaiserImpactFlight({elevation=45,launchY=12,drag=true,postLanding=POST_LANDING_SECONDS}={}){
+ const c=KAISER_IMPACT,a=elevation*Math.PI/180,direction=[0,Math.sin(a)+c.tilt,Math.cos(a)];
+ let power=c.power,active=true,controlEnd=null;
+ const f=flight3D(direction.map(x=>x*power),{launchY,drag,postLanding,correct:(velocity,t,dt,position)=>{
+  if(!active)return;
+  // In-game collision ray and possession can end control early; this empty-field scenario has only the landing plane.
+  const displacement=Math.hypot(position[0],position[1]-launchY,position[2]);
+  const rayHitsGround=direction[1]<0&&position[1]+direction[1]*c.rayLength<=PHYSICS.landingY;
+  if(t>=c.duration-1e-9||displacement>=c.maxDisplacement||rayHitsGround){active=false;controlEnd=t;return;}
+  if(t>1e-9)power=Math.max(c.minPower,power-c.decay*dt);
+  direction.forEach((x,i)=>velocity[i]=x*power);
+ }});
+ return {...f,controlEnd:controlEnd??Math.min(f.t,c.duration),end:f.end+' · Kaiser Impact velocity control ends at '+(controlEnd??Math.min(f.t,c.duration)).toFixed(2)+' s.'};
 }
