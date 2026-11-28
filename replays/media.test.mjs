@@ -1,0 +1,6 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import "../shared/replay-media.js";
+const M=globalThis.BLRReplayMedia;
+test("score and counter cues, no goal-credit duplicate or state guess",()=>{const a=M.buildCueTimeline([{t:1,kind:"goal"}],[{t:1.1,type:"goal_credit",source:"counter"},{t:1.2,type:"save",source:"counter",id:1},{t:1.21,type:"save",source:"counter",id:1},{t:1.3,type:"stunned",source:"state"}]);assert.equal(a.length,2);assert.equal(M.cuesBetween(a,0,1.5).length,2);assert.equal(M.cuesBetween(a,1.5,0).length,0);assert.equal(M.cuesBetween(a,0,3).length,0);});
+test("combined signals require same explicit actor; never confirm outcomes",()=>{const p=M.validatePack({schema:1,snapshotVersion:479,styles:[],abilities:[],media:{},signatures:[{id:"a",rules:[{match:"all_of",signal_ids:["animation:1","sound:2"],confidence:"medium"}]},{id:"b",rules:[{match:"any_of",signal_ids:["sound:2"],confidence:"low"}]}]});assert.equal(M.matchObservation(p,{signals:["animation:1","sound:2"]}).length,1);const m=M.matchObservation(p,{actor:1,signals:["animation:1","sound:2"]});assert.equal(m.length,2);assert.ok(m.every(x=>!x.confirmed));assert.equal(M.matchObservation(p,{actor:1,signalId:"animation:1"}).length,0);});

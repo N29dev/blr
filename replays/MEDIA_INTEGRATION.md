@@ -1,0 +1,7 @@
+# Offline media integration — phase 1
+
+Replay Studio now has optional original synthesized cues for observed score increases and save, steal and ankle-break counter credits. They are not the original game audio. No sound is triggered by a seek, an unconfirmed stun or a cooldown update. Audio is disabled by default and never used during live viewing.
+
+The optional technical pack importer accepts schema 1 JSON derived from the private database export. It uses local browser file reads only; it does not replace tested wiki data. Fields: schema, snapshotVersion, styles (id/name/kit_ability_ids), abilities (id/name/description/activation/cooldowns/stages/media), media (id-keyed dictionary), signatures (id/kind/rules). The offline media observation adapter accepts an array of {t, signalId, actor?} or {t, signals, actor}. Combined rules require a known actor and simultaneous signals supplied by the caller. No matching across an invented timing window, no automatic gameplay outcome claims. Confidence describes reference evidence only, not a runtime probability. Shared candidate matches are all shown. The existing recorder is unchanged and does not generate media observations.
+
+Run node --test replays/media.test.mjs. Browser rendering, actual gameplay capture, native audio and animation/field renderer unification are separate work. Keep private source and unlicensed assets out of the repository.
